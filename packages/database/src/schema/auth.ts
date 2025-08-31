@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core';
+import {pgTable, text, timestamp, boolean, pgEnum} from 'drizzle-orm/pg-core';
 
 export const genderEnum = pgEnum('gender', ['male', 'female']);
 export const roleEnum = pgEnum('role', ['admin', 'member', 'driver', 'citizen', 'supervisor']);
@@ -16,7 +16,7 @@ export const user = pgTable('user', {
   role: roleEnum('role').default('member').notNull(),
   gender: genderEnum('gender'),
   createdAt: timestamp('createdAt').defaultNow(),
-  updatedAt: timestamp("updatedAt")
+  updatedAt: timestamp('updatedAt')
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
@@ -26,7 +26,9 @@ export const account = pgTable('account', {
   id: text('id').primaryKey(),
   accountId: text('accountId').notNull().notNull(),
   providerId: text('providerId').notNull(),
-  userId: text('userId').notNull().references(() => user.id, { onDelete: 'cascade' }),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id, {onDelete: 'cascade'}),
   accessToken: text('accessToken'),
   refreshToken: text('refreshToken'),
   idToken: text('idToken'),
@@ -35,35 +37,35 @@ export const account = pgTable('account', {
   scope: text('scope'),
   password: text('password'),
   createdAt: timestamp('createdAt').defaultNow(),
-  updatedAt: timestamp("updatedAt")
+  updatedAt: timestamp('updatedAt')
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
 
 // session.ts
-export const session = pgTable("session", {
-  id: text("id").primaryKey(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  token: text("token").notNull().unique(),
-  createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt")
+export const session = pgTable('session', {
+  id: text('id').primaryKey(),
+  expiresAt: timestamp('expiresAt').notNull(),
+  token: text('token').notNull().unique(),
+  createdAt: timestamp('createdAt').defaultNow(),
+  updatedAt: timestamp('updatedAt')
     .defaultNow()
     .$onUpdate(() => new Date()),
-  ipAddress: text("ipAddress"),
-  userAgent: text("userAgent"),
-  userId: text("userId")
+  ipAddress: text('ipAddress'),
+  userAgent: text('userAgent'),
+  userId: text('userId')
     .notNull()
     .references(() => user.id),
 });
 
 // verification.ts
-export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
-  identifier: text("identifier").notNull(),
-  value: text("value").notNull(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt")
+export const verification = pgTable('verification', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expiresAt').notNull(),
+  createdAt: timestamp('createdAt').defaultNow(),
+  updatedAt: timestamp('updatedAt')
     .defaultNow()
     .$onUpdate(() => new Date()),
 });

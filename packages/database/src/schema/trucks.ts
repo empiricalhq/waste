@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, boolean, timestamp } from "drizzle-orm/pg-core";
+import {pgEnum, pgTable, text, boolean, timestamp, decimal} from 'drizzle-orm/pg-core';
 
 export const assignmentStatusEnum = pgEnum('assignment_status', ['scheduled', 'active', 'completed']);
 
@@ -12,6 +12,11 @@ export const truck = pgTable('truck', {
 
 export const truckLocation = pgTable('truck_location', {
   id: text('id').primaryKey(),
-  truckId: text('truck_id').notNull(),
-  routeAssignmentId: text('route_assignment_id').notNull(),
+  truckId: text('truck_id')
+    .notNull()
+    .references(() => truck.id, {onDelete: 'cascade'}),
+  routeAssignmentId: text('route_assignment_id'),
+  lat: decimal('lat', {precision: 10, scale: 8}).notNull(),
+  lng: decimal('lng', {precision: 11, scale: 8}).notNull(),
+  timestamp: timestamp('timestamp').defaultNow(),
 });

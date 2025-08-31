@@ -1,6 +1,11 @@
 {
   "name": "database",
   "private": true,
+  "scripts": {
+    "build": "drizzle-kit generate",
+    "migrate": "drizzle-kit push",
+    "prettier": "prettier --write ."
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.56.1",
     "dotenv": "^17.2.1",
@@ -9,6 +14,7 @@
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.4",
+    "prettier": "3.6.2",
     "tsx": "^4.20.5"
   }
 }
