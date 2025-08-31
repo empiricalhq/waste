@@ -12,14 +12,6 @@ export default async function Home() {
   return (
     <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center font-[family-name:var(--font-geist-sans)]">
       <main className="row-start-2 flex flex-col items-center gap-8 sm:items-start w-full">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
         {me ? (
           <SimpleDashboard/>
         ) : (
