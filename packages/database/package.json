@@ -1,9 +1,18 @@
 {
-  "name": "database",
+  "name": "@repo/database",
   "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema/index.ts"
+  },
   "scripts": {
-    "build": "drizzle-kit generate",
-    "migrate": "drizzle-kit push",
+    "generate": "drizzle-kit generate",
+    "push": "drizzle-kit push",
+    "studio": "drizzle-kit studio",
+    "seed": "tsx scripts/seed.ts",
     "prettier": "prettier --write ."
   },
   "dependencies": {
