@@ -55,16 +55,15 @@ export function SimpleDashboard() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
+    <div className="max-w-4xl mx-auto space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard de Choferes</h1>
+          <h1 className="text-3xl font-bold">Dashboard de choferes</h1>
           <p className="text-muted-foreground">Gestiona tu flota de choferes</p>
         </div>
         <Button onClick={() => setIsAddModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
-          Agregar Chofer
+          Agregar chofer
         </Button>
       </div>
 
