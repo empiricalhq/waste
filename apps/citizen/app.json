@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "name": "@lima-garbage/citizens",
+    "slug": "@lima-garbage/citizens",
     "version": "1.0.0",
 
     "web": {
