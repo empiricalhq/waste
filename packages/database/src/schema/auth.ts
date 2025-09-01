@@ -1,30 +1,27 @@
 import {pgTable, text, timestamp, boolean, pgEnum} from 'drizzle-orm/pg-core';
 
-export const genderEnum = pgEnum('gender', ['male', 'female']);
-export const roleEnum = pgEnum('role', ['admin', 'member', 'driver', 'citizen', 'supervisor']);
+export const roleEnum = pgEnum('role', ['admin', 'supervisor', 'driver', 'citizen']);
 
-// This was originally at web/src/db/schema/tables/user.ts
-// but was moved and modified to work under monorepo
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
-  username: text('username').notNull().unique(),
-  displayUsername: text('display_username'),
   email: text('email').notNull().unique(),
   emailVerified: boolean('emailVerified').notNull().default(false),
   image: text('image'),
-  role: roleEnum('role').default('member').notNull(),
-  gender: genderEnum('gender'),
-  createdAt: timestamp('createdAt').defaultNow(),
+  role: roleEnum('role').default('citizen').notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt')
     .defaultNow()
+    .notNull()
     .$onUpdate(() => new Date()),
+  isActive: boolean('isActive').default(true).notNull(),
+  phoneNumber: text('phoneNumber'),
+  lastLoginAt: timestamp('lastLoginAt'),
 });
 
-// account.ts
 export const account = pgTable('account', {
   id: text('id').primaryKey(),
-  accountId: text('accountId').notNull().notNull(),
+  accountId: text('accountId').notNull(),
   providerId: text('providerId').notNull(),
   userId: text('userId')
     .notNull()
@@ -36,36 +33,37 @@ export const account = pgTable('account', {
   refreshTokenExpiresAt: timestamp('refreshTokenExpiresAt'),
   scope: text('scope'),
   password: text('password'),
-  createdAt: timestamp('createdAt').defaultNow(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt')
     .defaultNow()
+    .notNull()
     .$onUpdate(() => new Date()),
 });
 
-// session.ts
 export const session = pgTable('session', {
   id: text('id').primaryKey(),
   expiresAt: timestamp('expiresAt').notNull(),
   token: text('token').notNull().unique(),
-  createdAt: timestamp('createdAt').defaultNow(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt')
     .defaultNow()
+    .notNull()
     .$onUpdate(() => new Date()),
   ipAddress: text('ipAddress'),
   userAgent: text('userAgent'),
   userId: text('userId')
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, {onDelete: 'cascade'}),
 });
 
-// verification.ts
 export const verification = pgTable('verification', {
   id: text('id').primaryKey(),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
   expiresAt: timestamp('expiresAt').notNull(),
-  createdAt: timestamp('createdAt').defaultNow(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt')
     .defaultNow()
+    .notNull()
     .$onUpdate(() => new Date()),
 });

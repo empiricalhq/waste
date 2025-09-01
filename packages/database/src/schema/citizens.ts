@@ -1,14 +1,22 @@
-import {pgTable, text, timestamp, integer, primaryKey} from 'drizzle-orm/pg-core';
-
+import {pgTable, text, timestamp, doublePrecision, integer, primaryKey, boolean} from 'drizzle-orm/pg-core';
 import {user} from './auth';
 
-export const citizenAddress = pgTable('citizen_address', {
+export const citizenProfile = pgTable('citizen_profile', {
   userId: text('user_id')
     .primaryKey()
     .references(() => user.id, {onDelete: 'cascade'}),
-  streetName: text('street_name').notNull(),
+  lat: doublePrecision('lat'),
+  lng: doublePrecision('lng'),
+  streetName: text('street_name'),
   reference: text('reference'),
-  createdAt: timestamp('created_at').defaultNow(),
+  district: text('district'),
+  notificationsEnabled: boolean('notifications_enabled').default(true),
+  preferredLanguage: text('preferred_language').default('es'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const userEducationProgress = pgTable(
@@ -17,13 +25,14 @@ export const userEducationProgress = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, {onDelete: 'cascade'}),
-    contentKey: text('content_key').notNull(),
-    completedAt: timestamp('completed_at').defaultNow(),
+    contentId: text('content_id').notNull(),
+    completedAt: timestamp('completed_at').defaultNow().notNull(),
     score: integer('score'),
+    timeSpentSeconds: integer('time_spent_seconds'),
   },
   table => {
     return {
-      pk: primaryKey({columns: [table.userId, table.contentKey]}),
+      pk: primaryKey({columns: [table.userId, table.contentId]}),
     };
   }
 );

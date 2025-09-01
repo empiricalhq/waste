@@ -1,22 +1,40 @@
-import {pgEnum, pgTable, text, boolean, timestamp, decimal} from 'drizzle-orm/pg-core';
+import {pgTable, text, boolean, timestamp, doublePrecision, pgEnum} from 'drizzle-orm/pg-core';
 
-export const assignmentStatusEnum = pgEnum('assignment_status', ['scheduled', 'active', 'completed']);
+export const assignmentStatusEnum = pgEnum('assignment_status', ['scheduled', 'active', 'completed', 'cancelled']);
 
 export const truck = pgTable('truck', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
-  licensePlate: text('license_plate').unique(),
+  licensePlate: text('license_plate').notNull().unique(),
   isActive: boolean('is_active').default(true).notNull(),
-  createdAt: timestamp('created_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const truckLocation = pgTable('truck_location', {
+// one record per truck
+export const truckCurrentLocation = pgTable('truck_current_location', {
+  truckId: text('truck_id')
+    .primaryKey()
+    .references(() => truck.id, {onDelete: 'cascade'}),
+  routeAssignmentId: text('route_assignment_id'),
+  lat: doublePrecision('lat').notNull(),
+  lng: doublePrecision('lng').notNull(),
+  speed: doublePrecision('speed'), // km/h
+  heading: doublePrecision('heading'), // degrees 0-359
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export const truckLocationHistory = pgTable('truck_location_history', {
   id: text('id').primaryKey(),
   truckId: text('truck_id')
     .notNull()
     .references(() => truck.id, {onDelete: 'cascade'}),
   routeAssignmentId: text('route_assignment_id'),
-  lat: decimal('lat', {precision: 10, scale: 8}).notNull(),
-  lng: decimal('lng', {precision: 11, scale: 8}).notNull(),
-  timestamp: timestamp('timestamp').defaultNow(),
+  lat: doublePrecision('lat').notNull(),
+  lng: doublePrecision('lng').notNull(),
+  speed: doublePrecision('speed'),
+  heading: doublePrecision('heading'),
+  recordedAt: timestamp('recorded_at').defaultNow().notNull(),
 });

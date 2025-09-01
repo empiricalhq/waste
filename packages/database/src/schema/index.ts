@@ -1,24 +1,57 @@
+import {relations} from 'drizzle-orm';
+
 export * from './auth';
 export * from './trucks';
 export * from './routes';
 export * from './citizens';
 
-import {relations} from 'drizzle-orm';
 import {user, account, session} from './auth';
-import {truck, truckLocation} from './trucks';
-import {route, routeHistory, routeAssignment} from './routes';
-import {citizenAddress, userEducationProgress} from './citizens';
+import {truck, truckCurrentLocation, truckLocationHistory} from './trucks';
+import {route, routeWaypoint, routeSchedule, routeAssignment} from './routes';
+import {citizenProfile, userEducationProgress} from './citizens';
 
 export const userRelations = relations(user, ({many, one}) => ({
   accounts: many(account),
   sessions: many(session),
+  profile: one(citizenProfile),
+  educationProgress: many(userEducationProgress),
+  // route management
   createdRoutes: many(route, {relationName: 'createdBy'}),
   approvedRoutes: many(route, {relationName: 'approvedBy'}),
-  routeHistory: many(routeHistory),
-  assignments: many(routeAssignment, {relationName: 'driver'}),
+  // assignments
+  driverAssignments: many(routeAssignment, {relationName: 'driver'}),
   assignmentsMade: many(routeAssignment, {relationName: 'assignedBy'}),
-  address: one(citizenAddress),
-  educationProgress: many(userEducationProgress),
+}));
+
+export const accountRelations = relations(account, ({one}) => ({
+  user: one(user, {
+    fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+export const sessionRelations = relations(session, ({one}) => ({
+  user: one(user, {
+    fields: [session.userId],
+    references: [user.id],
+  }),
+}));
+
+export const truckRelations = relations(truck, ({one, many}) => ({
+  currentLocation: one(truckCurrentLocation),
+  locationHistory: many(truckLocationHistory),
+  assignments: many(routeAssignment),
+}));
+
+export const truckCurrentLocationRelations = relations(truckCurrentLocation, ({one}) => ({
+  truck: one(truck, {
+    fields: [truckCurrentLocation.truckId],
+    references: [truck.id],
+  }),
+  assignment: one(routeAssignment, {
+    fields: [truckCurrentLocation.routeAssignmentId],
+    references: [routeAssignment.id],
+  }),
 }));
 
 export const routeRelations = relations(route, ({one, many}) => ({
@@ -32,13 +65,23 @@ export const routeRelations = relations(route, ({one, many}) => ({
     references: [user.id],
     relationName: 'approvedBy',
   }),
-  history: many(routeHistory),
+  waypoints: many(routeWaypoint),
+  schedules: many(routeSchedule),
   assignments: many(routeAssignment),
 }));
 
-export const truckRelations = relations(truck, ({many}) => ({
-  locations: many(truckLocation),
-  assignments: many(routeAssignment),
+export const routeWaypointRelations = relations(routeWaypoint, ({one}) => ({
+  route: one(route, {
+    fields: [routeWaypoint.routeId],
+    references: [route.id],
+  }),
+}));
+
+export const routeScheduleRelations = relations(routeSchedule, ({one}) => ({
+  route: one(route, {
+    fields: [routeSchedule.routeId],
+    references: [route.id],
+  }),
 }));
 
 export const routeAssignmentRelations = relations(routeAssignment, ({one}) => ({
@@ -59,5 +102,19 @@ export const routeAssignmentRelations = relations(routeAssignment, ({one}) => ({
     fields: [routeAssignment.assignedBy],
     references: [user.id],
     relationName: 'assignedBy',
+  }),
+}));
+
+export const citizenProfileRelations = relations(citizenProfile, ({one}) => ({
+  user: one(user, {
+    fields: [citizenProfile.userId],
+    references: [user.id],
+  }),
+}));
+
+export const userEducationProgressRelations = relations(userEducationProgress, ({one}) => ({
+  user: one(user, {
+    fields: [userEducationProgress.userId],
+    references: [user.id],
   }),
 }));
