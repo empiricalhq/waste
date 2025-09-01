@@ -1,3 +1,5 @@
 .env
 *.ps1
 *.sh
+
+node_modules/
