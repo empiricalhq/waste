@@ -9,9 +9,7 @@ export const citizenProfile = pgTable('citizen_profile', {
   lng: doublePrecision('lng'),
   streetName: text('street_name'),
   reference: text('reference'),
-  district: text('district'),
   notificationsEnabled: boolean('notifications_enabled').default(true),
-  preferredLanguage: text('preferred_language').default('es'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
