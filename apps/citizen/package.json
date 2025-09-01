@@ -11,13 +11,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@lima-garbage/database": "workspace:*",
     "expo": "53.0.22",
     "expo-status-bar": "~2.2.3",
     "nativewind": "latest",
     "react": "19.0.0",
     "react-native": "0.79.5",
     "react-native-reanimated": "~3.17.4",
-    "react-native-safe-area-context": "5.4.0"
+    "react-native-safe-area-context": "5.4.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -30,6 +32,6 @@
     "prettier-plugin-tailwindcss": "^0.5.11",
     "typescript": "~5.8.3"
   },
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "expo-router/entry",
   "private": true
 }

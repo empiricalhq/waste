@@ -1,10 +1,22 @@
+const { theme } = require('tailwindcss/defaultConfig');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./App.{js,ts,tsx}', './components/**/*.{js,ts,tsx}'],
+  content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
 
   presets: [require('nativewind/preset')],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#10B981',
+        secondary: '#64748B',
+        background: '#F8FAFC',
+        text: '#0F172A',
+      },
+      fontFamily: {
+        sans: ['Inter', ...theme.fontFamily.sans],
+      },
+    },
   },
   plugins: [],
 };
