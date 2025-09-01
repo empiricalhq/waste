@@ -8,7 +8,7 @@ async function seed() {
     {
       id: 'admin-1',
       email: 'admin@lima.gob.pe',
-      name: 'Admin Municipal',
+      name: 'Admin municipal',
       role: 'admin',
       emailVerified: true,
     },
@@ -37,7 +37,7 @@ async function seed() {
   await db.insert(route).values([
     {
       id: 'route-1',
-      name: 'Centro Histórico - Mañana',
+      name: 'Centro Histórico - turno mañana',
       description: 'Recorrido matutino por el centro histórico de Lima',
       startLat: -12.046374,
       startLng: -77.042793,
@@ -129,10 +129,10 @@ async function seed() {
   console.log('- 3 users (1 admin, 2 drivers)');
   console.log('- 3 trucks');
   console.log('- 1 route with waypoints and schedule');
-  console.log('- 3 assignments showing flexible scheduling:');
-  console.log('  * Driver 1: Morning (Truck 1) + Afternoon (Truck 2)');
-  console.log('  * Driver 2: Midday (Truck 1)');
-  console.log('  * Truck 1: Morning (Driver 1) + Midday (Driver 2)');
+  console.log('- 3 assignments showing:');
+  console.log('  * Driver 1: morning (truck 1) + afternoon (truck 2)');
+  console.log('  * Driver 2: midday (truck 1)');
+  console.log('  * Truck 1: morning (driver 1) + midday (driver 2)');
 
   process.exit(0);
 }
