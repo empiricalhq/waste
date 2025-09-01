@@ -13,11 +13,11 @@ export default function HomeScreen() {
     fetchTruckStatus('citizen-1');
   }, []);
 
-  const renderContent = () => {
+  function renderContent() {
     switch (status) {
       case 'LOADING':
         return (
-          <View className={styles.loadingContainer}>
+          <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#10B981" />
           </View>
         );
@@ -33,10 +33,10 @@ export default function HomeScreen() {
       case 'NOT_SCHEDULED':
         return (
           <>
-            <Text className={styles.subHeader}>
+            <Text className="text-lg text-secondary">
               El próximo recojo es: {nextCollectionDay}
             </Text>
-            <Text className={styles.educationTitle}>
+            <Text className="text-xl font-bold text-text pt-4">
               Mientras tanto, ¡aprendamos a reciclar!
             </Text>
             <EducationCard
@@ -46,28 +46,19 @@ export default function HomeScreen() {
           </>
         );
       case 'ERROR':
-        return <Text className={styles.errorText}>Error al cargar los datos.</Text>;
+        return <Text className="text-red-500">Error al cargar los datos.</Text>;
     }
-  };
+  }
 
   return (
     <Page>
-      <View className={styles.container}>
+      <View className="space-y-6">
         <View>
-          <Text className={styles.header}>Bienvenido,</Text>
-          <Text className={styles.subHeader}>Tu gestor de residuos inteligente.</Text>
+          <Text className="text-3xl font-bold text-text">Bienvenido,</Text>
+          <Text className="text-lg text-secondary">Tu gestor de residuos inteligente.</Text>
         </View>
         {renderContent()}
       </View>
     </Page>
   );
 }
-
-const styles = {
-  container: `p-6 space-y-6`,
-  header: `text-3xl font-bold text-text`,
-  subHeader: `text-lg text-secondary`,
-  educationTitle: `text-xl font-bold text-text pt-4`,
-  loadingContainer: `flex-1 justify-center items-center`,
-  errorText: 'text-red-500',
-};
