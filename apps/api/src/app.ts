@@ -6,19 +6,14 @@ import adminRoutes from '@/routes/admin';
 
 const app = createApp();
 
-// CORS middleware
 app.use(
   '*',
   cors({
-    origin: [
-      'http://localhost:3000', // Next.js admin
-      'http://localhost:8081', // Expo Metro
-    ],
+    origin: ['http://localhost:3000', 'http://localhost:8081'],
     credentials: true,
   }),
 );
 
-// Routes
 const routes = [
   { path: '/auth', router: authRoutes },
   { path: '/trucks', router: truckRoutes },
@@ -29,7 +24,6 @@ routes.forEach(({ path, router }) => {
   app.basePath('/api').route(path, router);
 });
 
-// Health check
 app.get('/api/health', (c) => {
   return c.json({
     status: 'ok',

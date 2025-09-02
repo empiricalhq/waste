@@ -1,13 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import postgres from 'postgres';
 
-declare global {
-  var prisma: PrismaClient;
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
 }
 
-const prisma = globalThis.prisma || new PrismaClient();
+const sql = postgres(process.env.DATABASE_URL, {
+  prepare: false,
+  ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
+});
 
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
-}
-
-export default prisma;
+export default sql;

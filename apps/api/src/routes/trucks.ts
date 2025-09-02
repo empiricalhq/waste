@@ -1,6 +1,6 @@
 import { createRouter } from '@/lib/create-app';
 import { auth } from '@/lib/auth';
-import prisma from '@/lib/db';
+import sql from '@/lib/db';
 
 const router = createRouter();
 
@@ -27,9 +27,14 @@ router.get('/status', async (c) => {
   }
 
   try {
-    const profile = await prisma.citizenProfile.findFirst({
-      where: { userId: user.id },
-    });
+    const profiles = await sql`
+      SELECT lat, lng, street_name, reference 
+      FROM citizen_profile 
+      WHERE user_id = ${user.id}
+      LIMIT 1
+    `;
+
+    const profile = profiles[0];
 
     if (!profile || !profile.lat || !profile.lng) {
       return c.json({
@@ -39,7 +44,7 @@ router.get('/status', async (c) => {
     }
 
     // TODO: Implement real truck tracking logic
-    // For now, we return mock data
+    // For now, return mock data
     const isNearby = Math.random() > 0.5;
 
     if (isNearby) {

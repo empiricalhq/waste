@@ -1,10 +1,9 @@
 import { createRouter } from '@/lib/create-app';
 import { auth } from '@/lib/auth';
-import prisma from '@/lib/db';
+import sql from '@/lib/db';
 
 const router = createRouter();
 
-// Admin auth middleware
 router.use('*', async (c, next) => {
   const session = await auth.api.getSession({
     headers: c.req.raw.headers,
@@ -22,25 +21,29 @@ router.use('*', async (c, next) => {
   await next();
 });
 
-// Get all trucks
 router.get('/trucks', async (c) => {
   try {
-    const trucks = await prisma.truck.findMany({
-      include: {
-        currentLocation: true,
-        routeAssignments: {
-          where: {
-            status: 'active',
-          },
-          include: {
-            route: true,
-            driver: {
-              select: { id: true, name: true, email: true },
-            },
-          },
-        },
-      },
-    });
+    const trucks = await sql`
+      SELECT 
+        t.*,
+        tcl.lat,
+        tcl.lng,
+        tcl.speed,
+        tcl.heading,
+        tcl.updated_at as location_updated_at,
+        ra.id as assignment_id,
+        ra.status as assignment_status,
+        r.name as route_name,
+        u.name as driver_name,
+        u.email as driver_email
+      FROM truck t
+      LEFT JOIN truck_current_location tcl ON t.id = tcl.truck_id
+      LEFT JOIN route_assignment ra ON t.id = ra.truck_id AND ra.status = 'active'
+      LEFT JOIN route r ON ra.route_id = r.id
+      LEFT JOIN "user" u ON ra.driver_id = u.id
+      ORDER BY t.created_at DESC
+    `;
+
     return c.json(trucks);
   } catch (error) {
     console.error('Failed to fetch trucks:', error);
@@ -48,28 +51,39 @@ router.get('/trucks', async (c) => {
   }
 });
 
-// Get all routes
 router.get('/routes', async (c) => {
   try {
-    const routes = await prisma.route.findMany({
-      include: {
-        creator: {
-          select: { id: true, name: true, email: true },
-        },
-        waypoints: {
-          orderBy: { sequenceOrder: 'asc' },
-        },
-        schedules: true,
-        assignments: {
-          include: {
-            truck: true,
-            driver: {
-              select: { id: true, name: true, email: true },
-            },
-          },
-        },
-      },
-    });
+    const routes = await sql`
+      SELECT 
+        r.*,
+        creator.name as creator_name,
+        creator.email as creator_email,
+        approver.name as approver_name,
+        approver.email as approver_email
+      FROM route r
+      LEFT JOIN "user" creator ON r.created_by = creator.id
+      LEFT JOIN "user" approver ON r.approved_by = approver.id
+      ORDER BY r.created_at DESC
+    `;
+
+    // get waypoints for each route
+    for (const route of routes) {
+      const waypoints = await sql`
+        SELECT * FROM route_waypoint 
+        WHERE route_id = ${route.id} 
+        ORDER BY sequence_order ASC
+      `;
+
+      const schedules = await sql`
+        SELECT * FROM route_schedule 
+        WHERE route_id = ${route.id}
+        ORDER BY day_of_week ASC
+      `;
+
+      route.waypoints = waypoints;
+      route.schedules = schedules;
+    }
+
     return c.json(routes);
   } catch (error) {
     console.error('Failed to fetch routes:', error);
