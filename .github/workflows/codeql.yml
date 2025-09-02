@@ -4,7 +4,17 @@ on:
   push:
     branches:
       - 'master'
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
   pull_request:
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
   schedule:
     - cron: '0 0 * * 0'
   workflow_dispatch:
