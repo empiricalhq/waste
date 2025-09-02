@@ -9,5 +9,8 @@
   ],
   "scripts": {
     "clean": "rm -rf node_modules packages/database/node_modules apps/citizen/node_modules bun.lockb packages/database/bun.lockb apps/citizen/bun.lockb"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.21"
   }
 }

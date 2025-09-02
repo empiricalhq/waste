@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
+    "outDir": "./dist",
     "module": "nodenext",
     "target": "esnext",
     "moduleResolution": "nodenext",
@@ -11,6 +12,6 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "types": ["bun-types"]
-  }
+    "types": ["bun-types"],
+  },
 }
