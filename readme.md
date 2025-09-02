@@ -50,14 +50,14 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
 
 ```mermaid
 graph TD
-    subgraph Clientes (entornos no confiables)
+    subgraph Clientes - entornos no confiables
         A["apps/citizen - Expo / React Native"]
         B["apps/trucker - Flutter"]
         C["apps/admin-web - Next.js"]
     end
 
-    subgraph API (entornos confiables)
-        D["apps/api - Hono on Edge Runtime"]
+    subgraph API - entorno seguro
+        D["apps/api - Hono en Edge Runtime"]
     end
 
     subgraph Paquetes compartidos
