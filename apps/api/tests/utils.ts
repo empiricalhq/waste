@@ -48,6 +48,8 @@ export async function login(email: string, password: string): Promise<string | n
       body: JSON.stringify({ email, password }),
     });
 
+    console.log('the response is', response);
+
     const data = await response.json();
     prettyPrint(`LOGIN ${email}`, data, response.status);
 

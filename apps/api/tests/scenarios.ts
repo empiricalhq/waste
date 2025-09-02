@@ -4,6 +4,7 @@ import { login, register, fetchAndPrint } from './utils';
 export async function testAdminFlow(adminEmail: string, adminPassword: string): Promise<string | null> {
   console.log('\n=== testing: admin flow (web) ===');
   const adminCookie = await login(adminEmail, adminPassword);
+  console.log('The admin cookie is:', adminCookie);
 
   if (adminCookie) {
     console.log('Admin logged in successfully. Fetching admin endpoints...');

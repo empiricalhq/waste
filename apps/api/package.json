@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "bun --hot src/index.ts --env-file=.env",
-    "test": "bun tests/main.ts",
+    "test": "bun tests/main.ts --env-file=.env",
     "prettier": "prettier --write ."
   },
   "dependencies": {

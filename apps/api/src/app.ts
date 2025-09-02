@@ -15,13 +15,13 @@ app.use(
 );
 
 const routes = [
-  { path: '/auth', router: authRoutes },
-  { path: '/trucks', router: truckRoutes },
-  { path: '/admin', router: adminRoutes },
+  { path: '/api/auth', router: authRoutes },
+  { path: '/api/trucks', router: truckRoutes },
+  { path: '/api/admin', router: adminRoutes },
 ] as const;
 
 routes.forEach(({ path, router }) => {
-  app.basePath('/api').route(path, router);
+  app.route(path, router);
 });
 
 app.get('/api/health', (c) => {

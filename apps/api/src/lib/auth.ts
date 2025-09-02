@@ -12,6 +12,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     'http://localhost:3000', // apps/web (nextjs)
     'http://localhost:8081', // apps/citizen
+    '*',
   ],
   emailAndPassword: {
     enabled: true,
