@@ -1,5 +1,5 @@
 import {db} from '../src/client';
-import {truck, route, routeWaypoint, routeSchedule, user, routeAssignment} from '../src/schema';
+import {truck, route, routeWaypoint, routeSchedule, user, routeAssignment, account} from '../src/schema';
 
 async function seed() {
   console.log('🌱 Seeding database...');
@@ -9,6 +9,8 @@ async function seed() {
       id: 'admin-1',
       email: 'admin@lima.gob.pe',
       name: 'Admin municipal',
+      username: 'admin.municipal',
+      displayUsername: 'Admin Municipal',
       role: 'admin',
       emailVerified: true,
     },
@@ -16,6 +18,8 @@ async function seed() {
       id: 'driver-1',
       email: 'driver1@lima.gob.pe',
       name: 'Juan Pérez',
+      username: 'juan.perez',
+      displayUsername: 'Juan Pérez',
       role: 'driver',
       phoneNumber: '+51-999-123-456',
     },
@@ -23,8 +27,30 @@ async function seed() {
       id: 'driver-2',
       email: 'driver2@lima.gob.pe',
       name: 'María González',
+      username: 'maria.gonzalez',
+      displayUsername: 'María González',
       role: 'driver',
       phoneNumber: '+51-999-789-012',
+    },
+    {
+      id: 'admin-2',
+      email: 'pedro.rojas.f24@gmail.com',
+      name: 'Pedro Rojas',
+      username: 'pedrorojasf',
+      displayUsername: 'Pedro Rojas',
+      role: 'admin',
+      emailVerified: true,
+    },
+  ]);
+
+  await db.insert(account).values([
+    {
+      id: 'admin-2',
+      accountId: 'testadmin-credentials',
+      providerId: 'credential',
+      userId: 'admin-2',
+      password: '0afb753ecbcb1e9943d70e2a9de3efa9:313c15541de6148319f12d972624a54e3eb23a862b9f5961324633352218e0cc5446b22c60f1fca7114e29ba915e12de537a4644528025962f5d59ab856a31ac',
+      scope: 'all',
     },
   ]);
 
@@ -127,12 +153,10 @@ async function seed() {
   console.log('✅ Database seeded successfully!');
   console.log('Check your database for:');
   console.log('- 3 users (1 admin, 2 drivers)');
+  console.log('- 1 account linked to driver-1');
   console.log('- 3 trucks');
   console.log('- 1 route with waypoints and schedule');
-  console.log('- 3 assignments showing:');
-  console.log('  * Driver 1: morning (truck 1) + afternoon (truck 2)');
-  console.log('  * Driver 2: midday (truck 1)');
-  console.log('  * Truck 1: morning (driver 1) + midday (driver 2)');
+  console.log('- 3 assignments showing shared drivers/trucks');
 
   process.exit(0);
 }
