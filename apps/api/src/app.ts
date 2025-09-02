@@ -1,44 +1,41 @@
-import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-
+import createApp from '@/lib/create-app';
 import authRoutes from '@/routes/auth';
 import truckRoutes from '@/routes/trucks';
+import adminRoutes from '@/routes/admin';
 
-// Define the context type for Hono requests
-// This allows us to pass typed data (like the user object) between middleware
-type AppEnv = {
-  Variables: {
-    user: Awaited<
-      ReturnType<typeof import('./lib/auth').auth.getSession>
-    >['user'];
-  };
-};
+const app = createApp();
 
-const app = new Hono<AppEnv>().basePath('/api');
-
-// --- Global Middleware ---
-
-// Configure CORS to allow requests from your frontend clients
+// CORS middleware
 app.use(
   '*',
   cors({
     origin: [
-      'http://localhost:3000', // Next.js admin web
-      'http://localhost:8081', // Expo Go Metro Bundler
-      // Add your production frontend URLs here
+      'http://localhost:3000', // Next.js admin
+      'http://localhost:8081', // Expo Metro
     ],
     credentials: true,
   }),
 );
 
-// --- Route Mounting ---
+// Routes
+const routes = [
+  { path: '/auth', router: authRoutes },
+  { path: '/trucks', router: truckRoutes },
+  { path: '/admin', router: adminRoutes },
+] as const;
 
-app.route('/auth', authRoutes);
-app.route('/trucks', truckRoutes);
+routes.forEach(({ path, router }) => {
+  app.basePath('/api').route(path, router);
+});
 
-// A simple health check endpoint
-app.get('/health', (c) => {
-  return c.json({ status: 'ok', timestamp: new Date().toISOString() });
+// Health check
+app.get('/api/health', (c) => {
+  return c.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development',
+  });
 });
 
 export default app;

@@ -1,10 +1,10 @@
-import { Hono } from 'hono';
 import { auth } from '@/lib/auth';
+import { createRouter } from '@/lib/create-app';
 
-const app = new Hono();
+const router = createRouter();
 
-app.on(['GET', 'POST'], '/*', async (c) => {
-  return await auth.handler(c.req.raw);
+router.on(['POST', 'GET'], '/auth/**', (c) => {
+  return auth.handler(c.req.raw);
 });
 
-export default app;
+export default router;

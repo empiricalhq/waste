@@ -4,16 +4,18 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --hot src/index.ts --env-file=.env"
+    "dev": "bun --hot src/index.ts --env-file=.env",
+    "db:generate": "bunx @better-auth/cli generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@lima-garbage/database": "workspace:*",
+    "@prisma/client": "^6.15.0",
     "better-auth": "^1.3.7",
-    "drizzle-orm": "^0.44.5",
-    "hono": "^4.9.5",
-    "postgres": "^3.4.7"
+    "hono": "^4.9.5"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prisma": "^6.15.0"
   }
 }

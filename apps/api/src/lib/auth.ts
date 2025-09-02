@@ -1,35 +1,21 @@
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import prisma from './db';
 
-import {
-  db,
-  user,
-  account,
-  session,
-  verification,
-} from '@lima-garbage/database';
-
-if (!process.env.AUTH_SECRET) {
-  throw new Error('AUTH_SECRET environment variable is not set');
+if (!process.env.BETTER_AUTH_SECRET) {
+  throw new Error('BETTER_AUTH_SECRET environment variable is not set');
 }
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    schema: {
-      user,
-      account,
-      session,
-      verification,
-    },
-    provider: 'pg',
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql',
   }),
-  secret: process.env.AUTH_SECRET,
-  origin: process.env.AUTH_ORIGIN || 'http://localhost:4000',
-
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000',
+  trustedOrigins: ['http://localhost:3000', 'http://localhost:8081'],
   emailAndPassword: {
     enabled: true,
   },
-
   user: {
     additionalFields: {
       role: {
@@ -40,3 +26,10 @@ export const auth = betterAuth({
     },
   },
 });
+
+export type AuthType = {
+  Variables: {
+    user: typeof auth.$Infer.Session.user | null;
+    session: typeof auth.$Infer.Session.session | null;
+  };
+};
