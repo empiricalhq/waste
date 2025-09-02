@@ -1,0 +1,105 @@
+version: 2
+updates:
+  # root
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+    open-pull-requests-limit: 10
+    assignees:
+      - 'totallynotdavid'
+    commit-message:
+      prefix: 'deps'
+      include: 'scope'
+
+  - package-ecosystem: 'npm'
+    directory: '/apps/web'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+    open-pull-requests-limit: 10
+    assignees:
+      - 'PedroRojasF'
+    commit-message:
+      prefix: 'deps(web)'
+      include: 'scope'
+    groups:
+      nextjs:
+        patterns:
+          - 'next*'
+          - '@next/*'
+      react:
+        patterns:
+          - 'react*'
+          - '@types/react*'
+      radix:
+        patterns:
+          - '@radix-ui/*'
+      drizzle:
+        patterns:
+          - 'drizzle*'
+
+  - package-ecosystem: 'npm'
+    directory: '/apps/citizen'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+    open-pull-requests-limit: 10
+    assignees:
+      - 'totallynotdavid'
+    commit-message:
+      prefix: 'deps(citizen)'
+      include: 'scope'
+    groups:
+      expo:
+        patterns:
+          - 'expo*'
+          - '@expo/*'
+      react-native:
+        patterns:
+          - 'react-native*'
+          - '@react-native/*'
+      react:
+        patterns:
+          - 'react*'
+          - '@types/react*'
+      eslint:
+        patterns:
+          - 'eslint*'
+          - '@eslint/*'
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/database'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+    open-pull-requests-limit: 10
+    assignees:
+      - 'totallynotdavid'
+    commit-message:
+      prefix: 'deps(database)'
+      include: 'scope'
+    groups:
+      drizzle:
+        patterns:
+          - 'drizzle*'
+      supabase:
+        patterns:
+          - '@supabase/*'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+    open-pull-requests-limit: 5
+    assignees:
+      - 'totallynotdavid'
+    commit-message:
+      prefix: 'deps(actions)'
