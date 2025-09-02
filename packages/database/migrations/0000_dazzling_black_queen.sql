@@ -1,3 +1,4 @@
+CREATE TYPE "public"."gender" AS ENUM('male', 'female');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('admin', 'supervisor', 'driver', 'citizen');--> statement-breakpoint
 CREATE TYPE "public"."assignment_status" AS ENUM('scheduled', 'active', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."route_status" AS ENUM('active', 'inactive', 'draft');--> statement-breakpoint
@@ -32,15 +33,19 @@ CREATE TABLE "session" (
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
+	"username" text NOT NULL,
+	"display_username" text,
 	"email" text NOT NULL,
 	"emailVerified" boolean DEFAULT false NOT NULL,
 	"image" text,
 	"role" "role" DEFAULT 'citizen' NOT NULL,
+	"gender" "gender",
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,
 	"isActive" boolean DEFAULT true NOT NULL,
 	"phoneNumber" text,
 	"lastLoginAt" timestamp,
+	CONSTRAINT "user_username_unique" UNIQUE("username"),
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
