@@ -32,9 +32,7 @@ export function Page({
     return (
       <SafeAreaView className={`flex-1 bg-background ${className}`}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, ...paddingStyle }}>
-          <View className={`flex-1 ${contentClassName}`}>
-            {children}
-          </View>
+          <View className={`flex-1 ${contentClassName}`}>{children}</View>
         </ScrollView>
       </SafeAreaView>
     );

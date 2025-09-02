@@ -8,11 +8,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <View style={{ flex: 1 }}>
-        <Stack 
-          screenOptions={{ 
+        <Stack
+          screenOptions={{
             headerShown: false,
-            animation: 'slide_from_right'
-          }} 
+            animation: 'slide_from_right',
+          }}
         />
       </View>
     </SafeAreaProvider>

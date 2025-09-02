@@ -17,7 +17,7 @@ export default function HomeScreen() {
     switch (status) {
       case 'LOADING':
         return (
-          <View className="flex-1 justify-center items-center">
+          <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#10B981" />
           </View>
         );
@@ -36,7 +36,7 @@ export default function HomeScreen() {
             <Text className="text-lg text-secondary">
               El próximo recojo es: {nextCollectionDay}
             </Text>
-            <Text className="text-xl font-bold text-text pt-4">
+            <Text className="pt-4 text-xl font-bold text-text">
               Mientras tanto, ¡aprendamos a reciclar!
             </Text>
             <EducationCard

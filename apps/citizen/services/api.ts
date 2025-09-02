@@ -10,8 +10,8 @@ type TruckStatusResponse =
  */
 export const getTruckStatusForUser = async (userId: string): Promise<TruckStatusResponse> => {
   console.log(`Fetching truck status for user: ${userId}`);
-  
-  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   const isNearby = Math.random() > 0.5;
 

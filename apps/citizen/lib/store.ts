@@ -26,7 +26,7 @@ export const useTruckStore = create<TruckState>((set) => ({
           etaMinutes: result.etaMinutes,
           nextCollectionDay: null,
         });
-      } else {
+      } else if (result.status === 'NOT_SCHEDULED') {
         set({
           status: 'NOT_SCHEDULED',
           etaMinutes: null,
