@@ -11,7 +11,7 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000',
   trustedOrigins: [
     'http://localhost:3000', // apps/web (nextjs)
-    'http://localhost:8081',
+    'http://localhost:8081', // apps/citizen
   ],
   emailAndPassword: {
     enabled: true,
@@ -24,6 +24,9 @@ export const auth = betterAuth({
         defaultValue: 'citizen',
       },
     },
+  },
+  telemetry: {
+    enabled: false,
   },
 });
 

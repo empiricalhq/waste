@@ -23,8 +23,8 @@ router.use('*', async (c, next) => {
 
 router.get('/trucks', async (c) => {
   try {
-    const trucks = await sql`
-      SELECT 
+    const query = `
+      SELECT
         t.*,
         tcl.lat,
         tcl.lng,
@@ -43,8 +43,8 @@ router.get('/trucks', async (c) => {
       LEFT JOIN "user" u ON ra.driver_id = u.id
       ORDER BY t.created_at DESC
     `;
-
-    return c.json(trucks);
+    const result = await sql.query(query);
+    return c.json(result.rows);
   } catch (error) {
     console.error('Failed to fetch trucks:', error);
     return c.json({ error: 'Internal Server Error' }, 500);
@@ -53,8 +53,8 @@ router.get('/trucks', async (c) => {
 
 router.get('/routes', async (c) => {
   try {
-    const routes = await sql`
-      SELECT 
+    const routesQuery = `
+      SELECT
         r.*,
         creator.name as creator_name,
         creator.email as creator_email,
@@ -65,23 +65,21 @@ router.get('/routes', async (c) => {
       LEFT JOIN "user" approver ON r.approved_by = approver.id
       ORDER BY r.created_at DESC
     `;
+    const routesResult = await sql.query(routesQuery);
+    const routes = routesResult.rows;
 
-    // get waypoints for each route
     for (const route of routes) {
-      const waypoints = await sql`
-        SELECT * FROM route_waypoint 
-        WHERE route_id = ${route.id} 
-        ORDER BY sequence_order ASC
-      `;
+      const waypointsResult = await sql.query(
+        'SELECT * FROM route_waypoint WHERE route_id = $1 ORDER BY sequence_order ASC',
+        [route.id],
+      );
+      route.waypoints = waypointsResult.rows;
 
-      const schedules = await sql`
-        SELECT * FROM route_schedule 
-        WHERE route_id = ${route.id}
-        ORDER BY day_of_week ASC
-      `;
-
-      route.waypoints = waypoints;
-      route.schedules = schedules;
+      const schedulesResult = await sql.query(
+        'SELECT * FROM route_schedule WHERE route_id = $1 ORDER BY day_of_week ASC',
+        [route.id],
+      );
+      route.schedules = schedulesResult.rows;
     }
 
     return c.json(routes);

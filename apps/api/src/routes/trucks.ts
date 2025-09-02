@@ -27,14 +27,12 @@ router.get('/status', async (c) => {
   }
 
   try {
-    const profiles = await sql`
-      SELECT lat, lng, street_name, reference 
-      FROM citizen_profile 
-      WHERE user_id = ${user.id}
-      LIMIT 1
-    `;
+    const profilesResult = await sql.query(
+      'SELECT lat, lng, street_name, reference FROM citizen_profile WHERE user_id = $1 LIMIT 1',
+      [user.id],
+    );
 
-    const profile = profiles[0];
+    const profile = profilesResult.rows[0];
 
     if (!profile || !profile.lat || !profile.lng) {
       return c.json({
