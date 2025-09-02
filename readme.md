@@ -4,7 +4,44 @@
 cliente y una API central. Los clientes se comunican solo con la API, que es la
 única autorizada a acceder directamente a la base de datos.
 
-**El team**: @totallynotdavid (mantainer), @PedroRojasF, @andrescosmemalaz
+**El team**:
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="http://totallynotdavid.github.io">
+          <img src="https://avatars.githubusercontent.com/u/20960328?v=4?s=100" width="100px;" alt="David"/><br />
+          <sub><b>David Duran</b></sub>
+        </a><br />
+        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
+        <a href="#security-totallynotdavid" title="Security">🛡️</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/PedroRojasF">
+          <img src="https://avatars.githubusercontent.com/u/48870694?v=4?s=100" width="100px;" alt="Pedro Rojas F"/><br />
+          <sub><b>Pedro Rojas F</b></sub>
+        </a><br />
+        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
+        <a href="#ideas-PedroRojasF" title="Ideas">💡</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/andrescosmemalaz">
+          <img src="https://avatars.githubusercontent.com/u/57787417?v=4?s=100" width="100px;" alt="Andrés Cosme Malaz"/><br />
+          <sub><b>Andrés Cosme Malaz</b></sub>
+        </a><br />
+        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 **Nuestro stack**: TypeScript, React Native (Expo), Flutter, Next.js, Supabase
 (PostgreSQL), better-auth, drizzle-orm, Tailwind CSS, Zustand.
