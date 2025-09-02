@@ -50,27 +50,19 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
 
 ```mermaid
 graph TD
-    subgraph Clientes - entornos no confiables
-        A["apps/citizen - Expo / React Native"]
-        B["apps/trucker - Flutter"]
-        C["apps/admin-web - Next.js"]
-    end
+    A["apps/citizen – expo / react native"]
+    B["apps/trucker – flutter"]
+    C["apps/web – next.js"]
+    D["apps/api – hono (deno deploy)"]
+    E["packages/database – drizzle orm"]
+    F[(supabase postgresql)]
 
-    subgraph API - entorno seguro
-        D["apps/api - Hono en Edge Runtime"]
-    end
+    A -->|auth http| D
+    B -->|auth http| D
+    C -->|server-to-server| D
 
-    subgraph Paquetes compartidos
-        E["packages/database - Drizzle ORM"]
-        F[(Supabase PostgreSQL)]
-    end
-
-    A -->|Authenticated HTTP Requests| D
-    B -->|Authenticated HTTP Requests| D
-    C -->|Server-to-Server HTTP Requests| D
-
-    D -->|SQL Queries via Drizzle| E
-    E -->|Defines Schema For| F
+    D -->|sql queries| E
+    E --> F
 ```
 
 ## Flujo de autenticación
