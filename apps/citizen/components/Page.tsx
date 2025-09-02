@@ -10,7 +10,7 @@ type PageProps = {
   contentClassName?: string;
 };
 
-const DEFAULT_PADDING = 24; // Tailwind p-6 equivalent
+const DEFAULT_PADDING = 24;
 
 export function Page({
   children,
@@ -26,11 +26,12 @@ export function Page({
     paddingTop: pad,
     paddingHorizontal: pad,
     paddingBottom: 0,
+    backgroundColor: 'red',
   };
 
   if (scroll) {
     return (
-      <SafeAreaView className={`flex-1 bg-background ${className}`}>
+      <SafeAreaView className={`flex-1 bg-background ${className}`} style={{ backgroundColor: 'blue', paddingBottom: 0 }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1, ...paddingStyle }}>
           <View className={`flex-1 ${contentClassName}`}>{children}</View>
         </ScrollView>
@@ -39,7 +40,7 @@ export function Page({
   }
 
   return (
-    <SafeAreaView className={`flex-1 bg-background ${className}`}>
+    <SafeAreaView className={`flex-1 bg-background ${className}`} style={{ backgroundColor: 'blue' }}>
       <View className={`flex-1 ${contentClassName}`} style={paddingStyle}>
         {children}
       </View>

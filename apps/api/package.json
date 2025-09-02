@@ -1,0 +1,19 @@
+{
+  "name": "@lima-garbage/api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot src/index.ts --env-file=.env"
+  },
+  "dependencies": {
+    "@lima-garbage/database": "workspace:*",
+    "better-auth": "^1.3.7",
+    "drizzle-orm": "^0.44.5",
+    "hono": "^4.9.5",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
