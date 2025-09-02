@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Foundation, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
 import colors from 'tailwindcss/colors';
 
 export default function TabsLayout() {
@@ -8,6 +9,8 @@ export default function TabsLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.emerald[500],
         headerShown: false,
+        // dont add ripple animation
+        tabBarButton: (props) => <TouchableOpacity {...(props as any)} activeOpacity={1} />,
       }}>
       <Tabs.Screen
         name="index"
