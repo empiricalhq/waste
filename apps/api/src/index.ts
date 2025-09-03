@@ -1,4 +1,5 @@
 import app from '@/app.ts';
+import process from 'node:process';
 
 const port = parseInt(process.env.PORT || '4000');
 

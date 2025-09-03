@@ -1,5 +1,8 @@
 {
   "imports": {
-    "@/*": "./src/*"
+    "@/": "./src/"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"]
   }
 }
