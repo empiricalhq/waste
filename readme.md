@@ -52,9 +52,7 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
 
 1. **API ([apps/api](apps/api))**: Aplicación
    [hono](https://hono.dev/docs/getting-started/deno) desplegada en
-   [Deno Deploy](https://console.deno.com/empirical).
-
-   **Live**: [https://api-prod.empirical.deno.net/](https://api-prod.empirical.deno.net/)
+   [Deno Deploy](https://console.deno.com/empirical). **See it live at** [https://api-prod.empirical.deno.net/](https://api-prod.empirical.deno.net/)
 
    - Gestiona todas las operaciones de datos.
    - Autenticación con
