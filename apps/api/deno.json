@@ -1,7 +1,5 @@
 {
   "imports": {
-    "hono/": "npm:hono/",
-    "hono/cors": "npm:hono/cors",
     "@/": "./apps/api/src/"
   },
   "compilerOptions": {
