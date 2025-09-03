@@ -24,6 +24,10 @@ export const auth = betterAuth({
       },
     },
   },
+
+  telemetry: {
+    enabled: false,
+  },
 });
 
 export type User = typeof auth.$Infer.Session.user;
