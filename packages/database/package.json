@@ -19,9 +19,12 @@
     "@clack/prompts": "^0.11.0",
     "@supabase/supabase-js": "^2.56.1",
     "drizzle-orm": "^0.44.5",
+    "pg": "^8.16.3",
     "postgres": "^3.4.7"
   },
   "devDependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@types/pg": "^8.15.5",
     "drizzle-kit": "^0.31.4",
     "prettier": "3.6.2"
   }
