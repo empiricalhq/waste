@@ -1,4 +1,4 @@
-import {pgTable, text, timestamp, boolean, pgEnum} from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core';
 
 export const genderEnum = pgEnum('gender', ['male', 'female']);
 export const roleEnum = pgEnum('role', ['admin', 'supervisor', 'driver', 'citizen']);
@@ -29,7 +29,7 @@ export const account = pgTable('account', {
   providerId: text('providerId').notNull(),
   userId: text('userId')
     .notNull()
-    .references(() => user.id, {onDelete: 'cascade'}),
+    .references(() => user.id, { onDelete: 'cascade' }),
   accessToken: text('accessToken'),
   refreshToken: text('refreshToken'),
   idToken: text('idToken'),
@@ -57,7 +57,7 @@ export const session = pgTable('session', {
   userAgent: text('userAgent'),
   userId: text('userId')
     .notNull()
-    .references(() => user.id, {onDelete: 'cascade'}),
+    .references(() => user.id, { onDelete: 'cascade' }),
 });
 
 export const verification = pgTable('verification', {

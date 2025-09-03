@@ -1,10 +1,10 @@
-import {pgTable, text, timestamp, doublePrecision, integer, primaryKey, boolean} from 'drizzle-orm/pg-core';
-import {user} from './auth';
+import { pgTable, text, timestamp, doublePrecision, integer, primaryKey, boolean } from 'drizzle-orm/pg-core';
+import { user } from './auth';
 
 export const citizenProfile = pgTable('citizen_profile', {
   userId: text('user_id')
     .primaryKey()
-    .references(() => user.id, {onDelete: 'cascade'}),
+    .references(() => user.id, { onDelete: 'cascade' }),
   lat: doublePrecision('lat'),
   lng: doublePrecision('lng'),
   streetName: text('street_name'),
@@ -22,7 +22,7 @@ export const userEducationProgress = pgTable(
   {
     userId: text('user_id')
       .notNull()
-      .references(() => user.id, {onDelete: 'cascade'}),
+      .references(() => user.id, { onDelete: 'cascade' }),
     contentId: text('content_id').notNull(),
     completedAt: timestamp('completed_at').defaultNow().notNull(),
     score: integer('score'),
@@ -30,7 +30,7 @@ export const userEducationProgress = pgTable(
   },
   table => {
     return {
-      pk: primaryKey({columns: [table.userId, table.contentId]}),
+      pk: primaryKey({ columns: [table.userId, table.contentId] }),
     };
   }
 );

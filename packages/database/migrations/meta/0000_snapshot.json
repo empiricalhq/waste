@@ -95,12 +95,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -172,12 +168,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -187,9 +179,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -299,16 +289,12 @@
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         },
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -410,9 +396,7 @@
         "truck_license_plate_unique": {
           "name": "truck_license_plate_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "license_plate"
-          ]
+          "columns": ["license_plate"]
         }
       },
       "policies": {},
@@ -473,12 +457,8 @@
           "name": "truck_current_location_truck_id_truck_id_fk",
           "tableFrom": "truck_current_location",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -549,12 +529,8 @@
           "name": "truck_location_history_truck_id_truck_id_fk",
           "tableFrom": "truck_location_history",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -652,12 +628,8 @@
           "name": "route_created_by_user_id_fk",
           "tableFrom": "route",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -665,12 +637,8 @@
           "name": "route_approved_by_user_id_fk",
           "tableFrom": "route",
           "tableTo": "user",
-          "columnsFrom": [
-            "approved_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["approved_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -773,12 +741,8 @@
           "name": "route_assignment_route_id_route_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "route",
-          "columnsFrom": [
-            "route_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -786,12 +750,8 @@
           "name": "route_assignment_truck_id_truck_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -799,12 +759,8 @@
           "name": "route_assignment_driver_id_user_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "user",
-          "columnsFrom": [
-            "driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -812,12 +768,8 @@
           "name": "route_assignment_assigned_by_user_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "user",
-          "columnsFrom": [
-            "assigned_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["assigned_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -879,12 +831,8 @@
           "name": "route_schedule_route_id_route_id_fk",
           "tableFrom": "route_schedule",
           "tableTo": "route",
-          "columnsFrom": [
-            "route_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -948,12 +896,8 @@
           "name": "route_waypoint_route_id_route_id_fk",
           "tableFrom": "route_waypoint",
           "tableTo": "route",
-          "columnsFrom": [
-            "route_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1026,12 +970,8 @@
           "name": "citizen_profile_user_id_user_id_fk",
           "tableFrom": "citizen_profile",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1084,12 +1024,8 @@
           "name": "user_education_progress_user_id_user_id_fk",
           "tableFrom": "user_education_progress",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1097,10 +1033,7 @@
       "compositePrimaryKeys": {
         "user_education_progress_user_id_content_id_pk": {
           "name": "user_education_progress_user_id_content_id_pk",
-          "columns": [
-            "user_id",
-            "content_id"
-          ]
+          "columns": ["user_id", "content_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1113,39 +1046,22 @@
     "public.gender": {
       "name": "gender",
       "schema": "public",
-      "values": [
-        "male",
-        "female"
-      ]
+      "values": ["male", "female"]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "admin",
-        "supervisor",
-        "driver",
-        "citizen"
-      ]
+      "values": ["admin", "supervisor", "driver", "citizen"]
     },
     "public.assignment_status": {
       "name": "assignment_status",
       "schema": "public",
-      "values": [
-        "scheduled",
-        "active",
-        "completed",
-        "cancelled"
-      ]
+      "values": ["scheduled", "active", "completed", "cancelled"]
     },
     "public.route_status": {
       "name": "route_status",
       "schema": "public",
-      "values": [
-        "active",
-        "inactive",
-        "draft"
-      ]
+      "values": ["active", "inactive", "draft"]
     }
   },
   "schemas": {},

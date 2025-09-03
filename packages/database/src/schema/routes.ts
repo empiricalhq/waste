@@ -1,6 +1,16 @@
-import {pgTable, text, timestamp, integer, time, date, pgEnum, uniqueIndex, doublePrecision} from 'drizzle-orm/pg-core';
-import {user} from './auth';
-import {truck, assignmentStatusEnum} from './trucks';
+import {
+  pgTable,
+  text,
+  timestamp,
+  integer,
+  time,
+  date,
+  pgEnum,
+  uniqueIndex,
+  doublePrecision,
+} from 'drizzle-orm/pg-core';
+import { user } from './auth';
+import { truck, assignmentStatusEnum } from './trucks';
 
 export const routeStatusEnum = pgEnum('route_status', ['active', 'inactive', 'draft']);
 
@@ -28,7 +38,7 @@ export const routeWaypoint = pgTable('route_waypoint', {
   id: text('id').primaryKey(),
   routeId: text('route_id')
     .notNull()
-    .references(() => route.id, {onDelete: 'cascade'}),
+    .references(() => route.id, { onDelete: 'cascade' }),
   sequenceOrder: integer('sequence_order').notNull(),
   lat: doublePrecision('lat').notNull(),
   lng: doublePrecision('lng').notNull(),
@@ -41,7 +51,7 @@ export const routeSchedule = pgTable(
   {
     routeId: text('route_id')
       .notNull()
-      .references(() => route.id, {onDelete: 'cascade'}),
+      .references(() => route.id, { onDelete: 'cascade' }),
     dayOfWeek: integer('day_of_week').notNull(), // 0=lunes, 1=martes, etc.
     startTime: time('start_time').notNull(),
   },

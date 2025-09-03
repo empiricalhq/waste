@@ -1,5 +1,5 @@
-import {drizzle} from 'drizzle-orm/postgres-js';
-import {createClient} from '@supabase/supabase-js';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import { createClient } from '@supabase/supabase-js';
 import postgres from 'postgres';
 
 if (!process.env.DATABASE_URL) {

@@ -1,5 +1,5 @@
-import {db} from '../src/client';
-import {truck, route, routeWaypoint, routeSchedule, user, routeAssignment, account} from '../src/schema';
+import { db } from '../src/client';
+import { truck, route, routeWaypoint, routeSchedule, user, routeAssignment, account } from '../src/schema';
 
 async function seed() {
   console.log('🌱 Seeding database...');
@@ -49,15 +49,16 @@ async function seed() {
       accountId: 'testadmin-credentials',
       providerId: 'credential',
       userId: 'admin-2',
-      password: '0afb753ecbcb1e9943d70e2a9de3efa9:313c15541de6148319f12d972624a54e3eb23a862b9f5961324633352218e0cc5446b22c60f1fca7114e29ba915e12de537a4644528025962f5d59ab856a31ac',
+      password:
+        '0afb753ecbcb1e9943d70e2a9de3efa9:313c15541de6148319f12d972624a54e3eb23a862b9f5961324633352218e0cc5446b22c60f1fca7114e29ba915e12de537a4644528025962f5d59ab856a31ac',
       scope: 'all',
     },
   ]);
 
   await db.insert(truck).values([
-    {id: 'truck-1', name: 'Lima Centro', licensePlate: 'ABC-123'},
-    {id: 'truck-2', name: 'Lima Norte', licensePlate: 'XYZ-789'},
-    {id: 'truck-3', name: 'San Isidro', licensePlate: 'SID-456'},
+    { id: 'truck-1', name: 'Lima Centro', licensePlate: 'ABC-123' },
+    { id: 'truck-2', name: 'Lima Norte', licensePlate: 'XYZ-789' },
+    { id: 'truck-3', name: 'San Isidro', licensePlate: 'SID-456' },
   ]);
 
   await db.insert(route).values([
@@ -105,11 +106,11 @@ async function seed() {
   ]);
 
   await db.insert(routeSchedule).values([
-    {routeId: 'route-1', dayOfWeek: 1, startTime: '06:00'},
-    {routeId: 'route-1', dayOfWeek: 2, startTime: '06:00'},
-    {routeId: 'route-1', dayOfWeek: 3, startTime: '06:00'},
-    {routeId: 'route-1', dayOfWeek: 4, startTime: '06:00'},
-    {routeId: 'route-1', dayOfWeek: 5, startTime: '06:00'},
+    { routeId: 'route-1', dayOfWeek: 1, startTime: '06:00' },
+    { routeId: 'route-1', dayOfWeek: 2, startTime: '06:00' },
+    { routeId: 'route-1', dayOfWeek: 3, startTime: '06:00' },
+    { routeId: 'route-1', dayOfWeek: 4, startTime: '06:00' },
+    { routeId: 'route-1', dayOfWeek: 5, startTime: '06:00' },
   ]);
 
   const today = new Date().toISOString().split('T')[0]!;

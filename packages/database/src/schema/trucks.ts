@@ -1,4 +1,4 @@
-import {pgTable, text, boolean, timestamp, doublePrecision, pgEnum} from 'drizzle-orm/pg-core';
+import { pgTable, text, boolean, timestamp, doublePrecision, pgEnum } from 'drizzle-orm/pg-core';
 
 export const assignmentStatusEnum = pgEnum('assignment_status', ['scheduled', 'active', 'completed', 'cancelled']);
 
@@ -14,7 +14,7 @@ export const truck = pgTable('truck', {
 export const truckCurrentLocation = pgTable('truck_current_location', {
   truckId: text('truck_id')
     .primaryKey()
-    .references(() => truck.id, {onDelete: 'cascade'}),
+    .references(() => truck.id, { onDelete: 'cascade' }),
   routeAssignmentId: text('route_assignment_id'),
   lat: doublePrecision('lat').notNull(),
   lng: doublePrecision('lng').notNull(),
@@ -30,7 +30,7 @@ export const truckLocationHistory = pgTable('truck_location_history', {
   id: text('id').primaryKey(),
   truckId: text('truck_id')
     .notNull()
-    .references(() => truck.id, {onDelete: 'cascade'}),
+    .references(() => truck.id, { onDelete: 'cascade' }),
   routeAssignmentId: text('route_assignment_id'),
   lat: doublePrecision('lat').notNull(),
   lng: doublePrecision('lng').notNull(),
