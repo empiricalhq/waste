@@ -1,7 +1,7 @@
 {
   "imports": {
     "hono/": "npm:hono/",
-    "@/": "./src/"
+    "@/": "./apps/api/src/"
   },
   "compilerOptions": {
     "lib": ["deno.window"]
