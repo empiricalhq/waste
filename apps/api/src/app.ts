@@ -1,10 +1,10 @@
+import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import createApp from '@/lib/create-app';
-import authRoutes from '@/routes/auth';
-import truckRoutes from '@/routes/trucks';
-import adminRoutes from '@/routes/admin';
+import { authRouter } from '@/routes/auth';
+import { trucksRouter } from '@/routes/trucks';
+import { adminRouter } from '@/routes/admin';
 
-const app = createApp();
+const app = new Hono();
 
 app.use(
   '*',
@@ -14,22 +14,12 @@ app.use(
   }),
 );
 
-const routes = [
-  { path: '/api/auth', router: authRoutes },
-  { path: '/api/trucks', router: truckRoutes },
-  { path: '/api/admin', router: adminRoutes },
-] as const;
-
-routes.forEach(({ path, router }) => {
-  app.route(path, router);
-});
+app.route('/api/auth', authRouter);
+app.route('/api/trucks', trucksRouter);
+app.route('/api/admin', adminRouter);
 
 app.get('/api/health', (c) => {
-  return c.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development',
-  });
+  return c.json({ status: 'ok' });
 });
 
 export default app;

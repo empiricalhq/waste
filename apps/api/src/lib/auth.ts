@@ -1,22 +1,19 @@
 import { betterAuth } from 'better-auth';
-import sql from '@/lib/db';
+import { db } from '@/lib/db';
 
 if (!process.env.BETTER_AUTH_SECRET) {
-  throw new Error('BETTER_AUTH_SECRET environment variable is not set');
+  throw new Error('BETTER_AUTH_SECRET is required');
 }
 
 export const auth = betterAuth({
-  database: sql,
+  database: db,
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000',
-  trustedOrigins: [
-    'http://localhost:3000', // apps/web (nextjs)
-    'http://localhost:8081', // apps/citizen
-    '*',
-  ],
-  emailAndPassword: {
-    enabled: true,
-  },
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
+
+  trustedOrigins: ['http://localhost:3000', 'http://localhost:8081'],
+
+  emailAndPassword: { enabled: true },
+
   user: {
     additionalFields: {
       role: {
@@ -26,14 +23,7 @@ export const auth = betterAuth({
       },
     },
   },
-  telemetry: {
-    enabled: false,
-  },
 });
 
-export type AuthType = {
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
-  };
-};
+export type User = typeof auth.$Infer.Session.user;
+export type Session = typeof auth.$Infer.Session.session;

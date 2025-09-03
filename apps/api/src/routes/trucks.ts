@@ -1,13 +1,16 @@
-import { createRouter } from '@/lib/create-app';
-import { auth } from '@/lib/auth';
-import sql from '@/lib/db';
+import { Hono } from 'hono';
+import { auth, type User, type Session } from '@/lib/auth';
+import { db } from '@/lib/db';
 
-const router = createRouter();
+type Variables = {
+  user: User;
+  session: Session;
+};
 
-router.use('*', async (c, next) => {
-  const session = await auth.api.getSession({
-    headers: c.req.raw.headers,
-  });
+export const trucksRouter = new Hono<{ Variables: Variables }>();
+
+trucksRouter.use('*', async (c, next) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
   if (!session?.user) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
@@ -16,51 +19,30 @@ router.use('*', async (c, next) => {
   await next();
 });
 
-type TruckStatusResponse =
-  | { status: 'NEARBY' | 'ON_THE_WAY'; etaMinutes: number }
-  | { status: 'NOT_SCHEDULED'; nextCollectionDay: string };
-
-router.get('/status', async (c) => {
+trucksRouter.get('/status', async (c) => {
   const user = c.get('user');
-  if (!user) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
 
   try {
-    const profilesResult = await sql.query(
-      'SELECT lat, lng, street_name, reference FROM citizen_profile WHERE user_id = $1 LIMIT 1',
-      [user.id],
-    );
+    const result = await db.query('SELECT lat, lng FROM citizen_profile WHERE user_id = $1', [user.id]);
 
-    const profile = profilesResult.rows[0];
-
-    if (!profile || !profile.lat || !profile.lng) {
-      return c.json({
-        status: 'NOT_SCHEDULED',
-        nextCollectionDay: 'Ubicación no configurada',
-      } as TruckStatusResponse);
+    const profile = result.rows[0];
+    if (!profile?.lat || !profile?.lng) {
+      return c.json({ status: 'NOT_SCHEDULED', message: 'Location not set' });
     }
 
-    // TODO: Implement real truck tracking logic
-    // For now, return mock data
-    const isNearby = Math.random() > 0.5;
+    // Mock truck status
+    const statuses = ['NEARBY', 'ON_THE_WAY', 'NOT_SCHEDULED'];
+    const status = statuses[Math.floor(Math.random() * 3)];
 
-    if (isNearby) {
-      const eta = Math.floor(Math.random() * 10) + 2;
-      return c.json({
-        status: eta < 5 ? 'NEARBY' : 'ON_THE_WAY',
-        etaMinutes: eta,
-      } as TruckStatusResponse);
-    } else {
-      return c.json({
-        status: 'NOT_SCHEDULED',
-        nextCollectionDay: 'Mañana por la mañana',
-      } as TruckStatusResponse);
+    if (status === 'NEARBY') {
+      return c.json({ status: 'NEARBY', etaMinutes: 5 });
     }
+    if (status === 'ON_THE_WAY') {
+      return c.json({ status: 'ON_THE_WAY', etaMinutes: 20 });
+    }
+
+    return c.json({ status: 'NOT_SCHEDULED', nextCollectionDay: 'Tomorrow' });
   } catch (error) {
-    console.error('Failed to fetch truck status:', error);
-    return c.json({ error: 'Internal Server Error' }, 500);
+    return c.json({ error: 'Server error' }, 500);
   }
 });
-
-export default router;

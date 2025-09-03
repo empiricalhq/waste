@@ -5,8 +5,10 @@
   "private": true,
   "scripts": {
     "dev": "bun --hot src/index.ts --env-file=.env",
+    "start": "bun src/index.ts",
     "test": "bun tests/main.ts --env-file=.env",
-    "prettier": "prettier --write ."
+    "build": "bun build src/index.ts --outdir ./dist --target bun",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "better-auth": "^1.3.7",
