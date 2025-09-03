@@ -1,168 +1,224 @@
-import { db } from '../src/client';
-import { truck, route, routeWaypoint, routeSchedule, user, routeAssignment, account } from '../src/schema';
+import * as p from '@clack/prompts';
+import { Pool } from 'pg';
+import { betterAuth } from 'better-auth';
+import { admin } from 'better-auth/plugins';
+import { createId } from '@paralleldrive/cuid2';
+import color from 'picocolors';
 
-async function seed() {
-  console.log('🌱 Seeding database...');
-
-  await db.insert(user).values([
-    {
-      id: 'admin-1',
-      email: 'admin@lima.gob.pe',
-      name: 'Admin municipal',
-      username: 'admin.municipal',
-      displayUsername: 'Admin Municipal',
-      role: 'admin',
-      emailVerified: true,
-    },
-    {
-      id: 'driver-1',
-      email: 'driver1@lima.gob.pe',
-      name: 'Juan Pérez',
-      username: 'juan.perez',
-      displayUsername: 'Juan Pérez',
-      role: 'driver',
-      phoneNumber: '+51-999-123-456',
-    },
-    {
-      id: 'driver-2',
-      email: 'driver2@lima.gob.pe',
-      name: 'María González',
-      username: 'maria.gonzalez',
-      displayUsername: 'María González',
-      role: 'driver',
-      phoneNumber: '+51-999-789-012',
-    },
-    {
-      id: 'admin-2',
-      email: 'pedro.rojas.f24@gmail.com',
-      name: 'Pedro Rojas',
-      username: 'pedrorojasf',
-      displayUsername: 'Pedro Rojas',
-      role: 'admin',
-      emailVerified: true,
-    },
-  ]);
-
-  await db.insert(account).values([
-    {
-      id: 'admin-2',
-      accountId: 'testadmin-credentials',
-      providerId: 'credential',
-      userId: 'admin-2',
-      password:
-        '0afb753ecbcb1e9943d70e2a9de3efa9:313c15541de6148319f12d972624a54e3eb23a862b9f5961324633352218e0cc5446b22c60f1fca7114e29ba915e12de537a4644528025962f5d59ab856a31ac',
-      scope: 'all',
-    },
-  ]);
-
-  await db.insert(truck).values([
-    { id: 'truck-1', name: 'Lima Centro', licensePlate: 'ABC-123' },
-    { id: 'truck-2', name: 'Lima Norte', licensePlate: 'XYZ-789' },
-    { id: 'truck-3', name: 'San Isidro', licensePlate: 'SID-456' },
-  ]);
-
-  await db.insert(route).values([
-    {
-      id: 'route-1',
-      name: 'Centro Histórico - turno mañana',
-      description: 'Recorrido matutino por el centro histórico de Lima',
-      startLat: -12.046374,
-      startLng: -77.042793,
-      estimatedDurationMinutes: 180,
-      createdBy: 'admin-1',
-      approvedBy: 'admin-1',
-      approvedAt: new Date(),
-    },
-  ]);
-
-  await db.insert(routeWaypoint).values([
-    {
-      id: 'wp-1',
-      routeId: 'route-1',
-      sequenceOrder: 1,
-      lat: -12.046374,
-      lng: -77.042793,
-      streetName: 'Plaza de Armas',
-      estimatedArrivalOffsetMinutes: 0,
-    },
-    {
-      id: 'wp-2',
-      routeId: 'route-1',
-      sequenceOrder: 2,
-      lat: -12.043333,
-      lng: -77.028611,
-      streetName: 'Jr. de la Unión',
-      estimatedArrivalOffsetMinutes: 30,
-    },
-    {
-      id: 'wp-3',
-      routeId: 'route-1',
-      sequenceOrder: 3,
-      lat: -12.05,
-      lng: -77.04,
-      streetName: 'Av. Abancay',
-      estimatedArrivalOffsetMinutes: 60,
-    },
-  ]);
-
-  await db.insert(routeSchedule).values([
-    { routeId: 'route-1', dayOfWeek: 1, startTime: '06:00' },
-    { routeId: 'route-1', dayOfWeek: 2, startTime: '06:00' },
-    { routeId: 'route-1', dayOfWeek: 3, startTime: '06:00' },
-    { routeId: 'route-1', dayOfWeek: 4, startTime: '06:00' },
-    { routeId: 'route-1', dayOfWeek: 5, startTime: '06:00' },
-  ]);
-
-  const today = new Date().toISOString().split('T')[0]!;
-
-  await db.insert(routeAssignment).values([
-    {
-      id: 'assignment-1',
-      routeId: 'route-1',
-      truckId: 'truck-1',
-      driverId: 'driver-1',
-      assignedDate: today,
-      scheduledStartTime: new Date(`${today}T06:00:00Z`),
-      scheduledEndTime: new Date(`${today}T09:00:00Z`),
-      status: 'scheduled',
-      assignedBy: 'admin-1',
-    },
-    {
-      id: 'assignment-2',
-      routeId: 'route-1',
-      truckId: 'truck-2',
-      driverId: 'driver-1',
-      assignedDate: today,
-      scheduledStartTime: new Date(`${today}T14:00:00Z`),
-      scheduledEndTime: new Date(`${today}T17:00:00Z`),
-      status: 'scheduled',
-      assignedBy: 'admin-1',
-    },
-    {
-      id: 'assignment-3',
-      routeId: 'route-1',
-      truckId: 'truck-1', // same truck as morning,  but a different driver
-      driverId: 'driver-2',
-      assignedDate: today,
-      scheduledStartTime: new Date(`${today}T10:00:00Z`),
-      scheduledEndTime: new Date(`${today}T13:00:00Z`),
-      status: 'scheduled',
-      assignedBy: 'admin-1',
-    },
-  ]);
-
-  console.log('✅ Database seeded successfully!');
-  console.log('Check your database for:');
-  console.log('- 3 users (1 admin, 2 drivers)');
-  console.log('- 1 account linked to driver-1');
-  console.log('- 3 trucks');
-  console.log('- 1 route with waypoints and schedule');
-  console.log('- 3 assignments showing shared drivers/trucks');
-
-  process.exit(0);
+if (!process.env.DATABASE_URL || !process.env.BETTER_AUTH_SECRET) {
+  throw new Error('DATABASE_URL and BETTER_AUTH_SECRET must be set in your .env file.');
 }
 
-seed().catch(error => {
-  console.error('❌ Error seeding database:', error);
-  process.exit(1);
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+const auth = betterAuth({
+  database: pool,
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
+
+  emailAndPassword: { enabled: true },
+
+  plugins: [admin()],
+
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        required: true,
+        defaultValue: 'citizen',
+      },
+    },
+  },
+
+  telemetry: { enabled: false },
 });
+
+const seedUsers = [
+  {
+    authRole: 'admin' as const,
+    appRole: 'supervisor' as const,
+    name: 'Juan Díaz',
+    email: 'supervisor@example.com',
+    password: 'supervisor123',
+  },
+  {
+    authRole: 'user' as const,
+    appRole: 'driver' as const,
+    name: 'Luis Martínez',
+    email: 'driver@example.com',
+    password: 'driver123',
+  },
+  {
+    authRole: 'user' as const,
+    appRole: 'citizen' as const,
+    name: 'María Pérez',
+    email: 'citizen@example.com',
+    password: 'citizen123',
+  },
+];
+
+const seedData = {
+  trucks: [
+    { name: 'Recolector Miraflores', licensePlate: 'MIR-001' },
+    { name: 'Recolector San Isidro', licensePlate: 'SID-002' },
+  ],
+  route: {
+    name: 'Ruta Centro Lima',
+    description: 'Ruta de recolección para el Centro Histórico de Lima.',
+    startLat: -12.046374,
+    startLng: -77.042793,
+    estimatedDurationMinutes: 180,
+  },
+  waypoints: [
+    { lat: -12.046374, lng: -77.042793, streetName: 'Plaza de Armas', order: 1, offset: 0 },
+    { lat: -12.047196, lng: -77.030983, streetName: 'Jr. de la Unión', order: 2, offset: 30 },
+    { lat: -12.043333, lng: -77.028056, streetName: 'Mercado Central', order: 3, offset: 60 },
+    { lat: -12.056944, lng: -77.035278, streetName: 'Av. Abancay', order: 4, offset: 90 },
+    { lat: -12.068611, lng: -77.036111, streetName: 'Cercado de Lima', order: 5, offset: 120 },
+  ],
+};
+
+async function createUsers() {
+  p.log.step('Creando usuarios...');
+  const createdUsers = [];
+
+  for (const userData of seedUsers) {
+    try {
+      const existingUserResponse = await auth.api.listUsers({
+        query: {
+          searchField: 'email',
+          searchValue: userData.email,
+          limit: 1,
+        },
+      });
+
+      if (existingUserResponse.users && existingUserResponse.users.length > 0) {
+        const existingUser = existingUserResponse.users[0];
+        if (existingUser) {
+          p.log.info(`El usuario @${userData.email} ya existe.`);
+          createdUsers.push(existingUser);
+          continue;
+        }
+      }
+
+      const newUserResponse = await auth.api.createUser({
+        body: {
+          email: userData.email,
+          password: userData.password,
+          name: userData.name,
+          role: userData.authRole,
+          data: {
+            emailVerified: true,
+            role: userData.appRole,
+          },
+        },
+      });
+
+      const newUser = newUserResponse.user ?? newUserResponse;
+      if (newUser) {
+        createdUsers.push(newUser);
+        p.log.success(`Usuario creado: ${userData.email} (${userData.appRole})`);
+      }
+    } catch (error: any) {
+      p.log.error(`Error al crear el usuario ${userData.email}: ${error.message}`);
+    }
+  }
+
+  return createdUsers;
+}
+
+async function createAppData(supervisorUserId: string) {
+  p.log.step('Añadiendo data sobre las rutas, asignaciones y camiones recolectores...');
+  const client = await pool.connect();
+  try {
+    for (const truck of seedData.trucks) {
+      const { rows } = await client.query('SELECT id FROM truck WHERE license_plate = $1', [truck.licensePlate]);
+      if (rows.length === 0) {
+        await client.query('INSERT INTO truck (id, name, license_plate) VALUES ($1, $2, $3)', [
+          createId(),
+          truck.name,
+          truck.licensePlate,
+        ]);
+        p.log.success(`Camión recolector creado: ${truck.name}`);
+      } else {
+        p.log.info(`Camión recolector con placa ${truck.licensePlate} ya existe.`);
+      }
+    }
+    const { rows } = await client.query('SELECT id FROM route WHERE name = $1', [seedData.route.name]);
+    let routeId;
+    if (rows.length === 0) {
+      routeId = createId();
+      await client.query(
+        `INSERT INTO route (id, name, description, start_lat, start_lng, estimated_duration_minutes, created_by) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          routeId,
+          seedData.route.name,
+          seedData.route.description,
+          seedData.route.startLat,
+          seedData.route.startLng,
+          seedData.route.estimatedDurationMinutes,
+          supervisorUserId,
+        ]
+      );
+      for (const wp of seedData.waypoints) {
+        await client.query(
+          `INSERT INTO route_waypoint (id, route_id, sequence_order, lat, lng, street_name, estimated_arrival_offset_minutes) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [createId(), routeId, wp.order, wp.lat, wp.lng, wp.streetName, wp.offset]
+        );
+      }
+      p.log.success(`Ruta creada: ${seedData.route.name} con ${seedData.waypoints.length} puntos de referencia.`);
+    } else {
+      routeId = rows[0].id;
+      p.log.info(`La ruta "${seedData.route.name}" ya existe.`);
+    }
+  } catch (error: any) {
+    p.log.error(`Error al crear la data de la aplicación: ${error.message}`);
+  } finally {
+    client.release();
+  }
+}
+
+async function main() {
+  p.intro(color.inverse(' @lima-garbage/database: añadir sample data '));
+  try {
+    const users = await createUsers();
+    if (users.length === 0) throw new Error('No se encontraron usuarios creados.');
+
+    const supervisorUser = users.find(u => u.role === 'supervisor');
+    if (!supervisorUser)
+      throw new Error('No se pudo encontrar un usuario supervisor para crear la data de la aplicación.');
+
+    await createAppData(supervisorUser.id);
+
+    p.note(
+      `🎉 El entorno de trabajo está listo
+
+Se han creado los siguientes usuarios:
+
+Rol         | Email                   | Nombre
+------------|-------------------------|-----------------
+${users.map(u => `${u.role?.padEnd(10)} | ${u.email.padEnd(23)} | ${u.name}`).join('\n')}
+
+Contraseñas:
+- Supervisor -> supervisor123
+- Driver     -> driver123
+- Citizen    -> citizen123
+
+Ruta: ${seedData.route.name}
+Camiones: ${seedData.trucks.map(t => t.name).join(', ')}
+Puntos de referencia: ${seedData.waypoints.length} ubicaciones en Lima
+`,
+      '✅ Los datos se han añadido correctamente'
+    );
+    p.outro(color.green('Ya puedes intentar levantar apps/web, apps/citizen o apps/driver'));
+  } catch (error: any) {
+    p.log.error('La creación de datos falló:');
+    p.log.error(error.message);
+    p.outro(color.red('La creación de datos falló. Verifica tu base de datos y la configuración de Better Auth.'));
+    process.exit(1);
+  } finally {
+    await pool.end();
+  }
+}
+
+main().catch(console.error);
