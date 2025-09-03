@@ -33,7 +33,7 @@ CREATE TABLE "session" (
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"username" text NOT NULL,
+	"username" text,
 	"display_username" text,
 	"email" text NOT NULL,
 	"emailVerified" boolean DEFAULT false NOT NULL,

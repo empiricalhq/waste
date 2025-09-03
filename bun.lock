@@ -19,6 +19,19 @@
         "@types/pg": "^8.15.5",
       },
     },
+    "apps/apiv2": {
+      "name": "simple-hono-auth",
+      "version": "1.0.0",
+      "dependencies": {
+        "better-auth": "^1.3.7",
+        "hono": "^4.9.5",
+        "pg": "^8.16.3",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "@types/pg": "^8.15.5",
+      },
+    },
     "apps/citizen": {
       "name": "@lima-garbage/citizens",
       "version": "1.0.0",
@@ -1917,6 +1930,8 @@
     "side-channel-weakmap": ["side-channel-weakmap@1.0.2", "", { "dependencies": { "call-bound": "^1.0.2", "es-errors": "^1.3.0", "get-intrinsic": "^1.2.5", "object-inspect": "^1.13.3", "side-channel-map": "^1.0.1" } }, "sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A=="],
 
     "signal-exit": ["signal-exit@4.1.0", "", {}, "sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw=="],
+
+    "simple-hono-auth": ["simple-hono-auth@workspace:apps/apiv2"],
 
     "simple-plist": ["simple-plist@1.3.1", "", { "dependencies": { "bplist-creator": "0.1.0", "bplist-parser": "0.3.1", "plist": "^3.0.5" } }, "sha512-iMSw5i0XseMnrhtIzRb7XpQEXepa9xhWxGUojHBL43SIpQuDQkh3Wpy67ZbDzZVr6EKxvwVChnVpdl8hEVLDiw=="],
 
