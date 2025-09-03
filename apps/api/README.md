@@ -8,12 +8,12 @@ the endpoint segments.
 
 | Action                 | Method | Endpoint                           |
 | ---------------------- | ------ | ---------------------------------- |
-| Login (Email/Pass)     | `POST` | `/api/auth/sign-in/email`          |
+| Login (email/pass)     | `POST` | `/api/auth/sign-in/email`          |
 | Logout                 | `POST` | `/api/auth/sign-out`               |
-| Sign Up (Email/Pass)   | `POST` | `/api/auth/sign-up/email`          |
-| Change Password        | `POST` | `/api/auth/change-password`        |
-| Get Session            | `GET`  | `/api/auth/get-session`            |
-| Request Password Reset | `POST` | `/api/auth/request-password-reset` |
+| Sign up (email/pass)   | `POST` | `/api/auth/sign-up/email`          |
+| Change password        | `POST` | `/api/auth/change-password`        |
+| Get session            | `GET`  | `/api/auth/get-session`            |
+| Request password reset | `POST` | `/api/auth/request-password-reset` |
 
 **To find a path, check the type definitions:**
 
