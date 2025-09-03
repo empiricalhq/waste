@@ -101,11 +101,12 @@ async function main() {
     const noteMessage = `
 Agrega estas credenciales al archivo ${color.bold('.env')} en la raíz del proyecto:
 
-${color.green(`ADMIN_EMAIL="${email}"`)}
-${color.green(`ADMIN_PASSWORD="${password}"`)}
+${color.green(`SYSTEM_ADMIN_EMAIL="${email}"`)}
+${color.green(`SYSTEM_ADMIN_PASSWORD="${password}"`)}
 `;
-    p.note(noteMessage, 'Próximos pasos');
+    p.note(noteMessage, 'Próximos pasos (apps/api/test):');
     p.outro(color.green('Usuario administrador configurado correctamente.'));
+    p.outro('Ahora puedes usar esta cuenta para la prueba de la API via "bun run test".');
   } catch (error: any) {
     s.stop('Ocurrió un error durante la creación.');
     p.log.error('No se pudo crear el usuario administrador.');
