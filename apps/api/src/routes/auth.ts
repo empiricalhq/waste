@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { auth } from '@/lib/auth.js';
+import { auth } from '../lib/auth.ts';
 
 export const authRouter = new Hono();
 

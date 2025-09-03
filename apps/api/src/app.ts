@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { authRouter } from '@/routes/auth';
-import { trucksRouter } from '@/routes/trucks';
-import { adminRouter } from '@/routes/admin';
+import { authRouter } from './routes/auth.ts';
+import { trucksRouter } from './routes/trucks.ts';
+import { adminRouter } from './routes/admin.ts';
 
 const app = new Hono();
 

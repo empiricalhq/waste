@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import { auth, type User, type Session } from '@/lib/auth';
-import { db } from '@/lib/db';
+import { auth, type User, type Session } from '../lib/auth.ts';
+import { db } from '../lib/db.ts';
 
 type Variables = {
   user: User;
