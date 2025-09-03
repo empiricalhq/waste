@@ -23,12 +23,23 @@ the endpoint segments.
 
 ## Deno deploy
 
-Use this configuration:
+For a standard project:
 
 ```
 Install command:  deno i
 Build command:    -
 Entrypoint:       src/index.ts
+Args:             -
+```
+
+For a monorepo, install dependencies from the `apps/api` folder and copy them to
+the root:
+
+```
+# ignore monorepo structure and copy to root
+Install command:  mv package.json _package.json.bak && cp -r apps/api/* ./ && deno install
+Build command:    -
+Entrypoint:       apps/api/src/index.ts
 Args:             -
 ```
 
