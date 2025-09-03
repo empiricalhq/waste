@@ -48,12 +48,47 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
 
 **Deploy**: aplicaciones móviles vía Expo y API en Deno Deploy.
 
+## Guía rápida
+
+Ejecuta todos estos comandos desde la raíz del proyecto.
+
+1. Para generar y aplicar el esquema de base de datos:
+
+   ```bash
+   bun --filter @lima-garbage/database db:generate
+   bun --filter @lima-garbage/database db:push
+   ```
+
+2. Para crear el usuario administrador:
+
+   ```bash
+   bun --filter @lima-garbage/database setup:admin
+   ```
+
+3. Para poblar la base de datos con datos de prueba:
+
+   ```bash
+   bun --filter @lima-garbage/database db:seed
+   ```
+
+4. Para iniciar el servidor de desarrollo de la API:
+
+   ```bash
+   bun --filter @lima-garbage/api dev
+   ```
+
+   Para asegurar que la API está funcionando correctamente:
+
+   ```bash
+   bun --filter @lima-garbage/api test
+   ```
+
 ## Repositorios
 
 1. **API ([apps/api](apps/api))**: Aplicación
    [hono](https://hono.dev/docs/getting-started/deno) desplegada en
-   [Deno Deploy](https://console.deno.com/empirical). **See it live at** [https://api-prod.empirical.deno.net/](https://api-prod.empirical.deno.net/)
-
+   [Deno Deploy](https://console.deno.com/empirical). **See it live at**
+   [https://api-prod.empirical.deno.net/](https://api-prod.empirical.deno.net/)
    - Gestiona todas las operaciones de datos.
    - Autenticación con
      [better-auth](https://www.better-auth.com/docs/concepts/database); valida
