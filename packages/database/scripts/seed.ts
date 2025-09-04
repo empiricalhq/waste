@@ -122,8 +122,7 @@ async function createUsers(sessionToken: string) {
         p.log.success(`Usuario creado: ${userData.email} (${userData.appRole})`);
       }
     } catch (error: any) {
-      const errorMessage = error.message || String(error);
-      p.log.error(`Error al crear el usuario ${userData.email}: ${errorMessage}`);
+      p.log.error(`Error al crear el usuario ${userData.email}: ${error}`);
     }
   }
 
