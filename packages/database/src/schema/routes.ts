@@ -55,11 +55,11 @@ export const routeSchedule = pgTable(
     dayOfWeek: integer('day_of_week').notNull(), // 0=lunes, 1=martes, etc.
     startTime: time('start_time').notNull(),
   },
-  table => {
+  (table) => {
     return {
       pk: uniqueIndex('route_schedule_pkey').on(table.routeId, table.dayOfWeek),
     };
-  }
+  },
 );
 
 export const routeAssignment = pgTable('route_assignment', {

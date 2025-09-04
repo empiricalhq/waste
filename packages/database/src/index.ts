@@ -1,4 +1,4 @@
-export { db, supabase } from './client';
+export { db } from './client';
 export * from './schema';
 
 export type User = typeof import('./schema').user.$inferSelect;

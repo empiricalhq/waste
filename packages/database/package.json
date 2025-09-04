@@ -11,13 +11,12 @@
     "db:push": "drizzle-kit push --config ./drizzle.config.ts --force",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "bun scripts/seed.ts --env-file=.env",
-    "setup:admin": "bun scripts/create-admin.ts --env-file=.env",
-    "format": "prettier --write ."
+    "db:seed": "bun --env-file=../../.env scripts/seed.ts",
+    "setup:admin": "bun --env-file=../../.env scripts/create-admin.ts",
+    "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "@supabase/supabase-js": "^2.56.1",
     "drizzle-orm": "^0.44.5",
     "pg": "^8.16.3",
     "postgres": "^3.4.7"

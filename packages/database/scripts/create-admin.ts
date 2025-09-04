@@ -59,7 +59,7 @@ async function main() {
           p.text({
             message: 'Nombre completo del administrador:',
             placeholder: 'Ejemplo: Juan Pérez',
-            validate: value => {
+            validate: (value) => {
               if (value.trim().length < 5) return 'Escribe el nombre completo (mínimo 5 caracteres).';
             },
           }),
@@ -67,14 +67,14 @@ async function main() {
           p.text({
             message: 'Correo electrónico del administrador:',
             placeholder: 'Ejemplo: admin@dominio.xyz',
-            validate: value => {
+            validate: (value) => {
               if (!/^\S+@\S+\.\S+$/.test(value)) return 'Debes ingresar un correo electrónico válido.';
             },
           }),
         password: () =>
           p.password({
             message: 'Crea una contraseña segura (mínimo 8 caracteres):',
-            validate: value => {
+            validate: (value) => {
               if (value.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
             },
           }),
@@ -84,7 +84,7 @@ async function main() {
           p.cancel('Operación cancelada por el usuario.');
           process.exit(0);
         },
-      }
+      },
     );
 
     s.start('Creando usuario administrador...');
