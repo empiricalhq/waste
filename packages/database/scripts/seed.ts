@@ -9,6 +9,12 @@ if (!process.env.DATABASE_URL || !process.env.BETTER_AUTH_SECRET) {
   throw new Error('DATABASE_URL and BETTER_AUTH_SECRET must be set in your .env file.');
 }
 
+if (!process.env.SYSTEM_ADMIN_EMAIL || !process.env.SYSTEM_ADMIN_PASSWORD) {
+  throw new Error(
+    'SYSTEM_ADMIN_EMAIL and SYSTEM_ADMIN_PASSWORD are required. Please run the `db:create-admin` script first.'
+  );
+}
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const auth = betterAuth({
@@ -78,27 +84,21 @@ const seedData = {
   ],
 };
 
-async function createUsers() {
-  p.log.step('Creando usuarios...');
+async function createUsers(sessionToken: string) {
+  p.log.step('Creando usuarios de prueba...');
   const createdUsers = [];
 
   for (const userData of seedUsers) {
     try {
       const existingUserResponse = await auth.api.listUsers({
-        query: {
-          searchField: 'email',
-          searchValue: userData.email,
-          limit: 1,
-        },
+        query: { searchField: 'email', searchValue: userData.email, limit: 1 },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       });
 
       if (existingUserResponse.users && existingUserResponse.users.length > 0) {
-        const existingUser = existingUserResponse.users[0];
-        if (existingUser) {
-          p.log.info(`El usuario @${userData.email} ya existe.`);
-          createdUsers.push(existingUser);
-          continue;
-        }
+        p.log.info(`El usuario ${userData.email} ya existe.`);
+        createdUsers.push(existingUserResponse.users[0]);
+        continue;
       }
 
       const newUserResponse = await auth.api.createUser({
@@ -112,15 +112,16 @@ async function createUsers() {
             role: userData.appRole,
           },
         },
+        headers: { Authorization: `Bearer ${sessionToken}` },
       });
 
-      const newUser = newUserResponse.user ?? newUserResponse;
+      const newUser = newUserResponse.user;
       if (newUser) {
         createdUsers.push(newUser);
         p.log.success(`Usuario creado: ${userData.email} (${userData.appRole})`);
       }
     } catch (error: any) {
-      p.log.error(`Error al crear el usuario ${userData.email}: ${error.message}`);
+      p.log.error(`Error al crear el usuario ${userData.email}: ${error}`);
     }
   }
 
@@ -128,7 +129,7 @@ async function createUsers() {
 }
 
 async function createAppData(supervisorUserId: string) {
-  p.log.step('Añadiendo data sobre las rutas, asignaciones y camiones recolectores...');
+  p.log.step('Añadiendo data sobre las rutas y camiones...');
   const client = await pool.connect();
   try {
     for (const truck of seedData.trucks) {
@@ -140,14 +141,11 @@ async function createAppData(supervisorUserId: string) {
           truck.licensePlate,
         ]);
         p.log.success(`Camión recolector creado: ${truck.name}`);
-      } else {
-        p.log.info(`Camión recolector con placa ${truck.licensePlate} ya existe.`);
       }
     }
     const { rows } = await client.query('SELECT id FROM route WHERE name = $1', [seedData.route.name]);
-    let routeId;
     if (rows.length === 0) {
-      routeId = createId();
+      const routeId = createId();
       await client.query(
         `INSERT INTO route (id, name, description, start_lat, start_lng, estimated_duration_minutes, created_by) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         [
@@ -166,10 +164,7 @@ async function createAppData(supervisorUserId: string) {
           [createId(), routeId, wp.order, wp.lat, wp.lng, wp.streetName, wp.offset]
         );
       }
-      p.log.success(`Ruta creada: ${seedData.route.name} con ${seedData.waypoints.length} puntos de referencia.`);
-    } else {
-      routeId = rows[0].id;
-      p.log.info(`La ruta "${seedData.route.name}" ya existe.`);
+      p.log.success(`Ruta creada: ${seedData.route.name} con ${seedData.waypoints.length} puntos de recolección`);
     }
   } catch (error: any) {
     p.log.error(`Error al crear la data de la aplicación: ${error.message}`);
@@ -181,40 +176,36 @@ async function createAppData(supervisorUserId: string) {
 async function main() {
   p.intro(color.inverse(' @lima-garbage/database: añadir sample data '));
   try {
-    const users = await createUsers();
+    p.log.step('Iniciando sesión como administrador del sistema...');
+    const signInResponse = await auth.api.signInEmail({
+      body: {
+        email: process.env.SYSTEM_ADMIN_EMAIL!,
+        password: process.env.SYSTEM_ADMIN_PASSWORD!,
+      },
+    });
+
+    const sessionToken = signInResponse.token;
+    if (!sessionToken) {
+      throw new Error('No se pudo obtener el token de sesión. Verifica las credenciales del administrador en tu .env');
+    }
+    p.log.success('Sesión de administrador iniciada correctamente.');
+
+    const users = await createUsers(sessionToken);
     if (users.length === 0) throw new Error('No se encontraron usuarios creados.');
 
     const supervisorUser = users.find(u => u.role === 'supervisor');
-    if (!supervisorUser)
-      throw new Error('No se pudo encontrar un usuario supervisor para crear la data de la aplicación.');
+    if (!supervisorUser) {
+      console.log('Usuarios creados:', users);
+      throw new Error('No se pudo encontrar un usuario supervisor entre los usuarios creados.');
+    }
 
     await createAppData(supervisorUser.id);
 
-    p.note(
-      `🎉 El entorno de trabajo está listo
-
-Se han creado los siguientes usuarios:
-
-Rol         | Email                   | Nombre
-------------|-------------------------|-----------------
-${users.map(u => `${u.role?.padEnd(10)} | ${u.email.padEnd(23)} | ${u.name}`).join('\n')}
-
-Contraseñas:
-- Supervisor -> supervisor123
-- Driver     -> driver123
-- Citizen    -> citizen123
-
-Ruta: ${seedData.route.name}
-Camiones: ${seedData.trucks.map(t => t.name).join(', ')}
-Puntos de referencia: ${seedData.waypoints.length} ubicaciones en Lima
-`,
-      '✅ Los datos se han añadido correctamente'
-    );
-    p.outro(color.green('Ya puedes intentar levantar apps/web, apps/citizen o apps/driver'));
+    p.note('🎉 El entorno de trabajo está listo. Usuarios y datos creados.', '✅ Datos añadidos correctamente');
+    p.outro(color.green('Ya puedes levantar las aplicaciones.'));
   } catch (error: any) {
-    p.log.error('La creación de datos falló:');
-    p.log.error(error.message);
-    p.outro(color.red('La creación de datos falló. Verifica tu base de datos y la configuración de Better Auth.'));
+    p.log.error(`La creación de datos falló: ${error.message}`);
+    p.outro(color.red('Verifica tu base de datos y la configuración.'));
     process.exit(1);
   } finally {
     await pool.end();
