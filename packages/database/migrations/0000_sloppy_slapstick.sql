@@ -1,5 +1,5 @@
+CREATE TYPE "public"."app_role" AS ENUM('admin', 'supervisor', 'driver', 'citizen');--> statement-breakpoint
 CREATE TYPE "public"."gender" AS ENUM('male', 'female');--> statement-breakpoint
-CREATE TYPE "public"."role" AS ENUM('admin', 'supervisor', 'driver', 'citizen');--> statement-breakpoint
 CREATE TYPE "public"."assignment_status" AS ENUM('scheduled', 'active', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."route_status" AS ENUM('active', 'inactive', 'draft');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -38,7 +38,8 @@ CREATE TABLE "user" (
 	"email" text NOT NULL,
 	"emailVerified" boolean DEFAULT false NOT NULL,
 	"image" text,
-	"role" "role" DEFAULT 'citizen' NOT NULL,
+	"app_role" "app_role" DEFAULT 'citizen' NOT NULL,
+	"role" text DEFAULT 'user' NOT NULL,
 	"gender" "gender",
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL,

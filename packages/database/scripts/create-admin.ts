@@ -22,7 +22,7 @@ const auth = betterAuth({
   emailAndPassword: { enabled: true },
   user: {
     additionalFields: {
-      role: {
+      appRole: {
         type: ['admin', 'supervisor', 'driver', 'citizen'],
         required: true,
         defaultValue: 'citizen',
@@ -94,6 +94,9 @@ async function main() {
         password,
         name,
         role: 'admin',
+        data: {
+          appRole: 'admin',
+        },
       },
     });
     s.stop('Usuario administrador creado correctamente.');

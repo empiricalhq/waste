@@ -28,8 +28,8 @@ const auth = betterAuth({
 
   user: {
     additionalFields: {
-      role: {
-        type: 'string',
+      appRole: {
+        type: ['admin', 'supervisor', 'driver', 'citizen'],
         required: true,
         defaultValue: 'citizen',
       },
@@ -110,7 +110,7 @@ async function createUsers(sessionToken: string) {
           role: userData.authRole,
           data: {
             emailVerified: true,
-            role: userData.appRole,
+            appRole: userData.appRole,
           },
         },
         headers: { Cookie: authCookie },
@@ -194,7 +194,7 @@ async function main() {
     const users = await createUsers(sessionToken);
     if (users.length === 0) throw new Error('No se encontraron usuarios creados.');
 
-    const supervisorUser = users.find(u => u.role === 'supervisor');
+    const supervisorUser = users.find(u => u.appRole === 'supervisor');
     if (!supervisorUser) {
       console.log('Usuarios creados:', users);
       throw new Error('No se pudo encontrar un usuario supervisor entre los usuarios creados.');

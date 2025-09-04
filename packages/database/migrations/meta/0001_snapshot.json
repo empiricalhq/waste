@@ -1,6 +1,6 @@
 {
-  "id": "eea880d9-c38d-4d51-a3fc-7c7b47ade171",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "6cbc53ef-7aaf-47dc-a97f-f361a5830492",
+  "prevId": "eea880d9-c38d-4d51-a3fc-7c7b47ade171",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -243,9 +243,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "app_role": {
-          "name": "app_role",
-          "type": "app_role",
+        "appRole": {
+          "name": "appRole",
+          "type": "app_role_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -1117,8 +1117,8 @@
     }
   },
   "enums": {
-    "public.app_role": {
-      "name": "app_role",
+    "public.app_role_enum": {
+      "name": "app_role_enum",
       "schema": "public",
       "values": [
         "admin",
