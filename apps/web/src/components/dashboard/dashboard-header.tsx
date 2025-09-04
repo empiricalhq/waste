@@ -1,25 +1,35 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Bell, LogOut, Settings, User } from "lucide-react"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/dropdown-menu";
+import { Bell, LogOut, Settings, User } from "lucide-react";
+import { useRouter, redirect } from "next/navigation";
+import { signOut } from "@/lib/auth/client";
+import { useState } from "react";
 
 export function DashboardHeader() {
-  const router = useRouter()
+  const [isPending, setIsPending] = useState(false);
 
-  const handleLogout = () => {
-    router.push("/login")
-  }
+  const onSignOut = async () => {
+    setIsPending(true);
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          setIsPending(false);
+          redirect("/");
+        },
+      },
+    });
+  };
 
   return (
-    <header className="bg-card border-b border-border px-6 py-4">
+    <header className="bg-card border-border border-b px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex-1" />
 
@@ -27,7 +37,7 @@ export function DashboardHeader() {
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative">
             <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full text-xs flex items-center justify-center text-destructive-foreground">
+            <span className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full text-xs">
               3
             </span>
           </Button>
@@ -35,11 +45,19 @@ export function DashboardHeader() {
           {/* User menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-accent-foreground">A</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center space-x-2"
+              >
+                <div className="bg-accent flex h-8 w-8 items-center justify-center rounded-full">
+                  <span className="text-accent-foreground text-sm font-medium">
+                    A
+                  </span>
                 </div>
-                <span className="hidden md:block text-sm font-medium">Admin</span>
+                <span className="hidden text-sm font-medium md:block">
+                  Admin
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -52,7 +70,10 @@ export function DashboardHeader() {
                 Configuración
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+              <DropdownMenuItem
+                onClick={onSignOut}
+                className="text-destructive"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 Cerrar Sesión
               </DropdownMenuItem>
@@ -61,5 +82,5 @@ export function DashboardHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

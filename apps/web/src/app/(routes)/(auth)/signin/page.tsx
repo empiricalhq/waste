@@ -9,12 +9,12 @@ export const metadata: Metadata = {
 export default function SignInPage() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center">
-      <div className="flex w-full flex-col rounded-2xl border border-foreground/10 px-8 py-5 md:w-96">
+      <div className="border-foreground/10 flex w-full flex-col rounded-2xl border px-8 py-5 md:w-96">
         <h1>Iniciar Sesión</h1>
         <SignInForm />
         <div className="flex items-center justify-center gap-2">
           <small>¿No tienes una cuenta?</small>
-          <Link href={"/signup"} className="text-sm font-bold leading-none">
+          <Link href={"/signup"} className="text-sm leading-none font-bold">
             Regístrate
           </Link>
         </div>
