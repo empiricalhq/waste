@@ -1,0 +1,6 @@
+**/.expo/**
+**/.next/**
+**/node_modules/**
+**/migrations/**
+
+apps/web
