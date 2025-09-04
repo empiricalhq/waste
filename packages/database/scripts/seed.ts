@@ -87,12 +87,13 @@ const seedData = {
 async function createUsers(sessionToken: string) {
   p.log.step('Creando usuarios de prueba...');
   const createdUsers = [];
+  const authCookie = `auth-session=${sessionToken}`;
 
   for (const userData of seedUsers) {
     try {
       const existingUserResponse = await auth.api.listUsers({
         query: { searchField: 'email', searchValue: userData.email, limit: 1 },
-        headers: { Authorization: `Bearer ${sessionToken}` },
+        headers: { Cookie: authCookie },
       });
 
       if (existingUserResponse.users && existingUserResponse.users.length > 0) {
@@ -112,7 +113,7 @@ async function createUsers(sessionToken: string) {
             role: userData.appRole,
           },
         },
-        headers: { Authorization: `Bearer ${sessionToken}` },
+        headers: { Cookie: authCookie },
       });
 
       const newUser = newUserResponse.user;
@@ -121,7 +122,8 @@ async function createUsers(sessionToken: string) {
         p.log.success(`Usuario creado: ${userData.email} (${userData.appRole})`);
       }
     } catch (error: any) {
-      p.log.error(`Error al crear el usuario ${userData.email}: ${error}`);
+      const errorMessage = error.message || String(error);
+      p.log.error(`Error al crear el usuario ${userData.email}: ${errorMessage}`);
     }
   }
 
