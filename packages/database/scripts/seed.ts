@@ -122,7 +122,8 @@ async function createUsers(sessionToken: string) {
         p.log.success(`Usuario creado: ${userData.email} (${userData.appRole})`);
       }
     } catch (error: any) {
-      p.log.error(`Error al crear el usuario ${userData.email}: ${error}`);
+      p.log.error(`Error al crear el usuario ${userData.email}`);
+      console.error(error);
     }
   }
 
@@ -168,7 +169,8 @@ async function createAppData(supervisorUserId: string) {
       p.log.success(`Ruta creada: ${seedData.route.name} con ${seedData.waypoints.length} puntos de recolección`);
     }
   } catch (error: any) {
-    p.log.error(`Error al crear la data de la aplicación: ${error.message}`);
+    p.log.error(`Error al crear la data de la aplicación`);
+    console.error(error);
   } finally {
     client.release();
   }
@@ -205,7 +207,8 @@ async function main() {
     p.note('🎉 El entorno de trabajo está listo. Usuarios y datos creados.', '✅ Datos añadidos correctamente');
     p.outro(color.green('Ya puedes levantar las aplicaciones.'));
   } catch (error: any) {
-    p.log.error(`La creación de datos falló: ${error.message}`);
+    p.log.error(`La creación de datos falló`);
+    console.error(error);
     p.outro(color.red('Verifica tu base de datos y la configuración.'));
     process.exit(1);
   } finally {
