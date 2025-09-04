@@ -22,7 +22,7 @@ export default function SignOutButton() {
 
   return (
     <Button disabled={isPending} onClick={onSignOut} variant={"destructive"}>
-      Logout
+      Cerrar sesión
     </Button>
   );
 }

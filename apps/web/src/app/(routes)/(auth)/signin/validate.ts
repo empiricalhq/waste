@@ -4,7 +4,7 @@ export const SignInSchema = z.object({
   username: z.string().min(4, { message: "Username is required" }),
   password: z
     .string()
-    .min(6, { message: "Password lenght at least 6 characters" }),
+    .min(6, { message: "Contraseña de al menos 6 caracteres" }),
 });
 
 export type SignInValues = z.infer<typeof SignInSchema>;
