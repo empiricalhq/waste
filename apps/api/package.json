@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --hot src/index.ts --env-file=.env",
+    "dev": "bun --hot --env-file=../../.env src/index.ts",
     "start": "bun src/index.ts",
-    "test": "bun tests/main.ts --env-file=.env",
+    "test": "bun --env-file=../../.env tests/main.ts",
     "build": "bun build src/index.ts --outdir ./dist --target bun",
     "format": "prettier --write ."
   },
