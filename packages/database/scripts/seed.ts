@@ -170,8 +170,6 @@ async function main() {
     if (!sessionToken) throw new Error('No session token');
     s.stop('Sesión iniciada.');
 
-    await db.query('BEGIN');
-
     s.start('Creando usuarios...');
     const userList = await Promise.all(seedUsers.map(u => ensureUser(sessionToken, u)));
     const users = new Map(userList.map(u => [u.email, u]));
@@ -183,6 +181,8 @@ async function main() {
     if (!supervisor || !driver) {
       throw new Error('El usuario con rol de "supervisor" o "conductor" no pudo ser creado/encontrado.');
     }
+
+    await db.query('BEGIN');
 
     s.start('Creando camiones...');
     const truckIds = await Promise.all(seedData.trucks.map(ensureTruck));
