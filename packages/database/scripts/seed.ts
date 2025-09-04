@@ -120,12 +120,12 @@ async function ensureRoute(dbClient: PoolClient, supervisorId: string) {
       route.startLng,
       route.estimatedDurationMinutes,
       supervisorId,
-    ]
+    ],
   );
   for (const wp of waypoints) {
     await dbClient.query(
       'INSERT INTO route_waypoint (id,route_id,sequence_order,lat,lng,estimated_arrival_offset_minutes,street_name) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-      [createId(), routeId, wp.order, wp.lat, wp.lng, wp.offset, wp.streetName]
+      [createId(), routeId, wp.order, wp.lat, wp.lng, wp.offset, wp.streetName],
     );
   }
   return routeId;
@@ -138,7 +138,7 @@ async function ensureAssignment(
   driverId: string,
   supervisorId: string,
   startHour: number,
-  durationMinutes: number
+  durationMinutes: number,
 ) {
   const today = new Date().toISOString().split('T')[0];
   const { rows } = await dbClient.query('SELECT id FROM route_assignment WHERE truck_id=$1 AND assigned_date=$2', [
@@ -153,7 +153,7 @@ async function ensureAssignment(
 
   await dbClient.query(
     'INSERT INTO route_assignment (id,route_id,truck_id,driver_id,assigned_date,scheduled_start_time,scheduled_end_time,assigned_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
-    [createId(), routeId, truckId, driverId, today, start, end, supervisorId]
+    [createId(), routeId, truckId, driverId, today, start, end, supervisorId],
   );
 }
 
@@ -174,8 +174,8 @@ async function main() {
     s.stop('Sesión iniciada.');
 
     s.start('Creando usuarios...');
-    const userList = await Promise.all(seedUsers.map(u => ensureUser(sessionToken, u)));
-    const users = new Map(userList.map(u => [u.email, u]));
+    const userList = await Promise.all(seedUsers.map((u) => ensureUser(sessionToken, u)));
+    const users = new Map(userList.map((u) => [u.email, u]));
     s.stop('Usuarios listos.');
 
     const supervisor = users.get('supervisor@example.com');
@@ -188,7 +188,7 @@ async function main() {
     await client.query('BEGIN');
 
     s.start('Creando camiones...');
-    const truckIds = await Promise.all(seedData.trucks.map(t => ensureTruck(client, t)));
+    const truckIds = await Promise.all(seedData.trucks.map((t) => ensureTruck(client, t)));
     s.stop('Camiones listos.');
 
     s.start('Creando ruta y waypoints...');
@@ -203,7 +203,7 @@ async function main() {
       driver.id,
       supervisor.id,
       8,
-      seedData.route.estimatedDurationMinutes
+      seedData.route.estimatedDurationMinutes,
     );
     s.stop('Asignaciones listas.');
 

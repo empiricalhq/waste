@@ -28,9 +28,9 @@ export const userEducationProgress = pgTable(
     score: integer('score'),
     timeSpentSeconds: integer('time_spent_seconds'),
   },
-  table => {
+  (table) => {
     return {
       pk: primaryKey({ columns: [table.userId, table.contentId] }),
     };
-  }
+  },
 );
