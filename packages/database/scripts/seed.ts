@@ -1,31 +1,25 @@
 import * as p from '@clack/prompts';
 import { Pool } from 'pg';
-import { betterAuth, type APIError } from 'better-auth';
+import { betterAuth } from 'better-auth';
 import { admin } from 'better-auth/plugins';
 import color from 'picocolors';
 import { createId } from '@paralleldrive/cuid2';
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is required. Make sure it is set in your .env file.');
+function mustEnv(name: string): string {
+  const val = process.env[name];
+  if (!val) throw new Error(`${name} is required in .env`);
+  return val;
 }
 
-if (!process.env.BETTER_AUTH_SECRET) {
-  throw new Error('BETTER_AUTH_SECRET is required in your .env file.');
-}
+const DATABASE_URL = mustEnv('DATABASE_URL');
+const AUTH_SECRET = mustEnv('BETTER_AUTH_SECRET');
+const ADMIN_EMAIL = mustEnv('SYSTEM_ADMIN_EMAIL');
+const ADMIN_PASS = mustEnv('SYSTEM_ADMIN_PASSWORD');
 
-if (!process.env.SYSTEM_ADMIN_EMAIL || !process.env.SYSTEM_ADMIN_PASSWORD) {
-  throw new Error(
-    'SYSTEM_ADMIN_EMAIL and SYSTEM_ADMIN_PASSWORD are required in your .env file. Make sure you have run `bun setup:admin` first.'
-  );
-}
-
-const db = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
+const db = new Pool({ connectionString: DATABASE_URL });
 const auth = betterAuth({
   database: db,
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
   emailAndPassword: { enabled: true },
   user: {
@@ -38,167 +32,174 @@ const auth = betterAuth({
     },
   },
   telemetry: { enabled: false },
-  plugins: [
-    admin({
-      adminRoles: ['admin'],
-    }),
-  ],
+  plugins: [admin({ adminRoles: ['admin'] })],
 });
 
-async function main() {
-  p.intro(color.inverse(' @lima-garbage/database: añadir sample data '));
+const seedUsers = [
+  {
+    authRole: 'admin' as const,
+    appRole: 'supervisor' as const,
+    name: 'Juan Díaz',
+    email: 'supervisor@example.com',
+  },
+  {
+    authRole: 'user' as const,
+    appRole: 'driver' as const,
+    name: 'Luis Martínez',
+    email: 'driver@example.com',
+  },
+  {
+    authRole: 'user' as const,
+    appRole: 'citizen' as const,
+    name: 'María Pérez',
+    email: 'citizen@example.com',
+  },
+];
 
+const seedData = {
+  trucks: [
+    { name: 'Recolector Miraflores', licensePlate: 'MIR-001' },
+    { name: 'Recolector San Isidro', licensePlate: 'SID-002' },
+  ],
+  route: {
+    name: 'Ruta Centro Lima',
+    description: 'Ruta de recolección para el Centro Histórico de Lima.',
+    startLat: -12.046374,
+    startLng: -77.042793,
+    estimatedDurationMinutes: 180,
+  },
+  waypoints: [
+    { lat: -12.046374, lng: -77.042793, streetName: 'Plaza de Armas', order: 1, offset: 0 },
+    { lat: -12.047196, lng: -77.030983, streetName: 'Jr. de la Unión', order: 2, offset: 30 },
+    { lat: -12.043333, lng: -77.028056, streetName: 'Mercado Central', order: 3, offset: 60 },
+    { lat: -12.056944, lng: -77.035278, streetName: 'Av. Abancay', order: 4, offset: 90 },
+    { lat: -12.068611, lng: -77.036111, streetName: 'Cercado de Lima', order: 5, offset: 120 },
+  ],
+};
+
+async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
+  const { rows } = await db.query('SELECT * FROM "user" WHERE email=$1', [u.email]);
+  if (rows.length) return rows[0];
+
+  await auth.api.createUser({
+    body: {
+      email: u.email,
+      password: 'password123',
+      name: u.name,
+      role: u.authRole,
+      data: { appRole: u.appRole },
+    },
+    headers: { Cookie: sessionToken },
+  });
+
+  const { rows: created } = await db.query('SELECT * FROM "user" WHERE email=$1', [u.email]);
+  return created[0];
+}
+
+async function ensureTruck(t: (typeof seedData.trucks)[number]) {
+  const { rows } = await db.query('SELECT id FROM truck WHERE license_plate=$1', [t.licensePlate]);
+  if (rows.length) return rows[0].id;
+  const id = createId();
+  await db.query('INSERT INTO truck (id,name,license_plate) VALUES ($1,$2,$3)', [id, t.name, t.licensePlate]);
+  return id;
+}
+
+async function ensureRoute(supervisorId: string) {
+  const { route, waypoints } = seedData;
+  const { rows } = await db.query('SELECT id FROM route WHERE name=$1', [route.name]);
+  if (rows.length) return rows[0].id;
+
+  const routeId = createId();
+  await db.query(
+    'INSERT INTO route (id,name,description,start_lat,start_lng,estimated_duration_minutes,created_by) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+    [
+      routeId,
+      route.name,
+      route.description,
+      route.startLat,
+      route.startLng,
+      route.estimatedDurationMinutes,
+      supervisorId,
+    ]
+  );
+  for (const wp of waypoints) {
+    await db.query(
+      'INSERT INTO route_waypoint (id,route_id,sequence_order,lat,lng,estimated_arrival_offset_minutes,street_name) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [createId(), routeId, wp.order, wp.lat, wp.lng, wp.offset, wp.streetName]
+    );
+  }
+  return routeId;
+}
+
+async function ensureAssignment(
+  truckId: string,
+  routeId: string,
+  driverId: string,
+  supervisorId: string,
+  startHour: number
+) {
+  const today = new Date().toISOString().split('T')[0];
+  const { rows } = await db.query('SELECT id FROM route_assignment WHERE truck_id=$1 AND assigned_date=$2', [
+    truckId,
+    today,
+  ]);
+  if (rows.length) return;
+
+  const start = new Date();
+  start.setHours(startHour, 0, 0, 0);
+  const { rows: r } = await db.query('SELECT estimated_duration_minutes FROM route WHERE id=$1', [routeId]);
+  const end = new Date(start.getTime() + r[0].estimated_duration_minutes * 60000);
+
+  await db.query(
+    'INSERT INTO route_assignment (id,route_id,truck_id,driver_id,assigned_date,scheduled_start_time,scheduled_end_time,assigned_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+    [createId(), routeId, truckId, driverId, today, start, end, supervisorId]
+  );
+}
+
+async function main() {
+  p.intro(color.inverse('Seeding sample data...'));
   const s = p.spinner();
 
   try {
-    s.start('Iniciando sesión como administrador del sistema...');
+    s.start('Iniciando sesión como administrador...');
     const { headers } = await auth.api.signInEmail({
       returnHeaders: true,
-      body: {
-        email: process.env.SYSTEM_ADMIN_EMAIL!,
-        password: process.env.SYSTEM_ADMIN_PASSWORD!,
-      },
+      body: { email: ADMIN_EMAIL, password: ADMIN_PASS },
     });
     const sessionToken = headers.get('set-cookie');
-    s.stop();
+    if (!sessionToken) throw new Error('No session token');
+    s.stop('Sesión iniciada.');
 
-    if (!sessionToken) {
-      throw new Error('No se pudo obtener el token de sesión. Verifica las credenciales del administrador en tu .env');
+    s.start('Creando usuarios...');
+    const users = new Map<string, any>();
+    for (const u of seedUsers) {
+      users.set(u.email, await ensureUser(sessionToken, u));
     }
-    p.log.success('Sesión de administrador iniciada correctamente.');
+    s.stop('Usuarios listos.');
 
-    s.start('Creando usuarios de prueba...');
-    const usersToCreate = [
-      {
-        email: 'supervisor@example.com',
-        name: 'Juan Díaz',
-        appRole: 'supervisor',
-      },
-      {
-        email: 'driver@example.com',
-        name: 'Luis Martínez',
-        appRole: 'driver',
-      },
-      {
-        email: 'citizen@example.com',
-        name: 'María Pérez',
-        appRole: 'citizen',
-      },
-    ];
+    const supervisor = users.get('supervisor@example.com');
+    const driver = users.get('driver@example.com');
 
-    const createdUsers = new Map<string, any>();
+    s.start('Creando camiones...');
+    const truckIds = await Promise.all(seedData.trucks.map(ensureTruck));
+    s.stop('Camiones listos.');
 
-    for (const userData of usersToCreate) {
-      try {
-        const { rows } = await db.query('SELECT * FROM "user" WHERE email = $1', [userData.email]);
-        if (rows.length > 0) {
-          p.log.info(`Usuario ${userData.email} ya existe.`);
-          createdUsers.set(userData.appRole, rows[0]);
-          continue;
-        }
+    s.start('Creando ruta y waypoints...');
+    const routeId = await ensureRoute(supervisor.id);
+    s.stop('Ruta lista.');
 
-        const newUser = await auth.api.createUser({
-          body: {
-            email: userData.email,
-            password: 'password123',
-            name: userData.name,
-            role: 'user',
-            data: {
-              appRole: userData.appRole,
-            },
-          },
-          headers: {
-            Cookie: sessionToken,
-          },
-        });
-        createdUsers.set(userData.appRole, newUser);
-        p.log.success(`Usuario ${userData.email} creado.`);
-      } catch (error) {
-        p.log.error(`Error al crear el usuario ${userData.email}`);
-        const apiError = error as APIError;
-        if (apiError.status) {
-          console.error(`Status: ${apiError.status}, Body: ${JSON.stringify(apiError.body)}`);
-        } else {
-          console.error(error);
-        }
-      }
-    }
-    s.stop('Creación de usuarios completada.');
-
-    if (createdUsers.size === 0) {
-      throw new Error('No se crearon ni encontraron usuarios de prueba. El script no puede continuar.');
-    }
-
-    const supervisor = createdUsers.get('supervisor');
-    const driver = createdUsers.get('driver');
-
-    if (!supervisor || !driver) {
-      p.log.warn('No se encontraron los usuarios supervisor o driver, se omitirá la creación de datos relacionados.');
-    } else {
-      s.start('Creando camiones de prueba...');
-      const { rows: existingTrucks } = await db.query(
-        "SELECT license_plate FROM truck WHERE license_plate = 'ABC-123'"
-      );
-      let truckId;
-      if (existingTrucks.length > 0) {
-        p.log.info('Camión de prueba ya existe.');
-        const { rows } = await db.query("SELECT id FROM truck WHERE license_plate = 'ABC-123'");
-        truckId = rows[0].id;
-      } else {
-        truckId = createId();
-        await db.query("INSERT INTO truck (id, name, license_plate) VALUES ($1, 'Camión 01', 'ABC-123')", [truckId]);
-        p.log.success('Camión de prueba creado.');
-      }
-      s.stop();
-
-      s.start('Creando rutas de prueba...');
-      const { rows: existingRoutes } = await db.query("SELECT name FROM route WHERE name = 'Ruta Centro'");
-      let routeId;
-      if (existingRoutes.length > 0) {
-        p.log.info('Ruta de prueba ya existe.');
-        const { rows } = await db.query("SELECT id FROM route WHERE name = 'Ruta Centro'");
-        routeId = rows[0].id;
-      } else {
-        routeId = createId();
-        await db.query(
-          "INSERT INTO route (id, name, start_lat, start_lng, estimated_duration_minutes, created_by) VALUES ($1, 'Ruta Centro', -12.046374, -77.042793, 120, $2)",
-          [routeId, supervisor.id]
-        );
-        p.log.success('Ruta de prueba creada.');
-      }
-      s.stop();
-
-      s.start('Creando asignaciones de ruta...');
-      const today = new Date().toISOString().split('T')[0];
-      const { rows: existingAssignments } = await db.query(
-        'SELECT id FROM route_assignment WHERE truck_id = $1 AND assigned_date = $2',
-        [truckId, today]
-      );
-      if (existingAssignments.length > 0) {
-        p.log.info('La asignación de hoy ya existe.');
-      } else {
-        const assignmentId = createId();
-        const startTime = new Date();
-        startTime.setHours(8, 0, 0, 0);
-        const endTime = new Date(startTime.getTime() + 120 * 60000); // 120 minutes later
-        await db.query(
-          'INSERT INTO route_assignment (id, route_id, truck_id, driver_id, assigned_date, scheduled_start_time, scheduled_end_time, assigned_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-          [assignmentId, routeId, truckId, driver.id, today, startTime, endTime, supervisor.id]
-        );
-        p.log.success('Asignación de ruta creada.');
-      }
-      s.stop();
-    }
+    s.start('Creando asignaciones...');
+    await ensureAssignment(truckIds[0], routeId, driver.id, supervisor.id, 8);
+    s.stop('Asignaciones listas.');
 
     p.outro(color.green('Datos de ejemplo añadidos correctamente.'));
-  } catch (error: any) {
-    s.stop('La creación de datos falló');
-    p.log.error(error.message);
-    p.outro(color.red('Verifica tu base de datos y la configuración.'));
+  } catch (err: any) {
+    s.stop('Error al crear datos');
+    p.log.error(err.message);
     process.exit(1);
   } finally {
     await db.end();
   }
 }
 
-main().catch(console.error);
+main();
