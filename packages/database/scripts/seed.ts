@@ -37,7 +37,7 @@ const auth = betterAuth({
 
 const seedUsers = [
   {
-    authRole: 'admin' as const,
+    authRole: 'user' as const,
     appRole: 'supervisor' as const,
     name: 'Juan Díaz',
     email: 'supervisor@example.com',
@@ -136,7 +136,8 @@ async function ensureAssignment(
   routeId: string,
   driverId: string,
   supervisorId: string,
-  startHour: number
+  startHour: number,
+  durationMinutes: number
 ) {
   const today = new Date().toISOString().split('T')[0];
   const { rows } = await db.query('SELECT id FROM route_assignment WHERE truck_id=$1 AND assigned_date=$2', [
@@ -147,8 +148,7 @@ async function ensureAssignment(
 
   const start = new Date();
   start.setHours(startHour, 0, 0, 0);
-  const { rows: r } = await db.query('SELECT estimated_duration_minutes FROM route WHERE id=$1', [routeId]);
-  const end = new Date(start.getTime() + r[0].estimated_duration_minutes * 60000);
+  const end = new Date(start.getTime() + durationMinutes * 60000);
 
   await db.query(
     'INSERT INTO route_assignment (id,route_id,truck_id,driver_id,assigned_date,scheduled_start_time,scheduled_end_time,assigned_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
@@ -170,15 +170,19 @@ async function main() {
     if (!sessionToken) throw new Error('No session token');
     s.stop('Sesión iniciada.');
 
+    await db.query('BEGIN');
+
     s.start('Creando usuarios...');
-    const users = new Map<string, any>();
-    for (const u of seedUsers) {
-      users.set(u.email, await ensureUser(sessionToken, u));
-    }
+    const userList = await Promise.all(seedUsers.map(u => ensureUser(sessionToken, u)));
+    const users = new Map(userList.map(u => [u.email, u]));
     s.stop('Usuarios listos.');
 
     const supervisor = users.get('supervisor@example.com');
     const driver = users.get('driver@example.com');
+
+    if (!supervisor || !driver) {
+      throw new Error('El usuario con rol de "supervisor" o "conductor" no pudo ser creado/encontrado.');
+    }
 
     s.start('Creando camiones...');
     const truckIds = await Promise.all(seedData.trucks.map(ensureTruck));
@@ -189,11 +193,14 @@ async function main() {
     s.stop('Ruta lista.');
 
     s.start('Creando asignaciones...');
-    await ensureAssignment(truckIds[0], routeId, driver.id, supervisor.id, 8);
+    await ensureAssignment(truckIds[0], routeId, driver.id, supervisor.id, 8, seedData.route.estimatedDurationMinutes);
     s.stop('Asignaciones listas.');
+
+    await db.query('COMMIT');
 
     p.outro(color.green('Datos de ejemplo añadidos correctamente.'));
   } catch (err: any) {
+    await db.query('ROLLBACK');
     s.stop('Error al crear datos');
     p.log.error(err.message);
     process.exit(1);
