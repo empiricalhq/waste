@@ -1,5 +1,5 @@
 import * as p from '@clack/prompts';
-import { Pool } from 'pg';
+import { Pool, type PoolClient } from 'pg';
 import { betterAuth } from 'better-auth';
 import { admin } from 'better-auth/plugins';
 import color from 'picocolors';
@@ -96,21 +96,21 @@ async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
   return created[0];
 }
 
-async function ensureTruck(t: (typeof seedData.trucks)[number]) {
-  const { rows } = await db.query('SELECT id FROM truck WHERE license_plate=$1', [t.licensePlate]);
+async function ensureTruck(dbClient: PoolClient, t: (typeof seedData.trucks)[number]) {
+  const { rows } = await dbClient.query('SELECT id FROM truck WHERE license_plate=$1', [t.licensePlate]);
   if (rows.length) return rows[0].id;
   const id = createId();
-  await db.query('INSERT INTO truck (id,name,license_plate) VALUES ($1,$2,$3)', [id, t.name, t.licensePlate]);
+  await dbClient.query('INSERT INTO truck (id,name,license_plate) VALUES ($1,$2,$3)', [id, t.name, t.licensePlate]);
   return id;
 }
 
-async function ensureRoute(supervisorId: string) {
+async function ensureRoute(dbClient: PoolClient, supervisorId: string) {
   const { route, waypoints } = seedData;
-  const { rows } = await db.query('SELECT id FROM route WHERE name=$1', [route.name]);
+  const { rows } = await dbClient.query('SELECT id FROM route WHERE name=$1', [route.name]);
   if (rows.length) return rows[0].id;
 
   const routeId = createId();
-  await db.query(
+  await dbClient.query(
     'INSERT INTO route (id,name,description,start_lat,start_lng,estimated_duration_minutes,created_by) VALUES ($1,$2,$3,$4,$5,$6,$7)',
     [
       routeId,
@@ -123,7 +123,7 @@ async function ensureRoute(supervisorId: string) {
     ]
   );
   for (const wp of waypoints) {
-    await db.query(
+    await dbClient.query(
       'INSERT INTO route_waypoint (id,route_id,sequence_order,lat,lng,estimated_arrival_offset_minutes,street_name) VALUES ($1,$2,$3,$4,$5,$6,$7)',
       [createId(), routeId, wp.order, wp.lat, wp.lng, wp.offset, wp.streetName]
     );
@@ -132,6 +132,7 @@ async function ensureRoute(supervisorId: string) {
 }
 
 async function ensureAssignment(
+  dbClient: PoolClient,
   truckId: string,
   routeId: string,
   driverId: string,
@@ -140,7 +141,7 @@ async function ensureAssignment(
   durationMinutes: number
 ) {
   const today = new Date().toISOString().split('T')[0];
-  const { rows } = await db.query('SELECT id FROM route_assignment WHERE truck_id=$1 AND assigned_date=$2', [
+  const { rows } = await dbClient.query('SELECT id FROM route_assignment WHERE truck_id=$1 AND assigned_date=$2', [
     truckId,
     today,
   ]);
@@ -150,7 +151,7 @@ async function ensureAssignment(
   start.setHours(startHour, 0, 0, 0);
   const end = new Date(start.getTime() + durationMinutes * 60000);
 
-  await db.query(
+  await dbClient.query(
     'INSERT INTO route_assignment (id,route_id,truck_id,driver_id,assigned_date,scheduled_start_time,scheduled_end_time,assigned_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
     [createId(), routeId, truckId, driverId, today, start, end, supervisorId]
   );
@@ -159,6 +160,8 @@ async function ensureAssignment(
 async function main() {
   p.intro(color.inverse('Seeding sample data...'));
   const s = p.spinner();
+
+  const client = await db.connect();
 
   try {
     s.start('Iniciando sesión como administrador...');
@@ -182,29 +185,38 @@ async function main() {
       throw new Error('El usuario con rol de "supervisor" o "conductor" no pudo ser creado/encontrado.');
     }
 
-    await db.query('BEGIN');
+    await client.query('BEGIN');
 
     s.start('Creando camiones...');
-    const truckIds = await Promise.all(seedData.trucks.map(ensureTruck));
+    const truckIds = await Promise.all(seedData.trucks.map(t => ensureTruck(client, t)));
     s.stop('Camiones listos.');
 
     s.start('Creando ruta y waypoints...');
-    const routeId = await ensureRoute(supervisor.id);
+    const routeId = await ensureRoute(client, supervisor.id);
     s.stop('Ruta lista.');
 
     s.start('Creando asignaciones...');
-    await ensureAssignment(truckIds[0], routeId, driver.id, supervisor.id, 8, seedData.route.estimatedDurationMinutes);
+    await ensureAssignment(
+      client,
+      truckIds[0],
+      routeId,
+      driver.id,
+      supervisor.id,
+      8,
+      seedData.route.estimatedDurationMinutes
+    );
     s.stop('Asignaciones listas.');
 
-    await db.query('COMMIT');
+    await client.query('COMMIT');
 
     p.outro(color.green('Datos de ejemplo añadidos correctamente.'));
   } catch (err: any) {
-    await db.query('ROLLBACK');
+    await client.query('ROLLBACK');
     s.stop('Error al crear datos');
     p.log.error(err.message);
     process.exit(1);
   } finally {
+    client.release();
     await db.end();
   }
 }
