@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp } from "@/lib/auth/client";
@@ -22,6 +22,8 @@ import InputPasswordContainer from "../components/input-password";
 import { cn } from "@/lib/utils";
 import { AtSign, MailIcon, UserIcon } from "lucide-react";
 import { GenderRadioGroup } from "../components/gender-radio-group";
+import { RoleSelect } from "../components/role-select";
+
 
 export default function SignUpForm() {
   const [isPending, startTransition] = useTransition();
@@ -33,6 +35,8 @@ export default function SignUpForm() {
       username: "",
       password: "",
       confirmPassword: "",
+      gender: undefined,
+      role: "driver",
     },
   });
 
@@ -70,7 +74,7 @@ export default function SignUpForm() {
               <FormControl>
                 <InputStartIcon icon={UserIcon}>
                   <Input
-                    placeholder="Name"
+                    placeholder="Nombre"
                     className={cn("peer ps-9", getInputClassName("name"))}
                     disabled={isPending}
                     {...field}
@@ -89,7 +93,7 @@ export default function SignUpForm() {
               <FormControl>
                 <InputStartIcon icon={MailIcon}>
                   <Input
-                    placeholder="Email"
+                    placeholder="Correo electrónico"
                     className={cn("peer ps-9", getInputClassName("email"))}
                     disabled={isPending}
                     {...field}
@@ -130,7 +134,7 @@ export default function SignUpForm() {
                 <InputPasswordContainer>
                   <Input
                     className={cn("pe-9", getInputClassName("password"))}
-                    placeholder="Password"
+                    placeholder="Contraseña"
                     disabled={isPending}
                     {...field}
                   />
@@ -150,7 +154,7 @@ export default function SignUpForm() {
                 <InputPasswordContainer>
                   <Input
                     className={cn("pe-9", getInputClassName("confirmPassword"))}
-                    placeholder="Confirm Password"
+                    placeholder="Confirmar contraseña"
                     disabled={isPending}
                     {...field}
                   />
@@ -167,7 +171,7 @@ export default function SignUpForm() {
           name="gender"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Gender</FormLabel>
+              <FormLabel>Género</FormLabel>
               <GenderRadioGroup
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -177,8 +181,26 @@ export default function SignUpForm() {
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Role</FormLabel>
+              <FormControl>
+                <RoleSelect
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  disabled={isPending}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit" disabled={isPending} className="mt-5 w-full">
-          Sign Up
+          Agregar usuario
         </Button>
       </form>
     </Form>

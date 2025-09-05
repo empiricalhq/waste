@@ -41,6 +41,9 @@ export const SignUpSchema = z
     gender: z.enum(["male", "female"], {
       message: "Gender must be either 'male' or 'female'.",
     }),
+    role: z.enum(["admin", "supervisor", "driver"], {
+      message: "Role must be one of: admin, supervisor, driver, or citizen.",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
