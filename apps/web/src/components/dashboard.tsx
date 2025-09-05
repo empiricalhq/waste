@@ -64,7 +64,7 @@ export function SimpleDashboard() {
       <div>
         <h1 className="text-foreground text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">
-          Resumen general del sistema de gestión de choferes
+          Resumen general del sistema de gestión de usuarios
         </p>
       </div>
 

@@ -34,7 +34,7 @@ export default async function Home() {
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             Bienvenido a Lima-limpia
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="text-muted-foreground mt-4 text-lg">
             Gestiona tus rutas y choferes de forma eficiente. Inicia sesión para
             comenzar.
           </p>
@@ -48,7 +48,7 @@ export default async function Home() {
           </div>
         </div>
       </main>
-      <footer className="bg-background border-t py-4 px-6 text-center text-sm text-muted-foreground">
+      <footer className="bg-background text-muted-foreground border-t px-6 py-4 text-center text-sm">
         <p>Síguenos en nuestras redes sociales | Contacto: info@waste.com</p>
       </footer>
     </div>
