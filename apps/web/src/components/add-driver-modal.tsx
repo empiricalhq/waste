@@ -68,7 +68,7 @@ export function AddDriverModal({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit">Agregar Chofer</Button>
+            <Button type="submit">Agregar usuario</Button>
           </div>
         </form>
       </DialogContent>

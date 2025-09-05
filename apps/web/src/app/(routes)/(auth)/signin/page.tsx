@@ -13,10 +13,7 @@ export default function SignInPage() {
         <h1>Iniciar Sesión</h1>
         <SignInForm />
         <div className="flex items-center justify-center gap-2">
-          <small>¿No tienes una cuenta?</small>
-          <Link href={"/signup"} className="text-sm leading-none font-bold">
-            Regístrate
-          </Link>
+          <small>¿No tienes una cuenta? Consulta a los administradores.</small>
         </div>
       </div>
     </div>

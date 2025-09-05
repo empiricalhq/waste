@@ -42,7 +42,7 @@ export function DashboardHeader() {
           <div>
             <Button onClick={() => setIsModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Agregar Chofer
+              Agregar usuario
             </Button>
           </div>
 
