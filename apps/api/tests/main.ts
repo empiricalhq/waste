@@ -40,13 +40,13 @@ async function main() {
     await request('/admin/routes', { headers: { Cookie: adminCookie } });
   }
 
-  console.log('test: citizen registration');
+  console.log('\ntest: citizen registration');
   const citizenCookie = await register(CITIZEN_EMAIL, CITIZEN_PASSWORD);
   if (citizenCookie) {
     await request('/trucks/status', { headers: { Cookie: citizenCookie } });
   }
 
-  console.log('test: security');
+  console.log('\ntest: security');
   await request('/admin/trucks'); // Should fail
   await request('/trucks/status'); // Should fail
   if (citizenCookie) {
