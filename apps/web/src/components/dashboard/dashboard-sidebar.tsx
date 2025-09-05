@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,8 @@ import {
   Truck,
   MapPin,
 } from "lucide-react";
+import { getMe } from "@/actions/user";
+import { UserType } from "@/db/schema";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -26,6 +28,24 @@ const navigation = [
 export function DashboardSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const [user, setUser] = useState<UserType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getMe();
+        setUser(userData || null);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <>
@@ -113,10 +133,10 @@ export function DashboardSidebar() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sidebar-foreground truncate text-sm font-medium">
-                  Admin
+                  {isLoading ? 'Cargando...' : (user?.name || 'No se pudo fetchear el nombre')}
                 </p>
                 <p className="text-muted-foreground truncate text-xs">
-                  admin@lima-limpia.com
+                  {isLoading ? 'Cargando...' : (user?.email || 'No se pudo fetchear el email')}
                 </p>
               </div>
             </div>
