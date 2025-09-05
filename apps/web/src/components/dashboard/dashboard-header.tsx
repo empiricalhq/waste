@@ -12,7 +12,7 @@ import { Bell, LogOut, Settings, User, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/client";
 import { useState } from "react";
-import { AddDriverModal } from "@/components/add-driver-modal";
+import { AddUserModal } from "@/components/add-user-modal";
 
 export function DashboardHeader() {
   const [isPending, setIsPending] = useState(false);
@@ -30,9 +30,13 @@ export function DashboardHeader() {
     });
   };
 
-  const handleAddDriver = (driver: { name: string; phone: string }) => {
-    console.log("Nuevo chofer agregado:", driver);
-    // Aquí iría la lógica para guardar el chofer en la base de datos
+  const handleAddUser = (user: {
+    name: string;
+    phone: string;
+    role: string;
+  }) => {
+    console.log("Nuevo usuario agregado:", user);
+    // Aquí iría la lógica para guardar el usuario en la base de datos
   };
 
   return (
@@ -95,10 +99,10 @@ export function DashboardHeader() {
           </div>
         </div>
       </header>
-      <AddDriverModal
+      <AddUserModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddDriver}
+        onAdd={handleAddUser}
       />
     </>
   );

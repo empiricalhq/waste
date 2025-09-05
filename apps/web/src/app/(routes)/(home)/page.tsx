@@ -5,7 +5,7 @@ import Link from "next/link";
 import SignOutButton from "../(auth)/components/button-signout";
 import { getMe } from "@/actions/user";
 import { SimpleDashboard } from "@/components/dashboard";
-import { AddDriverModal } from "@/components/add-driver-modal";
+import { AddUserModal } from "@/components/add-user-modal";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 //import { Dashboard }  from "@/components/dashboard"

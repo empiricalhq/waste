@@ -21,26 +21,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface AddDriverModalProps {
+interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (driver: { name: string; phone: string }) => void;
+  onAdd: (user: { name: string; phone: string; role: string }) => void;
 }
 
-export function AddDriverModal({
-  isOpen,
-  onClose,
-  onAdd,
-}: AddDriverModalProps) {
+export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [role, setRole] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim() && phone.trim()) {
-      onAdd({ name: name.trim(), phone: phone.trim() });
+    if (name.trim() && phone.trim() && role.trim()) {
+      onAdd({ name: name.trim(), phone: phone.trim(), role: role.trim() });
       setName("");
       setPhone("");
+      setRole("");
       onClose();
     }
   };
@@ -49,7 +47,7 @@ export function AddDriverModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Agregar Nuevo Chofer</DialogTitle>
+          <DialogTitle>Agregar nuevo usuario</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -71,6 +69,19 @@ export function AddDriverModal({
               placeholder="Ej: +1234567890"
               required
             />
+          </div>
+                    <div className="space-y-2">
+            <Label htmlFor="role">Rol</Label>
+            <Select onValueChange={setRole} value={role} required>
+              <SelectTrigger id="role">
+                <SelectValue placeholder="Seleccionar un rol" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="supervisor">Supervisor</SelectItem>
+                <SelectItem value="driver">Chofer</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={onClose}>

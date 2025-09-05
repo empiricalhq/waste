@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, MapPin, Clock } from "lucide-react";
-import { AddDriverModal } from "@/components/add-driver-modal";
+import { AddUserModal } from "@/components/add-user-modal";
 // Update the import path to the correct location of SignOutButton
 import SignOutButton from "../app/(routes)/(auth)/components/button-signout";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
