@@ -1,8 +1,8 @@
-# [monorepo] lima-limpia
+# [monorepo]: lima-limpia
 
-@lima-limpia es un sistema de gestión de residuos urbanos con tres aplicaciones
-cliente y una API central. Los clientes se comunican solo con la API, que es la
-única autorizada a acceder directamente a la base de datos.
+@lima-limpia es un sistema de gestión de residuos urbanos que consiste de tres
+aplicaciones cliente y una API central. Los clientes se comunican solo con la
+API, que es la única autorizada a acceder directamente a la base de datos.
 
 **El team**:
 
@@ -43,10 +43,18 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-**Nuestro stack**: TypeScript, React Native (Expo), Flutter, Next.js, Supabase
-(PostgreSQL), better-auth, drizzle-orm, Tailwind CSS, Zustand.
+**Nuestro stack**: TypeScript es el lenguaje principal del proyecto. Usamos
+frameworks como Next.js para la web, la app de uso público en React Native con
+Expo, la app de uso interno para choferes en Flutter y Supabase con PostgreSQL
+como backend.
 
-**Deploy**: aplicaciones móviles vía Expo y API en Deno Deploy.
+Adicionalmente, dependemos de los siguientes paquetes: better-auth para la
+autenticación, drizzle-orm para el esquema, Tailwind CSS para los estilos,
+Zustand para la gestión de estado.
+
+**Deploy**: Las aplicaciones móviles se compilan con EAS, el
+[CI de Expo](https://docs.expo.dev/build/building-on-ci/) y la API en
+[Deno Deploy EA](https://docs.deno.com/deploy/early-access/).
 
 ## Guía rápida
 
@@ -87,7 +95,7 @@ Ejecuta todos estos comandos desde la raíz del proyecto.
 
 1. **API ([apps/api](apps/api))**: Aplicación
    [hono](https://hono.dev/docs/getting-started/deno) desplegada en
-   [Deno Deploy](https://console.deno.com/empirical). **See it live at**
+   [Deno Deploy](https://console.deno.com/empirical). **Disponible en**
    [https://api-prod.empirical.deno.net/](https://api-prod.empirical.deno.net/)
    - Gestiona todas las operaciones de datos.
    - Autenticación con
