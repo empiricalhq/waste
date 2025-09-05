@@ -53,7 +53,7 @@ autenticación, drizzle-orm para el esquema, Tailwind CSS para los estilos,
 Zustand para la gestión de estado.
 
 **Deploy**: Las aplicaciones móviles se compilan con EAS, el
-[CI de Expo](https://docs.expo.dev/build/building-on-ci/) y la API en
+[CI de Expo](https://docs.expo.dev/build/building-on-ci/) y la API a través de
 [Deno Deploy EA](https://docs.deno.com/deploy/early-access/).
 
 ## Guía rápida
