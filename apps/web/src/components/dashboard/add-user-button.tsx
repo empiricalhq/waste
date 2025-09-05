@@ -1,20 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Bell, LogOut, Settings, User, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/client";
 import { useState } from "react";
 import { AddUserModal } from "@/components/dashboard/add-user-modal";
 
-export function DashboardHeader() {
+export function AddUserButton() {
   const [isPending, setIsPending] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

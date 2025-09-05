@@ -16,7 +16,6 @@ import {
   Bell,
   LogOut,
   User,
-  Plus,
 } from "lucide-react";
 import { getMe } from "@/actions/user";
 import { UserType } from "@/db/schema";
@@ -30,10 +29,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/client";
-import { AddUserModal } from "@/components/dashboard/add-user-modal";
+
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Choferes", href: "/dashboard/drivers", icon: Users },
   { name: "Ubicaciones", href: "/dashboard/locations", icon: MapPin },
   { name: "Vehículos", href: "/dashboard/vehicles", icon: Truck },

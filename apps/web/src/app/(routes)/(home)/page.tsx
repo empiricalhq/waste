@@ -1,11 +1,9 @@
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
-import SignOutButton from "../(auth)/components/button-signout";
 import { getMe } from "@/actions/user";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { AddUserButton } from "@/components/dashboard/add-user-button";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 //import { Dashboard }  from "@/components/dashboard"
@@ -25,7 +23,7 @@ export default async function Home() {
                   Sistema de gestión de administradores, supervisores y choferes
                 </p>
               </div>
-              <DashboardHeader />
+              <AddUserButton />
             </div>
 
             <DashboardStats />
