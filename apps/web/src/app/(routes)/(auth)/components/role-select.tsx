@@ -33,7 +33,6 @@ export function RoleSelect({
         <SelectItem value="admin">Admin</SelectItem>
         <SelectItem value="supervisor">Supervisor</SelectItem>
         <SelectItem value="driver">Chofer</SelectItem>
-        <SelectItem value="citizen">Ciudadano</SelectItem>
       </SelectContent>
     </Select>
   );

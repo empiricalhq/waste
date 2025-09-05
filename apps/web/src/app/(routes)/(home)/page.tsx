@@ -17,14 +17,21 @@ export default async function Home() {
       <div>
         <DashboardSidebar />
         <div className="lg:pl-64">
-          <DashboardHeader />
           <main className="p-6">
-            <h1 className="mb-1 text-3xl font-bold">Dashboard</h1>
-            <p className="mb-5">
-              Sistema de gestión de administradores, supervisores y choferes
-            </p>
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h1 className="mb-1 text-3xl font-bold">Dashboard</h1>
+                <p>
+                  Sistema de gestión de administradores, supervisores y choferes
+                </p>
+              </div>
+              <DashboardHeader />
+            </div>
+
             <DashboardStats />
-            <RecentActivity />
+            <div className="mt-6">
+              <RecentActivity />
+            </div>
           </main>
         </div>
       </div>

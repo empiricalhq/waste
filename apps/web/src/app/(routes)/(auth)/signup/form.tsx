@@ -185,7 +185,7 @@ export default function SignUpForm() {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Role</FormLabel>
+              <FormLabel>Rol</FormLabel>
               <FormControl>
                 <RoleSelect
                   value={field.value ?? ""}
