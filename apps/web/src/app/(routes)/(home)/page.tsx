@@ -12,7 +12,6 @@ import { RecentActivity } from "@/components/dashboard/recent-activity";
 
 export default async function Home() {
   const me = await getMe();
-  console.log("me", me);
   if (me) {
     return (
       <div>
