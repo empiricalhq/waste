@@ -3,8 +3,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 const options = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
+  { label: "Masculino", value: "male" },
+  { label: "Femenino", value: "female" },
 ];
 
 export function GenderRadioGroup({
