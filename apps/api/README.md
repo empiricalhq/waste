@@ -1,10 +1,23 @@
 # [pkg]: @lima-garbage/api
 
-`better-auth` uses specific API paths. Using incorrect paths will result in 404
-errors.
+**Base URL**: `/api`
 
-The base path `/api/auth` is configured in the Hono server. The library defines
-the endpoint segments.
+**Authentication**: session cookie obtained from `POST /auth/sign-in/email`.
+
+You have to send the cookie on every protected call.
+
+Errors:
+
+- 401 – no or invalid session
+- 403 – valid session, wrong role
+- 400 – malformed body / params
+- 404 – resource does not exist
+
+## Endpoints
+
+### Authentication
+
+Managed by `better-auth` library. All endpoints use `/api/auth` base path.
 
 | Action                 | Method | Endpoint                           |
 | ---------------------- | ------ | ---------------------------------- |
@@ -15,11 +28,191 @@ the endpoint segments.
 | Get session            | `GET`  | `/api/auth/get-session`            |
 | Request password reset | `POST` | `/api/auth/request-password-reset` |
 
-**To find a path, check the type definitions:**
+**Need a path that is not listed?** Open
+`node_modules/better-auth/dist/shared/better-auth.*.d.ts` and grep the method
+name (e.g. `signInEmail`).
 
-1.  Open the type file:
-    `node_modules/better-auth/dist/shared/better-auth.[hash].d.ts`
-2.  Search for the method name (e.g., `signInEmail`, `signOut`).
+### /api/admin
+
+Requires admin or supervisor role.
+
+**Drivers**:
+
+- GET /admin/drivers - List all drivers
+- POST /admin/drivers - Create a new driver
+
+  body:
+
+  ```json
+  {
+    "name": "...",
+    "email": "...",
+    "password": "..."
+  }
+  ```
+
+- PUT /admin/drivers/:id - Update driver details
+- DELETE /admin/drivers/:id - Deactivate driver
+
+**Trucks**:
+
+- GET /admin/trucks - List all trucks with locations
+- POST /admin/trucks
+
+  body:
+
+  ```json
+  {
+    "name": "...",
+    "license_plate": "..."
+  }
+  ```
+
+- PUT /admin/trucks/:id - Update truck details
+- DELETE /admin/trucks/:id - Remove truck
+
+**Routes**:
+
+- GET /admin/routes - List all routes
+- POST /admin/routes - Create new route
+
+  body:
+
+  ```json
+  {
+    "name": "...",
+    "description": "...",
+    "start_lat": "...",
+    "start_lng": "...",
+    "estimated_duration_minutes": "...",
+    "waypoints": [
+      {
+        "lat": "...",
+        "lng": "...",
+        "sequence_order": "..."
+      }
+    ]
+  }
+  ```
+
+- PUT /admin/routes/:id - Update route details
+- DELETE /admin/routes/:id - Delete route
+- GET /admin/routes/:id/waypoints - Get route waypoints
+
+**Assignments**:
+
+- GET /admin/assignments - List assignments (filterable)
+- POST /admin/routes/assign - Assign route to driver/truck
+
+  body:
+
+  ```json
+  {
+    "route_id": "...",
+    "truck_id": "...",
+    "driver_id": "...",
+    "assigned_date": "YYYY-MM-DD"
+  }
+  ```
+
+**Monitoring**:
+
+- GET /admin/alerts - Get unread alerts
+- GET /admin/issues - Get open issues
+- POST /admin/dispatch/messages - Send message to driver
+
+  body:
+
+  ```json
+  {
+    "recipient_id": "...",
+    "content": "..."
+  }
+  ```
+
+### /api/driver
+
+Requires driver role.
+
+**Route**:
+
+- GET /driver/route/current - Get current/next route details
+- POST /driver/assignments/:id/start - Start route
+- POST /driver/assignments/:id/complete - Complete route
+- POST /driver/assignments/:id/cancel - Cancel route
+
+**Live operations**:
+
+- POST /driver/location - Update location
+
+  body:
+
+  ```json
+  {"lat": ..., "lng": ..., "speed": ..., "heading": ...}
+  ```
+
+- POST /driver/issues - Report issue
+
+  body:
+
+  ```json
+  {"type": "road_blocked", "notes": "...", "lat": ..., "lng": ...}
+  ```
+
+- GET /driver/dispatch/messages - Get messages
+
+### /api/citizen
+
+Requires citizen role.
+
+Core features:
+
+- GET /citizen/truck/status - Get nearest truck status
+- PUT /citizen/profile/location - Set home location
+
+  body:
+
+  ```json
+  {"lat": ..., "lng": ...}
+  ```
+
+**Engagement**:
+
+- POST /citizen/push-token - Register push notifications
+
+  body:
+
+  ```json
+  {
+    "token": "...",
+    "device_type": "android"|"ios"
+  }
+  ```
+
+- POST /citizen/issues - Report issue
+
+  body:
+
+  ```json
+  {
+    "type": "illegal_dumping",
+    "description": "...",
+    "photo_url": "...",
+    "lat": ...,
+    "lng": ...
+  }
+  ```
+
+- POST /citizen/education/progress - Save quiz results
+
+  body:
+
+  ```json
+  {
+    "content_id": "plastics-quiz",
+    "score": 8
+  }
+  ```
 
 ## Deno deploy
 
