@@ -8,17 +8,19 @@ import {
 
 interface RoleSelectProps {
   value: string;
-  onValueChange: (value: string) => void;
+  onChange: (value: string) => void;
+  disabled?: boolean;
   required?: boolean;
 }
 
 export function RoleSelect({
   value,
-  onValueChange,
+  onChange,
+  disabled,
   required,
 }: RoleSelectProps) {
   return (
-    <Select onValueChange={onValueChange} value={value} required={required}>
+    <Select onValueChange={onChange} value={value} required={required} disabled={disabled}>
       <SelectTrigger id="role">
         <SelectValue placeholder="Seleccionar un rol" />
       </SelectTrigger>
@@ -26,6 +28,7 @@ export function RoleSelect({
         <SelectItem value="admin">Admin</SelectItem>
         <SelectItem value="supervisor">Supervisor</SelectItem>
         <SelectItem value="driver">Chofer</SelectItem>
+        <SelectItem value="citizen">Ciudadano</SelectItem>
       </SelectContent>
     </Select>
   );

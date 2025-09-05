@@ -36,7 +36,7 @@ export default function SignUpForm() {
       password: "",
       confirmPassword: "",
       gender: undefined,
-      role: "",
+      role: "citizen",
     },
   });
 
@@ -187,9 +187,15 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Role</FormLabel>
+              <FormControl>
+                <RoleSelect
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  disabled={isPending}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
-            
           )}
         />
 
