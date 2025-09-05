@@ -24,18 +24,29 @@ import {
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (user: { name: string; phone: string; role: string }) => void;
+  onAdd: (user: {
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+  }) => void;
 }
 
 export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim() && phone.trim() && role.trim()) {
-      onAdd({ name: name.trim(), phone: phone.trim(), role: role.trim() });
+    if (name.trim() && email.trim() && phone.trim() && role.trim()) {
+      onAdd({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        role: role.trim(),
+      });
       setName("");
       setPhone("");
       setRole("");
@@ -61,6 +72,16 @@ export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="email">Correo electrónico</Label>
+            <Input
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Ej: juanperez@example.com"
+              required
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="phone">Teléfono</Label>
             <Input
               id="phone"
@@ -70,7 +91,7 @@ export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
               required
             />
           </div>
-                    <div className="space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="role">Rol</Label>
             <Select onValueChange={setRole} value={role} required>
               <SelectTrigger id="role">

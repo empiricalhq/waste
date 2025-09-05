@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import SignOutButton from "../(auth)/components/button-signout";
 import { getMe } from "@/actions/user";
-import { SimpleDashboard } from "@/components/dashboard";
-import { AddUserModal } from "@/components/add-user-modal";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardStats } from "@/components/dashboard/dashboard-stats";
+import { RecentActivity } from "@/components/dashboard/recent-activity";
 //import { Dashboard }  from "@/components/dashboard"
 
 export default async function Home() {
@@ -20,7 +20,10 @@ export default async function Home() {
         <div className="lg:pl-64">
           <DashboardHeader />
           <main className="p-6">
-            <SimpleDashboard />
+            <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
+            <p className="mb-5">Sistema de gestión de administradores, supervisores y choferes</p>
+            <DashboardStats />
+            <RecentActivity />
           </main>
         </div>
       </div>

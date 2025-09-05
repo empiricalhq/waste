@@ -12,7 +12,7 @@ import { Bell, LogOut, Settings, User, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/client";
 import { useState } from "react";
-import { AddUserModal } from "@/components/add-user-modal";
+import { AddUserModal } from "@/components/dashboard/add-user-modal";
 
 export function DashboardHeader() {
   const [isPending, setIsPending] = useState(false);
