@@ -15,7 +15,7 @@ Errors:
 
 ## Endpoints
 
-### Authentication
+### /api/auth
 
 Managed by `better-auth` library. All endpoints use `/api/auth` base path.
 
