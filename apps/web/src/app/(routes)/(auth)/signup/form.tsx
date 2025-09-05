@@ -36,7 +36,7 @@ export default function SignUpForm() {
       password: "",
       confirmPassword: "",
       gender: undefined,
-      role: "citizen",
+      role: "driver",
     },
   });
 
