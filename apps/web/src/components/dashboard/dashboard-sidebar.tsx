@@ -37,7 +37,7 @@ export function DashboardSidebar() {
         const userData = await getMe();
         setUser(userData || null);
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error("Error fetching user:", error);
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -133,10 +133,14 @@ export function DashboardSidebar() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sidebar-foreground truncate text-sm font-medium">
-                  {isLoading ? 'Cargando...' : (user?.name || 'No se pudo fetchear el nombre')}
+                  {isLoading
+                    ? "Cargando..."
+                    : user?.name || "No se pudo fetchear el nombre"}
                 </p>
                 <p className="text-muted-foreground truncate text-xs">
-                  {isLoading ? 'Cargando...' : (user?.email || 'No se pudo fetchear el email')}
+                  {isLoading
+                    ? "Cargando..."
+                    : user?.email || "No se pudo fetchear el email"}
                 </p>
               </div>
             </div>

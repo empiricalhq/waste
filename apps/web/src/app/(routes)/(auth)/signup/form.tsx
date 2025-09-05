@@ -24,7 +24,6 @@ import { AtSign, MailIcon, UserIcon } from "lucide-react";
 import { GenderRadioGroup } from "../components/gender-radio-group";
 import { RoleSelect } from "../components/role-select";
 
-
 export default function SignUpForm() {
   const [isPending, startTransition] = useTransition();
   const form = useForm<SignUpValues>({

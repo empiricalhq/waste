@@ -20,8 +20,10 @@ export default async function Home() {
         <div className="lg:pl-64">
           <DashboardHeader />
           <main className="p-6">
-            <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
-            <p className="mb-5">Sistema de gestión de administradores, supervisores y choferes</p>
+            <h1 className="mb-1 text-3xl font-bold">Dashboard</h1>
+            <p className="mb-5">
+              Sistema de gestión de administradores, supervisores y choferes
+            </p>
             <DashboardStats />
             <RecentActivity />
           </main>

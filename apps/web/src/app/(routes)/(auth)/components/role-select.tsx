@@ -20,7 +20,12 @@ export function RoleSelect({
   required,
 }: RoleSelectProps) {
   return (
-    <Select onValueChange={onChange} value={value} required={required} disabled={disabled}>
+    <Select
+      onValueChange={onChange}
+      value={value}
+      required={required}
+      disabled={disabled}
+    >
       <SelectTrigger id="role">
         <SelectValue placeholder="Seleccionar un rol" />
       </SelectTrigger>

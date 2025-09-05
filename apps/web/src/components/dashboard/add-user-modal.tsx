@@ -61,9 +61,9 @@ export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
         <DialogHeader>
           <DialogTitle>Agregar nuevo usuario</DialogTitle>
         </DialogHeader>
-          <div>
-            <SignUpForm/>
-          </div>
+        <div>
+          <SignUpForm />
+        </div>
       </DialogContent>
     </Dialog>
   );
