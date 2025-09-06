@@ -49,12 +49,12 @@ Requires admin or supervisor role.
 
 **Trucks**:
 
-| Method   | Endpoint            | Description                    | Request body                                                     | Response |
-| -------- | ------------------- | ------------------------------ | ---------------------------------------------------------------- | -------- |
-| `GET`    | `/admin/trucks`     | List all trucks with locations | —                                                                | —        |
-| `POST`   | `/admin/trucks`     | Create a new truck             | <pre lang="json">{ "name": "...", "license_plate": "..." }</pre> | —        |
-| `PUT`    | `/admin/trucks/:id` | Update truck details           | —                                                                | —        |
-| `DELETE` | `/admin/trucks/:id` | Remove truck                   | —                                                                | —        |
+| Method   | Endpoint                | Description                    | Request body                                                                   |
+| -------- | ----------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
+| `GET`    | `/api/admin/trucks`     | List all trucks with locations | -                                                                              |
+| `POST`   | `/api/admin/trucks`     | Create a new truck             | <pre lang="json">{&#13; "name": "...",&#13; "license_plate": "..."&#13;}</pre> |
+| `PUT`    | `/api/admin/trucks/:id` | Update truck details           | -                                                                              |
+| `DELETE` | `/api/admin/trucks/:id` | Remove truck                   | -                                                                              |
 
 **Routes**:
 
