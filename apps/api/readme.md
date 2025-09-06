@@ -37,29 +37,21 @@ Requires admin or supervisor role.
 
 **Drivers**:
 
-| Method | Endpoint             | Description           | Sample response                                           |
-| ------ | -------------------- | --------------------- | --------------------------------------------------------- |
-| GET    | `/admin/drivers`     | List all drivers      | —                                                         |
-| POST   | `/admin/drivers`     | Create a new driver   | `{ "name": string, "email": string, "password": string }` |
-| PUT    | `/admin/drivers/:id` | Update driver details | —                                                         |
-| DELETE | `/admin/drivers/:id` | Deactivate driver     | —                                                         |
+| Method   | Endpoint             | Description           | Sample response             |
+| -------- | -------------------- | --------------------- | --------------------------- |
+| `GET`    | `/admin/drivers`     | List all drivers      | —                           |
+| `POST`   | `/admin/drivers`     | Create a new driver   | `{ name, email, password }` |
+| `PUT`    | `/admin/drivers/:id` | Update driver details | —                           |
+| `DELETE` | `/admin/drivers/:id` | Deactivate driver     | —                           |
 
 **Trucks**:
 
-- GET /admin/trucks - List all trucks with locations
-- POST /admin/trucks
-
-  Response:
-
-  ```json
-  {
-    "name": "...",
-    "license_plate": "..."
-  }
-  ```
-
-- PUT /admin/trucks/:id - Update truck details
-- DELETE /admin/trucks/:id - Remove truck
+| Method   | Endpoint            | Description                    | Sample response           |
+| -------- | ------------------- | ------------------------------ | ------------------------- |
+| `GET`    | `/admin/trucks`     | List all trucks with locations | —                         |
+| `POST`   | `/admin/trucks`     | Create a new truck             | `{ name, license_plate }` |
+| `PUT`    | `/admin/trucks/:id` | Update truck details           | —                         |
+| `DELETE` | `/admin/trucks/:id` | Remove truck                   | —                         |
 
 **Routes**:
 
@@ -91,34 +83,20 @@ Requires admin or supervisor role.
 
 **Assignments**:
 
-- GET /admin/assignments - List assignments (filterable)
-- POST /admin/routes/assign - Assign route to driver/truck
+| Method | Endpoint               | Description                   | Sample response                                    |
+| ------ | ---------------------- | ----------------------------- | -------------------------------------------------- |
+| `GET`  | `/admin/assignments`   | List assignments (filterable) | —                                                  |
+| `POST` | `/admin/routes/assign` | Assign route to driver/truck  | `{ route_id, truck_id, driver_id, assigned_date }` |
 
-  Response:
-
-  ```json
-  {
-    "route_id": "...",
-    "truck_id": "...",
-    "driver_id": "...",
-    "assigned_date": "YYYY-MM-DD"
-  }
-  ```
+Note: `assigned_date` format: `YYYY-MM-DD`
 
 **Monitoring**:
 
-- GET /admin/alerts - Get unread alerts
-- GET /admin/issues - Get open issues
-- POST /admin/dispatch/messages - Send message to driver
-
-  Response:
-
-  ```json
-  {
-    "recipient_id": "...",
-    "content": "..."
-  }
-  ```
+| Method | Endpoint                   | Description         | Sample response             |
+| ------ | -------------------------- | ------------------- | --------------------------- |
+| `GET`  | `/admin/alerts`            | Get unread alerts   | —                           |
+| `GET`  | `/admin/issues`            | Get open issues     | —                           |
+| `POST` | `/admin/dispatch/messages` | Send message driver | `{ recipient_id, content }` |
 
 ### /api/driver
 
