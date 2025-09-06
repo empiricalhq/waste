@@ -32,11 +32,11 @@ import { signOut } from "@/lib/auth/client";
 
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Choferes", href: "/dashboard/drivers", icon: Users },
-  { name: "Ubicaciones", href: "/dashboard/locations", icon: MapPin },
-  { name: "Vehículos", href: "/dashboard/vehicles", icon: Truck },
-  { name: "Configuración", href: "/dashboard/settings", icon: Settings },
+  { name: "Dashboard", href: "/dashboard/principal", icon: LayoutDashboard },
+  { name: "Choferes", href: "/dashboard/choferes", icon: Users },
+  { name: "Ubicaciones", href: "/dashboard/ubicaciones", icon: MapPin },
+  { name: "Vehículos", href: "/dashboard/vehiculos", icon: Truck },
+  { name: "Configuración", href: "/dashboard/configuracion", icon: Settings },
 ];
 
 export function DashboardSidebar() {
