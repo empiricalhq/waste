@@ -59,7 +59,7 @@ Requires admin or supervisor role.
 **Routes**:
 
 <!-- prettier-ignore-start -->
-| Method   | Endpoint                          | Description          | Request Body            |
+| Method   | Endpoint                          | Description          | Request body            |
 | -------- | --------------------------------- | -------------------- | ----------------------- |
 | `GET`    | `/api/admin/routes`               | List all routes      | -                       |
 | `POST`   | `/api/admin/routes`               | Create new route     | <pre lang="json">{&#13;  "name": "...",&#13;  "description": "...",&#13;  "start_lat": "...",&#13;  "start_lng": "...",&#13;  "estimated_duration_minutes": "...",&#13;  "waypoints": [&#13;    {&#13;      "lat": "...",&#13;      "lng": "...",&#13;      "sequence_order": "..."&#13;    }&#13;  ]&#13;}</pre> |
@@ -70,62 +70,62 @@ Requires admin or supervisor role.
 
 **Assignments**:
 
-| Method | Endpoint               | Description                   | Request body                                                                                           | Response |
-| ------ | ---------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------ | -------- |
-| `GET`  | `/admin/assignments`   | List assignments (filterable) | —                                                                                                      | —        |
-| `POST` | `/admin/routes/assign` | Assign route to driver/truck  | <pre lang="json">{ "route_id": 1, "truck_id": 2, "driver_id": 3, "assigned_date": "2025-09-06" }</pre> | —        |
+<!-- prettier-ignore-start -->
+| Method | Endpoint                   | Description                   | Request body            |
+| ------ | -------------------------- | ----------------------------- | ----------------------- |
+| `GET`  | `/api/admin/assignments`   | List assignments (filterable) | -                       |
+| `POST` | `/api/admin/routes/assign` | Assign route to driver/truck  | <pre lang="json">{&#13;  "route_id": "...",&#13;  "truck_id": "...",&#13;  "driver_id": "...",&#13;  "assigned_date": "..."&#13;}</pre> |
+<!-- prettier-ignore-end -->
 
 Note: `assigned_date` format = `YYYY-MM-DD`.
 
 **Monitoring**:
 
-| Method | Endpoint                   | Description         | Request body                                                   | Response |
-| ------ | -------------------------- | ------------------- | -------------------------------------------------------------- | -------- |
-| `GET`  | `/admin/alerts`            | Get unread alerts   | —                                                              | —        |
-| `GET`  | `/admin/issues`            | Get open issues     | —                                                              | —        |
-| `POST` | `/admin/dispatch/messages` | Send message driver | <pre lang="json">{ "recipient_id": 1, "content": "..." }</pre> | —        |
+| Method | Endpoint                       | Description            | Request body                                                                     |
+| ------ | ------------------------------ | ---------------------- | -------------------------------------------------------------------------------- |
+| `GET`  | `/api/admin/alerts`            | Get unread alerts      | -                                                                                |
+| `GET`  | `/api/admin/issues`            | Get open issues        | -                                                                                |
+| `POST` | `/api/admin/dispatch/messages` | Send message to driver | <pre lang="json">{&#13; "recipient_id": "...",&#13; "content": "..."&#13;}</pre> |
 
 ### /api/driver
 
-Requires **driver** role.
+Requires driver role.
 
-#### Routes
+**Routes**:
 
-| Method | Endpoint                           | Description       | Request body | Response |
-| ------ | ---------------------------------- | ----------------- | ------------ | -------- |
-| `GET`  | `/driver/route/current`            | Get current route | —            | —        |
-| `POST` | `/driver/assignments/:id/start`    | Start route       | —            | —        |
-| `POST` | `/driver/assignments/:id/complete` | Complete route    | —            | —        |
-| `POST` | `/driver/assignments/:id/cancel`   | Cancel route      | —            | —        |
+| Method | Endpoint                               | Description                    | Request body |
+| ------ | -------------------------------------- | ------------------------------ | ------------ |
+| `GET`  | `/api/driver/route/current`            | Get current/next route details | -            |
+| `POST` | `/api/driver/assignments/:id/start`    | Start route                    | -            |
+| `POST` | `/api/driver/assignments/:id/complete` | Complete route                 | -            |
+| `POST` | `/api/driver/assignments/:id/cancel`   | Cancel route                   | -            |
 
-#### Live operations
+**Live operations**:
 
-| Method | Endpoint                    | Description     | Request body | Response                                                                              |
-| ------ | --------------------------- | --------------- | ------------ | ------------------------------------------------------------------------------------- |
-| `POST` | `/driver/location`          | Update location | —            | <pre lang="json">{ "lat": 0, "lng": 0, "speed": 0, "heading": 0 }</pre>               |
-| `POST` | `/driver/issues`            | Report issue    | —            | <pre lang="json">{ "type": "road_blocked", "notes": "...", "lat": 0, "lng": 0 }</pre> |
-| `GET`  | `/driver/dispatch/messages` | Get messages    | —            | —                                                                                     |
+| Method | Endpoint                        | Description     | Request body                                                                                                          |
+| ------ | ------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/driver/location`          | Update location | <pre lang="json">{&#13; "lat": "...",&#13; "lng": "...",&#13; "speed": "...",&#13; "heading": "..."&#13;}</pre>       |
+| `POST` | `/api/driver/issues`            | Report issue    | <pre lang="json">{&#13; "type": "road_blocked",&#13; "notes": "...",&#13; "lat": "...",&#13; "lng": "..."&#13;}</pre> |
+| `GET`  | `/api/driver/dispatch/messages` | Get messages    | -                                                                                                                     |
 
----
+### /api/citizen
 
-### `/api/citizen`
+Requires citizen role.
 
-Requires **citizen** role.
+**Core features**:
 
-#### Core features
+| Method | Endpoint                        | Description              | Request body                                                        |
+| ------ | ------------------------------- | ------------------------ | ------------------------------------------------------------------- |
+| `GET`  | `/api/citizen/truck/status`     | Get nearest truck status | -                                                                   |
+| `PUT`  | `/api/citizen/profile/location` | Set home location        | <pre lang="json">{&#13; "lat": "...",&#13; "lng": "..."&#13;}</pre> |
 
-| Method | Endpoint                    | Description       | Request body                                  | Response |
-| ------ | --------------------------- | ----------------- | --------------------------------------------- | -------- |
-| `GET`  | `/citizen/truck/status`     | Get nearest truck | —                                             | —        |
-| `PUT`  | `/citizen/profile/location` | Set home location | <pre lang="json">{ "lat": 0, "lng": 0 }</pre> | —        |
+**Engagement**:
 
-#### Engagement
-
-| Method | Endpoint                      | Description                 | Request body | Response                                                                                                           |
-| ------ | ----------------------------- | --------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `POST` | `/citizen/push-token`         | Register push notifications | —            | <pre lang="json">{ "token": "...", "device_type": "android" }</pre>                                                |
-| `POST` | `/citizen/issues`             | Report issue                | —            | <pre lang="json">{ "type": "illegal_dumping", "description": "...", "photo_url": "...", "lat": 0, "lng": 0 }</pre> |
-| `POST` | `/citizen/education/progress` | Save quiz results           | —            | <pre lang="json">{ "content_id": "plastics-quiz", "score": 8 }</pre>                                               |
+| Method | Endpoint                          | Description                 | Request Body                                                                                                                                            |
+| ------ | --------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/api/citizen/push-token`         | Register push notifications | <pre lang="json">{&#13; "token": "...",&#13; "device_type": "android\|ios"&#13;}</pre>                                                                  |
+| `POST` | `/api/citizen/issues`             | Report issue                | <pre lang="json">{&#13; "type": "illegal_dumping",&#13; "description": "...",&#13; "photo_url": "...",&#13; "lat": "...",&#13; "lng": "..."&#13;}</pre> |
+| `POST` | `/api/citizen/education/progress` | Save quiz results           | <pre lang="json">{&#13; "content_id": "plastics-quiz",&#13; "score": "..."&#13;}</pre>                                                                  |
 
 ## Deno deploy
 
