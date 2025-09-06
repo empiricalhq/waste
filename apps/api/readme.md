@@ -40,7 +40,7 @@ Requires admin or supervisor role.
 - GET /admin/drivers - List all drivers
 - POST /admin/drivers - Create a new driver
 
-  body:
+  Response:
 
   ```json
   {
@@ -58,7 +58,7 @@ Requires admin or supervisor role.
 - GET /admin/trucks - List all trucks with locations
 - POST /admin/trucks
 
-  body:
+  Response:
 
   ```json
   {
@@ -75,7 +75,7 @@ Requires admin or supervisor role.
 - GET /admin/routes - List all routes
 - POST /admin/routes - Create new route
 
-  body:
+  Response:
 
   ```json
   {
@@ -103,7 +103,7 @@ Requires admin or supervisor role.
 - GET /admin/assignments - List assignments (filterable)
 - POST /admin/routes/assign - Assign route to driver/truck
 
-  body:
+  Response:
 
   ```json
   {
@@ -120,7 +120,7 @@ Requires admin or supervisor role.
 - GET /admin/issues - Get open issues
 - POST /admin/dispatch/messages - Send message to driver
 
-  body:
+  Response:
 
   ```json
   {
@@ -144,7 +144,7 @@ Requires driver role.
 
 - POST /driver/location - Update location
 
-  body:
+  Response:
 
   ```json
   {"lat": ..., "lng": ..., "speed": ..., "heading": ...}
@@ -152,7 +152,7 @@ Requires driver role.
 
 - POST /driver/issues - Report issue
 
-  body:
+  Response:
 
   ```json
   {"type": "road_blocked", "notes": "...", "lat": ..., "lng": ...}
@@ -169,7 +169,7 @@ Core features:
 - GET /citizen/truck/status - Get nearest truck status
 - PUT /citizen/profile/location - Set home location
 
-  body:
+  Response:
 
   ```json
   {"lat": ..., "lng": ...}
@@ -179,7 +179,7 @@ Core features:
 
 - POST /citizen/push-token - Register push notifications
 
-  body:
+  Response:
 
   ```json
   {
@@ -190,7 +190,7 @@ Core features:
 
 - POST /citizen/issues - Report issue
 
-  body:
+  Response:
 
   ```json
   {
@@ -204,7 +204,7 @@ Core features:
 
 - POST /citizen/education/progress - Save quiz results
 
-  body:
+  Response:
 
   ```json
   {
