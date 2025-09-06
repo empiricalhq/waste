@@ -1,8 +1,7 @@
 # [pkg]: @lima-garbage/api
 
-**Base URL**: `/api`
-
-**Authentication**: session cookie obtained from `POST /auth/sign-in/email`.
+> **Base URL**: `/api`\
+> **Authentication**: session cookie obtained from `POST /auth/sign-in/email`.
 
 You have to send the cookie on every protected call.
 
