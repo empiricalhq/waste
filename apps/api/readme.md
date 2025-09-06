@@ -37,6 +37,13 @@ Requires admin or supervisor role.
 
 **Drivers**:
 
+| Method | Endpoint             | Description           | Sample response                                        |
+| ------ | -------------------- | --------------------- | ------------------------------------------------------ |
+| GET    | `/admin/drivers`     | List all drivers      | —                                                      |
+| POST   | `/admin/drivers`     | Create a new driver   | `{ "name": "...", "email": "...", "password": "..." }` |
+| PUT    | `/admin/drivers/:id` | Update driver details | —                                                      |
+| DELETE | `/admin/drivers/:id` | Deactivate driver     | —                                                      |
+
 - GET /admin/drivers - List all drivers
 - POST /admin/drivers - Create a new driver
 
