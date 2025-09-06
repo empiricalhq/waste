@@ -102,11 +102,13 @@ Requires driver role.
 
 **Live operations**:
 
-| Method | Endpoint                        | Description     | Request body                                                                                                          |
-| ------ | ------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/driver/location`          | Update location | <pre lang="json">{&#13; "lat": "...",&#13; "lng": "...",&#13; "speed": "...",&#13; "heading": "..."&#13;}</pre>       |
+<!-- prettier-ignore-start -->
+| Method | Endpoint                        | Description     | Request body            |
+| ------ | ------------------------------- | --------------- | ----------------------- |
+| `POST` | `/api/driver/location`          | Update location | <pre lang="json">{&#13; "lat": "...",&#13; "lng": "...",&#13; "speed": "...",&#13; "heading": "..."&#13;}</pre> |
 | `POST` | `/api/driver/issues`            | Report issue    | <pre lang="json">{&#13; "type": "road_blocked",&#13; "notes": "...",&#13; "lat": "...",&#13; "lng": "..."&#13;}</pre> |
-| `GET`  | `/api/driver/dispatch/messages` | Get messages    | -                                                                                                                     |
+| `GET`  | `/api/driver/dispatch/messages` | Get messages    | -                       |
+<!-- prettier-ignore-end -->
 
 ### /api/citizen
 
@@ -121,11 +123,13 @@ Requires citizen role.
 
 **Engagement**:
 
-| Method | Endpoint                          | Description                 | Request Body                                                                                                                                            |
-| ------ | --------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST` | `/api/citizen/push-token`         | Register push notifications | <pre lang="json">{&#13; "token": "...",&#13; "device_type": "android\|ios"&#13;}</pre>                                                                  |
+<!-- prettier-ignore-start -->
+| Method | Endpoint                          | Description                 | Request Body            |
+| ------ | --------------------------------- | --------------------------- | ----------------------- |
+| `POST` | `/api/citizen/push-token`         | Register push notifications | <pre lang="json">{&#13; "token": "...",&#13; "device_type": "android\|ios"&#13;}</pre> |
 | `POST` | `/api/citizen/issues`             | Report issue                | <pre lang="json">{&#13; "type": "illegal_dumping",&#13; "description": "...",&#13; "photo_url": "...",&#13; "lat": "...",&#13; "lng": "..."&#13;}</pre> |
-| `POST` | `/api/citizen/education/progress` | Save quiz results           | <pre lang="json">{&#13; "content_id": "plastics-quiz",&#13; "score": "..."&#13;}</pre>                                                                  |
+| `POST` | `/api/citizen/education/progress` | Save quiz results           | <pre lang="json">{&#13; "content_id": "plastics-quiz",&#13; "score": "..."&#13;}</pre> |
+<!-- prettier-ignore-end -->
 
 ## Deno deploy
 
