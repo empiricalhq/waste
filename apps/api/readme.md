@@ -44,22 +44,6 @@ Requires admin or supervisor role.
 | PUT    | `/admin/drivers/:id` | Update driver details | —                                                         |
 | DELETE | `/admin/drivers/:id` | Deactivate driver     | —                                                         |
 
-- GET /admin/drivers - List all drivers
-- POST /admin/drivers - Create a new driver
-
-  Response:
-
-  ```json
-  {
-    "name": "...",
-    "email": "...",
-    "password": "..."
-  }
-  ```
-
-- PUT /admin/drivers/:id - Update driver details
-- DELETE /admin/drivers/:id - Deactivate driver
-
 **Trucks**:
 
 - GET /admin/trucks - List all trucks with locations
