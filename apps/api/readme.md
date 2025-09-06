@@ -58,13 +58,15 @@ Requires admin or supervisor role.
 
 **Routes**:
 
-| Method   | Endpoint                      | Description          | Request body | Response                                                                                                                                                                                                               |
-| -------- | ----------------------------- | -------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET`    | `/admin/routes`               | List all routes      | —            | <pre lang="json">{ "name": "...", "description": "...", "start_lat": "...", "start_lng": "...", "estimated_duration_minutes": "...", "waypoints": \[ { "lat": "...", "lng": "...", "sequence_order": "..." } ] }</pre> |
-| `POST`   | `/admin/routes`               | Create new route     | —            | same as above                                                                                                                                                                                                          |
-| `PUT`    | `/admin/routes/:id`           | Update route details | —            | —                                                                                                                                                                                                                      |
-| `DELETE` | `/admin/routes/:id`           | Delete route         | —            | —                                                                                                                                                                                                                      |
-| `GET`    | `/admin/routes/:id/waypoints` | Get route waypoints  | —            | —                                                                                                                                                                                                                      |
+<!-- prettier-ignore-start -->
+| Method   | Endpoint                          | Description          | Request Body            |
+| -------- | --------------------------------- | -------------------- | ----------------------- |
+| `GET`    | `/api/admin/routes`               | List all routes      | -                       |
+| `POST`   | `/api/admin/routes`               | Create new route     | <pre lang="json">{&#13;  "name": "...",&#13;  "description": "...",&#13;  "start_lat": "...",&#13;  "start_lng": "...",&#13;  "estimated_duration_minutes": "...",&#13;  "waypoints": [&#13;    {&#13;      "lat": "...",&#13;      "lng": "...",&#13;      "sequence_order": "..."&#13;    }&#13;  ]&#13;}</pre> |
+| `PUT`    | `/api/admin/routes/:id`           | Update route details | -                       |
+| `DELETE` | `/api/admin/routes/:id`           | Delete route         | -                       |
+| `GET`    | `/api/admin/routes/:id/waypoints` | Get route waypoints  | -                       |
+<!-- prettier-ignore-end -->
 
 **Assignments**:
 
