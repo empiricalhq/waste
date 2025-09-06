@@ -7,10 +7,10 @@ You have to send the cookie on every protected call.
 
 Errors:
 
-- 401 – no or invalid session
-- 403 – valid session, wrong role
-- 400 – malformed body / params
-- 404 – resource does not exist
+- 401 (unauthorized) – no valid session or invalid credentials
+- 403 (forbidden) – valid session, wrong role
+- 400 (bad request) – malformed body / params
+- 404 (not found) – resource does not exist
 
 ## Endpoints
 
@@ -93,12 +93,12 @@ Requires driver role.
 
 **Routes**:
 
-| Method | Endpoint                               | Description                    | Request body |
-| ------ | -------------------------------------- | ------------------------------ | ------------ |
-| `GET`  | `/api/driver/route/current`            | Get current/next route details | -            |
-| `POST` | `/api/driver/assignments/:id/start`    | Start route                    | -            |
-| `POST` | `/api/driver/assignments/:id/complete` | Complete route                 | -            |
-| `POST` | `/api/driver/assignments/:id/cancel`   | Cancel route                   | -            |
+| Method | Endpoint                               | Description                           | Request body |
+| ------ | -------------------------------------- | ------------------------------------- | ------------ |
+| `GET`  | `/api/driver/route/current`            | Get current/next route details        | -            |
+| `POST` | `/api/driver/assignments/:id/start`    | Mark assigned route as 'active'.      | -            |
+| `POST` | `/api/driver/assignments/:id/complete` | Mark the active route as 'completed'. | -            |
+| `POST` | `/api/driver/assignments/:id/cancel`   | Mark the active route as 'cancelled'. | -            |
 
 **Live operations**:
 
@@ -135,7 +135,7 @@ Requires citizen role.
 
 For a standard project:
 
-```
+```txt
 Install command:  deno i
 Build command:    -
 Entrypoint:       src/index.ts
@@ -145,7 +145,7 @@ Args:             -
 For a monorepo, install dependencies from the `apps/api` folder and copy them to
 the root:
 
-```
+```txt
 # ignore monorepo structure and copy to root
 Install command:  mv package.json _package.json.bak && cp -r apps/api/* ./ && deno install
 Build command:    -
