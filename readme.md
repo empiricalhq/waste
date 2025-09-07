@@ -6,10 +6,12 @@ operadores y ciudadanos.
 
 El sistema actualmente incluye:
 
-- Aplicación web para visualizar ubicación y métricas de camiones recolectores
-- Aplicación móvil para operadores con registro de trayectos e incidencias
-- Aplicación móvil pública para notificaciones de llegada y reportes de
+- [`autoridades`] Aplicación web para visualizar ubicación y métricas de
+  camiones recolectores
+- [`operadores`] Aplicación móvil para operadores con registro de trayectos e
   incidencias
+- [`ciudadanos`] Aplicación móvil pública para notificaciones de llegada y
+  reportes de incidencias
 
 Nuestros **planes a futuro** incluyen:
 
