@@ -6,21 +6,19 @@ operadores y ciudadanos.
 
 El sistema actualmente incluye:
 
-- Para autoridades: Aplicación web para visualizar ubicación y métricas de
-  camiones recolectores
-- Para operadores: Aplicación móvil para operadores con registro de trayectos e
+- Aplicación web para visualizar ubicación y métricas de camiones recolectores
+- Aplicación móvil para operadores con registro de trayectos e incidencias
+- Aplicación móvil pública para notificaciones de llegada y reportes de
   incidencias
-- Para ciudadanos: Aplicación móvil pública para notificaciones de llegada y
-  reportes de incidencias
 
 Nuestros **planes a futuro** incluyen:
 
-- [hardware] Integrar trackers GPS en los camiones recolectores para obtener
+- [`hardware`] Integrar trackers GPS en los camiones recolectores para obtener
   datos de ubicación en tiempo real con mayor precisión y confiabilidad,
   manteniendo la aplicación móvil como respaldo
-- [data-science] Optimizar rutas y frecuencias con datos recolectados
-- [app] Implementar clasificación automática con machine learning
-- [deploy] Expandir el sistema a otras municipalidades adaptándolo al contexto
+- [`data-science`] Optimizar rutas y frecuencias con datos recolectados
+- [`app`] Implementar clasificación automática con machine learning
+- [`deploy`] Expandir el sistema a otras municipalidades adaptándolo al contexto
   local
 
 **El team**:
