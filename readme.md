@@ -44,8 +44,15 @@ Nuestros **planes a futuro** incluyen:
           <img src="https://avatars.githubusercontent.com/u/48870694?v=4?s=100" width="100px;" alt="Pedro Rojas F"/><br />
           <sub><b>Pedro Rojas F</b></sub>
         </a><br />
-        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
+        <a href="#maintenance-PedroRojasF" title="Maintenance">🚧</a>
         <a href="#ideas-PedroRojasF" title="Ideas">💡</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/andrescosmemalaz">
+          <img src="https://avatars.githubusercontent.com/u/57787417?v=4?s=100" width="100px;" alt="Andrés Cosme Malaz"/><br />
+          <sub><b>Andrés Cosme Malaz</b></sub>
+        </a><br />
+        <a href="#maintenance-andrescosmemalaz" title="Maintenance">🚧</a>
       </td>
     </tr>
   </tbody>
