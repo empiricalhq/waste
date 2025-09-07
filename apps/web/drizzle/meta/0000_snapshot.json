@@ -238,7 +238,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": "'member'"
+          "default": "'user'"
         },
         "gender": {
           "name": "gender",
@@ -342,7 +342,7 @@
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": ["admin", "member"]
+      "values": ["admin", "user"]
     }
   },
   "schemas": {},
