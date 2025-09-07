@@ -40,18 +40,21 @@ const seedUsers = [
     authRole: 'user' as const,
     appRole: 'supervisor' as const,
     name: 'Juan Díaz',
+    username: 'juan.supervisor',
     email: 'supervisor@example.com',
   },
   {
     authRole: 'user' as const,
     appRole: 'driver' as const,
     name: 'Luis Martínez',
+    username: 'luis.driver',
     email: 'driver@example.com',
   },
   {
     authRole: 'user' as const,
     appRole: 'citizen' as const,
     name: 'María Pérez',
+    username: 'maria.citizen',
     email: 'citizen@example.com',
   },
 ];
@@ -87,7 +90,10 @@ async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
       password: 'password123',
       name: u.name,
       role: u.authRole,
-      data: { appRole: u.appRole },
+      data: {
+        appRole: u.appRole,
+        username: u.username,
+      },
     },
     headers: { Cookie: sessionToken },
   });
