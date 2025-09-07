@@ -30,7 +30,6 @@ import {
 import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth/client";
 
-
 const navigation = [
   { name: "Dashboard", href: "/dashboard/principal", icon: LayoutDashboard },
   { name: "Choferes", href: "/dashboard/choferes", icon: Users },

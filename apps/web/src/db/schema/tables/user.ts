@@ -1,7 +1,7 @@
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { role, genderEnum } from "..";
 
-export const user = pgTable("driver", {
+export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   username: text("username").unique(),

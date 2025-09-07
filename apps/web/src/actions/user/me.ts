@@ -12,5 +12,15 @@ export async function getMe(): Promise<UserType | null | undefined> {
     return null;
   }
 
-  return (await db.select().from(user).where(eq(user.id, session.user.id)))[0];
+  const me = (
+    await db.select().from(user).where(eq(user.id, session.user.id))
+  )[0];
+  if (!me) {
+    return null;
+  }
+  if (me.role !== "admin" && me.role !== "supervisor") {
+    return null;
+  }
+
+  return me;
 }
