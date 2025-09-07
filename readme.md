@@ -1,8 +1,27 @@
 # [monorepo]: lima-limpia
 
-@lima-limpia es un sistema de gestión de residuos urbanos que consiste de tres
-aplicaciones cliente y una API central. Los clientes se comunican solo con la
-API, que es la única autorizada a acceder directamente a la base de datos.
+@lima-limpia es un sistema de gestión de residuos urbanos que rastrea en tiempo
+real los camiones recolectores y facilita la comunicación entre autoridades,
+operadores y ciudadanos.
+
+El sistema actualmente incluye:
+
+- Para autoridades: Aplicación web para visualizar ubicación y métricas de
+  camiones recolectores
+- Para operadores: Aplicación móvil para operadores con registro de trayectos e
+  incidencias
+- Para ciudadanos: Aplicación móvil pública para notificaciones de llegada y
+  reportes de incidencias
+
+Nuestros **planes a futuro** incluyen:
+
+- [hardware] Integrar trackers GPS en los camiones recolectores para obtener
+  datos de ubicación en tiempo real con mayor precisión y confiabilidad,
+  manteniendo la aplicación móvil como respaldo
+- [data-science] Optimizar rutas y frecuencias con datos recolectados
+- [app] Implementar clasificación automática con machine learning
+- [deploy] Expandir el sistema a otras municipalidades adaptándolo al contexto
+  local
 
 **El team**:
 
@@ -27,13 +46,6 @@ API, que es la única autorizada a acceder directamente a la base de datos.
         </a><br />
         <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
         <a href="#ideas-PedroRojasF" title="Ideas">💡</a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/andrescosmemalaz">
-          <img src="https://avatars.githubusercontent.com/u/57787417?v=4?s=100" width="100px;" alt="Andrés Cosme Malaz"/><br />
-          <sub><b>Andrés Cosme Malaz</b></sub>
-        </a><br />
-        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
       </td>
     </tr>
   </tbody>
@@ -90,6 +102,9 @@ Ejecuta todos estos comandos desde la raíz del proyecto.
    ```bash
    bun --filter @lima-garbage/api test
    ```
+
+   Para ver los endpoints disponibles, visita la documentación de la API en
+   [apps/api/readme.md](apps/api/readme.md).
 
 ## Repositorios
 
