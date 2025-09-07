@@ -1,8 +1,27 @@
-# [monorepo] lima-limpia
+# [monorepo]: lima-limpia
 
-@lima-limpia es un sistema de gestión de residuos urbanos con tres aplicaciones
-cliente y una API central. Los clientes se comunican solo con la API, que es la
-única autorizada a acceder directamente a la base de datos.
+@lima-limpia es un sistema de gestión de residuos urbanos que rastrea en tiempo
+real los camiones recolectores y facilita la comunicación entre autoridades,
+operadores y ciudadanos.
+
+El sistema actualmente incluye:
+
+- [`autoridades`] Aplicación web para visualizar ubicación y métricas de
+  camiones recolectores
+- [`operadores`] Aplicación móvil para operadores con registro de trayectos e
+  incidencias
+- [`ciudadanos`] Aplicación móvil pública para notificaciones de llegada y
+  reportes de incidencias
+
+Nuestros **planes a futuro** incluyen:
+
+- [`hardware`] Integrar trackers GPS en los camiones recolectores para obtener
+  datos de ubicación en tiempo real con mayor precisión y confiabilidad,
+  manteniendo la aplicación móvil como respaldo
+- [`data-science`] Optimizar rutas y frecuencias con datos recolectados
+- [`app`] Implementar clasificación automática con machine learning
+- [`deploy`] Expandir el sistema a otras municipalidades adaptándolo al contexto
+  local
 
 **El team**:
 
@@ -25,7 +44,7 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
           <img src="https://avatars.githubusercontent.com/u/48870694?v=4?s=100" width="100px;" alt="Pedro Rojas F"/><br />
           <sub><b>Pedro Rojas F</b></sub>
         </a><br />
-        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
+        <a href="#maintenance-PedroRojasF" title="Maintenance">🚧</a>
         <a href="#ideas-PedroRojasF" title="Ideas">💡</a>
       </td>
       <td align="center">
@@ -33,7 +52,7 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
           <img src="https://avatars.githubusercontent.com/u/57787417?v=4?s=100" width="100px;" alt="Andrés Cosme Malaz"/><br />
           <sub><b>Andrés Cosme Malaz</b></sub>
         </a><br />
-        <a href="#maintenance-totallynotdavid" title="Maintenance">🚧</a>
+        <a href="#maintenance-andrescosmemalaz" title="Maintenance">🚧</a>
       </td>
     </tr>
   </tbody>
@@ -43,10 +62,18 @@ cliente y una API central. Los clientes se comunican solo con la API, que es la
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-**Nuestro stack**: TypeScript, React Native (Expo), Flutter, Next.js, Supabase
-(PostgreSQL), better-auth, drizzle-orm, Tailwind CSS, Zustand.
+**Nuestro stack**: TypeScript es el lenguaje principal del proyecto. Usamos
+frameworks como Next.js para la web, la app de uso público en React Native con
+Expo, la app de uso interno para choferes en Flutter y Supabase con PostgreSQL
+como backend.
 
-**Deploy**: aplicaciones móviles vía Expo y API en Deno Deploy.
+Adicionalmente, dependemos de los siguientes paquetes: better-auth para la
+autenticación, drizzle-orm para el esquema, Tailwind CSS para los estilos,
+Zustand para la gestión de estado.
+
+**Deploy**: Las aplicaciones móviles se compilan con EAS, el
+[CI de Expo](https://docs.expo.dev/build/building-on-ci/) y la API a través de
+[Deno Deploy EA](https://docs.deno.com/deploy/early-access/).
 
 ## Guía rápida
 
@@ -83,11 +110,14 @@ Ejecuta todos estos comandos desde la raíz del proyecto.
    bun --filter @lima-garbage/api test
    ```
 
+   Para ver los endpoints disponibles, visita la documentación de la API en
+   [apps/api/readme.md](apps/api/readme.md).
+
 ## Repositorios
 
 1. **API ([apps/api](apps/api))**: Aplicación
    [hono](https://hono.dev/docs/getting-started/deno) desplegada en
-   [Deno Deploy](https://console.deno.com/empirical). **See it live at**
+   [Deno Deploy](https://console.deno.com/empirical). **Disponible en**
    [https://api-prod.empirical.deno.net/](https://api-prod.empirical.deno.net/)
    - Gestiona todas las operaciones de datos.
    - Autenticación con
