@@ -8,6 +8,7 @@ const disallowedUsernamePatterns = [
   "jabirdev",
   "cakfan",
   "withcakfan",
+  "user",
 ];
 
 export const SignUpSchema = z
@@ -42,7 +43,7 @@ export const SignUpSchema = z
       message: "Gender must be either 'male' or 'female'.",
     }),
     role: z.enum(["admin", "supervisor", "driver"], {
-      message: "Role must be one of: admin, supervisor, driver, or citizen.",
+      message: "Role must be one of: admin, supervisor or driver.",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {

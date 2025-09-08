@@ -1,5 +1,5 @@
 CREATE TYPE "public"."gender" AS ENUM('male', 'female');--> statement-breakpoint
-CREATE TYPE "public"."role" AS ENUM('admin', 'member');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('admin', "supervisor", "citizen", "driver", "user");--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
 	"accountId" text NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE "user" (
 	"email" text NOT NULL,
 	"emailVerified" boolean NOT NULL,
 	"image" text,
-	"role" "role" DEFAULT 'member' NOT NULL,
+	"role" "role" DEFAULT 'driver' NOT NULL,
 	"gender" "gender",
 	"createdAt" timestamp DEFAULT now(),
 	"updatedAt" timestamp DEFAULT now(),
