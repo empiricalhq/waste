@@ -15,7 +15,7 @@ export default function SignUpPage() {
         <SignUpForm />
         <div className="flex items-center justify-center gap-2">
           <small>Already have account?</small>
-          <Link href={"/signin"} className="text-sm leading-none font-bold">
+          <Link href={"/signin"} className="text-sm font-bold leading-none">
             Sign In
           </Link>
         </div>
