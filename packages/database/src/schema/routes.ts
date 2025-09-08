@@ -37,11 +37,9 @@ export const route = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => [
-    index('route_status_idx').on(table.status),
-    index('route_created_by_idx').on(table.createdBy),
-    index('route_start_location_idx').on(table.startLat, table.startLng),
-  ],
+  (table) => ({
+    statusIdx: index('route_status_idx').on(table.status),
+  }),
 );
 
 export const routeWaypoint = pgTable(
@@ -55,12 +53,11 @@ export const routeWaypoint = pgTable(
     lat: doublePrecision('lat').notNull(),
     lng: doublePrecision('lng').notNull(),
     streetName: text('street_name'),
-    estimatedArrivalOffsetMinutes: integer('estimated_arrival_offset_minutes').notNull(), // minutes from route start
+    estimatedArrivalOffsetMinutes: integer('estimated_arrival_offset_minutes').notNull(),
   },
-  (table) => [
-    index('route_waypoint_route_sequence_idx').on(table.routeId, table.sequenceOrder),
-    index('route_waypoint_location_idx').on(table.lat, table.lng),
-  ],
+  (table) => ({
+    routeSequenceIdx: index('route_waypoint_route_sequence_idx').on(table.routeId, table.sequenceOrder),
+  }),
 );
 
 export const routeSchedule = pgTable(
@@ -69,15 +66,13 @@ export const routeSchedule = pgTable(
     routeId: text('route_id')
       .notNull()
       .references(() => route.id, { onDelete: 'cascade' }),
-    dayOfWeek: integer('day_of_week').notNull(), // 0=lunes, 1=martes, etc.
+    dayOfWeek: integer('day_of_week').notNull(),
     startTime: time('start_time').notNull(),
   },
-  (table) => {
-    return {
-      pk: uniqueIndex('route_schedule_pkey').on(table.routeId, table.dayOfWeek),
-      dayIdx: index('route_schedule_day_idx').on(table.dayOfWeek),
-    };
-  },
+  (table) => ({
+    pk: uniqueIndex('route_schedule_pkey').on(table.routeId, table.dayOfWeek),
+    dayIdx: index('route_schedule_day_idx').on(table.dayOfWeek),
+  }),
 );
 
 export const routeAssignment = pgTable(
@@ -106,12 +101,9 @@ export const routeAssignment = pgTable(
       .references(() => user.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => [
-    index('route_assignment_date_idx').on(table.assignedDate),
-    index('route_assignment_status_idx').on(table.status),
-    index('route_assignment_driver_idx').on(table.driverId),
-    index('route_assignment_truck_idx').on(table.truckId),
-    index('route_assignment_scheduled_start_idx').on(table.scheduledStartTime),
-    index('route_assignment_route_date_idx').on(table.routeId, table.assignedDate),
-  ],
+  (table) => ({
+    driverDateIdx: index('idx_assignment_driver_date').on(table.driverId, table.assignedDate),
+    truckDateIdx: index('idx_assignment_truck_date').on(table.truckId, table.assignedDate),
+    dateStatusIdx: index('idx_assignment_date_status').on(table.assignedDate, table.status),
+  }),
 );

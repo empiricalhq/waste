@@ -241,54 +241,24 @@ ALTER TABLE "system_alert" ADD CONSTRAINT "system_alert_driver_id_user_id_fk" FO
 ALTER TABLE "dispatch_message" ADD CONSTRAINT "dispatch_message_sender_id_user_id_fk" FOREIGN KEY ("sender_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "dispatch_message" ADD CONSTRAINT "dispatch_message_recipient_id_user_id_fk" FOREIGN KEY ("recipient_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "push_notification_token" ADD CONSTRAINT "push_notification_token_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "account_user_id_idx" ON "account" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "session_user_id_idx" ON "session" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "session_expires_at_idx" ON "session" USING btree ("expiresAt");--> statement-breakpoint
 CREATE INDEX "user_app_role_idx" ON "user" USING btree ("appRole");--> statement-breakpoint
 CREATE INDEX "user_is_active_idx" ON "user" USING btree ("isActive");--> statement-breakpoint
-CREATE INDEX "user_created_at_idx" ON "user" USING btree ("createdAt");--> statement-breakpoint
-CREATE INDEX "verification_identifier_idx" ON "verification" USING btree ("identifier");--> statement-breakpoint
-CREATE INDEX "verification_expires_at_idx" ON "verification" USING btree ("expiresAt");--> statement-breakpoint
-CREATE INDEX "truck_is_active_idx" ON "truck" USING btree ("is_active");--> statement-breakpoint
-CREATE INDEX "truck_name_idx" ON "truck" USING btree ("name");--> statement-breakpoint
-CREATE INDEX "truck_current_location_updated_idx" ON "truck_current_location" USING btree ("updated_at");--> statement-breakpoint
-CREATE INDEX "truck_current_location_assignment_idx" ON "truck_current_location" USING btree ("route_assignment_id");--> statement-breakpoint
-CREATE INDEX "truck_current_location_coords_idx" ON "truck_current_location" USING btree ("lat","lng");--> statement-breakpoint
 CREATE INDEX "truck_location_history_truck_recorded_idx" ON "truck_location_history" USING btree ("truck_id","recorded_at");--> statement-breakpoint
-CREATE INDEX "truck_location_history_recorded_idx" ON "truck_location_history" USING btree ("recorded_at");--> statement-breakpoint
 CREATE INDEX "truck_location_history_assignment_idx" ON "truck_location_history" USING btree ("route_assignment_id");--> statement-breakpoint
 CREATE INDEX "route_status_idx" ON "route" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "route_created_by_idx" ON "route" USING btree ("created_by");--> statement-breakpoint
-CREATE INDEX "route_start_location_idx" ON "route" USING btree ("start_lat","start_lng");--> statement-breakpoint
-CREATE INDEX "route_assignment_date_idx" ON "route_assignment" USING btree ("assigned_date");--> statement-breakpoint
-CREATE INDEX "route_assignment_status_idx" ON "route_assignment" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "route_assignment_driver_idx" ON "route_assignment" USING btree ("driver_id");--> statement-breakpoint
-CREATE INDEX "route_assignment_truck_idx" ON "route_assignment" USING btree ("truck_id");--> statement-breakpoint
-CREATE INDEX "route_assignment_scheduled_start_idx" ON "route_assignment" USING btree ("scheduled_start_time");--> statement-breakpoint
-CREATE INDEX "route_assignment_route_date_idx" ON "route_assignment" USING btree ("route_id","assigned_date");--> statement-breakpoint
+CREATE INDEX "idx_assignment_driver_date" ON "route_assignment" USING btree ("driver_id","assigned_date");--> statement-breakpoint
+CREATE INDEX "idx_assignment_truck_date" ON "route_assignment" USING btree ("truck_id","assigned_date");--> statement-breakpoint
+CREATE INDEX "idx_assignment_date_status" ON "route_assignment" USING btree ("assigned_date","status");--> statement-breakpoint
 CREATE UNIQUE INDEX "route_schedule_pkey" ON "route_schedule" USING btree ("route_id","day_of_week");--> statement-breakpoint
 CREATE INDEX "route_schedule_day_idx" ON "route_schedule" USING btree ("day_of_week");--> statement-breakpoint
 CREATE INDEX "route_waypoint_route_sequence_idx" ON "route_waypoint" USING btree ("route_id","sequence_order");--> statement-breakpoint
-CREATE INDEX "route_waypoint_location_idx" ON "route_waypoint" USING btree ("lat","lng");--> statement-breakpoint
-CREATE INDEX "citizen_profile_location_idx" ON "citizen_profile" USING btree ("lat","lng");--> statement-breakpoint
-CREATE INDEX "user_education_progress_user_idx" ON "user_education_progress" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "user_education_progress_completed_idx" ON "user_education_progress" USING btree ("completed_at");--> statement-breakpoint
 CREATE INDEX "citizen_issue_report_status_idx" ON "citizen_issue_report" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "citizen_issue_report_user_idx" ON "citizen_issue_report" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "citizen_issue_report_created_idx" ON "citizen_issue_report" USING btree ("created_at");--> statement-breakpoint
-CREATE INDEX "citizen_issue_report_location_idx" ON "citizen_issue_report" USING btree ("lat","lng");--> statement-breakpoint
 CREATE INDEX "citizen_issue_report_type_idx" ON "citizen_issue_report" USING btree ("type");--> statement-breakpoint
 CREATE INDEX "driver_issue_report_status_idx" ON "driver_issue_report" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "driver_issue_report_driver_idx" ON "driver_issue_report" USING btree ("driver_id");--> statement-breakpoint
-CREATE INDEX "driver_issue_report_assignment_idx" ON "driver_issue_report" USING btree ("route_assignment_id");--> statement-breakpoint
-CREATE INDEX "driver_issue_report_created_idx" ON "driver_issue_report" USING btree ("created_at");--> statement-breakpoint
-CREATE INDEX "driver_issue_report_location_idx" ON "driver_issue_report" USING btree ("lat","lng");--> statement-breakpoint
 CREATE INDEX "system_alert_status_idx" ON "system_alert" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "system_alert_created_at_idx" ON "system_alert" USING btree ("created_at");--> statement-breakpoint
-CREATE INDEX "system_alert_type_idx" ON "system_alert" USING btree ("type");--> statement-breakpoint
-CREATE INDEX "system_alert_driver_idx" ON "system_alert" USING btree ("driver_id");--> statement-breakpoint
 CREATE INDEX "dispatch_message_recipient_sent_idx" ON "dispatch_message" USING btree ("recipient_id","sent_at");--> statement-breakpoint
-CREATE INDEX "dispatch_message_sender_idx" ON "dispatch_message" USING btree ("sender_id");--> statement-breakpoint
-CREATE INDEX "dispatch_message_read_at_idx" ON "dispatch_message" USING btree ("read_at");--> statement-breakpoint
-CREATE INDEX "push_notification_token_user_idx" ON "push_notification_token" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "push_notification_token_last_used_idx" ON "push_notification_token" USING btree ("last_used_at");
+CREATE INDEX "push_notification_token_user_idx" ON "push_notification_token" USING btree ("user_id");

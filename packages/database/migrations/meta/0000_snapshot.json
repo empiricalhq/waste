@@ -1,5 +1,5 @@
 {
-  "id": "09909134-1d49-4566-a4f7-c723b7231d36",
+  "id": "3077fb93-b1be-42ae-b685-b17e8a81ef43",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -89,23 +89,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "account_user_id_idx": {
-          "name": "account_user_id_idx",
-          "columns": [
-            {
-              "expression": "userId",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "account_userId_user_id_fk": {
           "name": "account_userId_user_id_fk",
@@ -376,21 +360,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "user_created_at_idx": {
-          "name": "user_created_at_idx",
-          "columns": [
-            {
-              "expression": "createdAt",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {},
@@ -458,38 +427,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "verification_identifier_idx": {
-          "name": "verification_identifier_idx",
-          "columns": [
-            {
-              "expression": "identifier",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "verification_expires_at_idx": {
-          "name": "verification_expires_at_idx",
-          "columns": [
-            {
-              "expression": "expiresAt",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -534,38 +472,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "truck_is_active_idx": {
-          "name": "truck_is_active_idx",
-          "columns": [
-            {
-              "expression": "is_active",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "truck_name_idx": {
-          "name": "truck_name_idx",
-          "columns": [
-            {
-              "expression": "name",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
@@ -629,59 +536,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "truck_current_location_updated_idx": {
-          "name": "truck_current_location_updated_idx",
-          "columns": [
-            {
-              "expression": "updated_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "truck_current_location_assignment_idx": {
-          "name": "truck_current_location_assignment_idx",
-          "columns": [
-            {
-              "expression": "route_assignment_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "truck_current_location_coords_idx": {
-          "name": "truck_current_location_coords_idx",
-          "columns": [
-            {
-              "expression": "lat",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "lng",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "truck_current_location_truck_id_truck_id_fk": {
           "name": "truck_current_location_truck_id_truck_id_fk",
@@ -780,21 +635,6 @@
               "asc": true,
               "nulls": "last"
             },
-            {
-              "expression": "recorded_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "truck_location_history_recorded_idx": {
-          "name": "truck_location_history_recorded_idx",
-          "columns": [
             {
               "expression": "recorded_at",
               "isExpression": false,
@@ -940,42 +780,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "route_created_by_idx": {
-          "name": "route_created_by_idx",
-          "columns": [
-            {
-              "expression": "created_by",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "route_start_location_idx": {
-          "name": "route_start_location_idx",
-          "columns": [
-            {
-              "expression": "start_lat",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "start_lng",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -1105,44 +909,20 @@
         }
       },
       "indexes": {
-        "route_assignment_date_idx": {
-          "name": "route_assignment_date_idx",
-          "columns": [
-            {
-              "expression": "assigned_date",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "route_assignment_status_idx": {
-          "name": "route_assignment_status_idx",
-          "columns": [
-            {
-              "expression": "status",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "route_assignment_driver_idx": {
-          "name": "route_assignment_driver_idx",
+        "idx_assignment_driver_date": {
+          "name": "idx_assignment_driver_date",
           "columns": [
             {
               "expression": "driver_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
+            },
+            {
+              "expression": "assigned_date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
             }
           ],
           "isUnique": false,
@@ -1150,26 +930,17 @@
           "method": "btree",
           "with": {}
         },
-        "route_assignment_truck_idx": {
-          "name": "route_assignment_truck_idx",
+        "idx_assignment_truck_date": {
+          "name": "idx_assignment_truck_date",
           "columns": [
             {
               "expression": "truck_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "route_assignment_scheduled_start_idx": {
-          "name": "route_assignment_scheduled_start_idx",
-          "columns": [
+            },
             {
-              "expression": "scheduled_start_time",
+              "expression": "assigned_date",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1180,17 +951,17 @@
           "method": "btree",
           "with": {}
         },
-        "route_assignment_route_date_idx": {
-          "name": "route_assignment_route_date_idx",
+        "idx_assignment_date_status": {
+          "name": "idx_assignment_date_status",
           "columns": [
             {
-              "expression": "route_id",
+              "expression": "assigned_date",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             },
             {
-              "expression": "assigned_date",
+              "expression": "status",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1412,27 +1183,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "route_waypoint_location_idx": {
-          "name": "route_waypoint_location_idx",
-          "columns": [
-            {
-              "expression": "lat",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "lng",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -1512,29 +1262,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "citizen_profile_location_idx": {
-          "name": "citizen_profile_location_idx",
-          "columns": [
-            {
-              "expression": "lat",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "lng",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "citizen_profile_user_id_user_id_fk": {
           "name": "citizen_profile_user_id_user_id_fk",
@@ -1592,38 +1320,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "user_education_progress_user_idx": {
-          "name": "user_education_progress_user_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "user_education_progress_completed_idx": {
-          "name": "user_education_progress_completed_idx",
-          "columns": [
-            {
-              "expression": "completed_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "user_education_progress_user_id_user_id_fk": {
           "name": "user_education_progress_user_id_user_id_fk",
@@ -1729,57 +1426,6 @@
           "columns": [
             {
               "expression": "status",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "citizen_issue_report_user_idx": {
-          "name": "citizen_issue_report_user_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "citizen_issue_report_created_idx": {
-          "name": "citizen_issue_report_created_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "citizen_issue_report_location_idx": {
-          "name": "citizen_issue_report_location_idx",
-          "columns": [
-            {
-              "expression": "lat",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "lng",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1926,57 +1572,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "driver_issue_report_assignment_idx": {
-          "name": "driver_issue_report_assignment_idx",
-          "columns": [
-            {
-              "expression": "route_assignment_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "driver_issue_report_created_idx": {
-          "name": "driver_issue_report_created_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "driver_issue_report_location_idx": {
-          "name": "driver_issue_report_location_idx",
-          "columns": [
-            {
-              "expression": "lat",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "lng",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -2100,36 +1695,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "system_alert_type_idx": {
-          "name": "system_alert_type_idx",
-          "columns": [
-            {
-              "expression": "type",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "system_alert_driver_idx": {
-          "name": "system_alert_driver_idx",
-          "columns": [
-            {
-              "expression": "driver_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -2242,36 +1807,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "dispatch_message_sender_idx": {
-          "name": "dispatch_message_sender_idx",
-          "columns": [
-            {
-              "expression": "sender_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "dispatch_message_read_at_idx": {
-          "name": "dispatch_message_read_at_idx",
-          "columns": [
-            {
-              "expression": "read_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -2352,21 +1887,6 @@
           "columns": [
             {
               "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "push_notification_token_last_used_idx": {
-          "name": "push_notification_token_last_used_idx",
-          "columns": [
-            {
-              "expression": "last_used_at",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

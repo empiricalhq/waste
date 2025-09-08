@@ -17,11 +17,9 @@ export const dispatchMessage = pgTable(
     readAt: timestamp('read_at'),
     sentAt: timestamp('sent_at').defaultNow().notNull(),
   },
-  (table) => [
-    index('dispatch_message_recipient_sent_idx').on(table.recipientId, table.sentAt),
-    index('dispatch_message_sender_idx').on(table.senderId),
-    index('dispatch_message_read_at_idx').on(table.readAt),
-  ],
+  (table) => ({
+    recipientSentIdx: index('dispatch_message_recipient_sent_idx').on(table.recipientId, table.sentAt),
+  }),
 );
 
 export const pushNotificationToken = pgTable(
@@ -35,8 +33,7 @@ export const pushNotificationToken = pgTable(
     lastUsedAt: timestamp('last_used_at').defaultNow().notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => [
-    index('push_notification_token_user_idx').on(table.userId),
-    index('push_notification_token_last_used_idx').on(table.lastUsedAt),
-  ],
+  (table) => ({
+    userIdx: index('push_notification_token_user_idx').on(table.userId),
+  }),
 );
