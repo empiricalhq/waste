@@ -1,6 +1,4 @@
-import { pgTable, text, boolean, timestamp, doublePrecision, pgEnum } from 'drizzle-orm/pg-core';
-
-export const assignmentStatusEnum = pgEnum('assignment_status', ['scheduled', 'active', 'completed', 'cancelled']);
+import { pgTable, text, boolean, timestamp, doublePrecision } from 'drizzle-orm/pg-core';
 
 export const truck = pgTable('truck', {
   id: text('id').primaryKey(),
