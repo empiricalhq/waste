@@ -2,10 +2,6 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { getMe } from "@/actions/user";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-import { AddUserButton } from "@/components/dashboard/add-user-button";
-import { DashboardStats } from "@/components/dashboard/dashboard-stats";
-import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { redirect } from "next/navigation";
 //import { Dashboard }  from "@/components/dashboard"
 
