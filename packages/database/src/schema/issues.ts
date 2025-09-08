@@ -1,4 +1,4 @@
-import { pgTable, text, pgEnum, timestamp, doublePrecision } from 'drizzle-orm/pg-core';
+import { pgTable, text, pgEnum, timestamp, doublePrecision, index } from 'drizzle-orm/pg-core';
 import { user } from './auth';
 import { routeAssignment } from './routes';
 import { truck } from './trucks';
@@ -14,48 +14,77 @@ export const driverIssueTypeEnum = pgEnum('driver_issue_type', [
 ]);
 export const citizenIssueTypeEnum = pgEnum('citizen_issue_type', ['missed_collection', 'illegal_dumping']);
 
-export const systemAlert = pgTable('system_alert', {
-  id: text('id').primaryKey(),
-  type: alertTypeEnum('type').notNull(),
-  message: text('message').notNull(),
-  status: alertStatusEnum('status').default('unread').notNull(),
-  routeAssignmentId: text('route_assignment_id').references(() => routeAssignment.id, { onDelete: 'set null' }),
-  truckId: text('truck_id').references(() => truck.id, { onDelete: 'set null' }),
-  driverId: text('driver_id').references(() => user.id, { onDelete: 'set null' }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-});
+export const systemAlert = pgTable(
+  'system_alert',
+  {
+    id: text('id').primaryKey(),
+    type: alertTypeEnum('type').notNull(),
+    message: text('message').notNull(),
+    status: alertStatusEnum('status').default('unread').notNull(),
+    routeAssignmentId: text('route_assignment_id').references(() => routeAssignment.id, { onDelete: 'set null' }),
+    truckId: text('truck_id').references(() => truck.id, { onDelete: 'set null' }),
+    driverId: text('driver_id').references(() => user.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('system_alert_status_idx').on(table.status),
+    index('system_alert_created_at_idx').on(table.createdAt),
+    index('system_alert_type_idx').on(table.type),
+    index('system_alert_driver_idx').on(table.driverId),
+  ],
+);
 
-export const driverIssueReport = pgTable('driver_issue_report', {
-  id: text('id').primaryKey(),
-  driverId: text('driver_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  routeAssignmentId: text('route_assignment_id')
-    .notNull()
-    .references(() => routeAssignment.id, { onDelete: 'cascade' }),
-  type: driverIssueTypeEnum('type').notNull(),
-  status: issueStatusEnum('status').default('open').notNull(),
-  notes: text('notes'),
-  lat: doublePrecision('lat').notNull(),
-  lng: doublePrecision('lng').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  resolvedAt: timestamp('resolved_at'),
-});
+export const driverIssueReport = pgTable(
+  'driver_issue_report',
+  {
+    id: text('id').primaryKey(),
+    driverId: text('driver_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    routeAssignmentId: text('route_assignment_id')
+      .notNull()
+      .references(() => routeAssignment.id, { onDelete: 'cascade' }),
+    type: driverIssueTypeEnum('type').notNull(),
+    status: issueStatusEnum('status').default('open').notNull(),
+    notes: text('notes'),
+    lat: doublePrecision('lat').notNull(),
+    lng: doublePrecision('lng').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    resolvedAt: timestamp('resolved_at'),
+  },
+  (table) => [
+    index('driver_issue_report_status_idx').on(table.status),
+    index('driver_issue_report_driver_idx').on(table.driverId),
+    index('driver_issue_report_assignment_idx').on(table.routeAssignmentId),
+    index('driver_issue_report_created_idx').on(table.createdAt),
+    index('driver_issue_report_location_idx').on(table.lat, table.lng),
+  ],
+);
 
-export const citizenIssueReport = pgTable('citizen_issue_report', {
-  id: text('id').primaryKey(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  type: citizenIssueTypeEnum('type').notNull(),
-  status: issueStatusEnum('status').default('open').notNull(),
-  description: text('description'),
-  photoUrl: text('photo_url'),
-  lat: doublePrecision('lat').notNull(),
-  lng: doublePrecision('lng').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at')
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
-});
+export const citizenIssueReport = pgTable(
+  'citizen_issue_report',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    type: citizenIssueTypeEnum('type').notNull(),
+    status: issueStatusEnum('status').default('open').notNull(),
+    description: text('description'),
+    photoUrl: text('photo_url'),
+    lat: doublePrecision('lat').notNull(),
+    lng: doublePrecision('lng').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index('citizen_issue_report_status_idx').on(table.status),
+    index('citizen_issue_report_user_idx').on(table.userId),
+    index('citizen_issue_report_created_idx').on(table.createdAt),
+    index('citizen_issue_report_location_idx').on(table.lat, table.lng),
+    index('citizen_issue_report_type_idx').on(table.type),
+  ],
+);
