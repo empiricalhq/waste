@@ -4,23 +4,30 @@ export * from './auth';
 export * from './trucks';
 export * from './routes';
 export * from './citizens';
+export * from './issues';
+export * from './communications';
 
 import { user, account, session } from './auth';
 import { truck, truckCurrentLocation, truckLocationHistory } from './trucks';
 import { route, routeWaypoint, routeSchedule, routeAssignment } from './routes';
 import { citizenProfile, userEducationProgress } from './citizens';
+import { systemAlert, driverIssueReport, citizenIssueReport } from './issues';
+import { dispatchMessage, pushNotificationToken } from './communications';
 
 export const userRelations = relations(user, ({ many, one }) => ({
   accounts: many(account),
   sessions: many(session),
   profile: one(citizenProfile),
   educationProgress: many(userEducationProgress),
-  // route management
   createdRoutes: many(route, { relationName: 'createdBy' }),
   approvedRoutes: many(route, { relationName: 'approvedBy' }),
-  // assignments
   driverAssignments: many(routeAssignment, { relationName: 'driver' }),
   assignmentsMade: many(routeAssignment, { relationName: 'assignedBy' }),
+  driverIssueReports: many(driverIssueReport),
+  citizenIssueReports: many(citizenIssueReport),
+  sentMessages: many(dispatchMessage, { relationName: 'sent' }),
+  receivedMessages: many(dispatchMessage, { relationName: 'received' }),
+  pushTokens: many(pushNotificationToken),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -84,7 +91,7 @@ export const routeScheduleRelations = relations(routeSchedule, ({ one }) => ({
   }),
 }));
 
-export const routeAssignmentRelations = relations(routeAssignment, ({ one }) => ({
+export const routeAssignmentRelations = relations(routeAssignment, ({ one, many }) => ({
   route: one(route, {
     fields: [routeAssignment.routeId],
     references: [route.id],
@@ -103,6 +110,8 @@ export const routeAssignmentRelations = relations(routeAssignment, ({ one }) => 
     references: [user.id],
     relationName: 'assignedBy',
   }),
+  systemAlerts: many(systemAlert),
+  driverIssueReports: many(driverIssueReport),
 }));
 
 export const citizenProfileRelations = relations(citizenProfile, ({ one }) => ({
@@ -115,6 +124,59 @@ export const citizenProfileRelations = relations(citizenProfile, ({ one }) => ({
 export const userEducationProgressRelations = relations(userEducationProgress, ({ one }) => ({
   user: one(user, {
     fields: [userEducationProgress.userId],
+    references: [user.id],
+  }),
+}));
+
+export const systemAlertRelations = relations(systemAlert, ({ one }) => ({
+  assignment: one(routeAssignment, {
+    fields: [systemAlert.routeAssignmentId],
+    references: [routeAssignment.id],
+  }),
+  truck: one(truck, {
+    fields: [systemAlert.truckId],
+    references: [truck.id],
+  }),
+  driver: one(user, {
+    fields: [systemAlert.driverId],
+    references: [user.id],
+  }),
+}));
+
+export const driverIssueReportRelations = relations(driverIssueReport, ({ one }) => ({
+  driver: one(user, {
+    fields: [driverIssueReport.driverId],
+    references: [user.id],
+  }),
+  assignment: one(routeAssignment, {
+    fields: [driverIssueReport.routeAssignmentId],
+    references: [routeAssignment.id],
+  }),
+}));
+
+export const citizenIssueReportRelations = relations(citizenIssueReport, ({ one }) => ({
+  user: one(user, {
+    fields: [citizenIssueReport.userId],
+    references: [user.id],
+  }),
+}));
+
+export const dispatchMessageRelations = relations(dispatchMessage, ({ one }) => ({
+  sender: one(user, {
+    fields: [dispatchMessage.senderId],
+    references: [user.id],
+    relationName: 'sent',
+  }),
+  recipient: one(user, {
+    fields: [dispatchMessage.recipientId],
+    references: [user.id],
+    relationName: 'received',
+  }),
+}));
+
+export const pushNotificationTokenRelations = relations(pushNotificationToken, ({ one }) => ({
+  user: one(user, {
+    fields: [pushNotificationToken.userId],
     references: [user.id],
   }),
 }));

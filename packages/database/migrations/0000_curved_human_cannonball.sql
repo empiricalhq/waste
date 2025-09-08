@@ -2,6 +2,12 @@ CREATE TYPE "public"."app_role_enum" AS ENUM('admin', 'supervisor', 'driver', 'c
 CREATE TYPE "public"."gender" AS ENUM('male', 'female');--> statement-breakpoint
 CREATE TYPE "public"."assignment_status" AS ENUM('scheduled', 'active', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."route_status" AS ENUM('active', 'inactive', 'draft');--> statement-breakpoint
+CREATE TYPE "public"."alert_status" AS ENUM('unread', 'read', 'archived');--> statement-breakpoint
+CREATE TYPE "public"."alert_type" AS ENUM('route_deviation', 'prolonged_stop', 'late_start');--> statement-breakpoint
+CREATE TYPE "public"."citizen_issue_type" AS ENUM('missed_collection', 'illegal_dumping');--> statement-breakpoint
+CREATE TYPE "public"."driver_issue_type" AS ENUM('mechanical_failure', 'road_blocked', 'truck_full', 'other');--> statement-breakpoint
+CREATE TYPE "public"."issue_status" AS ENUM('open', 'in_progress', 'resolved');--> statement-breakpoint
+CREATE TYPE "public"."device_type" AS ENUM('ios', 'android');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
 	"accountId" text NOT NULL,
@@ -115,6 +121,7 @@ CREATE TABLE "route_assignment" (
 	"status" "assignment_status" DEFAULT 'scheduled' NOT NULL,
 	"actual_start_time" timestamp,
 	"actual_end_time" timestamp,
+	"last_completed_waypoint_sequence" integer,
 	"notes" text,
 	"assigned_by" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
@@ -156,9 +163,64 @@ CREATE TABLE "user_education_progress" (
 	CONSTRAINT "user_education_progress_user_id_content_id_pk" PRIMARY KEY("user_id","content_id")
 );
 --> statement-breakpoint
+CREATE TABLE "citizen_issue_report" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"type" "citizen_issue_type" NOT NULL,
+	"status" "issue_status" DEFAULT 'open' NOT NULL,
+	"description" text,
+	"photo_url" text,
+	"lat" double precision NOT NULL,
+	"lng" double precision NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "driver_issue_report" (
+	"id" text PRIMARY KEY NOT NULL,
+	"driver_id" text NOT NULL,
+	"route_assignment_id" text NOT NULL,
+	"type" "driver_issue_type" NOT NULL,
+	"status" "issue_status" DEFAULT 'open' NOT NULL,
+	"notes" text,
+	"lat" double precision NOT NULL,
+	"lng" double precision NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"resolved_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "system_alert" (
+	"id" text PRIMARY KEY NOT NULL,
+	"type" "alert_type" NOT NULL,
+	"message" text NOT NULL,
+	"status" "alert_status" DEFAULT 'unread' NOT NULL,
+	"route_assignment_id" text,
+	"truck_id" text,
+	"driver_id" text,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "dispatch_message" (
+	"id" text PRIMARY KEY NOT NULL,
+	"sender_id" text NOT NULL,
+	"recipient_id" text NOT NULL,
+	"content" text NOT NULL,
+	"read_at" timestamp,
+	"sent_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "push_notification_token" (
+	"token" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"device_type" "device_type" NOT NULL,
+	"last_used_at" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "truck_current_location" ADD CONSTRAINT "truck_current_location_truck_id_truck_id_fk" FOREIGN KEY ("truck_id") REFERENCES "public"."truck"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "truck_current_location" ADD CONSTRAINT "truck_current_location_route_assignment_id_route_assignment_id_fk" FOREIGN KEY ("route_assignment_id") REFERENCES "public"."route_assignment"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "truck_location_history" ADD CONSTRAINT "truck_location_history_truck_id_truck_id_fk" FOREIGN KEY ("truck_id") REFERENCES "public"."truck"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "route" ADD CONSTRAINT "route_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "route" ADD CONSTRAINT "route_approved_by_user_id_fk" FOREIGN KEY ("approved_by") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -170,4 +232,33 @@ ALTER TABLE "route_schedule" ADD CONSTRAINT "route_schedule_route_id_route_id_fk
 ALTER TABLE "route_waypoint" ADD CONSTRAINT "route_waypoint_route_id_route_id_fk" FOREIGN KEY ("route_id") REFERENCES "public"."route"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "citizen_profile" ADD CONSTRAINT "citizen_profile_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_education_progress" ADD CONSTRAINT "user_education_progress_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE UNIQUE INDEX "route_schedule_pkey" ON "route_schedule" USING btree ("route_id","day_of_week");
+ALTER TABLE "citizen_issue_report" ADD CONSTRAINT "citizen_issue_report_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "driver_issue_report" ADD CONSTRAINT "driver_issue_report_driver_id_user_id_fk" FOREIGN KEY ("driver_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "driver_issue_report" ADD CONSTRAINT "driver_issue_report_route_assignment_id_route_assignment_id_fk" FOREIGN KEY ("route_assignment_id") REFERENCES "public"."route_assignment"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "system_alert" ADD CONSTRAINT "system_alert_route_assignment_id_route_assignment_id_fk" FOREIGN KEY ("route_assignment_id") REFERENCES "public"."route_assignment"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "system_alert" ADD CONSTRAINT "system_alert_truck_id_truck_id_fk" FOREIGN KEY ("truck_id") REFERENCES "public"."truck"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "system_alert" ADD CONSTRAINT "system_alert_driver_id_user_id_fk" FOREIGN KEY ("driver_id") REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "dispatch_message" ADD CONSTRAINT "dispatch_message_sender_id_user_id_fk" FOREIGN KEY ("sender_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "dispatch_message" ADD CONSTRAINT "dispatch_message_recipient_id_user_id_fk" FOREIGN KEY ("recipient_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "push_notification_token" ADD CONSTRAINT "push_notification_token_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "session_user_id_idx" ON "session" USING btree ("userId");--> statement-breakpoint
+CREATE INDEX "session_expires_at_idx" ON "session" USING btree ("expiresAt");--> statement-breakpoint
+CREATE INDEX "user_app_role_idx" ON "user" USING btree ("appRole");--> statement-breakpoint
+CREATE INDEX "user_is_active_idx" ON "user" USING btree ("isActive");--> statement-breakpoint
+CREATE INDEX "truck_location_history_truck_recorded_idx" ON "truck_location_history" USING btree ("truck_id","recorded_at");--> statement-breakpoint
+CREATE INDEX "truck_location_history_assignment_idx" ON "truck_location_history" USING btree ("route_assignment_id");--> statement-breakpoint
+CREATE INDEX "route_status_idx" ON "route" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "idx_assignment_driver_date" ON "route_assignment" USING btree ("driver_id","assigned_date");--> statement-breakpoint
+CREATE INDEX "idx_assignment_truck_date" ON "route_assignment" USING btree ("truck_id","assigned_date");--> statement-breakpoint
+CREATE INDEX "idx_assignment_date_status" ON "route_assignment" USING btree ("assigned_date","status");--> statement-breakpoint
+CREATE UNIQUE INDEX "route_schedule_pkey" ON "route_schedule" USING btree ("route_id","day_of_week");--> statement-breakpoint
+CREATE INDEX "route_schedule_day_idx" ON "route_schedule" USING btree ("day_of_week");--> statement-breakpoint
+CREATE INDEX "route_waypoint_route_sequence_idx" ON "route_waypoint" USING btree ("route_id","sequence_order");--> statement-breakpoint
+CREATE INDEX "citizen_issue_report_status_idx" ON "citizen_issue_report" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "citizen_issue_report_type_idx" ON "citizen_issue_report" USING btree ("type");--> statement-breakpoint
+CREATE INDEX "driver_issue_report_status_idx" ON "driver_issue_report" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "driver_issue_report_driver_idx" ON "driver_issue_report" USING btree ("driver_id");--> statement-breakpoint
+CREATE INDEX "system_alert_status_idx" ON "system_alert" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "system_alert_created_at_idx" ON "system_alert" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "dispatch_message_recipient_sent_idx" ON "dispatch_message" USING btree ("recipient_id","sent_at");--> statement-breakpoint
+CREATE INDEX "push_notification_token_user_idx" ON "push_notification_token" USING btree ("user_id");
