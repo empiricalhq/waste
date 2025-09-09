@@ -1,6 +1,6 @@
 import { createMiddleware } from 'hono/factory';
-import { auth, type User, type Session } from './auth.ts';
-import type { Role } from './validation.ts';
+import { auth, type User, type Session } from '@/lib/auth.ts';
+import type { Role } from '@/lib/validation.ts';
 
 type AuthEnv = {
   Variables: {

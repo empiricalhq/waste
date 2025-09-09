@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
 import process from 'node:process';
+import { Pool } from 'pg';
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is required');

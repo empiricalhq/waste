@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const roleSchema = z.enum(['admin', 'supervisor', 'driver', 'citizen']);
 export type Role = z.infer<typeof roleSchema>;
 
-export const uuidSchema = z.string().uuid();
+export const uuidSchema = z.uuid();
 export const uuidParamSchema = z.object({ id: uuidSchema });
 
 export const locationSchema = z.object({
@@ -34,7 +34,7 @@ export const updateLocationSchema = z.object({
 export const createIssueSchema = z.object({
   type: z.enum(['missed_collection', 'illegal_dumping']),
   description: z.string().max(500).optional(),
-  photo_url: z.string().url().optional(),
+  photo_url: z.url().optional(),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
 });
@@ -62,7 +62,7 @@ export const createAssignmentSchema = z.object({
   route_id: uuidSchema,
   truck_id: uuidSchema,
   driver_id: uuidSchema,
-  scheduled_start_time: z.string().datetime(),
-  scheduled_end_time: z.string().datetime(),
+  scheduled_start_time: z.iso.datetime(),
+  scheduled_end_time: z.iso.datetime(),
   notes: z.string().max(500).optional(),
 });

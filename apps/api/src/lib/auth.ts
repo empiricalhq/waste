@@ -1,7 +1,7 @@
+import process from 'node:process';
 import { betterAuth } from 'better-auth';
 import { admin } from 'better-auth/plugins';
-import { db } from './db.ts';
-import process from 'node:process';
+import { db } from '@/lib/db.ts';
 
 if (!process.env.BETTER_AUTH_SECRET) {
   throw new Error('BETTER_AUTH_SECRET is required');

@@ -2,10 +2,11 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { ZodError } from 'zod';
-import { authRouter } from './routes/auth.ts';
-import { adminRouter } from './routes/admin.ts';
-import { driverRouter } from './routes/driver.ts';
-import { citizenRouter } from './routes/citizen.ts';
+import { authRouter } from '@/routes/auth.ts';
+import { adminRouter } from '@/routes/admin.ts';
+import { driverRouter } from '@/routes/driver.ts';
+import { citizenRouter } from '@/routes/citizen.ts';
+import * as z from 'zod';
 
 const app = new Hono();
 
@@ -32,11 +33,14 @@ app.get('/api/health', (c) =>
 );
 
 app.onError((err, c) => {
-  if (err instanceof ZodError) {
+  if (err instanceof z.ZodError) {
+    const { formErrors, fieldErrors } = z.flattenError(err);
+
     return c.json(
       {
         error: 'Validation failed',
-        issues: err.flatten().fieldErrors,
+        formErrors,
+        fieldErrors,
       },
       400,
     );
