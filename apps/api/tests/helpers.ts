@@ -1,3 +1,4 @@
+import { expect } from 'bun:test';
 import { BASE_URL } from './config';
 import { auth } from '@/lib/auth.ts';
 
@@ -15,33 +16,50 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
   console.log(`${options.method || 'GET'} ${endpoint} -> ${response.status}`);
   if (response.status >= 400) {
-    console.error('Error:', data);
+    console.error('Response:', data);
   }
 
   return { response, data };
 }
 
-// Helper to get session cookie
 export async function login(email: string, password: string, role: string = 'citizen') {
-  // First create the user
-  await auth.api.signUpEmail({
-    body: {
-      name: `Test ${role}`,
-      email,
-      password,
-    },
-  });
+  console.log(`Attempting login for ${role}: ${email}`);
 
-  // Then sign in
-  const { headers } = await auth.api.signInEmail({
+  // first try to create the user (ignore if already exists)
+  try {
+    const signUpResult = await auth.api.signUpEmail({
+      body: {
+        name: `Test ${role}`,
+        email,
+        password,
+      },
+    });
+    console.log('User creation result:', signUpResult);
+  } catch (error) {
+    console.log('User might already exist, continuing with login...');
+  }
+
+  const signInResult = await auth.api.signInEmail({
     body: { email, password },
     returnHeaders: true,
   });
 
-  const cookie = headers.get('set-cookie');
+  console.log('Sign in result:', signInResult);
+
+  const cookie = signInResult.headers.get('set-cookie');
   if (!cookie) {
     throw new Error('No session cookie received');
   }
 
   return cookie;
+}
+
+export function expectValidId(id: any) {
+  expect(id).toBeDefined();
+  expect(typeof id === 'string' || typeof id === 'number').toBe(true);
+}
+
+export function expectValidTimestamp(timestamp: any) {
+  expect(timestamp).toBeDefined();
+  expect(new Date(timestamp).getTime()).not.toBeNaN();
 }

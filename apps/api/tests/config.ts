@@ -7,3 +7,5 @@ export const TEST_DRIVER_EMAIL = 'driver@test.com';
 export const TEST_DRIVER_PASSWORD = 'password123';
 export const TEST_CITIZEN_EMAIL = 'citizen@test.com';
 export const TEST_CITIZEN_PASSWORD = 'password123';
+
+export const TEST_TIMEOUT = 10000; // 10 seconds
