@@ -11,6 +11,11 @@ description = "Install dependencies"
 alias = "i"
 run = "uv --project datasets sync"
 
+[tasks.dev]
+description = "Run development server"
+alias = "d"
+run = "uv run marimo edit datasets/src/main.py"
+
 [tasks.export]
 description = "Export deps to requirements.txt"
 run = "uv export --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file datasets/requirements.txt"
