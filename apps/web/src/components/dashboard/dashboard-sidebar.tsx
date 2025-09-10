@@ -16,6 +16,7 @@ import {
   Bell,
   LogOut,
   User,
+  Leaf
 } from "lucide-react";
 import { getMe } from "@/actions/user";
 import { UserType } from "@/db/schema";
@@ -114,7 +115,7 @@ export function DashboardSidebar() {
           <div className="border-sidebar-border flex items-center border-b px-6 py-4">
             <div className="flex items-center space-x-2">
               <div className="bg-sidebar-accent flex h-8 w-8 items-center justify-center rounded-lg">
-                <Truck className="text-sidebar-accent-foreground h-5 w-5" />
+                <Leaf className="text-sidebar-accent-foreground h-5 w-5" />
               </div>
               <div>
                 <h1 className="text-sidebar-foreground text-lg font-bold">
