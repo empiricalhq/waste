@@ -1,6 +1,15 @@
 import { testDb } from './database';
 import { user, truck, route, routeAssignment } from '@lima-garbage/database';
-import type { User, NewUser, Truck, NewTruck, Route, NewRoute, RouteAssignment, NewRouteAssignment } from '@lima-garbage/database';
+import type {
+  User,
+  NewUser,
+  Truck,
+  NewTruck,
+  Route,
+  NewRoute,
+  RouteAssignment,
+  NewRouteAssignment,
+} from '@lima-garbage/database';
 
 /**
  * Create a test user with the specified role
@@ -103,7 +112,7 @@ export async function createTestAssignment(params: {
   overrides?: Partial<NewRouteAssignment>;
 }): Promise<RouteAssignment> {
   const { routeId, truckId, driverId, assignedBy, overrides = {} } = params;
-  
+
   const defaultAssignment: NewRouteAssignment = {
     id: `test-assignment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     routeId,
@@ -132,7 +141,7 @@ export async function createTestScenario(): Promise<{
   assignment: RouteAssignment;
 }> {
   console.log('🏗️ Creating complete test scenario...');
-  
+
   const admin = await createTestAdmin();
   const driver = await createTestDriver();
   const citizen = await createTestCitizen();
@@ -146,7 +155,7 @@ export async function createTestScenario(): Promise<{
   });
 
   console.log('✅ Test scenario created successfully');
-  
+
   return {
     admin,
     driver,

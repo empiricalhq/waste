@@ -42,7 +42,7 @@ export async function login(email: string, password: string, role: string = 'cit
         password,
       }),
     });
-    
+
     if (signUpResponse.response.status === 200 || signUpResponse.response.status === 201) {
       console.log('✅ User created successfully');
     } else if (signUpResponse.response.status === 409 || signUpResponse.response.status === 400) {
@@ -64,7 +64,9 @@ export async function login(email: string, password: string, role: string = 'cit
     });
 
     if (signInResponse.response.status !== 200) {
-      throw new Error(`Login failed with status ${signInResponse.response.status}: ${JSON.stringify(signInResponse.data)}`);
+      throw new Error(
+        `Login failed with status ${signInResponse.response.status}: ${JSON.stringify(signInResponse.data)}`,
+      );
     }
 
     const cookie = signInResponse.response.headers.get('set-cookie');

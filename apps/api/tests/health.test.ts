@@ -7,7 +7,7 @@ let server: any = null;
 
 beforeAll(async () => {
   console.log('🚀 Starting test server...');
-  
+
   // Setup test database
   await setupTestDatabase();
 
@@ -17,22 +17,22 @@ beforeAll(async () => {
     port,
     fetch: app.fetch,
   });
-  
+
   console.log(`✅ Test server started at http://localhost:${port}`);
 
   // Give the server a moment to fully start
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 });
 
 afterAll(async () => {
   console.log('🛑 Stopping test server...');
-  
+
   // Stop the server
   if (server) {
     server.stop();
     console.log('✅ Test server stopped');
   }
-  
+
   // Clean up test database
   await teardownTestDatabase();
 });
@@ -48,7 +48,7 @@ test('health endpoint returns success', async () => {
 
   expect(response.status).toBe(200);
   expect(data).toBeDefined();
-  
+
   // More specific assertions about the health response
   if (data) {
     expect(typeof data).toBe('object');
@@ -66,6 +66,6 @@ test('health endpoint responds quickly', async () => {
 
   expect(response.status).toBe(200);
   expect(responseTime).toBeLessThan(5000); // Should respond within 5 seconds
-  
+
   console.log(`✅ Health endpoint responded in ${responseTime}ms`);
 });
