@@ -20,7 +20,7 @@ export default function ConfiguracionPage() {
         {/* Sección de Gestión de Usuarios */}
         <div>
           <h2 className="text-xl font-semibold">Gestión de Usuarios</h2>
-          <div className="mt-4 rounded-lg border bg-card p-4 text-card-foreground">
+          <div className="bg-card text-card-foreground mt-4 rounded-lg border p-4">
             <p>
               Aquí irá la tabla o lista para crear, editar y desactivar
               usuarios.
@@ -31,7 +31,7 @@ export default function ConfiguracionPage() {
         {/* Sección de Roles y Permisos */}
         <div>
           <h2 className="text-xl font-semibold">Roles y Permisos</h2>
-          <div className="mt-4 rounded-lg border bg-card p-4 text-card-foreground">
+          <div className="bg-card text-card-foreground mt-4 rounded-lg border p-4">
             <p>
               Aquí irá la interfaz para definir los roles (admin, supervisor) y
               sus permisos.
@@ -42,14 +42,14 @@ export default function ConfiguracionPage() {
         {/* Otras configuraciones */}
         <div>
           <h2 className="text-xl font-semibold">Preferencias Generales</h2>
-                    <div className="mt-4 rounded-lg border bg-card p-4 text-card-foreground">
-                      <p>
-                        Aquí irán otros ajustes como preferencias de notificación,
-                        integraciones, etc.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          }
+          <div className="bg-card text-card-foreground mt-4 rounded-lg border p-4">
+            <p>
+              Aquí irán otros ajustes como preferencias de notificación,
+              integraciones, etc.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -16,6 +16,7 @@ import {
   Bell,
   LogOut,
   User,
+  Leaf
 } from "lucide-react";
 import { getMe } from "@/actions/user";
 import { UserType } from "@/db/schema";
@@ -77,7 +78,7 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Mobile menu button */}
-      <div className="fixed left-4 top-4 z-50 lg:hidden">
+      <div className="fixed top-4 left-4 z-50 lg:hidden">
         <Button
           variant="outline"
           size="sm"
@@ -114,7 +115,7 @@ export function DashboardSidebar() {
           <div className="border-sidebar-border flex items-center border-b px-6 py-4">
             <div className="flex items-center space-x-2">
               <div className="bg-sidebar-accent flex h-8 w-8 items-center justify-center rounded-lg">
-                <Truck className="text-sidebar-accent-foreground h-5 w-5" />
+                <Leaf className="text-sidebar-accent-foreground h-5 w-5" />
               </div>
               <div>
                 <h1 className="text-sidebar-foreground text-lg font-bold">
@@ -209,7 +210,7 @@ export function DashboardSidebar() {
                 className="relative h-8 w-8 shrink-0"
               >
                 <Bell className="h-5 w-5" />
-                <span className="bg-destructive text-destructive-foreground absolute -right-0 -top-0 flex h-3 w-3 items-center justify-center rounded-full text-[10px]">
+                <span className="bg-destructive text-destructive-foreground absolute -top-0 -right-0 flex h-3 w-3 items-center justify-center rounded-full text-[10px]">
                   3
                 </span>
               </Button>
