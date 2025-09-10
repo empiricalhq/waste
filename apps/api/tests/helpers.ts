@@ -1,6 +1,6 @@
 import { expect } from 'bun:test';
 import { BASE_URL } from './config';
-import { auth } from '@/lib/auth.ts';
+import { testDb, cleanDatabase } from './database';
 
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
@@ -22,36 +22,62 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   return { response, data };
 }
 
-export async function login(email: string, password: string, role: string = 'citizen') {
-  console.log(`Attempting login for ${role}: ${email}`);
+/**
+ * Clean database between tests to ensure isolation
+ */
+export async function cleanTestData(): Promise<void> {
+  await cleanDatabase();
+}
 
-  // first try to create the user (ignore if already exists)
+export async function login(email: string, password: string, role: string = 'citizen') {
+  console.log(`🔐 Attempting login for ${role}: ${email}`);
+
   try {
-    const signUpResult = await auth.api.signUpEmail({
-      body: {
-        name: `Test ${role}`,
+    // First try to create the user via better-auth API
+    const signUpResponse = await apiRequest('/auth/sign-up/email', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: `Test ${role.charAt(0).toUpperCase() + role.slice(1)}`,
         email,
         password,
-      },
+      }),
     });
-    console.log('User creation result:', signUpResult);
-  } catch (error) {
-    console.log('User might already exist, continuing with login...');
+    
+    if (signUpResponse.response.status === 200 || signUpResponse.response.status === 201) {
+      console.log('✅ User created successfully');
+    } else if (signUpResponse.response.status === 409 || signUpResponse.response.status === 400) {
+      console.log('ℹ️ User might already exist, continuing with login...');
+    } else {
+      console.warn('⚠️ Unexpected signup response:', signUpResponse.response.status, signUpResponse.data);
+    }
+  } catch (error: any) {
+    console.warn('⚠️ Signup error (continuing with login):', error?.message);
   }
 
-  const signInResult = await auth.api.signInEmail({
-    body: { email, password },
-    returnHeaders: true,
-  });
+  try {
+    const signInResponse = await apiRequest('/auth/sign-in/email', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
 
-  console.log('Sign in result:', signInResult);
+    if (signInResponse.response.status !== 200) {
+      throw new Error(`Login failed with status ${signInResponse.response.status}: ${JSON.stringify(signInResponse.data)}`);
+    }
 
-  const cookie = signInResult.headers.get('set-cookie');
-  if (!cookie) {
-    throw new Error('No session cookie received');
+    const cookie = signInResponse.response.headers.get('set-cookie');
+    if (!cookie) {
+      throw new Error('No session cookie received from login');
+    }
+
+    console.log('✅ Login successful');
+    return cookie;
+  } catch (error: any) {
+    console.error('❌ Login failed:', error?.message);
+    throw new Error(`Login failed for ${email}: ${error?.message}`);
   }
-
-  return cookie;
 }
 
 export function expectValidId(id: any) {
