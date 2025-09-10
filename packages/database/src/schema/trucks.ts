@@ -38,8 +38,8 @@ export const truckLocationHistory = pgTable(
     heading: doublePrecision('heading'),
     recordedAt: timestamp('recorded_at').defaultNow().notNull(),
   },
-  (table) => ({
-    truckRecordedIdx: index('truck_location_history_truck_recorded_idx').on(table.truckId, table.recordedAt),
-    assignmentIdx: index('truck_location_history_assignment_idx').on(table.routeAssignmentId),
-  }),
+  (table) => [
+    index('truck_location_history_truck_recorded_idx').on(table.truckId, table.recordedAt),
+    index('truck_location_history_assignment_idx').on(table.routeAssignmentId),
+  ],
 );

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun --hot --env-file=../../.env src/index.ts",
     "start": "bun src/index.ts",
-    "test": "bun --env-file=../../.env tests/main.ts",
+    "test": "bun --env-file=../../.env.test tests/main.ts",
     "build": "bun build src/index.ts --outdir ./dist --target bun",
     "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },

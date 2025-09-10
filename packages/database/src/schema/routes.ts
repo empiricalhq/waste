@@ -37,9 +37,7 @@ export const route = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => ({
-    statusIdx: index('route_status_idx').on(table.status),
-  }),
+  (table) => [index('route_status_idx').on(table.status)],
 );
 
 export const routeWaypoint = pgTable(
@@ -55,9 +53,7 @@ export const routeWaypoint = pgTable(
     streetName: text('street_name'),
     estimatedArrivalOffsetMinutes: integer('estimated_arrival_offset_minutes').notNull(),
   },
-  (table) => ({
-    routeSequenceIdx: index('route_waypoint_route_sequence_idx').on(table.routeId, table.sequenceOrder),
-  }),
+  (table) => [index('route_waypoint_route_sequence_idx').on(table.routeId, table.sequenceOrder)],
 );
 
 export const routeSchedule = pgTable(
@@ -69,10 +65,10 @@ export const routeSchedule = pgTable(
     dayOfWeek: integer('day_of_week').notNull(),
     startTime: time('start_time').notNull(),
   },
-  (table) => ({
-    pk: uniqueIndex('route_schedule_pkey').on(table.routeId, table.dayOfWeek),
-    dayIdx: index('route_schedule_day_idx').on(table.dayOfWeek),
-  }),
+  (table) => [
+    uniqueIndex('route_schedule_pkey').on(table.routeId, table.dayOfWeek),
+    index('route_schedule_day_idx').on(table.dayOfWeek),
+  ],
 );
 
 export const routeAssignment = pgTable(
@@ -101,9 +97,9 @@ export const routeAssignment = pgTable(
       .references(() => user.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    driverDateIdx: index('idx_assignment_driver_date').on(table.driverId, table.assignedDate),
-    truckDateIdx: index('idx_assignment_truck_date').on(table.truckId, table.assignedDate),
-    dateStatusIdx: index('idx_assignment_date_status').on(table.assignedDate, table.status),
-  }),
+  (table) => [
+    index('idx_assignment_driver_date').on(table.driverId, table.assignedDate),
+    index('idx_assignment_truck_date').on(table.truckId, table.assignedDate),
+    index('idx_assignment_date_status').on(table.assignedDate, table.status),
+  ],
 );

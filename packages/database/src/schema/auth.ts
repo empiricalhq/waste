@@ -69,10 +69,7 @@ export const session = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
   },
-  (table) => ({
-    userIdx: index('session_user_id_idx').on(table.userId),
-    expiresAtIdx: index('session_expires_at_idx').on(table.expiresAt),
-  }),
+  (table) => [index('session_user_id_idx').on(table.userId), index('session_expires_at_idx').on(table.expiresAt)],
 );
 
 export const verification = pgTable('verification', {
