@@ -15,13 +15,13 @@ export const SignUpSchema = z
   .object({
     email: z
       .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Invalid email address" }),
-    name: z.string().min(4, { message: "Must be at least 4 characters" }),
+      .min(1, { message: "Correo electrónico es requerido" })
+      .email({ message: "Correo electrónico no válido" }),
+    name: z.string().min(4, { message: "Debe tener al menos 4 caracteres" }),
     username: z
       .string()
-      .min(4, { message: "Must be at least 4 characters" })
-      .regex(/^[a-zA-Z0-0_-]+$/, "Only letters, numbers, - and _ allowed")
+      .min(4, { message: "Debe tener al menos 4 caracteres" })
+      .regex(/^[a-zA-Z0-0_-]+$/, "Solo se permiten letras, números, guiones y guiones bajos")
       .refine(
         (username) => {
           for (const pattern of disallowedUsernamePatterns) {
@@ -31,23 +31,23 @@ export const SignUpSchema = z
           }
           return true;
         },
-        { message: "Username contains disallowed words" },
+        { message: "El nombre de usuario contiene palabras no permitidas" },
       ),
     password: z.string().min(8, {
-      message: "Must be at least 8 characters",
+      message: "Debe tener al menos 8 caracteres",
     }),
     confirmPassword: z.string().min(8, {
-      message: "Must be at least 8 characters",
+      message: "Debe tener al menos 8 caracteres",
     }),
     gender: z.enum(["male", "female"], {
-      message: "Gender must be either 'male' or 'female'.",
+      message: "El género debe ser 'masculino' o 'femenino'.",
     }),
     role: z.enum(["admin", "supervisor", "driver"], {
-      message: "Role must be one of: admin, supervisor or driver.",
+      message: "El rol debe ser uno de: admin, supervisor o driver.",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   });
 
