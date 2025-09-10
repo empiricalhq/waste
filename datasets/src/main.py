@@ -6,47 +6,35 @@ app = marimo.App()
 
 @app.cell
 def _():
-    import marimo as mo
-    return (mo,)
+    import polars as pl
+    import datetime as dt
 
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(
-        """
-    marimo knows how your cells are related, and can automatically update
-    outputs like a spreadsheet. This eliminates hidden state and hidden bugs, accelerates data exploration,
-    and makes it possible for marimo to run your notebooks as scripts and web apps.
-    For expensive notebooks, you can [turn this
-    behavior off](https://docs.marimo.io/guides/expensive_notebooks/) via the notebook footer.
-
-    Try updating the values of variables below and see what happens! You can also try deleting a cell.
-    """
+    df = pl.DataFrame(
+        {
+            "name": ["Alice Archer", "Ben Brown", "Chloe Cooper", "Daniel Donovan"],
+            "birthdate": [
+                dt.date(1997, 1, 10),
+                dt.date(1985, 2, 15),
+                dt.date(1983, 3, 22),
+                dt.date(1981, 4, 30),
+            ],
+            "weight": [57.9, 72.5, 53.6, 83.1],  # (kg)
+            "height": [1.56, 1.77, 1.65, 1.75],  # (m)
+        }
     )
+
+    print(df)
+    return (df,)
+
+
+@app.cell
+def _(df):
+    df['weight'].sum()
     return
 
 
 @app.cell
 def _():
-    x = 0
-    return (x,)
-
-
-@app.cell
-def _():
-    y = 1
-    return
-
-
-@app.cell
-def _(x):
-    x
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""a""")
     return
 
 
