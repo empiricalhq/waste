@@ -21,7 +21,10 @@ export const SignUpSchema = z
     username: z
       .string()
       .min(4, { message: "Debe tener al menos 4 caracteres" })
-      .regex(/^[a-zA-Z0-0_-]+$/, "Solo se permiten letras, números, guiones y guiones bajos")
+      .regex(
+        /^[a-zA-Z0-0_-]+$/,
+        "Solo se permiten letras, números, guiones y guiones bajos",
+      )
       .refine(
         (username) => {
           for (const pattern of disallowedUsernamePatterns) {
