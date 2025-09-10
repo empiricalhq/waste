@@ -27,7 +27,7 @@ export default async function Home() {
               href={"/signin"}
               className={cn(buttonVariants({ variant: "default", size: "lg" }))}
             >
-              Iniciar Sesión
+              Iniciar sesión
             </Link>
           </div>
         </div>

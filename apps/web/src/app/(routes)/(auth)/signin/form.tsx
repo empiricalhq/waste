@@ -66,7 +66,7 @@ export default function SignInForm() {
               <FormControl>
                 <InputStartIcon icon={AtSign}>
                   <Input
-                    placeholder="Email"
+                    placeholder="usuario"
                     className={cn("peer ps-9", getInputClassName("username"))}
                     disabled={isPending}
                     {...field}
@@ -99,7 +99,7 @@ export default function SignInForm() {
           )}
         />
         <Button type="submit" disabled={isPending} className="mt-5 w-full">
-          Sign In
+          Iniciar sesión
         </Button>
       </form>
     </Form>
