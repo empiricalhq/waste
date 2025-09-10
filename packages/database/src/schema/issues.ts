@@ -26,10 +26,10 @@ export const systemAlert = pgTable(
     driverId: text('driver_id').references(() => user.id, { onDelete: 'set null' }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    statusIdx: index('system_alert_status_idx').on(table.status),
-    createdAtIdx: index('system_alert_created_at_idx').on(table.createdAt),
-  }),
+  (table) => [
+    index('system_alert_status_idx').on(table.status),
+    index('system_alert_created_at_idx').on(table.createdAt),
+  ],
 );
 
 export const driverIssueReport = pgTable(
@@ -50,10 +50,10 @@ export const driverIssueReport = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
     resolvedAt: timestamp('resolved_at'),
   },
-  (table) => ({
-    statusIdx: index('driver_issue_report_status_idx').on(table.status),
-    driverIdx: index('driver_issue_report_driver_idx').on(table.driverId),
-  }),
+  (table) => [
+    index('driver_issue_report_status_idx').on(table.status),
+    index('driver_issue_report_driver_idx').on(table.driverId),
+  ],
 );
 
 export const citizenIssueReport = pgTable(
@@ -75,8 +75,8 @@ export const citizenIssueReport = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => ({
-    statusIdx: index('citizen_issue_report_status_idx').on(table.status),
-    typeIdx: index('citizen_issue_report_type_idx').on(table.type),
-  }),
+  (table) => [
+    index('citizen_issue_report_status_idx').on(table.status),
+    index('citizen_issue_report_type_idx').on(table.type),
+  ],
 );
