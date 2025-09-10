@@ -1,4 +1,4 @@
-import { test, expect, beforeAll, beforeEach, afterAll } from 'bun:test';
+import { test, expect, beforeEach } from 'bun:test';
 import { login, apiRequest, cleanTestData } from './helpers';
 import {
   TEST_ADMIN_EMAIL,
@@ -8,42 +8,6 @@ import {
   TEST_CITIZEN_EMAIL,
   TEST_CITIZEN_PASSWORD,
 } from './config';
-import { setupTestDatabase, teardownTestDatabase } from './database';
-import app from '../src/app.ts';
-
-let server: any = null;
-
-beforeAll(async () => {
-  console.log('🚀 Starting test server for auth tests...');
-
-  // Setup test database
-  await setupTestDatabase();
-
-  // Start the API server for testing
-  const port = 4000;
-  server = Bun.serve({
-    port,
-    fetch: app.fetch,
-  });
-
-  console.log(`✅ Test server started at http://localhost:${port}`);
-
-  // Give the server a moment to fully start
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-});
-
-afterAll(async () => {
-  console.log('🛑 Stopping test server...');
-
-  // Stop the server
-  if (server) {
-    server.stop();
-    console.log('✅ Test server stopped');
-  }
-
-  // Clean up test database
-  await teardownTestDatabase();
-});
 
 beforeEach(async () => {
   await cleanTestData();
@@ -108,7 +72,6 @@ test('authenticated request works with valid cookie', async () => {
 
   console.log('Session response:', { status: response.status, data });
 
-  // The response should indicate we're authenticated
   expect(response.status).toBe(200);
   if (data) {
     expect(data).toHaveProperty('user');

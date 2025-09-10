@@ -1,6 +1,6 @@
 import { expect } from 'bun:test';
 import { BASE_URL } from './config';
-import { testDb, cleanDatabase } from './database';
+import { cleanDatabase } from './database';
 
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
@@ -22,9 +22,6 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   return { response, data };
 }
 
-/**
- * Clean database between tests to ensure isolation
- */
 export async function cleanTestData(): Promise<void> {
   await cleanDatabase();
 }
@@ -33,7 +30,6 @@ export async function login(email: string, password: string, role: string = 'cit
   console.log(`🔐 Attempting login for ${role}: ${email}`);
 
   try {
-    // First try to create the user via better-auth API
     const signUpResponse = await apiRequest('/auth/sign-up/email', {
       method: 'POST',
       body: JSON.stringify({
@@ -77,7 +73,7 @@ export async function login(email: string, password: string, role: string = 'cit
     console.log('✅ Login successful');
     return cookie;
   } catch (error: any) {
-    console.error('❌ Login failed:', error?.message);
+    console.error('Login failed:', error?.message);
     throw new Error(`Login failed for ${email}: ${error?.message}`);
   }
 }
