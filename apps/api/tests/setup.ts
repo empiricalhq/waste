@@ -1,17 +1,12 @@
-import { beforeAll, afterAll } from 'bun:test';
-import { BASE_URL } from './config';
-import { setupTestDatabase, teardownTestDatabase } from './database';
+import { beforeEach, afterAll } from 'bun:test';
+import { db } from './db.ts';
+import { auth } from './auth.ts';
 
-beforeAll(async () => {
-  console.log('@lima-garbage/api/test: Starting up...');
-  console.log(`@lima-garbage/api/test: Base URL: ${BASE_URL}`);
-  console.log('Make sure to run: bun run test:server');
-
-  await setupTestDatabase();
+beforeEach(async () => {
+  await db.clean();
+  auth.clear();
 });
 
 afterAll(async () => {
-  console.log('@lima-garbage/api/test is shutting down...');
-
-  await teardownTestDatabase();
+  await db.close();
 });
