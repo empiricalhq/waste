@@ -6,6 +6,7 @@ app = marimo.App()
 
 @app.cell
 def _():
+    import marimo as mo
     import polars as pl
     import datetime as dt
 
