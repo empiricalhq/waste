@@ -154,7 +154,7 @@ export function DashboardSidebar() {
           <div className="border-sidebar-border border-t p-4">
             <div className="flex items-center space-x-3">
               {/* User info convertido en DropdownMenu */}
-              <div className="border-sidebar-border border-t p-4">
+              <div className="border-sidebar-border p-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button

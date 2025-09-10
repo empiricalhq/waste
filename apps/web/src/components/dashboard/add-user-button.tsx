@@ -34,7 +34,7 @@ export function AddUserButton() {
 
   return (
     <>
-      <header className="bg-card border-border border-b px-6 py-4">
+      <header className="bg-card px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
             <Button onClick={() => setIsModalOpen(true)}>
