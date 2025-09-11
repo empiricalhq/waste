@@ -20,7 +20,7 @@ export const authMiddleware = (allowedRoles: Role[] = []) => {
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
-      if (allowedRoles.length > 0 && !allowedRoles.includes(session.user.role as Role)) {
+      if (allowedRoles.length > 0 && !allowedRoles.includes(session.user.appRole as Role)) {
         return c.json({ error: 'Forbidden' }, 403);
       }
 

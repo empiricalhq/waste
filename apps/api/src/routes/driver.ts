@@ -152,7 +152,7 @@ driverRouter.post('/location', zValidator('json', updateDriverLocationSchema), a
           lng = $4,
           speed = $5,
           heading = $6,
-          "updatedAt" = NOW()
+          updated_at = NOW()
       `,
         [truck_id, assignment_id, lat, lng, speed, heading],
       );

@@ -18,7 +18,7 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      role: {
+      appRole: {
         type: 'string',
         required: true,
         defaultValue: 'citizen',
@@ -35,7 +35,7 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          if (user.role === 'citizen') {
+          if (user.appRole === 'citizen') {
             try {
               await db.query('INSERT INTO citizen_profile (user_id) VALUES ($1)', [user.id]);
             } catch (error) {

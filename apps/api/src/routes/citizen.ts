@@ -31,7 +31,7 @@ citizenRouter.get('/truck/status', async (c) => {
       [user.id],
     );
 
-    if (profileResult.rowCount === 0 || !profileResult.rows[0].lat) {
+    if (profileResult.rowCount === 0 || !profileResult.rows[0]?.lat) {
       return c.json({
         status: 'LOCATION_NOT_SET',
         message: 'Please set your location first',
@@ -58,8 +58,14 @@ citizenRouter.get('/truck/status', async (c) => {
       JOIN truck t ON tcl.truck_id = t.id
       JOIN route_assignment ra ON tcl.route_assignment_id = ra.id
       WHERE ra.status = 'active'
-        AND tcl."updatedAt" > NOW() - INTERVAL '10 minutes'
-      HAVING distance_km < 1
+        AND tcl.updated_at > NOW() - INTERVAL '10 minutes'
+        AND (
+          6371 * acos(
+            cos(radians($1)) * cos(radians(tcl.lat)) *
+            cos(radians(tcl.lng) - radians($2)) +
+            sin(radians($1)) * sin(radians(tcl.lat))
+          )
+        ) < 1
       ORDER BY distance_km ASC
       LIMIT 1
     `,
@@ -101,11 +107,13 @@ citizenRouter.put('/profile/location', zValidator('json', updateLocationSchema),
   const user = c.get('user');
 
   try {
+    // TODO: is there a better way to do this?
     await db.query(
       `
-      UPDATE citizen_profile
-      SET lat = $1, lng = $2, "updatedAt" = NOW()
-      WHERE user_id = $3
+      INSERT INTO citizen_profile (user_id, lat, lng, updated_at)
+      VALUES ($3, $1, $2, NOW())
+      ON CONFLICT (user_id)
+      DO UPDATE SET lat = $1, lng = $2, updated_at = NOW()
     `,
       [lat, lng, user.id],
     );
@@ -146,7 +154,7 @@ citizenRouter.get('/issues', async (c) => {
       `
       SELECT * FROM citizen_issue_report
       WHERE user_id = $1
-      ORDER BY "createdAt" DESC
+      ORDER BY created_at DESC
     `,
       [user.id],
     );

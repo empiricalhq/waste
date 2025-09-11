@@ -20,9 +20,9 @@ adminRouter.use('*', authMiddleware(['admin', 'supervisor']));
 adminRouter.get('/drivers', async (c) => {
   try {
     const result = await db.query(`
-      SELECT id, name, email, role, "isActive", "createdAt"
+      SELECT id, name, email, "appRole", "isActive", "createdAt"
       FROM "user"
-      WHERE role = 'driver'
+      WHERE "appRole" = 'driver'
       ORDER BY "createdAt" DESC
     `);
     return c.json(result.rows);
@@ -39,15 +39,15 @@ adminRouter.get('/trucks', async (c) => {
         t.*,
         tcl.lat,
         tcl.lng,
-        tcl."updatedAt" as location_updated_at,
+        tcl.updated_at as location_updated_at,
         u.name as driver_name,
         ra.status as assignment_status
       FROM truck t
       LEFT JOIN truck_current_location tcl ON t.id = tcl.truck_id
       LEFT JOIN route_assignment ra ON t.id = ra.truck_id AND ra.status IN ('scheduled', 'active')
       LEFT JOIN "user" u ON ra.driver_id = u.id
-      WHERE t."isActive" = true
-      ORDER BY t."createdAt" DESC
+      WHERE t.is_active = true
+      ORDER BY t.created_at DESC
     `);
     return c.json(result.rows);
   } catch (error) {
@@ -85,7 +85,7 @@ adminRouter.delete('/trucks/:id', zValidator('param', uuidParamSchema), async (c
   try {
     const result = await db.query(
       `
-      UPDATE truck SET "isActive" = false WHERE id = $1
+      UPDATE truck SET is_active = false WHERE id = $1
       RETURNING id
     `,
       [id],
@@ -114,7 +114,7 @@ adminRouter.get('/routes', async (c) => {
       LEFT JOIN route_waypoint rw ON r.id = rw.route_id
       WHERE r.status = 'active'
       GROUP BY r.id, u.name
-      ORDER BY r."createdAt" DESC
+      ORDER BY r.created_at DESC
     `);
     return c.json(result.rows);
   } catch (error) {
@@ -246,20 +246,20 @@ adminRouter.get('/issues', async (c) => {
       db.query(`
         SELECT
           'driver' as source,
-          id, type, status, "createdAt", notes as description,
+          id, type, status, created_at, notes as description,
           lat, lng
         FROM driver_issue_report
         WHERE status = 'open'
-        ORDER BY "createdAt" DESC
+        ORDER BY created_at DESC
       `),
       db.query(`
         SELECT
           'citizen' as source,
-          id, type, status, "createdAt", description,
+          id, type, status, created_at, description,
           lat, lng
         FROM citizen_issue_report
         WHERE status = 'open'
-        ORDER BY "createdAt" DESC
+        ORDER BY created_at DESC
       `),
     ]);
 
