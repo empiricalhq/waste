@@ -3,9 +3,9 @@ const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/index.ts'], 
   stderr: 'inherit',
 });
 
-await Bun.sleep(1000);
+await Bun.sleep(3000);
 
-const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test'], {
+const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', '--sequential'], {
   stdout: 'inherit',
   stderr: 'inherit',
 });

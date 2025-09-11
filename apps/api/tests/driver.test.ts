@@ -2,12 +2,13 @@ import { test, expect, beforeEach } from 'bun:test';
 import { TEST_USERS } from './config.ts';
 import { auth } from './auth.ts';
 import { http } from './http.ts';
-import './setup.ts';
+import { setup } from './setup.ts';
 
 let driverHeaders: Record<string, string>;
 let adminHeaders: Record<string, string>;
 
 beforeEach(async () => {
+  await setup();
   await auth.login(TEST_USERS.driver.email, TEST_USERS.driver.password);
   await auth.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
 

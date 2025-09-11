@@ -1,8 +1,7 @@
-import { beforeEach } from 'bun:test';
 import { db } from './db.ts';
 import { auth } from './auth.ts';
 
-beforeEach(async () => {
+export async function setup() {
   await db.clean();
   auth.clear();
-});
+}

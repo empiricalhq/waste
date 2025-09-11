@@ -2,11 +2,12 @@ import { test, expect, beforeEach } from 'bun:test';
 import { TEST_USERS } from './config.ts';
 import { auth } from './auth.ts';
 import { http } from './http.ts';
-import './setup.ts';
+import { setup } from './setup.ts';
 
 let citizenHeaders: Record<string, string>;
 
 beforeEach(async () => {
+  await setup();
   await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
   citizenHeaders = auth.getAuthHeaders(TEST_USERS.citizen.email);
 });

@@ -1,7 +1,11 @@
-import { test, expect } from 'bun:test';
+import { test, expect, beforeEach, beforeAll } from 'bun:test';
 import { TEST_USERS } from './config.ts';
 import { auth } from './auth';
-import './setup.ts';
+import { setup } from './setup.ts';
+
+beforeEach(async () => {
+  await setup();
+});
 
 test('can create and login admin user', async () => {
   const session = await auth.login(TEST_USERS.admin.email, TEST_USERS.admin.password);

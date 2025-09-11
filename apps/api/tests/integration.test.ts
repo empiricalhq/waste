@@ -2,7 +2,11 @@ import { test, expect, beforeEach } from 'bun:test';
 import { TEST_USERS } from './config.ts';
 import { auth } from './auth.ts';
 import { http } from './http.ts';
-import './setup.ts';
+import { setup } from './setup.ts';
+
+beforeEach(async () => {
+  await setup();
+});
 
 test('full workflow: admin creates truck and route, driver gets assignment', async () => {
   // before: setup users
