@@ -21,7 +21,7 @@ El objetivo es contar la historia completa de los residuos: cómo se generan, de
 qué están compuestos, cómo se valorizan, cómo se disponen, qué programas
 ambientales los gestionan y cuáles son sus impactos.
 
-1. **Generación**
+1. **GENERACIÓN**
 
    datasets:
    - Generación anual de residuos sólidos domiciliarios y municipales
@@ -34,9 +34,7 @@ ambientales los gestionan y cuáles son sus impactos.
    - top 10: barras horizontales de municipios con mayor generación
    - indicador: kg de residuos per cápita por año.
 
----
-
-2. **Valorización**
+2. **VALORIZACIÓN**
 
    datasets:
    - Valorización de residuos sólidos Inorgánicos a nivel distrital
@@ -48,7 +46,7 @@ ambientales los gestionan y cuáles son sus impactos.
    - evaluación anual: líneas de % valorizado sobre total generado
    - mapa: distritos con tasa >= 20 %
 
-3. **Disposición final**
+3. **DISPOSICIÓN FINAL**
 
    datasets:
    - Disposición final adecuada de residuos sólidos
@@ -59,7 +57,7 @@ ambientales los gestionan y cuáles son sus impactos.
    - kpi: cobertura nacional último año
    - área apilada: % adecuado vs inadecuado 2010-2023
 
-4. **Composición**
+4. **COMPOSICIÓN**
 
    datasets:
    - Composición de residuos sólidos domiciliarios
@@ -71,7 +69,7 @@ ambientales los gestionan y cuáles son sus impactos.
      años.
    - barras horizontales: comparación por tipo de residuo.
 
-5. **Programas de gestión ambiental**
+5. **PROGRAMAS DE GESTIÓN AMBIENTAL**
 
    datasets:
    - Implementación del Programa Municipal EDUCCA
@@ -81,7 +79,7 @@ ambientales los gestionan y cuáles son sus impactos.
    - boxplot: valorización per cápita – con educca vs sin educca
    - línea temporal: crecimiento del programa en los últimos años.
 
-6. **Impactos**
+6. **IMPACTOS**
 
    datasets:
    - Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
