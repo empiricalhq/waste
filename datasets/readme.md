@@ -1,8 +1,6 @@
-## ODS 11: Gestión de residuos sólidos en áreas urbanas (Perú)
+## ODS 11
 
-Actualmente podemos obtener datos del
-[SINIA](https://sinia.minam.gob.pe/portal/datos-abiertos/) (Sistema Nacional de
-Información Ambiental):
+[Datos abiertos del sector ambiente](https://sinia.minam.gob.pe/portal/datos-abiertos/):
 
 | Dataset                                                                                                                                                                                                              | Descripción                                                                                                                                                               |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -14,25 +12,30 @@ Información Ambiental):
 | [Residuos municipales generados anualmente](https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente)                                                                                          | Cantidad de residuos generados por los municipios del país, con variación por año.                                                                                        |
 | [Implementación del Programa Municipal EDUCCA](https://www.datosabiertos.gob.pe/dataset/implementaci%C3%B3n-del-programa-municipal-de-educaci%C3%B3n-cultura-y-ciudadan%C3%ADa-ambiental-programa)                   | Información sobre la ejecución a nivel distrital del Programa EDUCCA, orientado a educación y cultura ambiental en la ciudadanía.                                         |
 | [Disposición final adecuada de residuos sólidos (duplicado)](https://www.datosabiertos.gob.pe/dataset/disposici%C3%B3n-final-adecuada-de-residuos-s%C3%B3lidos-ministerio-del-ambiente-minam)                        | Mismo dataset que el anterior sobre disposición final adecuada de residuos, listado dos veces en el portal.                                                               |
-| [Generación de residuos sólidos municipales](https://www.datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente)                            | Estadísticas de generación de residuos sólidos municipales; similar al dataset de domiciliarios y municipales, pero enfocado en lo municipal.                             |
 | [Inventario Nacional de Áreas Degradadas por residuos sólidos municipales](https://www.datosabiertos.gob.pe/dataset/inventario-nacional-de-%C3%A1reas-degradadas-por-residuos-s%C3%B3lidos-municipales-organismo-de) | Registro de sitios degradados por acumulación o disposición inadecuada de residuos sólidos municipales en el país.                                                        |
 
-El objetivo es contar la historia completa de los residuos: cómo se generan, de
-qué están compuestos, cómo se valorizan, cómo se disponen, qué programas
-ambientales los gestionan y cuáles son sus impactos.
+# Roadmap de Dashboard para Gestión de Residuos Sólidos (Perú)
 
-1. **Generación**
+Este dashboard busca mostrar la historia completa de los residuos: desde la
+**generación**, pasando por la **valorización**, la **disposición final**, la
+**composición**, los **programas ambientales** y finalmente los **impactos**.
 
-   datasets:
-   - Generación anual de residuos sólidos domiciliarios y municipales
-   - Residuos municipales generados anualmente
-   - Generación de residuos sólidos municipales
+---
 
-   gráficos:
-   - serie temporal: toneladas 2000-2024
-   - mapa coroplético: kg per cápita por distrito/provincia
-   - top 10: barras horizontales de municipios con mayor generación
-   - indicador: kg de residuos per cápita por año.
+## 1. Generación de residuos
+
+**Datasets:**
+
+- Generación anual de residuos sólidos domiciliarios y municipales
+- Residuos municipales generados anualmente
+
+**Gráficos sugeridos:**
+
+- Serie de tiempo (línea): evolución de toneladas de residuos generados
+  (2000–2024).
+- Mapa temático: intensidad de generación por distrito/provincia.
+- Ranking (barras): Top 10 municipios que más generan.
+- Indicador: kg de residuos per cápita por año.
 
 ---
 
