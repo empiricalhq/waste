@@ -1,30 +1,21 @@
-import { test, expect, beforeEach } from 'bun:test';
-import { TEST_USERS } from './config.ts';
-import { auth } from './auth.ts';
-import { http } from './http.ts';
-import './setup.ts';
+import { test, expect, beforeEach, afterAll } from 'bun:test';
+import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
-let driverHeaders: Record<string, string>;
-let adminHeaders: Record<string, string>;
+let ctx: TestContext;
 
 beforeEach(async () => {
-  await auth.login(TEST_USERS.driver.email, TEST_USERS.driver.password);
-  await auth.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
-
-  driverHeaders = auth.getAuthHeaders(TEST_USERS.driver.email);
-  adminHeaders = auth.getAuthHeaders(TEST_USERS.admin.email);
+  ctx = await setupTest();
+  await ctx.auth.loginAs('driver');
 });
 
-test('driver gets 404 when no current route assigned', async () => {
-  const response = await http.get('/driver/route/current', driverHeaders);
+test('driver gets 404 when no route assigned', async () => {
+  const response = await ctx.client.get('/driver/route/current', ctx.auth.getHeaders('driver'));
 
   expect(response.status).toBe(404);
   expect(response.data.error).toContain('No upcoming or active route found');
 });
 
-test('driver can update location during active assignment', async () => {
-  // TODO: This test would require creating a full assignment workflow
-  // For now, test the endpoint structure
+test('driver cannot update location without active assignment', async () => {
   const locationData = {
     lat: -12.0464,
     lng: -77.0428,
@@ -32,14 +23,13 @@ test('driver can update location during active assignment', async () => {
     heading: 180,
   };
 
-  const response = await http.post('/driver/location', locationData, driverHeaders);
+  const response = await ctx.client.post('/driver/location', locationData, ctx.auth.getHeaders('driver'));
 
-  // Expect 500 because no active assignment exists
   expect(response.status).toBe(500);
   expect(response.data.error).toContain('Failed to update location');
 });
 
-test('driver can report issues', async () => {
+test('driver cannot report issues without active assignment', async () => {
   const issueData = {
     type: 'mechanical_failure',
     notes: 'Engine overheating',
@@ -47,18 +37,20 @@ test('driver can report issues', async () => {
     lng: -77.0428,
   };
 
-  const response = await http.post('/driver/issues', issueData, driverHeaders);
+  const response = await ctx.client.post('/driver/issues', issueData, ctx.auth.getHeaders('driver'));
 
-  // TODO: Expect 400 because no active assignment exists
   expect(response.status).toBe(400);
   expect(response.data.error).toContain('No active assignment found');
 });
 
 test('non-driver cannot access driver endpoints', async () => {
-  await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
-  const citizenHeaders = auth.getAuthHeaders(TEST_USERS.citizen.email);
+  await ctx.auth.loginAs('citizen');
 
-  const response = await http.get('/driver/route/current', citizenHeaders);
+  const response = await ctx.client.get('/driver/route/current', ctx.auth.getHeaders('citizen'));
 
   expect(response.status).toBe(403);
+});
+
+afterAll(async () => {
+  await ctx.db.close();
 });

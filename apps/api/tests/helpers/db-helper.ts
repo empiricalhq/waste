@@ -5,7 +5,7 @@ export class DbHelper {
 
   constructor() {
     if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL is required for tests');
+      throw new Error('DATABASE_URL required');
     }
 
     this.pool = new Pool({
@@ -38,32 +38,24 @@ export class DbHelper {
 
     try {
       await this.pool.query('SET session_replication_role = replica;');
-
       const tableList = tables.join(', ');
       await this.pool.query(`TRUNCATE TABLE ${tableList} RESTART IDENTITY CASCADE`);
-
       await this.pool.query('SET session_replication_role = DEFAULT;');
     } catch (error) {
-      console.error('Failed to clean database:', error);
+      console.error('Database clean failed:', error);
       throw error;
     }
+  }
+
+  async updateUserRole(email: string, role: string): Promise<void> {
+    await this.pool.query('UPDATE "user" SET "appRole" = $1 WHERE email = $2', [role, email]);
   }
 
   async query(text: string, params?: any[]): Promise<any> {
     return this.pool.query(text, params);
   }
 
-  async updateUserAppRole(email: string, appRole: string): Promise<void> {
-    await this.pool.query('UPDATE "user" SET "appRole" = $1 WHERE email = $2', [appRole, email]);
-  }
-
   async close(): Promise<void> {
-    try {
-      await this.pool.end();
-    } catch (error) {
-      console.warn('Error closing database pool:', error);
-    }
+    await this.pool.end();
   }
 }
-
-export const db = new DbHelper();

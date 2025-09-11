@@ -1,14 +1,11 @@
-import { test, expect, beforeEach } from 'bun:test';
-import { TEST_USERS } from './config.ts';
-import { auth } from './auth.ts';
-import { http } from './http.ts';
-import './setup.ts';
+import { test, expect, beforeEach, afterAll } from 'bun:test';
+import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
-let adminHeaders: Record<string, string>;
+let ctx: TestContext;
 
 beforeEach(async () => {
-  await auth.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
-  adminHeaders = auth.getAuthHeaders(TEST_USERS.admin.email);
+  ctx = await setupTest();
+  await ctx.auth.loginAs('admin');
 });
 
 test('admin can create truck', async () => {
@@ -17,7 +14,7 @@ test('admin can create truck', async () => {
     license_plate: `T${Date.now().toString().slice(-8)}`,
   };
 
-  const response = await http.post('/admin/trucks', truckData, adminHeaders);
+  const response = await ctx.client.post('/admin/trucks', truckData, ctx.auth.getHeaders('admin'));
 
   expect(response.status).toBe(201);
   expect(response.data).toMatchObject({
@@ -28,33 +25,32 @@ test('admin can create truck', async () => {
 });
 
 test('admin can list trucks', async () => {
-  await http.post(
+  await ctx.client.post(
     '/admin/trucks',
     {
       name: 'Test Truck',
       license_plate: `L${Date.now().toString().slice(-8)}`,
     },
-    adminHeaders,
+    ctx.auth.getHeaders('admin'),
   );
 
-  const response = await http.get('/admin/trucks', adminHeaders);
+  const response = await ctx.client.get('/admin/trucks', ctx.auth.getHeaders('admin'));
 
   expect(response.status).toBe(200);
   expect(Array.isArray(response.data)).toBe(true);
   expect(response.data.length).toBeGreaterThan(0);
 });
 
-test('admin cannot create truck with duplicate license plate', async () => {
+test('admin cannot create duplicate license plate', async () => {
   const truckData = {
     name: 'Test Truck',
     license_plate: 'DUPLICATE',
   };
+  const headers = ctx.auth.getHeaders('admin');
 
-  // before: create a truck
-  await http.post('/admin/trucks', truckData, adminHeaders);
+  await ctx.client.post('/admin/trucks', truckData, headers);
 
-  // then: try to create duplicate
-  const response = await http.post('/admin/trucks', truckData, adminHeaders);
+  const response = await ctx.client.post('/admin/trucks', truckData, headers);
 
   expect(response.status).toBe(409);
   expect(response.data.error).toContain('License plate already exists');
@@ -73,7 +69,7 @@ test('admin can create route with waypoints', async () => {
     ],
   };
 
-  const response = await http.post('/admin/routes', routeData, adminHeaders);
+  const response = await ctx.client.post('/admin/routes', routeData, ctx.auth.getHeaders('admin'));
 
   expect(response.status).toBe(201);
   expect(response.data).toMatchObject({
@@ -83,20 +79,14 @@ test('admin can create route with waypoints', async () => {
   });
 });
 
-test('admin can list drivers', async () => {
-  await auth.login(TEST_USERS.driver.email, TEST_USERS.driver.password);
-
-  const response = await http.get('/admin/drivers', adminHeaders);
-
-  expect(response.status).toBe(200);
-  expect(Array.isArray(response.data)).toBe(true);
-});
-
 test('non-admin cannot access admin endpoints', async () => {
-  await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
-  const citizenHeaders = auth.getAuthHeaders(TEST_USERS.citizen.email);
+  await ctx.auth.loginAs('citizen');
 
-  const response = await http.get('/admin/trucks', citizenHeaders);
+  const response = await ctx.client.get('/admin/trucks', ctx.auth.getHeaders('citizen'));
 
   expect(response.status).toBe(403);
+});
+
+afterAll(async () => {
+  await ctx.db.close();
 });

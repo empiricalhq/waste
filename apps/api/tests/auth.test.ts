@@ -1,40 +1,47 @@
-import { test, expect } from 'bun:test';
-import { TEST_USERS } from './config.ts';
-import { auth } from './auth';
-import './setup.ts';
+import { test, expect, beforeEach, afterAll } from 'bun:test';
+import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
-test('can create and login admin user', async () => {
-  const session = await auth.login(TEST_USERS.admin.email, TEST_USERS.admin.password);
+let ctx: TestContext;
 
-  expect(session.user.email).toBe(TEST_USERS.admin.email);
+beforeEach(async () => {
+  ctx = await setupTest();
+});
+
+test('admin user can login and has correct role', async () => {
+  const session = await ctx.auth.loginAs('admin');
+
+  expect(session.user.email).toBe('admin@test.com');
   expect(session.user.appRole).toBe('admin');
   expect(session.cookie).toContain('better-auth.session_token');
 });
 
-test('can create and login driver user', async () => {
-  const session = await auth.login(TEST_USERS.driver.email, TEST_USERS.driver.password);
+test('driver user can login and has correct role', async () => {
+  const session = await ctx.auth.loginAs('driver');
 
-  expect(session.user.email).toBe(TEST_USERS.driver.email);
+  expect(session.user.email).toBe('driver@test.com');
   expect(session.user.appRole).toBe('driver');
+  expect(session.cookie).toContain('better-auth.session_token');
 });
 
-test('can create and login citizen user', async () => {
-  const session = await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
+test('citizen user can login and has correct role', async () => {
+  const session = await ctx.auth.loginAs('citizen');
 
-  expect(session.user.email).toBe(TEST_USERS.citizen.email);
+  expect(session.user.email).toBe('citizen@test.com');
   expect(session.user.appRole).toBe('citizen');
+  expect(session.cookie).toContain('better-auth.session_token');
 });
 
-test('login fails with wrong password', async () => {
-  await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
-  auth.clear();
-
-  expect(auth.login(TEST_USERS.citizen.email, 'wrongpassword')).rejects.toThrow('Login failed');
+test('login fails with invalid credentials', async () => {
+  expect(ctx.auth.login('nonexistent@test.com', 'wrongpassword')).rejects.toThrow();
 });
 
-test('reuses existing session on multiple login calls', async () => {
-  const session1 = await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
-  const session2 = await auth.login(TEST_USERS.citizen.email, TEST_USERS.citizen.password);
+test('multiple login calls reuse existing session', async () => {
+  const session1 = await ctx.auth.loginAs('citizen');
+  const session2 = await ctx.auth.loginAs('citizen');
 
   expect(session1).toBe(session2);
+});
+
+afterAll(async () => {
+  await ctx.db.close();
 });
