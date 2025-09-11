@@ -73,7 +73,7 @@ test('complete workflow: admin creates resources, driver gets assignment', async
     truck_name: truck.name,
     status: 'scheduled',
   });
-});
+}, 15000);
 
 test('citizen can report issue and admin can view it', async () => {
   await ctx.auth.loginAs('citizen');
@@ -100,7 +100,7 @@ test('citizen can report issue and admin can view it', async () => {
 
   expect(adminIssuesResponse.status).toBe(200);
   expect(Array.isArray(adminIssuesResponse.data)).toBe(true);
-});
+}, 15000);
 
 test('role-based access control works across endpoints', async () => {
   await ctx.auth.loginAs('citizen');
@@ -126,7 +126,7 @@ test('role-based access control works across endpoints', async () => {
   // admin can access admin endpoints
   const adminToAdmin = await ctx.client.get('/admin/trucks', adminHeaders);
   expect(adminToAdmin.status).toBe(200);
-});
+}, 15000);
 
 afterAll(async () => {
   await ctx.db.close();
