@@ -36,92 +36,68 @@ ambientales los gestionan y cuáles son sus impactos.
 
 ---
 
-## 2. Valorización de residuos
+2. **Valorización**
 
-**Datasets:**
+   datasets:
+   - Valorización de residuos sólidos Inorgánicos a nivel distrital
+   - Valorización de residuos sólidos Orgánicos a nivel distrital
 
-- Valorización de residuos sólidos Inorgánicos a nivel distrital
-- Valorización de residuos sólidos Orgánicos a nivel distrital
+   gráficos:
+   - barras agrupadas: comparación de valorización orgánica vs inorgánica por
+     distrito
+   - evaluación anual: líneas de % valorizado sobre total generado
+   - mapa: distritos con tasa >= 20 %
 
-**Gráficos sugeridos:**
+3. **Disposición final**
 
-- Barras agrupadas: comparación de valorización orgánica vs inorgánica por
-  distrito.
-- Serie temporal: evolución de valorización en toneladas por año.
-- Indicador circular (%): proporción de residuos valorizados frente al total
-  generado.
-- Mapa: municipios con mayores tasas de valorización.
+   datasets:
+   - Disposición final adecuada de residuos sólidos
 
----
+   gráficos:
+   - serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
+   - mapa: rellenos sanitarios y cobertura por distrito, distritos que atienden
+   - kpi: cobertura nacional último año
+   - área apilada: % adecuado vs inadecuado 2010-2023
 
-## 3. Disposición final de residuos
+4. **Composición**
 
-**Dataset:**
+   datasets:
+   - Composición de residuos sólidos domiciliarios
 
-- Disposición final adecuada de residuos sólidos
+   gráficos:
+   - donut: % orgánicos, plásticos, papel, vidrio, metales, otros
+   - heatmap: cambio de proporción 2014 vs 2023 por región
+   - evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
+     años.
+   - barras horizontales: comparación por tipo de residuo.
 
-**Gráficos sugeridos:**
+5. **Programas de gestión ambiental**
 
-- Serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
-- Mapa: ubicación de rellenos sanitarios y distritos que atienden.
-- Indicador KPI: cobertura nacional (ej. 65% residuos con disposición adecuada).
-- Comparación regional: barras apiladas mostrando disposición adecuada vs
-  inadecuada.
+   datasets:
+   - Implementación del Programa Municipal EDUCCA
 
----
+   gráficos:
+   - mapa binario: distrito con/sin educca (% de municipios)
+   - boxplot: valorización per cápita – con educca vs sin educca
+   - línea temporal: crecimiento del programa en los últimos años.
 
-## 4. Caracterización de residuos
+6. **Impactos**
 
-**Dataset:**
+   datasets:
+   - Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
 
-- Composición de residuos sólidos domiciliarios
+   gráficos:
+   - puntos: ubicación y tamaño (ha) de áreas degradadas
+   - serie temporal: evolución de áreas degradadas detectadas por año.
+   - scatter: toneladas generadas vs ha degradadas por región (x: toneladas
+     generadas, y: áreas degradadas).
+   - indicador: total de ha registradas.
 
-**Gráficos sugeridos:**
+El flujo narrativo podría ser algo como:
 
-- Gráfico circular: % de orgánicos, plásticos, vidrio, papel, metales, otros.
-- Evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
-  años.
-- Comparación entre regiones: barras horizontales por tipo de residuo.
-
----
-
-## 5. Programas y gestión ambiental
-
-**Dataset:**
-
-- Implementación del Programa Municipal EDUCCA
-
-**Gráficos sugeridos:**
-
-- Mapa de cobertura: distritos con y sin EDUCCA.
-- Indicador: % de municipios implementando el programa.
-- Cruce de datos: comparar valorización promedio de municipios con EDUCCA vs sin
-  EDUCCA.
-- Línea temporal: crecimiento del programa en los últimos años.
-
----
-
-## 6. Impactos ambientales
-
-**Dataset:**
-
-- Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
-
-**Gráficos sugeridos:**
-
-- Mapa: localización de áreas degradadas.
-- Serie temporal: evolución de áreas degradadas detectadas por año.
-- Comparación con generación: scatter plot (eje X: toneladas generadas, eje Y:
-  áreas degradadas).
-- Indicador: número total de hectáreas degradadas registradas.
-
----
-
-## Flujo narrativo del dashboard
-
-1. **Generación** → mostrar cuánto y dónde se produce.
-2. **Valorización** → mostrar cuánto se reaprovecha.
-3. **Disposición** → mostrar cuánto se maneja correctamente.
-4. **Composición** → mostrar de qué están hechos los residuos.
-5. **Programas EDUCCA** → mostrar esfuerzos de gestión y educación ambiental.
-6. **Impactos** → mostrar consecuencias de la mala gestión.
+1. Generación: mostrar cuánto y dónde se produce
+2. Valorización: mostrar cuánto se reaprovecha
+3. Disposición: mostrar cuánto se maneja correctamente
+4. Composición: mostrar de qué están hechos los residuos
+5. Programas: mostrar esfuerzos de gestión y educación ambiental
+6. Impactos: mostrar consecuencias de la mala gestión
