@@ -1,6 +1,8 @@
-## ODS 11
+## ODS 11: Gestión de residuos sólidos en áreas urbanas (Perú)
 
-[Datos abiertos del sector ambiente](https://sinia.minam.gob.pe/portal/datos-abiertos/):
+Actualmente podemos obtener datos del
+[SINIA](https://sinia.minam.gob.pe/portal/datos-abiertos/) (Sistema Nacional de
+Información Ambiental):
 
 | Dataset                                                                                                                                                                                                              | Descripción                                                                                                                                                               |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -14,117 +16,85 @@
 | [Disposición final adecuada de residuos sólidos (duplicado)](https://www.datosabiertos.gob.pe/dataset/disposici%C3%B3n-final-adecuada-de-residuos-s%C3%B3lidos-ministerio-del-ambiente-minam)                        | Mismo dataset que el anterior sobre disposición final adecuada de residuos, listado dos veces en el portal.                                                               |
 | [Inventario Nacional de Áreas Degradadas por residuos sólidos municipales](https://www.datosabiertos.gob.pe/dataset/inventario-nacional-de-%C3%A1reas-degradadas-por-residuos-s%C3%B3lidos-municipales-organismo-de) | Registro de sitios degradados por acumulación o disposición inadecuada de residuos sólidos municipales en el país.                                                        |
 
-# Roadmap de Dashboard para Gestión de Residuos Sólidos (Perú)
+El objetivo es contar la historia completa de los residuos: cómo se generan, de
+qué están compuestos, cómo se valorizan, cómo se disponen, qué programas
+ambientales los gestionan y cuáles son sus impactos.
 
-Este dashboard busca mostrar la historia completa de los residuos: desde la
-**generación**, pasando por la **valorización**, la **disposición final**, la
-**composición**, los **programas ambientales** y finalmente los **impactos**.
+1. **GENERACIÓN**
 
----
+   datasets:
+   - Generación anual de residuos sólidos domiciliarios y municipales
+   - Residuos municipales generados anualmente
+   - Generación de residuos sólidos municipales
 
-## 1. Generación de residuos
+   gráficos:
+   - serie temporal: toneladas 2000-2024
+   - mapa coroplético: kg per cápita por distrito/provincia
+   - top 10: barras horizontales de municipios con mayor generación
+   - indicador: kg de residuos per cápita por año.
 
-**Datasets:**
+2. **VALORIZACIÓN**
 
-- Generación anual de residuos sólidos domiciliarios y municipales
-- Residuos municipales generados anualmente
+   datasets:
+   - Valorización de residuos sólidos Inorgánicos a nivel distrital
+   - Valorización de residuos sólidos Orgánicos a nivel distrital
 
-**Gráficos sugeridos:**
+   gráficos:
+   - barras agrupadas: comparación de valorización orgánica vs inorgánica por
+     distrito
+   - evaluación anual: líneas de % valorizado sobre total generado
+   - mapa: distritos con tasa >= 20 %
 
-- Serie de tiempo (línea): evolución de toneladas de residuos generados
-  (2000–2024).
-- Mapa temático: intensidad de generación por distrito/provincia.
-- Ranking (barras): Top 10 municipios que más generan.
-- Indicador: kg de residuos per cápita por año.
+3. **DISPOSICIÓN FINAL**
 
----
+   datasets:
+   - Disposición final adecuada de residuos sólidos
 
-## 2. Valorización de residuos
+   gráficos:
+   - serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
+   - mapa: rellenos sanitarios y cobertura por distrito, distritos que atienden
+   - kpi: cobertura nacional último año
+   - área apilada: % adecuado vs inadecuado 2010-2023
 
-**Datasets:**
+4. **COMPOSICIÓN**
 
-- Valorización de residuos sólidos Inorgánicos a nivel distrital
-- Valorización de residuos sólidos Orgánicos a nivel distrital
+   datasets:
+   - Composición de residuos sólidos domiciliarios
 
-**Gráficos sugeridos:**
+   gráficos:
+   - donut: % orgánicos, plásticos, papel, vidrio, metales, otros
+   - heatmap: cambio de proporción 2014 vs 2023 por región
+   - evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
+     años.
+   - barras horizontales: comparación por tipo de residuo.
 
-- Barras agrupadas: comparación de valorización orgánica vs inorgánica por
-  distrito.
-- Serie temporal: evolución de valorización en toneladas por año.
-- Indicador circular (%): proporción de residuos valorizados frente al total
-  generado.
-- Mapa: municipios con mayores tasas de valorización.
+5. **PROGRAMAS DE GESTIÓN AMBIENTAL**
 
----
+   datasets:
+   - Implementación del Programa Municipal EDUCCA
 
-## 3. Disposición final de residuos
+   gráficos:
+   - mapa binario: distrito con/sin educca (% de municipios)
+   - boxplot: valorización per cápita – con educca vs sin educca
+   - línea temporal: crecimiento del programa en los últimos años.
 
-**Dataset:**
+6. **IMPACTOS**
 
-- Disposición final adecuada de residuos sólidos
+   datasets:
+   - Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
 
-**Gráficos sugeridos:**
+   gráficos:
+   - puntos: ubicación y tamaño (ha) de áreas degradadas
+   - serie temporal: evolución de áreas degradadas detectadas por año.
+   - scatter: toneladas generadas vs ha degradadas por región (x: toneladas
+     generadas, y: áreas degradadas).
+   - indicador: total de ha registradas.
 
-- Serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
-- Mapa: ubicación de rellenos sanitarios y distritos que atienden.
-- Indicador KPI: cobertura nacional (ej. 65% residuos con disposición adecuada).
-- Comparación regional: barras apiladas mostrando disposición adecuada vs
-  inadecuada.
+El flujo narrativo podría ser algo como:
 
----
-
-## 4. Caracterización de residuos
-
-**Dataset:**
-
-- Composición de residuos sólidos domiciliarios
-
-**Gráficos sugeridos:**
-
-- Gráfico circular: % de orgánicos, plásticos, vidrio, papel, metales, otros.
-- Evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
-  años.
-- Comparación entre regiones: barras horizontales por tipo de residuo.
-
----
-
-## 5. Programas y gestión ambiental
-
-**Dataset:**
-
-- Implementación del Programa Municipal EDUCCA
-
-**Gráficos sugeridos:**
-
-- Mapa de cobertura: distritos con y sin EDUCCA.
-- Indicador: % de municipios implementando el programa.
-- Cruce de datos: comparar valorización promedio de municipios con EDUCCA vs sin
-  EDUCCA.
-- Línea temporal: crecimiento del programa en los últimos años.
-
----
-
-## 6. Impactos ambientales
-
-**Dataset:**
-
-- Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
-
-**Gráficos sugeridos:**
-
-- Mapa: localización de áreas degradadas.
-- Serie temporal: evolución de áreas degradadas detectadas por año.
-- Comparación con generación: scatter plot (eje X: toneladas generadas, eje Y:
-  áreas degradadas).
-- Indicador: número total de hectáreas degradadas registradas.
-
----
-
-## Flujo narrativo del dashboard
-
-1. **Generación** → mostrar cuánto y dónde se produce.
-2. **Valorización** → mostrar cuánto se reaprovecha.
-3. **Disposición** → mostrar cuánto se maneja correctamente.
-4. **Composición** → mostrar de qué están hechos los residuos.
-5. **Programas EDUCCA** → mostrar esfuerzos de gestión y educación ambiental.
-6. **Impactos** → mostrar consecuencias de la mala gestión.
+1. Generación: mostrar cuánto y dónde se produce
+2. Valorización: mostrar cuánto se reaprovecha
+3. Disposición: mostrar cuánto se maneja correctamente
+4. Composición: mostrar de qué están hechos los residuos
+5. Programas: mostrar esfuerzos de gestión y educación ambiental
+6. Impactos: mostrar consecuencias de la mala gestión
