@@ -8,5 +8,6 @@ dependencies = [
     "altair>=5.5.0",
     "marimo>=0.15.2",
     "matplotlib>=3.10.6",
+    "plotly[express]>=6.3.0",
     "polars>=1.33.1",
 ]
