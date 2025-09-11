@@ -1,23 +1,36 @@
-import { TEST_CONFIG } from './config';
+import { TEST_CONFIG } from '../config.ts';
 
-interface ApiResponse<T = any> {
+interface Response<T = any> {
   data: T;
   status: number;
   headers: Headers;
 }
 
-class HttpClient {
-  constructor(private baseUrl: string) {}
+export class TestClient {
+  private baseUrl: string;
 
-  private async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  constructor() {
+    this.baseUrl = TEST_CONFIG.baseUrl;
+  }
+
+  async request<T = any>(
+    method: string,
+    endpoint: string,
+    body?: any,
+    headers?: Record<string, string>,
+  ): Promise<Response<T>> {
     const url = `${this.baseUrl}${endpoint}`;
 
-    const headers = {
+    const requestHeaders = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...headers,
     };
 
-    const response = await fetch(url, { ...options, headers });
+    const response = await fetch(url, {
+      method,
+      headers: requestHeaders,
+      body: body ? JSON.stringify(body) : undefined,
+    });
 
     let data: T;
     const text = await response.text();
@@ -35,29 +48,19 @@ class HttpClient {
     };
   }
 
-  async get<T = any>(endpoint: string, headers?: Record<string, string>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { method: 'GET', headers });
+  async get<T = any>(endpoint: string, headers?: Record<string, string>): Promise<Response<T>> {
+    return this.request<T>('GET', endpoint, undefined, headers);
   }
 
-  async post<T = any>(endpoint: string, body?: any, headers?: Record<string, string>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
-      headers,
-    });
+  async post<T = any>(endpoint: string, body?: any, headers?: Record<string, string>): Promise<Response<T>> {
+    return this.request<T>('POST', endpoint, body, headers);
   }
 
-  async put<T = any>(endpoint: string, body?: any, headers?: Record<string, string>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
-      headers,
-    });
+  async put<T = any>(endpoint: string, body?: any, headers?: Record<string, string>): Promise<Response<T>> {
+    return this.request<T>('PUT', endpoint, body, headers);
   }
 
-  async delete<T = any>(endpoint: string, headers?: Record<string, string>): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, { method: 'DELETE', headers });
+  async delete<T = any>(endpoint: string, headers?: Record<string, string>): Promise<Response<T>> {
+    return this.request<T>('DELETE', endpoint, undefined, headers);
   }
 }
-
-export const http = new HttpClient(TEST_CONFIG.baseUrl);
