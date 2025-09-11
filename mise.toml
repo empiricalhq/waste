@@ -5,6 +5,7 @@ python.uv_venv_auto = true
 bun = "1.2.21"
 uv = "0.8.16"
 ruff = "0.12.10"
+biome = "latest"
 
 [tasks.install]
 description = "Install dependencies"
