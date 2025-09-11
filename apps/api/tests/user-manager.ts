@@ -36,10 +36,10 @@ export class UserManager {
       throw new Error(`Signup failed for ${email}: ${signUpResponse.status} - ${JSON.stringify(signUpResponse.data)}`);
     }
 
-    // if this user should be an admin user, we upgrade them directly in DB
+    // if this user should have a non-default role, we update them directly in DB
     // this is the only justified use of direct DB access
-    if (userConfig.role === 'admin') {
-      await db.updateUserAppRole(email, 'admin');
+    if (userConfig.role !== 'citizen') {
+      await db.updateUserAppRole(email, userConfig.role);
     }
   }
 
