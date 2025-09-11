@@ -17,12 +17,7 @@ class HttpClient {
       ...options.headers,
     };
 
-    const requestOptions = {
-      ...options,
-      headers,
-    };
-
-    const response = await fetch(url, requestOptions);
+    const response = await fetch(url, { ...options, headers });
 
     let data: T;
     const text = await response.text();

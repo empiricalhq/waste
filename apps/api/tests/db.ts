@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 
-class DbHelper {
+export class DbHelper {
   private pool: Pool;
 
   constructor() {
@@ -18,17 +18,17 @@ class DbHelper {
     const tables = [
       'push_notification_token',
       'dispatch_message',
-      'citizen_issue_report',
-      'driver_issue_report',
       'system_alert',
+      'driver_issue_report',
+      'citizen_issue_report',
       'user_education_progress',
       'citizen_profile',
-      'route_assignment',
-      'route_schedule',
-      'route_waypoint',
-      'route',
       'truck_location_history',
       'truck_current_location',
+      'route_waypoint',
+      'route_schedule',
+      'route_assignment',
+      'route',
       'truck',
       'verification',
       'session',
@@ -37,7 +37,13 @@ class DbHelper {
     ];
 
     try {
-      await this.pool.query(`TRUNCATE TABLE ${tables.join(', ')} RESTART IDENTITY CASCADE`);
+      await this.pool.query('SET session_replication_role = replica;');
+
+      for (const table of tables) {
+        await this.pool.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE`);
+      }
+
+      await this.pool.query('SET session_replication_role = DEFAULT;');
     } catch (error) {
       console.error('Failed to clean database:', error);
       throw error;
@@ -46,6 +52,10 @@ class DbHelper {
 
   async query(text: string, params?: any[]): Promise<any> {
     return this.pool.query(text, params);
+  }
+
+  async updateUserAppRole(email: string, appRole: string): Promise<void> {
+    await this.pool.query('UPDATE "user" SET "appRole" = $1 WHERE email = $2', [appRole, email]);
   }
 
   async close(): Promise<void> {
