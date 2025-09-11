@@ -1,4 +1,4 @@
-import { test, expect, beforeEach } from 'bun:test';
+import { test, expect, beforeEach, afterAll } from 'bun:test';
 import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
 let ctx: TestContext;
@@ -93,4 +93,8 @@ test('non-citizen cannot access citizen endpoints', async () => {
   const response = await ctx.client.get('/citizen/truck/status', ctx.auth.getHeaders('admin'));
 
   expect(response.status).toBe(403);
+});
+
+afterAll(async () => {
+  await ctx.db.close();
 });

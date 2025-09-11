@@ -1,4 +1,4 @@
-import { test, expect, beforeEach } from 'bun:test';
+import { test, expect, beforeEach, afterAll } from 'bun:test';
 import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
 let ctx: TestContext;
@@ -40,4 +40,8 @@ test('multiple login calls reuse existing session', async () => {
   const session2 = await ctx.auth.loginAs('citizen');
 
   expect(session1).toBe(session2);
+});
+
+afterAll(async () => {
+  await ctx.db.close();
 });

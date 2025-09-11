@@ -1,4 +1,4 @@
-import { test, expect, beforeEach } from 'bun:test';
+import { test, expect, beforeEach, afterAll } from 'bun:test';
 import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
 let ctx: TestContext;
@@ -126,4 +126,8 @@ test('role-based access control works across endpoints', async () => {
   // admin can access admin endpoints
   const adminToAdmin = await ctx.client.get('/admin/trucks', adminHeaders);
   expect(adminToAdmin.status).toBe(200);
+});
+
+afterAll(async () => {
+  await ctx.db.close();
 });
