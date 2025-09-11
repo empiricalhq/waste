@@ -1,9 +1,9 @@
-import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { Hono } from 'hono';
+import type { Session, User } from '@/lib/auth.ts';
 import { db, withTransaction } from '@/lib/db.ts';
 import { authMiddleware } from '@/lib/middleware.ts';
-import { uuidParamSchema, updateDriverLocationSchema, createDriverIssueSchema } from '@/lib/validation.ts';
-import type { User, Session } from '@/lib/auth.ts';
+import { createDriverIssueSchema, updateDriverLocationSchema, uuidParamSchema } from '@/lib/validation.ts';
 
 type AuthEnv = {
   Variables: {

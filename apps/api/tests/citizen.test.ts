@@ -1,4 +1,4 @@
-import { test, expect, beforeEach, afterAll } from 'bun:test';
+import { afterAll, beforeEach, expect, test } from 'bun:test';
 import { setupTest, type TestContext } from './helpers/test-setup.ts';
 
 let ctx: TestContext;

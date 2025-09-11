@@ -1,5 +1,5 @@
-import { TestClient } from './test-client.ts';
-import { TestUsers } from './test-users.ts';
+import type { TestClient } from './test-client.ts';
+import type { TestUsers } from './test-users.ts';
 
 interface Session {
   cookie: string;

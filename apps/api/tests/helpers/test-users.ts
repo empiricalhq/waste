@@ -1,5 +1,5 @@
-import { TestClient } from './test-client.ts';
-import { DbHelper } from './db-helper.ts';
+import type { DbHelper } from './db-helper.ts';
+import type { TestClient } from './test-client.ts';
 
 interface UserConfig {
   email: string;

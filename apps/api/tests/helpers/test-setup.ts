@@ -1,7 +1,7 @@
-import { TestClient } from './test-client.ts';
 import { AuthHelper } from './auth-helper.ts';
-import { TestUsers } from './test-users.ts';
 import { DbHelper } from './db-helper.ts';
+import { TestClient } from './test-client.ts';
+import { TestUsers } from './test-users.ts';
 
 export interface TestContext {
   client: TestClient;

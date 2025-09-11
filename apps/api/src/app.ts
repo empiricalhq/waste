@@ -1,12 +1,11 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import { ZodError } from 'zod';
-import { authRouter } from '@/routes/auth.ts';
-import { adminRouter } from '@/routes/admin.ts';
-import { driverRouter } from '@/routes/driver.ts';
-import { citizenRouter } from '@/routes/citizen.ts';
 import * as z from 'zod';
+import { adminRouter } from '@/routes/admin.ts';
+import { authRouter } from '@/routes/auth.ts';
+import { citizenRouter } from '@/routes/citizen.ts';
+import { driverRouter } from '@/routes/driver.ts';
 
 const app = new Hono();
 
