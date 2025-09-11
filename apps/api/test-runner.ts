@@ -1,35 +1,20 @@
-const server = Bun.spawn(
-  ["bun", "src/index.ts"],
-  {
-    stdout: "inherit",
-    stderr: "inherit",
-    env: {
-      ...process.env,
-      BUN_ENV_FILE: "../../.env.test",
-    },
-    onExit(proc, exitCode, signalCode, error) {
-      console.log(`Server exited with code ${exitCode}`);
-    },
-  }
-);
+const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/index.ts'], {
+  stdout: 'inherit',
+  stderr: 'inherit',
+});
 
 await Bun.sleep(1000);
 
-const tests = Bun.spawn(
-  ["bun", "test", "tests/*.test.ts"],
-  {
-    stdout: "inherit",
-    stderr: "inherit",
-    env: {
-      ...process.env,
-      BUN_ENV_FILE: "../../.env.test",
-    },
-    onExit(proc, exitCode, signalCode, error) {
-      console.log(`Tests exited with code ${exitCode}`);
-      server.kill();
-      process.exit(exitCode ?? 1);
-    },
-  }
-);
+const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', 'tests/*.test.ts'], {
+  stdout: 'inherit',
+  stderr: 'inherit',
+});
 
-await tests.exited;
+const code = await tests.exited;
+console.log(`Tests exited with code ${code}`);
+
+try {
+  server.kill();
+} catch {}
+
+process.exit(code ?? 1);
