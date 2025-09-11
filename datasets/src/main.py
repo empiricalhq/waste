@@ -5,11 +5,18 @@ app = marimo.App(width="full")
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""# Análisis de datasets""")
+    return
+
+
+@app.cell
 def _():
     import marimo as mo
     import polars as pl
     import datetime as dt
     from pathlib import Path
+    import plotly as px
     import altair as alt
     import matplotlib.pyplot as plt
 
@@ -26,7 +33,6 @@ def _():
             path_df.append(new_path)
         else:
             path_df.append(csv_file)
-
     return alt, mo, path_df, pl, plt
 
 
@@ -105,30 +111,7 @@ def _(df2, mo):
 @app.cell
 def _(df2, pl, year):
     data = df2.filter(pl.col("ANIO") == year.value)
-    data.head()
     return (data,)
-
-
-@app.cell
-def _(df2, mo):
-    def _():
-        year = mo.ui.dropdown(
-            options=sorted(df2["ANIO"].unique().to_list()),
-            value=2020,
-            label="Selecciona un año"
-        )
-        return year
-    _()
-    return
-
-
-@app.cell
-def _(df2, pl, year):
-    def _():
-        data = df2.filter(pl.col("ANIO") == year.value)
-        return
-    _()
-    return
 
 
 @app.cell
@@ -137,14 +120,16 @@ def _(data, pl, plt):
         pl.col("GENERACION_MUN_TANIO").sum().alias("residuos_ton")
     ).sort("residuos_ton", descending=True)
 
+    labels = grouped["DEPARTAMENTO"]
+
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.bar(grouped["DEPARTAMENTO"], grouped["residuos_ton"])
+    ax.bar(labels, grouped["residuos_ton"])
     ax.set_ylabel("Toneladas de residuos municipales")
-    ax.set_xticklabels(grouped["DEPARTAMENTO"], rotation=90)
+    ax.set_xticks(labels)
+    plt.xticks(rotation=90)
     plt.tight_layout()
 
     fig
-
     return
 
 
@@ -210,10 +195,10 @@ def _(alt, df2, mo, pl):
     )
 
     # Con selección interactiva
-    selection = alt.selection_single(on='mouseover', empty='all')
+    selection = alt.selection_point(on='mouseover', empty='all')
 
     mo.ui.altair_chart(
-        alt.Chart(df_ranking).add_selection(
+        alt.Chart(df_ranking).add_params(
             selection
         ).mark_bar().encode(
             x=alt.X('GENERACION_MUN_TANIO:Q', title='Toneladas'),
