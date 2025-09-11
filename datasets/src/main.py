@@ -11,6 +11,7 @@ def _():
     import datetime as dt
     from pathlib import Path
     import altair as alt
+    import matplotlib.pyplot as plt
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
@@ -23,13 +24,10 @@ def _():
             new_path = FILES_DIR / new_name
             csv_file.rename(new_path)
             path_df.append(new_path)
-            print(path_df)
         else:
             path_df.append(csv_file)
-            print(path_df)
- 
 
-    return alt, mo, path_df, pl
+    return alt, mo, path_df, pl, plt
 
 
 @app.cell
@@ -52,8 +50,20 @@ def _(path_df, pl):
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""## Dataset: Residuos municipales generados anualmente unificado""")
+    return
+
+
+@app.cell
 def _(df1):
     df1.head()
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales""")
     return
 
 
@@ -64,8 +74,88 @@ def _(df2):
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""### Residuos municipales por departamento""")
+    return
+
+
+@app.cell
+def _(df2, pl):
+    df2.group_by("DEPARTAMENTO").agg(pl.col("GENERACION_PER_CAPITA_DOM").mean().alias("gpc_dom_mean"))
+    return
+
+
+@app.cell
+def _(df2, pl):
+    df2.group_by(["ANIO", "DEPARTAMENTO"]).agg(pl.col("GENERACION_MUN_TANIO").sum().alias("residuos_mun_ton")).sort(["ANIO", "DEPARTAMENTO"])
+    return
+
+
+@app.cell
+def _(df2, mo):
+    year = mo.ui.dropdown(
+        options=sorted(df2["ANIO"].unique().to_list()),
+        value=2020,
+        label="Selecciona un año"
+    )
+    year
+    return (year,)
+
+
+@app.cell
+def _(df2, pl, year):
+    data = df2.filter(pl.col("ANIO") == year.value)
+    data.head()
+    return (data,)
+
+
+@app.cell
+def _(df2, mo):
+    def _():
+        year = mo.ui.dropdown(
+            options=sorted(df2["ANIO"].unique().to_list()),
+            value=2020,
+            label="Selecciona un año"
+        )
+        return year
+    _()
+    return
+
+
+@app.cell
+def _(df2, pl, year):
+    def _():
+        data = df2.filter(pl.col("ANIO") == year.value)
+        return
+    _()
+    return
+
+
+@app.cell
+def _(data, pl, plt):
+    grouped = data.group_by("DEPARTAMENTO").agg(
+        pl.col("GENERACION_MUN_TANIO").sum().alias("residuos_ton")
+    ).sort("residuos_ton", descending=True)
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.bar(grouped["DEPARTAMENTO"], grouped["residuos_ton"])
+    ax.set_ylabel("Toneladas de residuos municipales")
+    ax.set_xticklabels(grouped["DEPARTAMENTO"], rotation=90)
+    plt.tight_layout()
+
+    fig
+
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""### Evolución de residuos""")
+    return
+
+
+@app.cell
 def _(alt, df2, mo, pl):
-    # Todo en Polars - más eficiente
     df_time2 = (df2
         .group_by('ANIO')
         .agg([

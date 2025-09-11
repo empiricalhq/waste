@@ -16,7 +16,7 @@ import {
   Bell,
   LogOut,
   User,
-  Leaf
+  Leaf,
 } from "lucide-react";
 import { getMe } from "@/actions/user";
 import { UserType } from "@/db/schema";
