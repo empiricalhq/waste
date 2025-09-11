@@ -12,13 +12,17 @@ class HttpClient {
   private async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
 
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    const requestOptions = {
       ...options,
-    });
+      headers,
+    };
+
+    const response = await fetch(url, requestOptions);
 
     let data: T;
     const text = await response.text();

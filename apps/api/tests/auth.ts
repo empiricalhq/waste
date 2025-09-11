@@ -1,4 +1,5 @@
 import { http } from './http.ts';
+import { TEST_USERS } from './config.ts';
 
 interface AuthSession {
   cookie: string;
@@ -13,18 +14,44 @@ interface AuthSession {
 export class AuthHelper {
   private sessions = new Map<string, AuthSession>();
 
+  private getRoleFromEmail(email: string): string {
+    for (const [, user] of Object.entries(TEST_USERS)) {
+      if (user.email === email) {
+        return user.role;
+      }
+    }
+    return 'citizen'; // default
+  }
+
   async login(email: string, password: string): Promise<AuthSession> {
     const existing = this.sessions.get(email);
     if (existing) {
       return existing;
     }
 
+    const role = this.getRoleFromEmail(email);
+
     // sign up first (idempotent)
-    await http.post('/auth/sign-up/email', {
+    const signUpResponse = await http.post('/auth/sign-up/email', {
       email,
       password,
       name: email.split('@')[0],
     });
+
+    // Update user role in database if user was just created or already exists
+    if (signUpResponse.status === 200 || signUpResponse.status === 422) {
+      try {
+        // Use a direct database connection to update the role
+        const { Pool } = await import('pg');
+        const pool = new Pool({
+          connectionString: process.env.DATABASE_URL,
+        });
+        await pool.query('UPDATE "user" SET "role" = $1 WHERE email = $2', [role, email]);
+        await pool.end();
+      } catch (error) {
+        console.error(`Failed to update role for ${email}:`, error);
+      }
+    }
 
     const response = await http.post('/auth/sign-in/email', {
       email,
@@ -32,7 +59,12 @@ export class AuthHelper {
     });
 
     if (response.status !== 200) {
-      throw new Error(`Login failed for ${email}: ${response.status}`);
+      console.error(`Login failed for ${email}:`, {
+        status: response.status,
+        statusText: response.statusText,
+        body: response.data,
+      });
+      throw new Error(`Login failed for ${email}: ${response.status} - ${JSON.stringify(response.data)}`);
     }
 
     const cookie = response.headers.get('set-cookie');

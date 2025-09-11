@@ -36,7 +36,16 @@ class DbHelper {
       '"user"',
     ];
 
-    await this.pool.query(`TRUNCATE TABLE ${tables.join(', ')} RESTART IDENTITY CASCADE`);
+    try {
+      await this.pool.query(`TRUNCATE TABLE ${tables.join(', ')} RESTART IDENTITY CASCADE`);
+    } catch (error) {
+      console.error('Failed to clean database:', error);
+      throw error;
+    }
+  }
+
+  async query(text: string, params?: any[]): Promise<any> {
+    return this.pool.query(text, params);
   }
 
   async close(): Promise<void> {
