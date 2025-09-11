@@ -25,9 +25,9 @@ export class DbHelper {
       'citizen_profile',
       'truck_location_history',
       'truck_current_location',
+      'route_assignment',
       'route_waypoint',
       'route_schedule',
-      'route_assignment',
       'route',
       'truck',
       'verification',
@@ -39,9 +39,8 @@ export class DbHelper {
     try {
       await this.pool.query('SET session_replication_role = replica;');
 
-      for (const table of tables) {
-        await this.pool.query(`TRUNCATE TABLE ${table} RESTART IDENTITY CASCADE`);
-      }
+      const tableList = tables.join(', ');
+      await this.pool.query(`TRUNCATE TABLE ${tableList} RESTART IDENTITY CASCADE`);
 
       await this.pool.query('SET session_replication_role = DEFAULT;');
     } catch (error) {
@@ -59,7 +58,11 @@ export class DbHelper {
   }
 
   async close(): Promise<void> {
-    await this.pool.end();
+    try {
+      await this.pool.end();
+    } catch (error) {
+      console.warn('Error closing database pool:', error);
+    }
   }
 }
 
