@@ -11,7 +11,7 @@ interface UserConfig {
 export class TestUsers {
   private client: TestClient;
   private db: DbHelper;
-  private users: Record<string, UserConfig> = {
+  private users: Record<'admin' | 'driver' | 'citizen', UserConfig> = {
     admin: {
       email: process.env.TEST_ADMIN_EMAIL || 'admin@test.com',
       password: 'admin123456',
