@@ -1,5 +1,6 @@
 import requests
 from pathlib import Path
+from collections.abc import Iterator
 import hashlib
 import time
 
@@ -48,8 +49,8 @@ class DataDownloader:
                 response.raise_for_status()
 
                 with open(filepath, "wb") as f:
-                    chunk: bytes
-                    for chunk in response.iter_content(chunk_size=8192):
+                    chunks: Iterator[bytes] = response.iter_content(chunk_size=8192)
+                    for chunk in chunks:
                         if chunk:
                             _ = f.write(chunk)
 
