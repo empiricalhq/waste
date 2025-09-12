@@ -1,8 +1,15 @@
-import requests
-from pathlib import Path
-from collections.abc import Iterator
 import hashlib
+import logging
 import time
+
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+import requests
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class DataDownloader:
@@ -43,8 +50,7 @@ class DataDownloader:
 
         for attempt in range(max_retries):
             try:
-                print(f"Downloading {filepath.name}... (attempt {attempt + 1})")
-
+                logging.info(f"Downloading {filepath.name}... (attempt {attempt + 1})")
                 response = requests.get(url, timeout=30, stream=True)
                 response.raise_for_status()
 
@@ -54,11 +60,11 @@ class DataDownloader:
                         if chunk:
                             _ = f.write(chunk)
 
-                print(f"Downloaded {filepath.name}")
+                logging.info(f"Downloaded {filepath.name}")
                 return True
 
             except requests.RequestException as e:
-                print(f"Attempt {attempt + 1} failed: {e}")
+                logging.error(f"Attempt {attempt + 1} failed: {e}")
                 if attempt < max_retries - 1:
                     time.sleep(2 + attempt)
 
@@ -74,8 +80,8 @@ class DataDownloader:
 
         # skip if file exists and not forcing
         if filepath.exists() and not force:
-            print(
-                f"✓ {config['filename']} already exists (use force=True to re-download)"
+            logging.warn(
+                f"{config['filename']} already exists (use force=True to re-download)"
             )
             return filepath
 
@@ -93,7 +99,7 @@ class DataDownloader:
                 filepath = self.download_dataset(dataset_key, force=force)
                 downloaded_files.append(filepath)
             except Exception as e:
-                print(f"Failed to download {dataset_key}: {e}")
+                logging.error(f"Failed to download {dataset_key}: {e}")
 
         return downloaded_files
 
