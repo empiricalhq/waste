@@ -30,7 +30,7 @@ jobs:
 
       - name: Export HTML using Marimo
         run: |
-          cd ../.. & 
+          cd ../..
           uv run --project datasets marimo export html datasets/src/main.py -o datasets/src/main.html
 
       - name: Upload static files as artifact
