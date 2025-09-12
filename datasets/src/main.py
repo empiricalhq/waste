@@ -5,7 +5,7 @@ __generated_with = "0.15.3"
 app = marimo.App(width="full")
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""# Análisis de datasets""")
     return
@@ -72,7 +72,7 @@ def _(dataset_paths, pl):
     return df1, df2
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""## Mapas""")
     return
@@ -99,8 +99,8 @@ def _(geojson_df, gpd):
 @app.cell
 def _(mapa_departamental_peru, mo, plt):
     mapa_departamental_peru.plot(figsize=(5, 5), edgecolor="gray", cmap="Pastel1")
-    plt.ylabel("Latitude")
-    plt.xlabel("Longitude")
+    plt.ylabel("Latitud")
+    plt.xlabel("Longitud")
     plt.title("Mapa del Perú")
     mo.mpl.interactive(plt.gcf())
     return
@@ -115,8 +115,8 @@ def _(geojson_df, gpd):
 @app.cell
 def _(mapa_distrital, mo, plt):
     mapa_distrital.plot(figsize=(5, 5), edgecolor="gray", cmap="Pastel1")
-    plt.ylabel("Latitude")
-    plt.xlabel("Longitude")
+    plt.ylabel("Latitud")
+    plt.xlabel("Longitud")
     plt.title("Mapa distrital del Perú")
     mo.mpl.interactive(plt.gcf())
     return
@@ -127,8 +127,8 @@ def _(mapa_distrital, mo, plt):
     mapa_distrital[mapa_distrital.NOMBDEP == "LIMA"].plot(
         figsize=(5, 5), edgecolor="gray", cmap="Pastel1"
     )
-    plt.ylabel("Latitude")
-    plt.xlabel("Longitude")
+    plt.ylabel("Latitud")
+    plt.xlabel("Longitud")
     plt.title("Mapa distrital de la provincia de Lima")
     mo.mpl.interactive(plt.gcf())
     return
@@ -146,7 +146,7 @@ def _(mapa_distrital, mo, plt):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""## Dataset: Residuos municipales generados anualmente unificado""")
     return
@@ -158,7 +158,7 @@ def _(df1):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales"""
@@ -172,7 +172,7 @@ def _(df2):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""### Residuos municipales por departamento""")
     return
@@ -232,7 +232,7 @@ def _(data, mo, pl, plt):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""### Evolución de residuos""")
     return
@@ -256,17 +256,21 @@ def _(alt, df2, mo, pl):
         .sort("ANIO")
     )
 
-    # Directo a altair sin conversión
-    mo.ui.altair_chart(
-        alt.Chart(df_time2)
-        .mark_line(point=True, strokeWidth=2, color="steelblue")
-        .encode(
-            x=alt.X("ANIO:O", title="Año"),
-            y=alt.Y("Total_Toneladas:Q", title="Toneladas"),
-            tooltip=["ANIO:O", "Total_Toneladas:Q", "KG_per_capita:Q"],
-        )
-        .properties(title="Evolución de Residuos (2000-2024)", width=700, height=350)
+    base = alt.Chart(df_time2).encode(
+        x=alt.X("ANIO:O", title="Año"),
+        y=alt.Y("Total_Toneladas:Q", title="Toneladas"),
+        tooltip=[
+            alt.Tooltip("ANIO:O", title="Año"),
+            alt.Tooltip("Total_Toneladas:Q", title="Toneladas"),
+            alt.Tooltip("KG_per_capita:Q", title="Kg per capita"),
+        ],
     )
+
+    line_chart = base.mark_line(
+        point=True, strokeWidth=2, color="steelblue"
+    ).properties(title="Evolución de Residuos (2000-2024)", width=700, height=350)
+
+    mo.ui.altair_chart(line_chart)
     return
 
 
@@ -340,11 +344,6 @@ def _(df2, mo, pl):
     mo.md(
         f"### Generación per cápita ({ultimo_año}): {ultimo_valor:.1f} kg/persona/año"
     )
-    return
-
-
-@app.cell
-def _():
     return
 
 
