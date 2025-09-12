@@ -24,7 +24,7 @@ run = "uv pip list --outdated"
 
 [tasks.export]
 description = "Export deps to requirements.txt"
-run = "uv export --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file datasets/requirements.txt"
+run = "uv export --project datasets --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file datasets/requirements.txt"
 
 [tasks.fix]
 description = "Lint & format (fix by default)"
