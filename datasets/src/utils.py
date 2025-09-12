@@ -7,17 +7,14 @@ def find_tag(
     class_: str | None = None,
     id_: str | None = None,
 ) -> Tag | None:
-    """Safely find a tag in BeautifulSoup object."""
-    if class_ is not None and id_ is not None:
-        result = parent.find(name=name, class_=class_, id=id_)
-    elif class_ is not None:
-        result = parent.find(name=name, class_=class_)
-    elif id_ is not None:
-        result = parent.find(name=name, id=id_)
-    else:
-        result = parent.find(name=name)
+    kwargs = {}
+    if class_ is not None:
+        kwargs["class_"] = class_
+    if id_ is not None:
+        kwargs["id"] = id_
 
-    return result if isinstance(result, Tag) else None
+    tag = parent.find(name=name, **kwargs)
+    return tag if isinstance(tag, Tag) else None
 
 
 def get_text(tag: Tag | None) -> str:
