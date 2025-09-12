@@ -10,11 +10,10 @@ class DataDownloader:
     data_dir: Path
     datasets: dict[str, dict[str, str]]
 
-    def __init__(self, data_dir: Path = Path("data")):
-        self.data_dir = data_dir
+    def __init__(self, data_dir: Path | None = None):
+        self.data_dir = data_dir or Path("data")
         self.data_dir.mkdir(exist_ok=True)
 
-        # URLs over here
         self.datasets = {
             "residuos_municipales": {
                 "url": "https://datosabiertos.gob.pe/sites/default/files/Residuos%20municipales%20generados%20anualmente%20unificado.csv",
