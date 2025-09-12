@@ -3,6 +3,7 @@ from pathlib import Path
 import hashlib
 import time
 
+
 class DataDownloader:
     """Downloads and caches datasets from datosabiertos.gob.pe"""
 
@@ -14,12 +15,12 @@ class DataDownloader:
         self.datasets = {
             "residuos_municipales": {
                 "url": "https://datosabiertos.gob.pe/sites/default/files/Residuos%20municipales%20generados%20anualmente%20unificado.csv",
-                "filename": "residuos_municipales_unificado.csv"
+                "filename": "residuos_municipales_unificado.csv",
             },
             "generacion_residuos": {
                 "url": "https://datosabiertos.gob.pe/sites/default/files/Generacion%20anual%20de%20residuos%20solidos%20domiciliarios%20y%20municipales.csv",
-                "filename": "generacion_residuos_domiciliarios.csv"
-            }
+                "filename": "generacion_residuos_domiciliarios.csv",
+            },
         }
 
     def _get_file_hash(self, filepath: Path) -> str:
@@ -44,7 +45,7 @@ class DataDownloader:
                 response = requests.get(url, timeout=30, stream=True)
                 response.raise_for_status()
 
-                with open(filepath, 'wb') as f:
+                with open(filepath, "wb") as f:
                     for chunk in response.iter_content(chunk_size=8192):
                         f.write(chunk)
 
@@ -54,7 +55,7 @@ class DataDownloader:
             except requests.RequestException as e:
                 print(f"Attempt {attempt + 1} failed: {e}")
                 if attempt < max_retries - 1:
-                    time.sleep(2 ** attempt)
+                    time.sleep(2**attempt)
 
         return False
 
@@ -68,7 +69,9 @@ class DataDownloader:
 
         # skip if file exists and not forcing
         if filepath.exists() and not force:
-            print(f"✓ {config['filename']} already exists (use force=True to re-download)")
+            print(
+                f"✓ {config['filename']} already exists (use force=True to re-download)"
+            )
             return filepath
 
         # download the file
@@ -94,7 +97,7 @@ class DataDownloader:
         """list available datasets with their descriptions"""
         return {
             "residuos_municipales": "Residuos municipales generados anualmente unificado",
-            "generacion_residuos": "Generación anual de residuos sólidos domiciliarios y municipales"
+            "generacion_residuos": "Generación anual de residuos sólidos domiciliarios y municipales",
         }
 
     def get_file_paths(self) -> dict[str, Path]:
@@ -104,6 +107,7 @@ class DataDownloader:
             for key, config in self.datasets.items()
         }
 
+
 def ensure_data(data_dir: Path = Path("data"), force: bool = False) -> dict[str, Path]:
     """
     Ensure all datasets are downloaded and return their paths.
@@ -112,6 +116,7 @@ def ensure_data(data_dir: Path = Path("data"), force: bool = False) -> dict[str,
     downloader = DataDownloader(data_dir)
     downloader.download_all(force=force)
     return downloader.get_file_paths()
+
 
 def get_dataset_path(dataset_key: str, data_dir: Path = Path("data")) -> Path:
     """Get path to a specific dataset, downloading if needed"""
