@@ -19,6 +19,7 @@ def _():
     import marimo as mo
     import matplotlib.pyplot as plt
     import polars as pl
+    import logging
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
@@ -33,7 +34,7 @@ def _():
             path_df.append(new_path)
         else:
             path_df.append(csv_file)
-    return BASE_DIR, alt, gpd, mo, path_df, pl, plt
+    return BASE_DIR, alt, gpd, logging, mo, path_df, pl, plt
 
 
 @app.cell
