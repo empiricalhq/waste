@@ -20,6 +20,7 @@ def _():
     import marimo as mo
     import matplotlib.pyplot as plt
     import polars as pl
+    import logging
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
@@ -66,6 +67,7 @@ def _(BASE_DIR):
 
     for geojson_file in GEOJSON_DIR.glob("*.geojson"):
         geojson_df.append(geojson_file)
+        logging.info({geojson_file})
     return (geojson_df,)
 
 
