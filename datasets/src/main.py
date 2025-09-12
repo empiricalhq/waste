@@ -19,6 +19,8 @@ def _():
     import plotly as px
     import altair as alt
     import matplotlib.pyplot as plt
+    import pandas as pd
+    import geopandas as gpd
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
@@ -33,7 +35,7 @@ def _():
             path_df.append(new_path)
         else:
             path_df.append(csv_file)
-    return alt, mo, path_df, pl, plt
+    return BASE_DIR, alt, gpd, mo, path_df, pl, plt
 
 
 @app.cell
@@ -53,6 +55,76 @@ def _(path_df, pl):
         truncate_ragged_lines=True
     )
     return df1, df2
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""##Mapas""")
+    return
+
+
+@app.cell
+def _(BASE_DIR):
+    GEOJSON_DIR = BASE_DIR / "geojson"
+    geojson_df = []
+
+    for geojson_file in GEOJSON_DIR.glob("*.geojson"):
+        geojson_df.append(geojson_file)
+        print(geojson_file)
+    return (geojson_df,)
+
+
+@app.cell
+def _(geojson_df, gpd):
+    mapa_departamental_peru = gpd.read_file(geojson_df[0])
+    mapa_departamental_peru.head()
+    return (mapa_departamental_peru,)
+
+
+@app.cell
+def _(mapa_departamental_peru, mo, plt):
+    mapa_departamental_peru_ax = mapa_departamental_peru.plot(figsize=(5,5),edgecolor=u'gray', cmap='Pastel1')
+    plt.ylabel('Latitude')
+    plt.xlabel('Longitude')
+    plt.title("Mapa del Perú")
+    mo.mpl.interactive(plt.gcf())
+    return
+
+
+@app.cell
+def _(geojson_df, gpd):
+    mapa_distrital = gpd.read_file(geojson_df[1])
+    return (mapa_distrital,)
+
+
+@app.cell
+def _(mapa_distrital, mo, plt):
+    mapa_distrital_ax = mapa_distrital.plot(figsize=(5,5),edgecolor=u'gray', cmap='Pastel1')
+    plt.ylabel('Latitude')
+    plt.xlabel('Longitude')
+    plt.title("Mapa distrital del Perú")
+    mo.mpl.interactive(plt.gcf())
+    return
+
+
+@app.cell
+def _(mapa_distrital, mo, plt):
+    mapa_distrital_lima_ax = mapa_distrital[mapa_distrital.NOMBDEP=='LIMA'].plot(figsize=(5,5),edgecolor=u'gray', cmap='Pastel1')
+    plt.ylabel('Latitude')
+    plt.xlabel('Longitude')
+    plt.title("Mapa distrital de la provincia de Lima")
+    mo.mpl.interactive(plt.gcf())
+    return
+
+
+@app.cell
+def _(mapa_distrital, mo, plt):
+    mapa_distrital_lima_metropolinata_ax = mapa_distrital[mapa_distrital.NOMBPROV=='LIMA'].plot(figsize=(5,5),edgecolor=u'gray', cmap='Pastel1')
+    plt.ylabel('Latitude')
+    plt.xlabel('Longitude')
+    plt.title("Mapa distrital de Lima Metropolitana")
+    mo.mpl.interactive(plt.gcf())
+    return
 
 
 @app.cell
@@ -237,7 +309,12 @@ def _(df2, mo, pl):
     ultimo_valor = df_percapita.select(pl.col('KG_per_capita').last()).item()
     ultimo_año = df_percapita.select(pl.col('ANIO').last()).item()
 
-    mo.md(f"## Generación per cápita ({ultimo_año}): {ultimo_valor:.1f} kg/persona/año")
+    mo.md(f"### Generación per cápita ({ultimo_año}): {ultimo_valor:.1f} kg/persona/año")
+    return
+
+
+@app.cell
+def _():
     return
 
 
