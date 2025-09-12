@@ -27,6 +27,8 @@ jobs:
 
       - run: bun install
 
+      - run: echo "DATABASE_URL is ${{ secrets.DATABASE_URL }}"
+
       - run: bun run test
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
