@@ -7,6 +7,9 @@ import time
 class DataDownloader:
     """Downloads and caches datasets from datosabiertos.gob.pe"""
 
+    data_dir: Path
+    datasets: dict[str, dict[str, str]]
+
     def __init__(self, data_dir: Path = Path("data")):
         self.data_dir = data_dir
         self.data_dir.mkdir(exist_ok=True)
@@ -47,7 +50,8 @@ class DataDownloader:
 
                 with open(filepath, "wb") as f:
                     for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
+                        if chunk:
+                            _ = f.write(chunk)
 
                 print(f"Downloaded {filepath.name}")
                 return True
@@ -81,15 +85,14 @@ class DataDownloader:
             raise RuntimeError(f"Failed to download {dataset_key}")
 
     def download_all(self, force: bool = False) -> list[Path]:
-        """Download all configured datasets"""
-        downloaded_files = []
+        downloaded_files: list[Path] = []
 
         for dataset_key in self.datasets:
             try:
                 filepath = self.download_dataset(dataset_key, force=force)
                 downloaded_files.append(filepath)
             except Exception as e:
-                print(f"✗ Failed to download {dataset_key}: {e}")
+                print(f"Failed to download {dataset_key}: {e}")
 
         return downloaded_files
 
