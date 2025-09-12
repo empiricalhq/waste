@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.15.2"
 app = marimo.App(width="full")
 
@@ -12,12 +13,13 @@ def _(mo):
 
 @app.cell
 def _():
-    import marimo as mo
-    import polars as pl
     from pathlib import Path
+
     import altair as alt
-    import matplotlib.pyplot as plt
     import geopandas as gpd
+    import marimo as mo
+    import matplotlib.pyplot as plt
+    import polars as pl
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
@@ -64,7 +66,6 @@ def _(BASE_DIR):
 
     for geojson_file in GEOJSON_DIR.glob("*.geojson"):
         geojson_df.append(geojson_file)
-        print(geojson_file)
     return (geojson_df,)
 
 
