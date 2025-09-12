@@ -32,6 +32,7 @@ jobs:
         run: |
           echo 'Current directory:'
           pwd
+          ls
           cd datasets
           echo 'Changed directory to datasets:'
           pwd
