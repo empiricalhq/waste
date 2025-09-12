@@ -8,12 +8,12 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 
-from bs4 import BeautifulSoup
-from utils import find_tag
+from bs4 import BeautifulSoup, Tag
+from utils import find_tag, get_text
 
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterator, Sequence
 
 
 def _download_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
@@ -51,32 +51,29 @@ def _get_csv_downloads_from_page(page_url: str) -> list[dict[str, str]]:
 
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Find the resources section
     resources_div = find_tag(soup, "div", id_="data-and-resources")
     if not resources_div:
         return []
 
     csv_resources = []
-    resource_items = resources_div.find_all("li")
+    resource_items: Sequence[Tag] = [
+        li for li in resources_div.find_all("li") if isinstance(li, Tag)
+    ]
 
     for item in resource_items:
-        # Find the download link
         download_tag = find_tag(item, "a", class_="data-link")
         format_tag = find_tag(item, "span", class_="format-label")
         title_tag = find_tag(item, "a", class_="heading")
 
-        if not all([download_tag, format_tag]):
+        if download_tag is None or format_tag is None:
             continue
 
-        download_url = download_tag.get("href", "")
-        file_format = format_tag.get("data-original-title", "").lower()
-        title = title_tag.get_text(strip=True) if title_tag else "unknown"
+        download_url = str(download_tag.get("href") or "")
+        file_format = str(format_tag.get("data-original-title") or "").lower()
+        title = get_text(title_tag)
 
-        # Check if it's a CSV (by format tag or file extension)
         is_csv = "csv" in file_format or download_url.lower().endswith(".csv")
-
         if is_csv:
-            # Make URL absolute if needed
             if download_url.startswith("/"):
                 download_url = urljoin("https://datosabiertos.gob.pe", download_url)
 

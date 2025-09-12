@@ -18,3 +18,8 @@ def find_tag(
         result = parent.find(name=name)
 
     return result if isinstance(result, Tag) else None
+
+
+def get_text(tag: Tag | None) -> str:
+    """Return stripped text or empty string if tag is None."""
+    return tag.get_text(strip=True) if tag else "unknown"
