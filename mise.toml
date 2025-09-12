@@ -30,8 +30,8 @@ run = "uv export --project datasets --format requirements-txt --no-hashes --no-h
 description = "Lint & format (fix by default)"
 alias = "f"
 run = [
-  "uv run ruff format . --config datasets/pyproject.toml",
-  "uv run ruff check --fix --unsafe-fixes . --config pyproject.toml",
+  "uv run --project datasets ruff format . --config datasets/pyproject.toml",
+  "uv run --project datasets ruff check --fix --unsafe-fixes . --config datasets/pyproject.toml",
 ]
 
 [tasks.dev]
