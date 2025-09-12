@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import type { Session, User } from '@/lib/auth.ts';
 import { db, withTransaction } from '@/lib/db.ts';
 import { authMiddleware } from '@/lib/middleware.ts';
-import { createAssignmentSchema, createRouteSchema, createTruckSchema, IdSchema } from '@/lib/validation.ts';
+import { createAssignmentSchema, createRouteSchema, createTruckSchema, IdParamSchema } from '@/lib/validation.ts';
 
 type AuthEnv = {
   Variables: {
@@ -79,7 +79,7 @@ adminRouter.post('/trucks', zValidator('json', createTruckSchema), async (c) => 
   }
 });
 
-adminRouter.delete('/trucks/:id', zValidator('param', IdSchema), async (c) => {
+adminRouter.delete('/trucks/:id', zValidator('param', IdParamSchema), async (c) => {
   const { id } = c.req.valid('param');
 
   try {
@@ -181,7 +181,7 @@ adminRouter.post('/routes', zValidator('json', createRouteSchema), async (c) => 
   }
 });
 
-adminRouter.get('/routes/:id/waypoints', zValidator('param', IdSchema), async (c) => {
+adminRouter.get('/routes/:id/waypoints', zValidator('param', IdParamSchema), async (c) => {
   const { id } = c.req.valid('param');
 
   try {
