@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.15.3"
 app = marimo.App(width="full")
 
@@ -12,6 +13,8 @@ def _(mo):
 
 @app.cell
 def _():
+    import logging
+
     from pathlib import Path
 
     import altair as alt
@@ -19,7 +22,6 @@ def _():
     import marimo as mo
     import matplotlib.pyplot as plt
     import polars as pl
-    import logging
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
@@ -141,7 +143,9 @@ def _(df1):
 
 @app.cell
 def _(mo):
-    mo.md(r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales""")
+    mo.md(
+        r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales"""
+    )
     return
 
 
