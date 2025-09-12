@@ -1,6 +1,8 @@
+**/__pycache__/
+node_modules/
+
 .env
 .env.test
 *.ps1
 *.sh
-
-node_modules/
+*.csv

@@ -1,6 +1,5 @@
 import marimo
 
-
 __generated_with = "0.15.3"
 app = marimo.App(width="full")
 
@@ -23,41 +22,64 @@ def _():
     import matplotlib.pyplot as plt
     import polars as pl
 
+    from data_downloader import download_datasets
+
     BASE_DIR = Path(__file__).resolve().parent.parent
-    FILES_DIR = BASE_DIR / "files"
-
-    path_df = []
-
-    for csv_file in FILES_DIR.glob("*.csv"):
-        if " " in csv_file.name:
-            new_name = csv_file.name.replace(" ", "_")
-            new_path = FILES_DIR / new_name
-            csv_file.rename(new_path)
-            path_df.append(new_path)
-        else:
-            path_df.append(csv_file)
-    return BASE_DIR, alt, gpd, logging, mo, path_df, pl, plt
+    DATA_DIR = BASE_DIR / "data"
+    return (
+        BASE_DIR,
+        DATA_DIR,
+        alt,
+        download_datasets,
+        gpd,
+        logging,
+        mo,
+        pl,
+        plt,
+    )
 
 
 @app.cell
-def _(path_df, pl):
+def _(DATA_DIR, download_datasets, mo):
+    datasets = [
+        "https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente",
+        "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
+    ]
+
+    all_files = download_datasets(datasets, DATA_DIR)
+    mo.md("Datasets:")
+    for file in all_files:
+        mo.md(f"- {file}")
+
+    dataset_paths = {
+        "residuos_municipales": all_files[1] if len(all_files) > 1 else None,
+        "generacion_residuos": all_files[0] if len(all_files) > 0 else None,
+    }
+    return (dataset_paths,)
+
+
+@app.cell
+def _(dataset_paths, pl):
     # Construye las rutas completas a los archivos CSV
     df1 = pl.read_csv(
-        path_df[0],
+        dataset_paths["residuos_municipales"],
         encoding="latin1",
         separator=";",
-        truncate_ragged_lines=True,  # Trunca filas con columnas extra
+        truncate_ragged_lines=True,
     )
 
     df2 = pl.read_csv(
-        path_df[1], encoding="latin1", separator=";", truncate_ragged_lines=True
+        dataset_paths["generacion_residuos"],
+        encoding="latin1",
+        separator=";",
+        truncate_ragged_lines=True,
     )
     return df1, df2
 
 
 @app.cell
 def _(mo):
-    mo.md(r"""##Mapas""")
+    mo.md(r"""## Mapas""")
     return
 
 
@@ -143,9 +165,7 @@ def _(df1):
 
 @app.cell
 def _(mo):
-    mo.md(
-        r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales"""
-    )
+    mo.md(r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales""")
     return
 
 
