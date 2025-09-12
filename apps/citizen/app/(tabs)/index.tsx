@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
-
+import { EducationCard } from '@/components/EducationCard';
 import { Page } from '@/components/Page';
 import { TruckStatusCard } from '@/components/TruckStatusCard';
-import { EducationCard } from '@/components/EducationCard';
 import { useTruckStore } from '@/lib/store';
 
 export default function HomeScreen() {
@@ -33,12 +32,8 @@ export default function HomeScreen() {
       case 'NOT_SCHEDULED':
         return (
           <>
-            <Text className="text-lg text-secondary">
-              El próximo recojo es: {nextCollectionDay}
-            </Text>
-            <Text className="pt-4 text-xl font-bold text-text">
-              Mientras tanto, ¡aprendamos a reciclar!
-            </Text>
+            <Text className="text-lg text-secondary">El próximo recojo es: {nextCollectionDay}</Text>
+            <Text className="pt-4 text-xl font-bold text-text">Mientras tanto, ¡aprendamos a reciclar!</Text>
             <EducationCard
               title="Clasifica tus residuos"
               description="Aprende la diferencia entre orgánico, reciclable y no aprovechable."

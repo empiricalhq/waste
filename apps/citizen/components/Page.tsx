@@ -1,5 +1,5 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type PageProps = {
   children: React.ReactNode;
@@ -31,7 +31,10 @@ export function Page({
 
   if (scroll) {
     return (
-      <SafeAreaView className={`flex-1 bg-background ${className}`} style={{ backgroundColor: 'blue', paddingBottom: 0 }}>
+      <SafeAreaView
+        className={`flex-1 bg-background ${className}`}
+        style={{ backgroundColor: 'blue', paddingBottom: 0 }}
+      >
         <ScrollView contentContainerStyle={{ flexGrow: 1, ...paddingStyle }}>
           <View className={`flex-1 ${contentClassName}`}>{children}</View>
         </ScrollView>
