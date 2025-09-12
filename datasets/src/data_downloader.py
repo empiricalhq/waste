@@ -8,7 +8,7 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 
 if TYPE_CHECKING:
@@ -51,7 +51,10 @@ def _get_csv_downloads_from_page(page_url: str) -> list[dict[str, str]]:
     soup = BeautifulSoup(response.content, "html.parser")
 
     # Find the resources section
-    resources_div = soup.find("div", id="data-and-resources")
+    resources_div_raw = soup.find("div", id="data-and-resources")
+    resources_div: Tag | None = (
+        resources_div_raw if isinstance(resources_div_raw, Tag) else None
+    )
     if not resources_div:
         return []
 
