@@ -31,6 +31,7 @@ jobs:
       - name: Export HTML using Marimo
         run: |
           cd datasets
+          pwd
           uv run --project datasets marimo export html src/main.py -o src/main.html
 
       - name: Upload static files as artifact
