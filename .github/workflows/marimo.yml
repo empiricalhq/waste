@@ -5,12 +5,11 @@ on:
       - master
     paths:
       - 'datasets/src/main.py'
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'datasets/src/main.py'
-      - '.github/**'
+  #  pull_request:
+  #    branches:
+  #      - master
+  #    paths:
+  #      - 'datasets/src/main.py'
   workflow_dispatch:
 
 jobs:
@@ -30,13 +29,7 @@ jobs:
 
       - name: Export HTML using Marimo
         run: |
-          echo 'Current directory:'
-          pwd
-          ls
           cd datasets
-          echo 'Changed directory to datasets:'
-          pwd
-          ls
           uv run --project datasets marimo export html-wasm src/main.py -o src/output --mode run -f
 
       - name: Upload static files as artifact
