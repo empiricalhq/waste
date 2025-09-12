@@ -3,10 +3,10 @@ name: API Tests
 on:
   push:
     branches: [master]
-    paths: ['apps/api/**']
+    paths: ['apps/api/**', '.github/**']
   pull_request:
     branches: [master]
-    paths: ['apps/api/**']
+    paths: ['apps/api/**', '.github/**']
   workflow_dispatch:
 
 jobs:
