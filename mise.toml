@@ -3,7 +3,7 @@ python.uv_venv_auto = true
 
 [tools]
 bun = "1.2.21"
-uv = "0.8.16"
+uv = "0.8.17"
 ruff = "0.12.10"
 biome = "latest"
 
@@ -12,14 +12,19 @@ description = "Install dependencies"
 alias = "i"
 run = "uv --project datasets sync"
 
-[tasks.dev]
-description = "Run development server"
-alias = "d"
-run = "uv run marimo edit datasets/src/main.py"
+[tasks.update]
+description = "Update all dependencies"
+alias = "u"
+run = "uv --project datasets sync -U"
+
+[tasks.outdated]
+description = "List outdated dependencies"
+alias = "o"
+run = "uv pip list --outdated"
 
 [tasks.export]
 description = "Export deps to requirements.txt"
-run = "uv export --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file datasets/requirements.txt"
+run = "uv export --project datasets --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file datasets/requirements.txt"
 
 [tasks.fix]
 description = "Lint & format (fix by default)"
@@ -28,3 +33,8 @@ run = [
   "uv run ruff format . --config datasets/pyproject.toml",
   "uv run ruff check --fix --unsafe-fixes . --config pyproject.toml",
 ]
+
+[tasks.dev]
+description = "Run development server"
+alias = "d"
+run = "uv run marimo edit datasets/src/main.py"
