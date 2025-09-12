@@ -1,9 +1,6 @@
-import logging
-
 import marimo
 
-
-__generated_with = "0.15.2"
+__generated_with = "0.15.3"
 app = marimo.App(width="full")
 
 
@@ -62,7 +59,7 @@ def _(mo):
 
 
 @app.cell
-def _(BASE_DIR):
+def _(BASE_DIR, logging):
     GEOJSON_DIR = BASE_DIR / "geojson"
     geojson_df = []
 
@@ -143,9 +140,7 @@ def _(df1):
 
 @app.cell
 def _(mo):
-    mo.md(
-        r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales"""
-    )
+    mo.md(r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales""")
     return
 
 
