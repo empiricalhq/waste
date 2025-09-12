@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-def _fetch_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
+def fetch_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
     """Download a file with retry logic."""
     for attempt in range(max_retries):
         try:
@@ -33,7 +33,7 @@ def _fetch_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
     return False
 
 
-def _extract_csv_links(page_url: str) -> list[dict[str, str]]:
+def extract_csv_links(page_url: str) -> list[dict[str, str]]:
     """Extract CSV download links from a datosabiertos.gob.pe dataset page."""
     try:
         response = requests.get(page_url, timeout=10)
@@ -72,7 +72,7 @@ def _extract_csv_links(page_url: str) -> list[dict[str, str]]:
     return links
 
 
-def _sanitize_filename(title: str, url: str) -> str:
+def sanitize_filename(title: str, url: str) -> str:
     """Generate a safe filename from title or URL."""
     name = Path(urlparse(url).path).name
     if not name.endswith(".csv"):

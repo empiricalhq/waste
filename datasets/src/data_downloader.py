@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from urllib.parse import urlparse
 
-from _helpers import _extract_csv_links, _fetch_file, _sanitize_filename
+from _helpers import extract_csv_links, fetch_file, sanitize_filename
 
 
 def download_page_csvs(
@@ -11,7 +11,7 @@ def download_page_csvs(
 ) -> list[Path]:
     """Download all CSV files from a dataset page"""
     data_dir.mkdir(exist_ok=True)
-    links = _extract_csv_links(page_url)
+    links = extract_csv_links(page_url)
 
     if not links:
         logging.warning(f"No CSV files found on {page_url}")
@@ -22,7 +22,7 @@ def download_page_csvs(
     downloaded = []
 
     for link in links:
-        filename = _sanitize_filename(link["title"], link["url"])
+        filename = sanitize_filename(link["title"], link["url"])
         filepath = data_dir / filename
 
         if filepath.exists() and not force:
@@ -30,7 +30,7 @@ def download_page_csvs(
             downloaded.append(filepath)
             continue
 
-        if _fetch_file(link["url"], filepath):
+        if fetch_file(link["url"], filepath):
             downloaded.append(filepath)
 
     return downloaded
@@ -52,7 +52,7 @@ def download_csvs(urls: list[str], data_dir: Path, force: bool = False) -> list[
             downloaded.append(filepath)
             continue
 
-        if _fetch_file(url, filepath):
+        if fetch_file(url, filepath):
             downloaded.append(filepath)
 
     return downloaded
