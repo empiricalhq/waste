@@ -30,7 +30,10 @@ jobs:
 
       - name: Export HTML using Marimo
         run: |
+          echo 'Current directory:'
+          pwd
           cd datasets
+          echo 'Changed directory to datasets:'
           pwd
           uv run --project datasets marimo export html src/main.py -o src/main.html
 
