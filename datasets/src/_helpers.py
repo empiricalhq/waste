@@ -23,7 +23,7 @@ def fetch_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
             logging.info(f"Downloading {filepath.name} (attempt {attempt + 1})")
             with requests.get(url, timeout=30, stream=True) as r:
                 r.raise_for_status()
-                filepath.write_bytes(r.content)
+                _ = filepath.write_bytes(r.content)
             logging.info(f"Downloaded {filepath.name}")
             return True
         except requests.RequestException as e:
