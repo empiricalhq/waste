@@ -37,13 +37,13 @@ jobs:
           echo 'Changed directory to datasets:'
           pwd
           ls
-          uv run --project datasets marimo export html src/main.py -o src/main.html
+          uv run --project datasets marimo export html-wasm src/main.py -o src/output --mode run -f
 
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          path: datasets/src/main.html
+          path: datasets/src/output
 
   deploy:
     needs: build
