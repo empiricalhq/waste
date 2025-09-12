@@ -2,11 +2,15 @@ name: API Tests
 
 on:
   push:
-    branches: [master]
-    paths: ['apps/api/**', '.github/**']
+    branches:
+      - 'master'
+    paths:
+      - 'apps/api/**'
   pull_request:
-    branches: [master]
-    paths: ['apps/api/**', '.github/**']
+    branches:
+      - 'master'
+    paths:
+      - 'apps/api/**'
   workflow_dispatch:
 
 jobs:
@@ -27,13 +31,6 @@ jobs:
           bun-version: 1.2.21
 
       - run: bun install
-
-      - run: |
-          echo "DATABASE_URL is ${{ secrets.DATABASE_URL }}" \
-            echo "BETTER_AUTH_SECRET is ${{ secrets.BETTER_AUTH_SECRET }}"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
 
       - run: bun run test
         env:
