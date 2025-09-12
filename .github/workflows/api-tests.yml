@@ -1,0 +1,38 @@
+name: API Tests
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'apps/api/**'
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'apps/api/**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: testing
+
+    defaults:
+      run:
+        working-directory: apps/api
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.21
+
+      - run: bun install
+
+      - run: bun run test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
