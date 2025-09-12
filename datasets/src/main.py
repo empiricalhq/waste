@@ -31,7 +31,7 @@ def _():
 
 
 @app.cell
-def _(DATA_DIR, download):
+def _(DATA_DIR, download, mo):
     datasets = [
         "https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente",
         "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
@@ -43,16 +43,14 @@ def _(DATA_DIR, download):
         "residuos_municipales": all_files[1] if len(all_files) > 1 else None,
         "generacion_residuos": all_files[0] if len(all_files) > 0 else None,
     }
-    return all_files, dataset_paths
 
-
-@app.cell
-def _(all_files, mo):
-    mo.md("Datasets:")
-
+    # printear los archivos
+    files_md = ""
     for file in all_files:
-        mo.md(f"- {file}")
-    return
+        files_md += f"- {file}\n"
+
+    mo.md(files_md)
+    return (dataset_paths,)
 
 
 @app.cell
