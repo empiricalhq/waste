@@ -80,7 +80,7 @@ class DataDownloader:
 
         # skip if file exists and not forcing
         if filepath.exists() and not force:
-            logging.warn(
+            logging.warning(
                 f"{config['filename']} already exists (use force=True to re-download)"
             )
             return filepath
