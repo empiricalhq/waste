@@ -29,7 +29,9 @@ jobs:
         run: uv --project datasets sync
 
       - name: Export HTML using Marimo
-        run: uv run --project datasets marimo export html datasets/src/main.py -o datasets/src/main.html
+        run: |
+          cd ../.. & 
+          uv run --project datasets marimo export html datasets/src/main.py -o datasets/src/main.html
 
       - name: Upload static files as artifact
         id: deployment
