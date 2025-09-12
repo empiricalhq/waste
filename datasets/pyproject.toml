@@ -16,7 +16,7 @@ dependencies = [
     "altair>=5.5.0",
     "beautifulsoup4>=4.13.5",
     "geopandas>=1.1.1",
-    "marimo>=0.15.3",
+    "marimo==0.15.2",
     "matplotlib>=3.10.6",
     "pandas>=2.3.2",
     "plotly[express]>=6.3.0",
