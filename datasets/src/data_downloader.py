@@ -10,7 +10,7 @@ class DataDownloader:
     data_dir: Path
     datasets: dict[str, dict[str, str]]
 
-    def __init__(self, data_dir: Path | None = None):
+    def __init__(self, data_dir: Path):
         self.data_dir = data_dir or Path("data")
         self.data_dir.mkdir(exist_ok=True)
 
@@ -38,7 +38,7 @@ class DataDownloader:
 
     def _download_file(self, url: str, filepath: Path) -> bool:
         """Download a single file with retry logic"""
-        max_retries = 3
+        max_retries: int = 3
 
         for attempt in range(max_retries):
             try:
@@ -48,6 +48,7 @@ class DataDownloader:
                 response.raise_for_status()
 
                 with open(filepath, "wb") as f:
+                    chunk: bytes
                     for chunk in response.iter_content(chunk_size=8192):
                         if chunk:
                             _ = f.write(chunk)
@@ -58,7 +59,7 @@ class DataDownloader:
             except requests.RequestException as e:
                 print(f"Attempt {attempt + 1} failed: {e}")
                 if attempt < max_retries - 1:
-                    time.sleep(2**attempt)
+                    time.sleep(2 + attempt)
 
         return False
 
@@ -110,17 +111,17 @@ class DataDownloader:
         }
 
 
-def ensure_data(data_dir: Path = Path("data"), force: bool = False) -> dict[str, Path]:
+def ensure_data(data_dir: Path, force: bool = False) -> dict[str, Path]:
     """
     Ensure all datasets are downloaded and return their paths.
     Simple function for notebook usage.
     """
     downloader = DataDownloader(data_dir)
-    downloader.download_all(force=force)
+    _ = downloader.download_all(force=force)
     return downloader.get_file_paths()
 
 
-def get_dataset_path(dataset_key: str, data_dir: Path = Path("data")) -> Path:
+def get_dataset_path(dataset_key: str, data_dir: Path) -> Path:
     """Get path to a specific dataset, downloading if needed"""
     downloader = DataDownloader(data_dir)
     return downloader.download_dataset(dataset_key)
