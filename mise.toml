@@ -43,3 +43,8 @@ run = "uv run --project datasets marimo edit datasets/src/main.py"
 description = "Run development server (LAN)"
 alias = "dl"
 run = "uv run --project datasets marimo edit datasets/src/main.py --host 0.0.0.0"
+
+[tasks.marimo-export]
+description = "Export a HTML file for Marimo"
+alias = "html"
+run = "uv run --project datasets marimo export html datasets/src/main.py -o datasets/src/main.html"
