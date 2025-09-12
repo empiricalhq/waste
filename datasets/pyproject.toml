@@ -60,3 +60,8 @@ ban-relative-imports = "all"
 force-single-line = false
 lines-between-types = 1
 lines-after-imports = 2
+
+[tool.ruff.lint.pep8-naming]
+# ruff does not currently implement C0103, so ALL_CAPS constants are incorrectly flagged.
+# see: https://github.com/astral-sh/ruff/issues/2964
+ignore-names = ["*_DIR"]

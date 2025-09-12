@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.15.3"
 app = marimo.App(width="full")
 
@@ -165,7 +166,9 @@ def _(df1):
 
 @app.cell
 def _(mo):
-    mo.md(r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales""")
+    mo.md(
+        r"""## Dataset: Generacion anual de residuos sólidos domiciliarios y municipales"""
+    )
     return
 
 
@@ -204,7 +207,7 @@ def _(df2, mo):
         value=2020,
         label="Selecciona un año",
     )
-    year
+    _ = year
     return (year,)
 
 
@@ -215,7 +218,7 @@ def _(df2, pl, year):
 
 
 @app.cell
-def _(data, pl, plt):
+def _(data, mo, pl, plt):
     grouped = (
         data.group_by("DEPARTAMENTO")
         .agg(pl.col("GENERACION_MUN_TANIO").sum().alias("residuos_ton"))
@@ -231,7 +234,7 @@ def _(data, pl, plt):
     plt.xticks(rotation=90)
     plt.tight_layout()
 
-    fig
+    mo.as_html(fig)
     return
 
 
