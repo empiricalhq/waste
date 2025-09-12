@@ -1,3 +1,5 @@
+import logging
+
 import marimo
 
 
@@ -20,7 +22,6 @@ def _():
     import marimo as mo
     import matplotlib.pyplot as plt
     import polars as pl
-    import logging
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     FILES_DIR = BASE_DIR / "files"
