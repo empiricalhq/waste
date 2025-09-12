@@ -23,40 +23,36 @@ def _():
     import matplotlib.pyplot as plt
     import polars as pl
 
-    from data_downloader import download_datasets
+    from data_downloader import download
 
     BASE_DIR = Path(__file__).resolve().parent.parent
     DATA_DIR = BASE_DIR / "data"
-    return (
-        BASE_DIR,
-        DATA_DIR,
-        alt,
-        download_datasets,
-        gpd,
-        logging,
-        mo,
-        pl,
-        plt,
-    )
+    return BASE_DIR, DATA_DIR, alt, download, gpd, logging, mo, pl, plt
 
 
 @app.cell
-def _(DATA_DIR, download_datasets, mo):
+def _(DATA_DIR, download):
     datasets = [
         "https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente",
         "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
     ]
 
-    all_files = download_datasets(datasets, DATA_DIR)
-    mo.md("Datasets:")
-    for file in all_files:
-        mo.md(f"- {file}")
+    all_files = download(datasets, DATA_DIR)
 
     dataset_paths = {
         "residuos_municipales": all_files[1] if len(all_files) > 1 else None,
         "generacion_residuos": all_files[0] if len(all_files) > 0 else None,
     }
-    return (dataset_paths,)
+    return all_files, dataset_paths
+
+
+@app.cell
+def _(all_files, mo):
+    mo.md("Datasets:")
+
+    for file in all_files:
+        mo.md(f"- {file}")
+    return
 
 
 @app.cell
