@@ -25,7 +25,7 @@ jobs:
         with:
           bun-version: 1.2.21
 
-      - run: bun install --filter 'apps/api/**'
+      - run: bun install
 
       - run: bun run test
         env:
