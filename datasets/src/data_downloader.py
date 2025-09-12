@@ -51,7 +51,7 @@ def _get_csv_downloads_from_page(page_url: str) -> list[dict[str, str]]:
 
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Find the resources section safely
+    # Find the resources section
     resources_div = find_tag(soup, "div", id_="data-and-resources")
     if not resources_div:
         return []
@@ -60,7 +60,7 @@ def _get_csv_downloads_from_page(page_url: str) -> list[dict[str, str]]:
     resource_items = resources_div.find_all("li")
 
     for item in resource_items:
-        # Find the download link safely
+        # Find the download link
         download_tag = find_tag(item, "a", class_="data-link")
         format_tag = find_tag(item, "span", class_="format-label")
         title_tag = find_tag(item, "a", class_="heading")
