@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import type { Session, User } from '@/lib/auth.ts';
 import { db, withTransaction } from '@/lib/db.ts';
 import { authMiddleware } from '@/lib/middleware.ts';
-import { createDriverIssueSchema, updateDriverLocationSchema, uuidParamSchema } from '@/lib/validation.ts';
+import { createDriverIssueSchema, updateDriverLocationSchema, IdSchema } from '@/lib/validation.ts';
 
 type AuthEnv = {
   Variables: {
@@ -66,7 +66,7 @@ driverRouter.get('/route/current', async (c) => {
   }
 });
 
-driverRouter.post('/assignments/:id/start', zValidator('param', uuidParamSchema), async (c) => {
+driverRouter.post('/assignments/:id/start', zValidator('param', IdSchema), async (c) => {
   const { id } = c.req.valid('param');
   const user = c.get('user');
 
@@ -92,7 +92,7 @@ driverRouter.post('/assignments/:id/start', zValidator('param', uuidParamSchema)
   }
 });
 
-driverRouter.post('/assignments/:id/complete', zValidator('param', uuidParamSchema), async (c) => {
+driverRouter.post('/assignments/:id/complete', zValidator('param', IdSchema), async (c) => {
   const { id } = c.req.valid('param');
   const user = c.get('user');
 
