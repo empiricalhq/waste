@@ -77,9 +77,7 @@ def _(geojson_df, gpd):
 
 @app.cell
 def _(mapa_departamental_peru, mo, plt):
-    mapa_departamental_peru.plot(
-        figsize=(5, 5), edgecolor="gray", cmap="Pastel1"
-    )
+    mapa_departamental_peru.plot(figsize=(5, 5), edgecolor="gray", cmap="Pastel1")
     plt.ylabel("Latitude")
     plt.xlabel("Longitude")
     plt.title("Mapa del Perú")
@@ -95,9 +93,7 @@ def _(geojson_df, gpd):
 
 @app.cell
 def _(mapa_distrital, mo, plt):
-    mapa_distrital.plot(
-        figsize=(5, 5), edgecolor="gray", cmap="Pastel1"
-    )
+    mapa_distrital.plot(figsize=(5, 5), edgecolor="gray", cmap="Pastel1")
     plt.ylabel("Latitude")
     plt.xlabel("Longitude")
     plt.title("Mapa distrital del Perú")
@@ -119,9 +115,9 @@ def _(mapa_distrital, mo, plt):
 
 @app.cell
 def _(mapa_distrital, mo, plt):
-    mapa_distrital[
-        mapa_distrital.NOMBPROV == "LIMA"
-    ].plot(figsize=(5, 5), edgecolor="gray", cmap="Pastel1")
+    mapa_distrital[mapa_distrital.NOMBPROV == "LIMA"].plot(
+        figsize=(5, 5), edgecolor="gray", cmap="Pastel1"
+    )
     plt.ylabel("Latitude")
     plt.xlabel("Longitude")
     plt.title("Mapa distrital de Lima Metropolitana")
