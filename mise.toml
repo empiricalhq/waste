@@ -37,7 +37,7 @@ run = [
 [tasks.dev]
 description = "Run development server"
 alias = "d"
-run = "uv run --project datasets marimo edit datasets/src/main.py"
+run = "uv run --project datasets marimo edit datasets/src/index.py"
 
 [tasks.dev-lan]
 description = "Run development server (LAN)"

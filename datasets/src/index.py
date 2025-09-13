@@ -34,6 +34,7 @@ def _(DATA_DIR, download, mo):
     datasets = [
         "https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente",
         "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
+        "https://datosabiertos.gob.pe/dataset/composici%C3%B3n-de-residuos-s%C3%B3lidos-domiciliarios"
     ]
 
     all_files = download(datasets, DATA_DIR)
