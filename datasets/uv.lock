@@ -106,6 +106,30 @@ wheels = [
 ]
 
 [[package]]
+name = "click-plugins"
+version = "1.1.1.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c3/a4/34847b59150da33690a36da3681d6bbc2ec14ee9a846bc30a6746e5984e4/click_plugins-1.1.1.2.tar.gz", hash = "sha256:d7af3984a99d243c131aa1a828331e7630f4a88a9741fd05c927b204bcf92261", size = 8343, upload-time = "2025-06-25T00:47:37.555Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3d/9a/2abecb28ae875e39c8cad711eb1186d8d14eab564705325e77e4e6ab9ae5/click_plugins-1.1.1.2-py2.py3-none-any.whl", hash = "sha256:008d65743833ffc1f5417bf0e78e8d2c23aab04d9745ba817bd3e71b0feb6aa6", size = 11051, upload-time = "2025-06-25T00:47:36.731Z" },
+]
+
+[[package]]
+name = "cligj"
+version = "0.7.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ea/0d/837dbd5d8430fd0f01ed72c4cfb2f548180f4c68c635df84ce87956cff32/cligj-0.7.2.tar.gz", hash = "sha256:a4bc13d623356b373c2c27c53dbd9c68cae5d526270bfa71f6c6fa69669c6b27", size = 9803, upload-time = "2021-05-28T21:23:27.935Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/73/86/43fa9f15c5b9fb6e82620428827cd3c284aa933431405d1bcf5231ae3d3e/cligj-0.7.2-py3-none-any.whl", hash = "sha256:c1ca117dbce1fe20a5809dc96f01e1c2840f6dcc939b3ddbb1111bf330ba82df", size = 7069, upload-time = "2021-05-28T21:23:26.877Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -185,6 +209,25 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e9/86/5b41c32ecedcfdb4c77b28b6cb14234f252075f8cdb254531727a35547dd/docutils-0.22.tar.gz", hash = "sha256:ba9d57750e92331ebe7c08a1bbf7a7f8143b86c476acd51528b042216a6aad0f", size = 2277984, upload-time = "2025-07-29T15:20:31.06Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/44/57/8db39bc5f98f042e0153b1de9fb88e1a409a33cda4dd7f723c2ed71e01f6/docutils-0.22-py3-none-any.whl", hash = "sha256:4ed966a0e96a0477d852f7af31bdcb3adc049fbb35ccba358c2ea8a03287615e", size = 630709, upload-time = "2025-07-29T15:20:28.335Z" },
+]
+
+[[package]]
+name = "fiona"
+version = "1.10.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "certifi" },
+    { name = "click" },
+    { name = "click-plugins" },
+    { name = "cligj" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/51/e0/71b63839cc609e1d62cea2fc9774aa605ece7ea78af823ff7a8f1c560e72/fiona-1.10.1.tar.gz", hash = "sha256:b00ae357669460c6491caba29c2022ff0acfcbde86a95361ea8ff5cd14a86b68", size = 444606, upload-time = "2024-09-16T20:15:47.074Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c5/e0/665ce969cab6339c19527318534236e5e4184ee03b38cd474497ebd22f4d/fiona-1.10.1-cp313-cp313-macosx_10_15_x86_64.whl", hash = "sha256:a00b05935c9900678b2ca660026b39efc4e4b916983915d595964eb381763ae7", size = 16106571, upload-time = "2024-09-16T20:15:04.198Z" },
+    { url = "https://files.pythonhosted.org/packages/23/c8/150094fbc4220d22217f480cc67b6ee4c2f4324b4b58cd25527cd5905937/fiona-1.10.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:f78b781d5bcbbeeddf1d52712f33458775dbb9fd1b2a39882c83618348dd730f", size = 14738178, upload-time = "2024-09-16T20:15:06.848Z" },
+    { url = "https://files.pythonhosted.org/packages/20/83/63da54032c0c03d4921b854111e33d3a1dadec5d2b7e741fba6c8c6486a6/fiona-1.10.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:29ceeb38e3cd30d91d68858d0817a1bb0c4f96340d334db4b16a99edb0902d35", size = 17221414, upload-time = "2024-09-16T20:15:09.606Z" },
+    { url = "https://files.pythonhosted.org/packages/60/14/5ef47002ef19bd5cfbc7a74b21c30ef83f22beb80609314ce0328989ceda/fiona-1.10.1-cp313-cp313-win_amd64.whl", hash = "sha256:15751c90e29cee1e01fcfedf42ab85987e32f0b593cf98d88ed52199ef5ca623", size = 24461486, upload-time = "2024-09-16T20:15:13.399Z" },
 ]
 
 [[package]]
@@ -1019,6 +1062,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "altair" },
     { name = "beautifulsoup4" },
+    { name = "fiona" },
     { name = "geopandas" },
     { name = "marimo" },
     { name = "matplotlib" },
@@ -1026,12 +1070,14 @@ dependencies = [
     { name = "plotly", extra = ["express"] },
     { name = "polars" },
     { name = "requests" },
+    { name = "shapely" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "altair", specifier = ">=5.5.0" },
     { name = "beautifulsoup4", specifier = ">=4.13.5" },
+    { name = "fiona", specifier = ">=1.10.1" },
     { name = "geopandas", specifier = ">=1.1.1" },
     { name = "marimo", specifier = "==0.15.2" },
     { name = "matplotlib", specifier = ">=3.10.6" },
@@ -1039,6 +1085,7 @@ requires-dist = [
     { name = "plotly", extras = ["express"], specifier = ">=6.3.0" },
     { name = "polars", specifier = ">=1.33.1" },
     { name = "requests", specifier = ">=2.32.5" },
+    { name = "shapely", specifier = ">=2.1.1" },
 ]
 
 [[package]]
