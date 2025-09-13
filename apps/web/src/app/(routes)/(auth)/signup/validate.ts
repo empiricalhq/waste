@@ -22,7 +22,7 @@ export const SignUpSchema = z
       .string()
       .min(4, { message: "Debe tener al menos 4 caracteres" })
       .regex(
-        /^[a-zA-Z0-0_-]+$/,
+        /^[a-zA-Z0-9_-]+$/,
         "Solo se permiten letras, números, guiones y guiones bajos",
       )
       .refine(
