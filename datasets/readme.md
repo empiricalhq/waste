@@ -28,10 +28,10 @@ ambientales los gestionan y cuáles son sus impactos.
    - Generación de residuos sólidos municipales
 
    gráficos:
-   - serie temporal: toneladas 2000-2024
-   - mapa coroplético: kg per cápita por distrito/provincia
-   - top 10: barras horizontales de municipios con mayor generación
-   - indicador: kg de residuos per cápita por año.
+   - [ ] serie temporal: toneladas 2000-2024
+   - [ ] mapa coroplético: kg per cápita por distrito/provincia
+   - [ ] top 10: barras horizontales de municipios con mayor generación
+   - [ ] indicador: kg de residuos per cápita por año.
 
 2. **VALORIZACIÓN**
 
@@ -40,10 +40,10 @@ ambientales los gestionan y cuáles son sus impactos.
    - Valorización de residuos sólidos Orgánicos a nivel distrital
 
    gráficos:
-   - barras agrupadas: comparación de valorización orgánica vs inorgánica por
+   - [ ] barras agrupadas: comparación de valorización orgánica vs inorgánica por
      distrito
-   - evaluación anual: líneas de % valorizado sobre total generado
-   - mapa: distritos con tasa >= 20 %
+   - [ ] evaluación anual: líneas de % valorizado sobre total generado
+   - [ ] mapa: distritos con tasa >= 20 %
 
 3. **DISPOSICIÓN FINAL**
 
@@ -51,10 +51,10 @@ ambientales los gestionan y cuáles son sus impactos.
    - Disposición final adecuada de residuos sólidos
 
    gráficos:
-   - serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
-   - mapa: rellenos sanitarios y cobertura por distrito, distritos que atienden
-   - kpi: cobertura nacional último año
-   - área apilada: % adecuado vs inadecuado 2010-2023
+   - [ ] serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
+   - [ ] mapa: rellenos sanitarios y cobertura por distrito, distritos que atienden
+   - [ ] kpi: cobertura nacional último año
+   - [ ] área apilada: % adecuado vs inadecuado 2010-2023
 
 4. **COMPOSICIÓN**
 
@@ -62,11 +62,11 @@ ambientales los gestionan y cuáles son sus impactos.
    - Composición de residuos sólidos domiciliarios
 
    gráficos:
-   - donut: % orgánicos, plásticos, papel, vidrio, metales, otros
-   - heatmap: cambio de proporción 2014 vs 2023 por región
-   - evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
+   - [ ] donut: % orgánicos, plásticos, papel, vidrio, metales, otros
+   - [ ] heatmap: cambio de proporción 2014 vs 2023 por región
+   - [ ] evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
      años.
-   - barras horizontales: comparación por tipo de residuo.
+   - [ ] barras horizontales: comparación por tipo de residuo.
 
 5. **PROGRAMAS DE GESTIÓN AMBIENTAL**
 
@@ -74,9 +74,9 @@ ambientales los gestionan y cuáles son sus impactos.
    - Implementación del Programa Municipal EDUCCA
 
    gráficos:
-   - mapa binario: distrito con/sin educca (% de municipios)
-   - boxplot: valorización per cápita – con educca vs sin educca
-   - línea temporal: crecimiento del programa en los últimos años.
+   - [ ] mapa binario: distrito con/sin educca (% de municipios)
+   - [ ] boxplot: valorización per cápita – con educca vs sin educca
+   - [ ] línea temporal: crecimiento del programa en los últimos años.
 
 6. **IMPACTOS**
 
@@ -84,11 +84,11 @@ ambientales los gestionan y cuáles son sus impactos.
    - Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
 
    gráficos:
-   - puntos: ubicación y tamaño (ha) de áreas degradadas
-   - serie temporal: evolución de áreas degradadas detectadas por año.
-   - scatter: toneladas generadas vs ha degradadas por región (x: toneladas
+   - [ ] puntos: ubicación y tamaño (ha) de áreas degradadas
+   - [ ] serie temporal: evolución de áreas degradadas detectadas por año.
+   - [ ] scatter: toneladas generadas vs ha degradadas por región (x: toneladas
      generadas, y: áreas degradadas).
-   - indicador: total de ha registradas.
+   - [ ] indicador: total de ha registradas.
 
 El flujo narrativo podría ser algo como:
 
