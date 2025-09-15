@@ -40,8 +40,8 @@ ambientales los gestionan y cuáles son sus impactos.
    - Valorización de residuos sólidos Orgánicos a nivel distrital
 
    gráficos:
-   - [ ] barras agrupadas: comparación de valorización orgánica vs inorgánica por
-     distrito
+   - [ ] barras agrupadas: comparación de valorización orgánica vs inorgánica
+         por distrito
    - [ ] evaluación anual: líneas de % valorizado sobre total generado
    - [ ] mapa: distritos con tasa >= 20 %
 
@@ -51,8 +51,10 @@ ambientales los gestionan y cuáles son sus impactos.
    - Disposición final adecuada de residuos sólidos
 
    gráficos:
-   - [ ] serie de tiempo: % de residuos dispuestos adecuadamente vs total generado.
-   - [ ] mapa: rellenos sanitarios y cobertura por distrito, distritos que atienden
+   - [ ] serie de tiempo: % de residuos dispuestos adecuadamente vs total
+         generado.
+   - [ ] mapa: rellenos sanitarios y cobertura por distrito, distritos que
+         atienden
    - [ ] kpi: cobertura nacional último año
    - [ ] área apilada: % adecuado vs inadecuado 2010-2023
 
@@ -64,8 +66,8 @@ ambientales los gestionan y cuáles son sus impactos.
    gráficos:
    - [ ] donut: % orgánicos, plásticos, papel, vidrio, metales, otros
    - [ ] heatmap: cambio de proporción 2014 vs 2023 por región
-   - [ ] evolución temporal: cambios en la proporción de plásticos u orgánicos en 10
-     años.
+   - [ ] evolución temporal: cambios en la proporción de plásticos u orgánicos
+         en 10 años.
    - [ ] barras horizontales: comparación por tipo de residuo.
 
 5. **PROGRAMAS DE GESTIÓN AMBIENTAL**
@@ -87,7 +89,7 @@ ambientales los gestionan y cuáles son sus impactos.
    - [ ] puntos: ubicación y tamaño (ha) de áreas degradadas
    - [ ] serie temporal: evolución de áreas degradadas detectadas por año.
    - [ ] scatter: toneladas generadas vs ha degradadas por región (x: toneladas
-     generadas, y: áreas degradadas).
+         generadas, y: áreas degradadas).
    - [ ] indicador: total de ha registradas.
 
 El flujo narrativo podría ser algo como:

@@ -28,7 +28,6 @@
       "name": "@lima-garbage/citizens",
       "version": "1.0.0",
       "dependencies": {
-        "@lima-garbage/database": "workspace:*",
         "expo": "54.0.7",
         "expo-router": "~6.0.4",
         "expo-status-bar": "~3.0.8",
