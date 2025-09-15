@@ -43,7 +43,7 @@ export function Page({
   }
 
   return (
-    <SafeAreaView className={`flex-1 bg-background ${className}`} style={{ backgroundColor: 'blue' }}>
+    <SafeAreaView edges={['right', 'left', 'top']} className={`flex-1 bg-background ${className}`} style={{ backgroundColor: 'blue' }}>
       <View className={`flex-1 ${contentClassName}`} style={paddingStyle}>
         {children}
       </View>
