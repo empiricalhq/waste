@@ -65,7 +65,7 @@ export default async function ChoferesPage() {
                       <Badge className={statusColors[statusKey]}>
                         {statusLabels[statusKey]}
                       </Badge>
-                      <span className="text-muted-foreground text-xs whitespace-nowrap">
+                      <span className="text-muted-foreground whitespace-nowrap text-xs">
                         {new Date(driver.createdAt).toLocaleDateString()}
                       </span>
                     </div>

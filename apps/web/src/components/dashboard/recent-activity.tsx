@@ -90,7 +90,7 @@ export function RecentActivity() {
                 >
                   {statusLabels[activity.status as keyof typeof statusLabels]}
                 </Badge>
-                <span className="text-muted-foreground text-xs whitespace-nowrap">
+                <span className="text-muted-foreground whitespace-nowrap text-xs">
                   {activity.time}
                 </span>
               </div>
