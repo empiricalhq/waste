@@ -1,10 +1,50 @@
-export default function UbicacionesPage() {
+import { cookies } from "next/headers";
+import { RoutesTable, type Route } from "@/components/rutas-tabla/routes-table";
+
+async function getRoutes(): Promise<Route[]> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("better-auth.session_token");
+
+  if (!token) {
+    console.error("No auth token found");
+    return [];
+  }
+
+  try {
+    // Asumimos que el endpoint para las rutas es /api/admin/routes
+    const response = await fetch("http://localhost:4000/api/admin/routes", {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `${token.name}=${token.value}`,
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch routes: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Fetched routes:", data);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+export default async function RutasPage() {
+  const routes = await getRoutes();
+
   return (
     <div>
-      <h1 className="text-2xl font-bold">Gestión de ubicaciones</h1>
-      <p className="text-muted-foreground">
-        Administra las ubicaciones de la flota
-      </p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">Gestión de Rutas</h1>
+        <p className="text-muted-foreground">
+          Administra las rutas de recolección y sus puntos de paso (waypoints).
+        </p>
+      </div>
+      <RoutesTable initialRoutes={routes} />
     </div>
   );
 }
