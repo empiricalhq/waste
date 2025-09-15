@@ -1,10 +1,4 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface RoleSelectProps {
   value: string;
@@ -13,19 +7,9 @@ interface RoleSelectProps {
   required?: boolean;
 }
 
-export function RoleSelect({
-  value,
-  onChange,
-  disabled,
-  required,
-}: RoleSelectProps) {
+export function RoleSelect({ value, onChange, disabled, required }: RoleSelectProps) {
   return (
-    <Select
-      onValueChange={onChange}
-      value={value}
-      required={required}
-      disabled={disabled}
-    >
+    <Select onValueChange={onChange} value={value} required={required} disabled={disabled}>
       <SelectTrigger id="role">
         <SelectValue placeholder="Seleccionar un rol" />
       </SelectTrigger>

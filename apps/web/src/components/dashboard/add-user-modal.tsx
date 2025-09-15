@@ -1,45 +1,24 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import SignUpForm from "@/app/(routes)/(auth)/signup/form";
+import { useState } from 'react';
+import SignUpForm from '@/app/(routes)/(auth)/signup/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (user: {
-    name: string;
-    email: string;
-    phone: string;
-    role: string;
-  }) => void;
+  onAdd: (user: { name: string; email: string; phone: string; role: string }) => void;
 }
 
 export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("");
+  const [name, setName] = useState('');
+  const [email, _setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [role, setRole] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const _handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim() && email.trim() && phone.trim() && role.trim()) {
       onAdd({
@@ -48,9 +27,9 @@ export function AddUserModal({ isOpen, onClose, onAdd }: AddUserModalProps) {
         phone: phone.trim(),
         role: role.trim(),
       });
-      setName("");
-      setPhone("");
-      setRole("");
+      setName('');
+      setPhone('');
+      setRole('');
       onClose();
     }
   };
