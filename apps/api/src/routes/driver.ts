@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import type { Session, User } from '@/lib/auth.ts';
 import { db, withTransaction } from '@/lib/db.ts';
 import { authMiddleware } from '@/lib/middleware.ts';
-import { createDriverIssueSchema, updateDriverLocationSchema, IdParamSchema } from '@/lib/validation.ts';
+import { createDriverIssueSchema, IdParamSchema, updateDriverLocationSchema } from '@/lib/validation.ts';
 
 type AuthEnv = {
   Variables: {

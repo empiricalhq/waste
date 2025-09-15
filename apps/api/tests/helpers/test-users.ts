@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 import type { DbHelper } from './db-helper.ts';
 import type { TestClient } from './test-client.ts';
 
@@ -9,9 +11,9 @@ interface UserConfig {
 }
 
 export class TestUsers {
-  private client: TestClient;
-  private db: DbHelper;
-  private users: Record<'admin' | 'driver' | 'citizen', UserConfig> = {
+  private readonly client: TestClient;
+  private readonly db: DbHelper;
+  private readonly users: Record<'admin' | 'driver' | 'citizen', UserConfig> = {
     admin: {
       email: process.env.TEST_ADMIN_EMAIL || 'admin@test.com',
       password: 'admin123456',
