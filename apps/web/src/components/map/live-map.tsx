@@ -1,15 +1,11 @@
-"use client";
+'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 export default function InteractiveMap() {
   return (
-    <MapContainer
-      center={[-12.02, -77.12]}
-      zoom={13}
-      style={{ height: "400px", width: "100%" }}
-    >
+    <MapContainer center={[-12.02, -77.12]} zoom={13} style={{ height: '400px', width: '100%' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
