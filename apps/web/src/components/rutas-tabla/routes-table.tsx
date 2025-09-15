@@ -33,7 +33,6 @@ interface RoutesTableProps {
 }
 
 export function RoutesTable({ initialRoutes }: RoutesTableProps) {
-
   const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
 
   return (
@@ -53,8 +52,12 @@ export function RoutesTable({ initialRoutes }: RoutesTableProps) {
               initialRoutes.map((route) => (
                 <TableRow key={route.id}>
                   <TableCell className="font-medium">{route.name}</TableCell>
-                  <TableCell>{route.created_by_name || "No disponible"}</TableCell>
-                  <TableCell className="text-center">{route.waypoint_count}</TableCell>
+                  <TableCell>
+                    {route.created_by_name || "No disponible"}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {route.waypoint_count}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="outline"
@@ -77,7 +80,10 @@ export function RoutesTable({ initialRoutes }: RoutesTableProps) {
         </Table>
       </div>
 
-      <Dialog open={!!selectedRoute} onOpenChange={() => setSelectedRoute(null)}>
+      <Dialog
+        open={!!selectedRoute}
+        onOpenChange={() => setSelectedRoute(null)}
+      >
         <DialogContent className="sm:max-w-2xl">
           {selectedRoute && (
             <>
@@ -89,14 +95,27 @@ export function RoutesTable({ initialRoutes }: RoutesTableProps) {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <p><strong>Creado por:</strong> {selectedRoute.created_by_name || "N/A"}</p>
-                  <p><strong>Estado:</strong> <span className="capitalize">{selectedRoute.status}</span></p>
-                  <p><strong>Waypoints:</strong> {selectedRoute.waypoint_count}</p>
-                  <p><strong>Duración estimada:</strong> {selectedRoute.estimated_duration_minutes} min</p>
+                  <p>
+                    <strong>Creado por:</strong>{" "}
+                    {selectedRoute.created_by_name || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Estado:</strong>{" "}
+                    <span className="capitalize">{selectedRoute.status}</span>
+                  </p>
+                  <p>
+                    <strong>Waypoints:</strong> {selectedRoute.waypoint_count}
+                  </p>
+                  <p>
+                    <strong>Duración estimada:</strong>{" "}
+                    {selectedRoute.estimated_duration_minutes} min
+                  </p>
                 </div>
                 {/* Aquí iría el mapa y la lista de waypoints */}
-                <div className="mt-4 h-64 w-full rounded-md bg-secondary text-center flex items-center justify-center">
-                  <p className="text-muted-foreground">(Espacio para el mapa de la ruta)</p>
+                <div className="bg-secondary mt-4 flex h-64 w-full items-center justify-center rounded-md text-center">
+                  <p className="text-muted-foreground">
+                    (Espacio para el mapa de la ruta)
+                  </p>
                 </div>
               </div>
             </>

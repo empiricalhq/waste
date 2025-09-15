@@ -17,7 +17,7 @@ async function getRoutes(): Promise<Route[]> {
         "Content-Type": "application/json",
         Cookie: `${token.name}=${token.value}`,
       },
-      cache: 'no-store',
+      cache: "no-store",
     });
 
     if (!response.ok) {

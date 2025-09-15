@@ -30,7 +30,7 @@ export function VehiclesTable({ initialVehicles }: VehiclesTableProps) {
     if (!searchTerm) return initialVehicles;
 
     return initialVehicles.filter((vehicle) =>
-      vehicle.license_plate.toLowerCase().includes(searchTerm.toLowerCase())
+      vehicle.license_plate.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [initialVehicles, searchTerm]);
 
@@ -55,11 +55,14 @@ export function VehiclesTable({ initialVehicles }: VehiclesTableProps) {
             {filteredVehicles.length > 0 ? (
               filteredVehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
-                  <TableCell className="font-medium">{vehicle.license_plate}</TableCell>
+                  <TableCell className="font-medium">
+                    {vehicle.license_plate}
+                  </TableCell>
                   <TableCell>{vehicle.driver_name || "No asignado"}</TableCell>
                   <TableCell>
-
-                    <Badge variant={vehicle.is_active ? "default" : "secondary"}>
+                    <Badge
+                      variant={vehicle.is_active ? "default" : "secondary"}
+                    >
                       {vehicle.is_active ? "Activo" : "Inactivo"}
                     </Badge>
                   </TableCell>

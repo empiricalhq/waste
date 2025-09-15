@@ -34,16 +34,6 @@ export function AddUserButton() {
 
   return (
     <>
-      <header className="bg-card px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <Button onClick={() => setIsModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Agregar usuario
-            </Button>
-          </div>
-        </div>
-      </header>
       <AddUserModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
