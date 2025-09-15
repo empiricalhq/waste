@@ -2,7 +2,7 @@ import { AddUserButton } from "@/components/dashboard/add-user-button";
 // Se elimina la importación de DashboardSidebar ya que el layout se encarga de ella.
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
-import LiveMap from "@/components/map/live-map";
+import MapWrapper from "@/components/map/map-wrapper";
 
 export default async function DashboardPage() {
   return (
@@ -24,7 +24,7 @@ export default async function DashboardPage() {
         <RecentActivity />
       </div>
       <div className="mt-6">
-        <LiveMap />
+        <MapWrapper />
       </div>
     </div>
   );
