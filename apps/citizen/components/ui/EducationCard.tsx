@@ -21,9 +21,9 @@ export function EducationCard({ title, description, onPress }: EducationCardProp
 }
 
 const styles = {
-  container: `bg-white rounded-2xl shadow-sm overflow-hidden flex-row mt-4`,
-  image: `w-24 h-24`,
-  textContainer: `p-4 flex-1 justify-center`,
-  title: `text-base font-bold text-text`,
-  description: `text-sm text-secondary mt-1`,
+  container: 'bg-white rounded-2xl shadow-sm overflow-hidden flex-row mt-4',
+  image: 'w-24 h-24',
+  textContainer: 'p-4 flex-1 justify-center',
+  title: 'text-base font-bold text-text',
+  description: 'text-sm text-secondary mt-1',
 };

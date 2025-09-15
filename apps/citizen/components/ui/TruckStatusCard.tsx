@@ -24,11 +24,11 @@ export function TruckStatusCard({ status, etaMinutes, onMapPress }: TruckStatusC
 }
 
 const styles = {
-  container: `bg-white p-6 rounded-2xl shadow-md space-y-4`,
-  statusText: `text-xl font-bold text-primary`,
+  container: 'bg-white p-6 rounded-2xl shadow-md space-y-4',
+  statusText: 'text-xl font-bold text-primary',
   etaContainer: 'items-center',
-  etaText: `text-4xl font-extrabold text-text`,
-  etaLabel: `text-base text-secondary`,
-  mapButton: `bg-primary py-3 rounded-lg mt-4`,
-  mapButtonText: `text-white text-center font-bold text-base`,
+  etaText: 'text-4xl font-extrabold text-text',
+  etaLabel: 'text-base text-secondary',
+  mapButton: 'bg-primary py-3 rounded-lg mt-4',
+  mapButtonText: 'text-white text-center font-bold text-base',
 };

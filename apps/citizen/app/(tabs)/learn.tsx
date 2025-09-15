@@ -26,7 +26,7 @@ const RECYCLING_CATEGORIES = [
 
 export default function LearnScreen() {
   return (
-    <Screen scroll>
+    <Screen scroll={true}>
       <Text className="mb-6 text-3xl font-bold text-gray-900">Aprende a Reciclar</Text>
       <View className="space-y-4">
         {RECYCLING_CATEGORIES.map((category, index) => (
