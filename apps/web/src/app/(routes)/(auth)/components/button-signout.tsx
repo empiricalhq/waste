@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signOut } from "@/lib/auth/client";
-import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { redirect } from 'next/navigation';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { signOut } from '@/lib/auth/client';
 
 export default function SignOutButton() {
   const [isPending, setIsPending] = useState(false);
@@ -14,14 +14,14 @@ export default function SignOutButton() {
       fetchOptions: {
         onSuccess: () => {
           setIsPending(false);
-          redirect("/");
+          redirect('/');
         },
       },
     });
   };
 
   return (
-    <Button disabled={isPending} onClick={onSignOut} variant={"destructive"}>
+    <Button disabled={isPending} onClick={onSignOut} variant="destructive">
       Cerrar sesión
     </Button>
   );

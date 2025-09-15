@@ -1,3 +1,3 @@
-import { getMe } from "./me";
+import { getMe } from './me.ts';
 
 export { getMe };
