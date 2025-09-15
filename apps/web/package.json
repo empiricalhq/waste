@@ -10,7 +10,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "format": "prettier --write ."
+    "format": "prettier --config ../../.prettierrc --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
