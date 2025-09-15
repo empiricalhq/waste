@@ -1,2 +1,2 @@
-export * from "./gender";
-export * from "./role";
+export * from './gender.ts';
+export * from './role.ts';

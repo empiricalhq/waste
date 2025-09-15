@@ -1,11 +1,11 @@
-import { db } from "@/db";
-import { betterAuth } from "better-auth";
-import { username } from "better-auth/plugins";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { username } from 'better-auth/plugins';
+import { db } from '@/db';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
   }),
   plugins: [username()],
   emailAndPassword: {
@@ -14,7 +14,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       gender: {
-        type: "string",
+        type: 'string',
         required: true,
         input: true,
       },
