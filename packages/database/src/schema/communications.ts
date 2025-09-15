@@ -1,5 +1,5 @@
-import { pgTable, text, pgEnum, timestamp, index } from 'drizzle-orm/pg-core';
-import { user } from './auth';
+import { index, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { user } from './auth.ts';
 
 export const deviceTypeEnum = pgEnum('device_type', ['ios', 'android']);
 

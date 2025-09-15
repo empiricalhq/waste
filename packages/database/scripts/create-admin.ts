@@ -1,7 +1,8 @@
+import process from 'node:process';
 import * as p from '@clack/prompts';
-import { Pool } from 'pg';
 import { betterAuth } from 'better-auth';
 import { admin } from 'better-auth/plugins';
+import { Pool } from 'pg';
 import color from 'picocolors';
 
 if (!process.env.DATABASE_URL) {
@@ -60,7 +61,9 @@ async function main() {
             message: 'Nombre completo del administrador:',
             placeholder: 'Ejemplo: Juan Pérez',
             validate: (value) => {
-              if (value.trim().length < 5) return 'Escribe el nombre completo (mínimo 5 caracteres).';
+              if (value.trim().length < 5) {
+                return 'Escribe el nombre completo (mínimo 5 caracteres).';
+              }
             },
           }),
         email: () =>
@@ -68,7 +71,9 @@ async function main() {
             message: 'Correo electrónico del administrador:',
             placeholder: 'Ejemplo: admin@dominio.xyz',
             validate: (value) => {
-              if (!/^\S+@\S+\.\S+$/.test(value)) return 'Debes ingresar un correo electrónico válido.';
+              if (!/^\S+@\S+\.\S+$/.test(value)) {
+                return 'Debes ingresar un correo electrónico válido.';
+              }
             },
           }),
         username: () =>
@@ -76,16 +81,21 @@ async function main() {
             message: 'Nombre de usuario del administrador:',
             placeholder: 'Ejemplo: admin.system',
             validate: (value) => {
-              if (value.trim().length < 3) return 'El nombre de usuario debe tener al menos 3 caracteres.';
-              if (!/^[a-zA-Z0-9._-]+$/.test(value))
+              if (value.trim().length < 3) {
+                return 'El nombre de usuario debe tener al menos 3 caracteres.';
+              }
+              if (!/^[a-zA-Z0-9._-]+$/.test(value)) {
                 return 'Solo se permiten letras, números, puntos, guiones y guiones bajos.';
+              }
             },
           }),
         password: () =>
           p.password({
             message: 'Crea una contraseña segura (mínimo 8 caracteres):',
             validate: (value) => {
-              if (value.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
+              if (value.length < 8) {
+                return 'La contraseña debe tener al menos 8 caracteres.';
+              }
             },
           }),
       },
@@ -106,7 +116,7 @@ async function main() {
         role: 'admin',
         data: {
           appRole: 'admin',
-          username: username,
+          username,
         },
       },
     });

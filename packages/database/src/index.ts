@@ -1,5 +1,5 @@
-export { db } from './client';
-export * from './schema';
+export { db } from './client.ts';
+export * from './schema/index.ts';
 
 export type User = typeof import('./schema').user.$inferSelect;
 export type NewUser = typeof import('./schema').user.$inferInsert;

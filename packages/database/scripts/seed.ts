@@ -1,13 +1,16 @@
+import process from 'node:process';
 import * as p from '@clack/prompts';
-import { Pool, type PoolClient } from 'pg';
+import { createId } from '@paralleldrive/cuid2';
 import { betterAuth } from 'better-auth';
 import { admin } from 'better-auth/plugins';
+import { Pool, type PoolClient } from 'pg';
 import color from 'picocolors';
-import { createId } from '@paralleldrive/cuid2';
 
 function mustEnv(name: string): string {
   const val = process.env[name];
-  if (!val) throw new Error(`${name} is required in .env`);
+  if (!val) {
+    throw new Error(`${name} is required in .env`);
+  }
   return val;
 }
 
@@ -82,7 +85,9 @@ const seedData = {
 
 async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
   const { rows } = await db.query('SELECT * FROM "user" WHERE email=$1', [u.email]);
-  if (rows.length) return rows[0];
+  if (rows.length > 0) {
+    return rows[0];
+  }
 
   await auth.api.createUser({
     body: {
@@ -104,7 +109,9 @@ async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
 
 async function ensureTruck(dbClient: PoolClient, t: (typeof seedData.trucks)[number]) {
   const { rows } = await dbClient.query('SELECT id FROM truck WHERE license_plate=$1', [t.licensePlate]);
-  if (rows.length) return rows[0].id;
+  if (rows.length > 0) {
+    return rows[0].id;
+  }
   const id = createId();
   await dbClient.query('INSERT INTO truck (id,name,license_plate) VALUES ($1,$2,$3)', [id, t.name, t.licensePlate]);
   return id;
@@ -113,7 +120,9 @@ async function ensureTruck(dbClient: PoolClient, t: (typeof seedData.trucks)[num
 async function ensureRoute(dbClient: PoolClient, supervisorId: string) {
   const { route, waypoints } = seedData;
   const { rows } = await dbClient.query('SELECT id FROM route WHERE name=$1', [route.name]);
-  if (rows.length) return rows[0].id;
+  if (rows.length > 0) {
+    return rows[0].id;
+  }
 
   const routeId = createId();
   await dbClient.query(
@@ -151,11 +160,13 @@ async function ensureAssignment(
     truckId,
     today,
   ]);
-  if (rows.length) return;
+  if (rows.length > 0) {
+    return;
+  }
 
   const start = new Date();
   start.setHours(startHour, 0, 0, 0);
-  const end = new Date(start.getTime() + durationMinutes * 60000);
+  const end = new Date(start.getTime() + durationMinutes * 60_000);
 
   await dbClient.query(
     'INSERT INTO route_assignment (id,route_id,truck_id,driver_id,assigned_date,scheduled_start_time,scheduled_end_time,assigned_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
@@ -176,7 +187,9 @@ async function main() {
       body: { email: ADMIN_EMAIL, password: ADMIN_PASS },
     });
     const sessionToken = headers.get('set-cookie');
-    if (!sessionToken) throw new Error('No session token');
+    if (!sessionToken) {
+      throw new Error('No session token');
+    }
     s.stop('Sesión iniciada.');
 
     s.start('Creando usuarios...');
@@ -187,7 +200,7 @@ async function main() {
     const supervisor = users.get('supervisor@example.com');
     const driver = users.get('driver@example.com');
 
-    if (!supervisor || !driver) {
+    if (!(supervisor && driver)) {
       throw new Error('El usuario con rol de "supervisor" o "conductor" no pudo ser creado/encontrado.');
     }
 

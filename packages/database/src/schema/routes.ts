@@ -1,17 +1,17 @@
 import {
-  pgTable,
-  text,
-  timestamp,
-  integer,
-  time,
   date,
-  pgEnum,
-  uniqueIndex,
   doublePrecision,
   index,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  time,
+  timestamp,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { user } from './auth';
-import { truck } from './trucks';
+import { user } from './auth.ts';
+import { truck } from './trucks.ts';
 
 export const routeStatusEnum = pgEnum('route_status', ['active', 'inactive', 'draft']);
 export const assignmentStatusEnum = pgEnum('assignment_status', ['scheduled', 'active', 'completed', 'cancelled']);

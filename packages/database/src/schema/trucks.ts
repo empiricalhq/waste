@@ -1,5 +1,5 @@
-import { pgTable, text, boolean, timestamp, doublePrecision, index } from 'drizzle-orm/pg-core';
-import { routeAssignment } from './routes';
+import { boolean, doublePrecision, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { routeAssignment } from './routes.ts';
 
 export const truck = pgTable('truck', {
   id: text('id').primaryKey(),

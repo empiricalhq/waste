@@ -1,5 +1,5 @@
-import { pgTable, text, timestamp, doublePrecision, integer, primaryKey, boolean } from 'drizzle-orm/pg-core';
-import { user } from './auth';
+import { boolean, doublePrecision, integer, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
+import { user } from './auth.ts';
 
 export const citizenProfile = pgTable('citizen_profile', {
   userId: text('user_id')

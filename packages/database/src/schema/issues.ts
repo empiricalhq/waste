@@ -1,7 +1,7 @@
-import { pgTable, text, pgEnum, timestamp, doublePrecision, index } from 'drizzle-orm/pg-core';
-import { user } from './auth';
-import { routeAssignment } from './routes';
-import { truck } from './trucks';
+import { doublePrecision, index, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { user } from './auth.ts';
+import { routeAssignment } from './routes.ts';
+import { truck } from './trucks.ts';
 
 export const alertTypeEnum = pgEnum('alert_type', ['route_deviation', 'prolonged_stop', 'late_start']);
 export const alertStatusEnum = pgEnum('alert_status', ['unread', 'read', 'archived']);
