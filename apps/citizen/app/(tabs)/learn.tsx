@@ -1,29 +1,38 @@
 import { Text, View } from 'react-native';
-import { EducationCard } from '@/components/EducationCard';
-import { Page } from '@/components/Page';
+import { Screen, EducationCard } from '@/components/ui';
+
+const RECYCLING_CATEGORIES = [
+  {
+    title: 'Orgánicos',
+    description: 'Restos de comida, cáscaras, y residuos de jardín.',
+  },
+  {
+    title: 'Papel y Cartón',
+    description: 'Cajas, periódicos, revistas. Limpios y secos.',
+  },
+  {
+    title: 'Plásticos',
+    description: 'Botellas, envases y tapas. Enjuagados.',
+  },
+  {
+    title: 'Vidrio',
+    description: 'Botellas y frascos de cualquier color. Sin tapas.',
+  },
+  {
+    title: 'Metales',
+    description: 'Latas de aluminio y acero.',
+  },
+] as const;
 
 export default function LearnScreen() {
   return (
-    <Page scroll>
-      <Text className="mb-4 text-3xl font-bold text-text">Aprende a Reciclar</Text>
-      <View className="space-y-2">
-        <EducationCard title="Orgánicos" description="Restos de comida, cáscaras, y residuos de jardín." />
-        <EducationCard title="Papel y Cartón" description="Cajas, periódicos, revistas. Limpios y secos." />
-        <EducationCard title="Plásticos" description="Botellas, envases y tapas. Enjuagados." />
-        <EducationCard title="Vidrio" description="Botellas y frascos de cualquier color. Sin tapas." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
-        <EducationCard title="Metales" description="Latas de aluminio y acero." />
+    <Screen scroll>
+      <Text className="mb-6 text-3xl font-bold text-gray-900">Aprende a Reciclar</Text>
+      <View className="space-y-4">
+        {RECYCLING_CATEGORIES.map((category, index) => (
+          <EducationCard key={index} title={category.title} description={category.description} />
+        ))}
       </View>
-    </Page>
+    </Screen>
   );
 }

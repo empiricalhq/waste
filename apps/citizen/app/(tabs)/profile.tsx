@@ -1,15 +1,15 @@
 import { Text, View } from 'react-native';
-import { Page } from '@/components/Page';
+import { Screen } from '@/components/ui';
 
 export default function ProfileScreen() {
   return (
-    <Page>
+    <Screen>
       <View className="flex-1 items-center justify-center">
-        <Text className="text-2xl font-bold text-text">Perfil del ciudadano</Text>
-        <Text className="mt-2 text-center text-secondary">
+        <Text className="text-2xl font-bold text-gray-900">Perfil del ciudadano</Text>
+        <Text className="mt-4 text-center leading-6 text-gray-600">
           Configuración de notificaciones y ubicación próximamente.
         </Text>
       </View>
-    </Page>
+    </Screen>
   );
 }

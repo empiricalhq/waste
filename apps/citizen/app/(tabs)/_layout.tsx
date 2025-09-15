@@ -1,18 +1,16 @@
 import { Foundation, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
-import colors from 'tailwindcss/colors';
+import { appColors } from '@/constants/colors';
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colors.emerald[500],
+        tabBarActiveTintColor: appColors.primary,
         headerShown: false,
-        // dont add ripple animation
-        tabBarButton: (props) => <TouchableOpacity {...(props as any)} activeOpacity={1} />,
-      }}
-    >
+        tabBarButton: (props) => <TouchableOpacity {...(props as any)} activeOpacity={0.7} />,
+      }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -31,7 +29,9 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="person" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
