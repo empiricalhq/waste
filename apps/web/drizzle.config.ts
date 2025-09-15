@@ -1,9 +1,10 @@
-import { defineConfig } from "drizzle-kit";
+import process from 'node:process';
+import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: "./src/db/schema/index.ts",
-  out: "./drizzle",
-  dialect: "postgresql",
+  schema: './src/db/schema/index.ts',
+  out: './drizzle',
+  dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DIRECT_URL!,
   },
