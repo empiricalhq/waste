@@ -11,7 +11,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     fetchTruckStatus(USER_ID);
-  }, []);
+  }, [fetchTruckStatus]);
 
   const renderContent = () => {
     switch (status) {
