@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { Screen, EducationCard } from '@/components/ui';
+import { EducationCard, Screen } from '@/components/ui';
 
 const RECYCLING_CATEGORIES = [
   {

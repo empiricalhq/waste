@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
-import { Screen, EducationCard, TruckStatusCard } from '@/components/ui';
-import { useTruckStore } from '@/lib/stores/truck.store';
+import { EducationCard, Screen, TruckStatusCard } from '@/components/ui';
 import { appColors } from '@/constants/colors';
+import { useTruckStore } from '@/lib/stores/truck.store';
 
 const USER_ID = 'citizen-1';
 
@@ -36,9 +36,7 @@ export default function HomeScreen() {
         return (
           <View className="space-y-4">
             <Text className="text-lg text-gray-600">El próximo recojo es: {nextCollectionDay}</Text>
-            <Text className="text-xl font-bold text-gray-900">
-              Mientras tanto, ¡aprendamos a reciclar!
-            </Text>
+            <Text className="text-xl font-bold text-gray-900">Mientras tanto, ¡aprendamos a reciclar!</Text>
             <EducationCard
               title="Clasifica tus residuos"
               description="Aprende la diferencia entre orgánico, reciclable y no aprovechable."

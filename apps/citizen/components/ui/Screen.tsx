@@ -8,20 +8,11 @@ interface ScreenProps {
   contentClassName?: string;
 }
 
-export function Screen({
-  children,
-  scroll = false,
-  className = '',
-  contentClassName = '',
-}: ScreenProps) {
+export function Screen({ children, scroll = false, className = '', contentClassName = '' }: ScreenProps) {
   if (scroll) {
     return (
-      <SafeAreaView
-        edges={['right', 'left', 'top']}
-        className={`flex-1 bg-background ${className}`}>
-        <ScrollView
-          contentContainerStyle={scrollContentStyle}
-          showsVerticalScrollIndicator={false}>
+      <SafeAreaView edges={['right', 'left', 'top']} className={`flex-1 bg-background ${className}`}>
+        <ScrollView contentContainerStyle={scrollContentStyle} showsVerticalScrollIndicator={false}>
           <View style={defaultPadding} className={`flex-1 ${contentClassName}`}>
             {children}
           </View>
@@ -31,9 +22,7 @@ export function Screen({
   }
 
   return (
-    <SafeAreaView
-      edges={['right', 'left', 'top']}
-      className={`flex-1 bg-background ${className}`}>
+    <SafeAreaView edges={['right', 'left', 'top']} className={`flex-1 bg-background ${className}`}>
       <View style={defaultPadding} className={`flex-1 ${contentClassName}`}>
         {children}
       </View>

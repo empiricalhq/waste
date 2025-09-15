@@ -10,7 +10,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: appColors.primary,
         headerShown: false,
         tabBarButton: (props) => <TouchableOpacity {...(props as any)} activeOpacity={0.7} />,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -29,9 +30,7 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="person" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="person" size={size} color={color} />,
         }}
       />
     </Tabs>
