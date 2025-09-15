@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import {
   VehiclesTable,
   type Vehicle,
-} from "@/components/vehiculos-tabla/vehiculos";
+} from "@/components/dashboard/vehicles-table";
 
 async function getTrucks(): Promise<Vehicle[]> {
   const cookieStore = await cookies();

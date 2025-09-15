@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { RoutesTable, type Route } from "@/components/rutas-tabla/routes-table";
+import { RoutesTable, type Route } from "@/components/dashboard/routes-table";
 
 async function getRoutes(): Promise<Route[]> {
   const cookieStore = await cookies();
