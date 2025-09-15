@@ -14,7 +14,7 @@
     "@lima-garbage/database": "workspace:*",
     "expo": "53.0.22",
     "expo-router": "~5.1.6",
-    "expo-status-bar": "~2.2.3",
+    "expo-status-bar": "~3.0.8",
     "nativewind": "latest",
     "react": "19.0.0",
     "react-native": "0.79.5",
