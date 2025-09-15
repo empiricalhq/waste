@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/index.ts'], {
   stdout: 'inherit',
   stderr: 'inherit',

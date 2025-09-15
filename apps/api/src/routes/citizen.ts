@@ -83,13 +83,12 @@ citizenRouter.get('/truck/status', async (c) => {
           etaMinutes: Math.max(1, etaMinutes),
           truck: truck.truck_name,
         });
-      } else {
-        return c.json({
-          status: 'ON_THE_WAY',
-          etaMinutes,
-          truck: truck.truck_name,
-        });
       }
+      return c.json({
+        status: 'ON_THE_WAY',
+        etaMinutes,
+        truck: truck.truck_name,
+      });
     }
 
     return c.json({

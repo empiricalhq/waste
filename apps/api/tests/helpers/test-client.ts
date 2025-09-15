@@ -7,7 +7,7 @@ interface Response<T = any> {
 }
 
 export class TestClient {
-  private baseUrl: string;
+  private readonly baseUrl: string;
 
   constructor() {
     this.baseUrl = TEST_CONFIG.baseUrl;

@@ -6,7 +6,9 @@ export type Role = z.infer<typeof roleSchema>;
 export const IdSchema = z.union([
   z.uuid(),
   // IDs created by better-auth don't use standard UUID format
-  z.string().regex(/^[a-zA-Z0-9]{20,40}$/),
+  z
+    .string()
+    .regex(/^[a-zA-Z0-9]{20,40}$/),
 ]);
 export const IdParamSchema = z.object({ id: IdSchema });
 

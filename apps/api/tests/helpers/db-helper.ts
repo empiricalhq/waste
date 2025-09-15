@@ -1,7 +1,9 @@
+import process from 'node:process';
+
 import { Pool } from 'pg';
 
 export class DbHelper {
-  private pool: Pool;
+  private readonly pool: Pool;
 
   constructor() {
     if (!process.env.DATABASE_URL) {

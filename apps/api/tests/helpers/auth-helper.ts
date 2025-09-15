@@ -12,9 +12,9 @@ interface Session {
 }
 
 export class AuthHelper {
-  private client: TestClient;
-  private sessions = new Map<string, Session>();
-  private testUsers: TestUsers;
+  private readonly client: TestClient;
+  private readonly sessions = new Map<string, Session>();
+  private readonly testUsers: TestUsers;
 
   constructor(client: TestClient, testUsers: TestUsers) {
     this.client = client;
