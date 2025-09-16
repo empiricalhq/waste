@@ -26,15 +26,17 @@ export default function LiveMap({ trucks = [] }: LiveMapProps) {
     shadowSize: [41, 41],
   });
 
-  const trucksWithLocation = trucks.filter((t) => t.lat != null && t.lng != null);
+  const trucksWithLocation = trucks.filter(
+    (t): t is Truck & { lat: number; lng: number } => t.lat != null && t.lng != null,
+  );
   const center: [number, number] =
-    trucksWithLocation.length > 0 ? [trucksWithLocation[0].lat!, trucksWithLocation[0].lng!] : [-12.046, -77.042];
+    trucksWithLocation.length > 0 ? [trucksWithLocation[0].lat, trucksWithLocation[0].lng] : [-12.046, -77.042];
 
   return (
     <MapContainer center={center} zoom={12} style={{ height: '100%', width: '100%' }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {trucksWithLocation.map((truck) => (
-        <Marker key={truck.id} position={[truck.lat!, truck.lng!]} icon={icon}>
+        <Marker key={truck.id} position={[truck.lat, truck.lng]} icon={icon}>
           <Popup>
             <strong>Placa:</strong> {truck.license_plate}
           </Popup>
