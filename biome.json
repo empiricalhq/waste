@@ -16,6 +16,9 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "next": "recommended"
+    },
     "rules": {
       "a11y": "on",
       "complexity": "on",
