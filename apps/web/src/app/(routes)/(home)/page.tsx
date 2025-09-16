@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 import { getMe } from '@/actions/user';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-//import { Dashboard }  from "@/components/dashboard"
 
+// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 export default async function Home() {

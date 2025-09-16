@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { type Route, RoutesTable } from '@/components/dashboard/routes-table';
 
+// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 async function getRoutes(): Promise<Route[]> {

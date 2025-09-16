@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
+// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 interface Driver {

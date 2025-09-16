@@ -1,9 +1,10 @@
 import { cookies } from 'next/headers';
 import { AddUserButton } from '@/components/dashboard/add-user-button';
 import { DashboardStats } from '@/components/dashboard/dashboard-stats';
-import { RecentAlerts } from '@/components/dashboard/recent-alerts'; // Reemplazamos RecentActivity
+import { RecentAlerts } from '@/components/dashboard/recent-alerts';
 import MapWrapper from '@/components/map/map-wrapper';
 
+// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 // Asumimos estos tipos basados en las respuestas de la API

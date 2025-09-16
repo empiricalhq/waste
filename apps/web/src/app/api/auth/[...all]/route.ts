@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
+// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 const API_BASE_URL = process.env.BETTER_AUTH_URL || 'http://localhost:4000';
