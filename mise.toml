@@ -2,9 +2,9 @@
 python.uv_venv_auto = true
 
 [tools]
-bun = "1.2.21"
+bun = "1.2.22"
 uv = "0.8.17"
-ruff = "0.12.10"
+ruff = "0.13.0"
 biome = "2.2.4"
 
 [tasks.install]
