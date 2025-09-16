@@ -83,7 +83,6 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">Vista general del sistema en tiempo real.</p>
         </div>
-        <AddUserButton />
       </div>
 
       <DashboardStats activeRoutes={activeRoutesCount} openIssues={openIssuesCount} totalAlerts={alertsCount} />

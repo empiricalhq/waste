@@ -1,5 +1,7 @@
 // Se elimina la importación de DashboardLayout ya que no es necesaria.
 
+import { AddUserButton } from "@/components/dashboard/add-user-button";
+
 export default function ConfiguracionPage() {
   return (
     <div>
@@ -9,8 +11,7 @@ export default function ConfiguracionPage() {
           <h1 className="mb-1 text-3xl font-bold">Configuración</h1>
           <p className="text-muted-foreground">Ajustes del sistema, usuarios y roles.</p>
         </div>
-        {/* Aquí podrías poner un botón si fuera necesario, como en el ejemplo */}
-        {/* <AddUserButton /> */}
+        <AddUserButton />
       </div>
 
       {/* Contenido de la página de configuración */}
