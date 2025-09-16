@@ -30,15 +30,11 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [_isPending, setIsPending] = useState(false);
-  const [_isModalOpen, _setIsModalOpen] = useState(false);
 
   const onSignOut = async () => {
-    setIsPending(true);
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          setIsPending(false);
           redirect('/');
         },
       },
