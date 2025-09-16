@@ -17,7 +17,7 @@ export default async function Home() {
     <div className="bg-muted/30 flex min-h-screen flex-col">
       <main className="flex flex-1 flex-col items-center justify-center p-4 text-center">
         <div className="max-w-md">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Bienvenido a Lima-limpia</h1>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Bienvenido a Lima-limpia</h1>
           <p className="text-muted-foreground mt-4 text-lg">
             Gestiona tus rutas y choferes de forma eficiente. Inicia sesión para comenzar.
           </p>

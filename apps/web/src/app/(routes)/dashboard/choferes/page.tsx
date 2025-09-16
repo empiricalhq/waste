@@ -46,7 +46,7 @@ export default async function ChoferesPage() {
   return (
     <div>
       <main>
-        <h1 className="text-2xl font-bold">Gestión de choferes</h1>
+        <h1 className="text-3xl font-bold">Gestión de choferes</h1>
         <p className="text-muted-foreground">Administra los choferes de la flota</p>
         <Card className="mt-4">
           <CardContent>

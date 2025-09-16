@@ -39,7 +39,7 @@ export default async function RutasPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Gestión de Rutas</h1>
+        <h1 className="text-3xl font-bold">Gestión de Rutas</h1>
         <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de paso (waypoints).</p>
       </div>
       <RoutesTable initialRoutes={routes} />

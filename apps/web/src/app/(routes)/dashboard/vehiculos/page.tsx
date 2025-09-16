@@ -38,7 +38,7 @@ export default async function VehiculosPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Gestión de Vehículos</h1>
+        <h1 className="text-3xl font-bold">Gestión de Vehículos</h1>
         <p className="text-muted-foreground">Administra la flota de vehículos y sus conductores asignados.</p>
       </div>
       <VehiclesTable initialVehicles={trucks} />
