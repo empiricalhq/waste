@@ -13,8 +13,5 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.21"
-  },
-  "dependencies": {
-    "next": "^15.5.3"
   }
 }
