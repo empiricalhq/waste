@@ -22,14 +22,14 @@ export function SignInForm() {
   const form = useForm<SignInValues>({
     resolver: zodResolver(SignInSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
 
   function onSubmit(data: SignInValues) {
     startTransition(async () => {
-      const response = await signIn.username(data);
+      const response = await signIn.email(data);
 
       if (response.error) {
         console.log('SIGN_IN:', response.error.message);
@@ -43,7 +43,7 @@ export function SignInForm() {
   const getInputClassName = (fieldName: keyof SignInValues) =>
     cn(
       form.formState.errors[fieldName] &&
-        'border-destructive/80 text-destructive focus-visible:border-destructive/80 focus-visible:ring-destructive/20',
+      'border-destructive/80 text-destructive focus-visible:border-destructive/80 focus-visible:ring-destructive/20',
     );
 
   return (
@@ -51,14 +51,15 @@ export function SignInForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="z-50 my-8 flex w-full flex-col gap-5">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormControl>
                 <InputStartIcon icon={AtSign}>
                   <Input
-                    placeholder="usuario"
-                    className={cn('peer ps-9', getInputClassName('username'))}
+                    placeholder="email"
+                    type="email"
+                    className={cn('peer ps-9', getInputClassName('email'))}
                     disabled={isPending}
                     {...field}
                   />
