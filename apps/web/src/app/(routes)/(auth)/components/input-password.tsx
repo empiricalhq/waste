@@ -7,7 +7,7 @@ interface InputPasswordContainerProps {
   children: ReactElement<{ type?: string }>;
 }
 
-export default function InputPasswordContainer({ children }: InputPasswordContainerProps) {
+export function InputPasswordContainer({ children }: InputPasswordContainerProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);

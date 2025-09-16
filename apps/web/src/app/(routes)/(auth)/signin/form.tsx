@@ -11,11 +11,11 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Input } from '@/components/ui/input';
 import { signIn } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
-import InputPasswordContainer from '../components/input-password.tsx';
-import InputStartIcon from '../components/input-start-icon.tsx';
+import { InputPasswordContainer } from '../components/input-password.tsx';
+import { InputStartIcon } from '../components/input-start-icon.tsx';
 import { SignInSchema, type SignInValues } from './validate.ts';
 
-export default function SignInForm() {
+export function SignInForm() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -77,7 +77,6 @@ export default function SignInForm() {
               <FormControl>
                 <InputPasswordContainer>
                   <Input
-                    id="input-23"
                     className={cn('pe-9', getInputClassName('password'))}
                     placeholder="Contraseña"
                     disabled={isPending}

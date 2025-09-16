@@ -12,8 +12,8 @@ import { Input } from '@/components/ui/input';
 import { signUp } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 import { GenderRadioGroup } from '../components/gender-radio-group.tsx';
-import InputPasswordContainer from '../components/input-password.tsx';
-import InputStartIcon from '../components/input-start-icon.tsx';
+import { InputPasswordContainer } from '../components/input-password.tsx';
+import { InputStartIcon } from '../components/input-start-icon.tsx';
 import { RoleSelect } from '../components/role-select.tsx';
 import { SignUpSchema, type SignUpValues } from './validate.ts';
 

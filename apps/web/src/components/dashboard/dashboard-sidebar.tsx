@@ -77,7 +77,17 @@ export function DashboardSidebar() {
 
       {/* Mobile backdrop */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setIsMobileMenuOpen(false);
+            }
+          }}
+          aria-label="Close mobile menu"
+        />
       )}
 
       {/* Sidebar */}

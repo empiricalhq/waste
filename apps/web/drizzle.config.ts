@@ -1,4 +1,3 @@
-import process from 'node:process';
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
@@ -6,7 +5,7 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DIRECT_URL!,
+    url: process.env.DIRECT_URL || '',
   },
   verbose: true,
   strict: true,

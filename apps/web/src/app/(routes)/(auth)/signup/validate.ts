@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+const MIN_NAME_LENGTH = 4;
+const MIN_USERNAME_LENGTH = 4;
+const MIN_PASSWORD_LENGTH = 8;
+
 const disallowedUsernamePatterns = [
   'admin',
   'superuser',
@@ -17,10 +21,10 @@ export const SignUpSchema = z
       .string()
       .min(1, { message: 'Correo electrónico es requerido' })
       .email({ message: 'Correo electrónico no válido' }),
-    name: z.string().min(4, { message: 'Debe tener al menos 4 caracteres' }),
+    name: z.string().min(MIN_NAME_LENGTH, { message: 'Debe tener al menos 4 caracteres' }),
     username: z
       .string()
-      .min(4, { message: 'Debe tener al menos 4 caracteres' })
+      .min(MIN_USERNAME_LENGTH, { message: 'Debe tener al menos 4 caracteres' })
       .regex(/^[a-zA-Z0-9_-]+$/, 'Solo se permiten letras, números, guiones y guiones bajos')
       .refine(
         (username) => {
@@ -33,10 +37,10 @@ export const SignUpSchema = z
         },
         { message: 'El nombre de usuario contiene palabras no permitidas' },
       ),
-    password: z.string().min(8, {
+    password: z.string().min(MIN_PASSWORD_LENGTH, {
       message: 'Debe tener al menos 8 caracteres',
     }),
-    confirmPassword: z.string().min(8, {
+    confirmPassword: z.string().min(MIN_PASSWORD_LENGTH, {
       message: 'Debe tener al menos 8 caracteres',
     }),
     gender: z.enum(['male', 'female'], {

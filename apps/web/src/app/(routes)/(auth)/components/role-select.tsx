@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface RoleSelectProps {
@@ -8,9 +9,11 @@ interface RoleSelectProps {
 }
 
 export function RoleSelect({ value, onChange, disabled, required }: RoleSelectProps) {
+  const id = useId();
+
   return (
     <Select onValueChange={onChange} value={value} required={required} disabled={disabled}>
-      <SelectTrigger id="role">
+      <SelectTrigger id={id}>
         <SelectValue placeholder="Seleccionar un rol" />
       </SelectTrigger>
       <SelectContent>

@@ -2,6 +2,14 @@ import { cookies } from 'next/headers';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
+interface Driver {
+  id: string;
+  name: string;
+  email: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 const statusColors = {
   active: 'bg-green-100 text-green-800',
   completed: 'bg-blue-100 text-blue-800',
@@ -40,7 +48,7 @@ export default async function ChoferesPage() {
         <Card className="mt-4">
           <CardContent>
             <div className="space-y-4">
-              {data.map((driver: any) => {
+              {data.map((driver: Driver) => {
                 const statusKey = driver.isActive ? 'active' : 'inactive';
                 return (
                   <div key={driver.id} className="bg-muted/30 flex items-center justify-between rounded-lg p-3">
