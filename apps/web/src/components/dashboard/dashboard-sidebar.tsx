@@ -1,6 +1,19 @@
 'use client';
 
-import { Bell, LayoutDashboard, Leaf, LogOut, MapPin, Menu, Settings, Truck, User as UserIcon, Users, X } from 'lucide-react';
+import type { User } from '@lima-garbage/database';
+import {
+  Bell,
+  LayoutDashboard,
+  Leaf,
+  LogOut,
+  MapPin,
+  Menu,
+  Settings,
+  Truck,
+  User as UserIcon,
+  Users,
+  X,
+} from 'lucide-react';
 import Link from 'next/link';
 import { redirect, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -13,7 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { User } from '@lima-garbage/database';
 import { signOut } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 

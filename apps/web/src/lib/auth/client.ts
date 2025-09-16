@@ -1,7 +1,7 @@
 import { createAuthClient } from 'better-auth/react';
 
 // Point to the web app's own API route which proxies to the API service
-const getBaseURL = () => {
+const getBaseUrl = () => {
   // we do this or else build fails, TODO
   if (typeof window === 'undefined') {
     return 'http://localhost:3000';
@@ -10,5 +10,5 @@ const getBaseURL = () => {
 };
 
 export const { signIn, signUp, signOut, useSession, getSession } = createAuthClient({
-  baseURL: getBaseURL(),
+  baseURL: getBaseUrl(),
 });

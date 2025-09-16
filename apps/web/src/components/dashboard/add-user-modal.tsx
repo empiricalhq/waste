@@ -10,7 +10,6 @@ interface AddUserModalProps {
 }
 
 export function AddUserModal({ isOpen, onClose }: AddUserModalProps) {
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">

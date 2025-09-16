@@ -1,5 +1,5 @@
-import { cookies } from 'next/headers';
 import type { User } from '@lima-garbage/database';
+import { cookies } from 'next/headers';
 
 const API_BASE_URL = process.env.BETTER_AUTH_URL || 'http://localhost:4000';
 

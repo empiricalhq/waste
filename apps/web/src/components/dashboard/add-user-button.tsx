@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { AddUserModal } from '@/components/dashboard/add-user-modal';
+import { Button } from '@/components/ui/button';
 
 export function AddUserButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,14 +14,8 @@ export function AddUserButton() {
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)}>
-        Agregar Usuario
-      </Button>
-      <AddUserModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddUser}
-      />
+      <Button onClick={() => setIsModalOpen(true)}>Agregar Usuario</Button>
+      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAdd={handleAddUser} />
     </>
   );
 }

@@ -43,7 +43,7 @@ export function SignInForm() {
   const getInputClassName = (fieldName: keyof SignInValues) =>
     cn(
       form.formState.errors[fieldName] &&
-      'border-destructive/80 text-destructive focus-visible:border-destructive/80 focus-visible:ring-destructive/20',
+        'border-destructive/80 text-destructive focus-visible:border-destructive/80 focus-visible:ring-destructive/20',
     );
 
   return (
