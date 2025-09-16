@@ -179,7 +179,7 @@ export function SignUpForm() {
           )}
         />
 
-        <Button type="submit" disabled={isPending} className="mt-5 w-full">
+        <Button type="submit" disabled={isPending} className="cursor-pointer bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground mt-5 w-full">
           Agregar usuario
         </Button>
       </form>
