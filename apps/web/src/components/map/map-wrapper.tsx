@@ -24,7 +24,7 @@ const LiveMap = dynamic(() => import('@/components/map/live-map'), {
   ),
 });
 
-export default function MapWrapper({ trucks }: MapWrapperProps) {
+export function MapWrapper({ trucks }: MapWrapperProps) {
   // Pasamos la lista de camiones al componente LiveMap
   return <LiveMap trucks={trucks} />;
 }
