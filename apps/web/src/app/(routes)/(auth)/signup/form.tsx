@@ -17,7 +17,7 @@ import { InputStartIcon } from '../components/input-start-icon.tsx';
 import { RoleSelect } from '../components/role-select.tsx';
 import { SignUpSchema, type SignUpValues } from './validate.ts';
 
-export default function SignUpForm() {
+export function SignUpForm() {
   const [isPending, startTransition] = useTransition();
   const form = useForm<SignUpValues>({
     resolver: zodResolver(SignUpSchema),

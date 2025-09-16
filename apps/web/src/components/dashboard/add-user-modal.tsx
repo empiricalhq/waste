@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState } from 'react';
-import SignUpForm from '@/app/(routes)/(auth)/signup/form';
+import { SignUpForm }from '@/app/(routes)/(auth)/signup/form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface AddUserModalProps {
