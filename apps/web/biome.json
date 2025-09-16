@@ -1,0 +1,24 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "domains": {
+      "next": "all"
+    },
+    "rules": {
+      "style": {
+        "recommended": true,
+        "noDefaultExport": "off"
+      },
+      "suspicious": {
+        "recommended": true,
+        "noUnknownAtRules": "off",
+        "noReactSpecificProps": "off"
+      },
+      "performance": {
+        "recommended": true,
+        "noNamespaceImport": "off"
+      }
+    }
+  }
+}

@@ -16,9 +16,6 @@
   },
   "linter": {
     "enabled": true,
-    "domains": {
-      "next": "recommended"
-    },
     "rules": {
       "a11y": "on",
       "complexity": "on",
@@ -26,17 +23,10 @@
         "recommended": true,
         "noNodejsModules": "off"
       },
-      "performance": {
-        "recommended": true,
-        "noNamespaceImport": "off"
-      },
-      "recommended": true,
+      "performance": "on",
       "security": "on",
       "style": "on",
-      "suspicious": {
-        "recommended": true,
-        "noUnknownAtRules": "off"
-      }
+      "suspicious": "on"
     }
   },
   "javascript": {
