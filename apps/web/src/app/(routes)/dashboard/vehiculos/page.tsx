@@ -1,10 +1,7 @@
-import { cookies } from "next/headers";
-import {
-  VehiclesTable,
-  type Vehicle,
-} from "@/components/dashboard/vehicles-table";
+import { cookies } from 'next/headers';
+import { type Truck, VehiclesTable } from '@/components/dashboard/vehicles-table';
 
-async function getTrucks(): Promise<Vehicle[]> {
+async function getTrucks(): Promise<Truck[]> {
   const cookieStore = await cookies();
   const token = cookieStore.get('better-auth.session_token');
 
