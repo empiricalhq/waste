@@ -5,6 +5,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 //import { Dashboard }  from "@/components/dashboard"
 
+export const runtime = 'edge';
+
 export default async function Home() {
   const me = await getMe();
   if (me) {

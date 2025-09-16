@@ -1,10 +1,11 @@
-import { getSessionCookie } from 'better-auth/cookies';
+import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes.ts';
 
 export async function middleware(request: NextRequest) {
-  const session = getSessionCookie(request);
+  const cookieStore = await cookies();
+  const session = cookieStore.get('better-auth.session_token');
 
   const isApiAuth = request.nextUrl.pathname.startsWith(apiAuthPrefix);
 

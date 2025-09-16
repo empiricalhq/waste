@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { type Route, RoutesTable } from '@/components/dashboard/routes-table';
 
+export const runtime = 'edge';
+
 async function getRoutes(): Promise<Route[]> {
   const cookieStore = await cookies();
   const token = cookieStore.get('better-auth.session_token');

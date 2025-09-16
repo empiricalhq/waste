@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
+export const runtime = 'edge';
+
 interface Driver {
   id: string;
   name: string;

@@ -4,6 +4,8 @@ import { DashboardStats } from '@/components/dashboard/dashboard-stats';
 import { RecentAlerts } from '@/components/dashboard/recent-alerts'; // Reemplazamos RecentActivity
 import MapWrapper from '@/components/map/map-wrapper';
 
+export const runtime = 'edge';
+
 // Asumimos estos tipos basados en las respuestas de la API
 type Truck = {
   id: string;
