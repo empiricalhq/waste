@@ -1,8 +1,23 @@
 import { cookies } from 'next/headers';
+import type { User } from '@lima-garbage/database';
 
 const API_BASE_URL = process.env.BETTER_AUTH_URL || 'http://localhost:4000';
 
-export async function getSession() {
+interface SessionResponse {
+  user: User;
+  session: {
+    id: string;
+    expiresAt: string;
+    token: string;
+    createdAt: string;
+    updatedAt: string;
+    ipAddress?: string;
+    userAgent?: string;
+    userId: string;
+  };
+}
+
+export async function getSession(): Promise<SessionResponse | null> {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('better-auth.session_token');
 
@@ -28,7 +43,7 @@ export async function getSession() {
   }
 }
 
-export async function getUser() {
+export async function getUser(): Promise<User | null> {
   const session = await getSession();
   return session?.user || null;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, LayoutDashboard, Leaf, LogOut, MapPin, Menu, Settings, Truck, User, Users, X } from 'lucide-react';
+import { Bell, LayoutDashboard, Leaf, LogOut, MapPin, Menu, Settings, Truck, User as UserIcon, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { redirect, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { UserType } from '@/db/schema';
+import type { User } from '@lima-garbage/database';
 import { signOut } from '@/lib/auth/client';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +28,7 @@ const navigation = [
 export function DashboardSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [_isPending, setIsPending] = useState(false);
   const [_isModalOpen, _setIsModalOpen] = useState(false);
@@ -158,7 +158,7 @@ export function DashboardSidebar() {
 
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
+                      <UserIcon className="mr-2 h-4 w-4" />
                       Perfil
                     </DropdownMenuItem>
                     <DropdownMenuItem>

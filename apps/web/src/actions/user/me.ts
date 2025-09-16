@@ -1,8 +1,9 @@
 'use server';
 
 import { auth } from '@/lib/auth/server';
+import type { User } from '@lima-garbage/database';
 
-export async function getMe() {
+export async function getMe(): Promise<User | null> {
   const session = await auth.api.getSession();
   if (!session) {
     return null;
