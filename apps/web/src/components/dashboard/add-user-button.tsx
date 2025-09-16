@@ -1,15 +1,27 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { AddUserModal } from '@/components/dashboard/add-user-modal';
 
 export function AddUserButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAddUser = (user: { name: string; phone: string; role: string }) => {
+  const handleAddUser = (user: { name: string; email: string; phone: string; role: string }) => {
     console.log('Nuevo usuario agregado:', user);
-    // Aquí iría la lógica para guardar el usuario en la base de datos
+    setIsModalOpen(false);
   };
 
-  return <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAdd={handleAddUser} />;
+  return (
+    <>
+      <Button onClick={() => setIsModalOpen(true)}>
+        Agregar Usuario
+      </Button>
+      <AddUserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddUser}
+      />
+    </>
+  );
 }
