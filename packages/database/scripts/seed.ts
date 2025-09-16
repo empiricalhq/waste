@@ -70,16 +70,16 @@ const seedData = {
   route: {
     name: 'Ruta Centro Lima',
     description: 'Ruta de recolección para el Centro Histórico de Lima.',
-    startLat: -12.046374,
-    startLng: -77.042793,
+    startLat: -12.046_374,
+    startLng: -77.042_793,
     estimatedDurationMinutes: 180,
   },
   waypoints: [
-    { lat: -12.046374, lng: -77.042793, streetName: 'Plaza de Armas', order: 1, offset: 0 },
-    { lat: -12.047196, lng: -77.030983, streetName: 'Jr. de la Unión', order: 2, offset: 30 },
-    { lat: -12.043333, lng: -77.028056, streetName: 'Mercado Central', order: 3, offset: 60 },
-    { lat: -12.056944, lng: -77.035278, streetName: 'Av. Abancay', order: 4, offset: 90 },
-    { lat: -12.068611, lng: -77.036111, streetName: 'Cercado de Lima', order: 5, offset: 120 },
+    { lat: -12.046_374, lng: -77.042_793, streetName: 'Plaza de Armas', order: 1, offset: 0 },
+    { lat: -12.047_196, lng: -77.030_983, streetName: 'Jr. de la Unión', order: 2, offset: 30 },
+    { lat: -12.043_333, lng: -77.028_056, streetName: 'Mercado Central', order: 3, offset: 60 },
+    { lat: -12.056_944, lng: -77.035_278, streetName: 'Av. Abancay', order: 4, offset: 90 },
+    { lat: -12.068_611, lng: -77.036_111, streetName: 'Cercado de Lima', order: 5, offset: 120 },
   ],
 };
 
