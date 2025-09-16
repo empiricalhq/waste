@@ -1,12 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { getSessionCookie } from 'better-auth/cookies';
+import { type NextRequest, NextResponse } from 'next/server';
 
-import {
-  apiAuthPrefix,
-  authRoutes,
-  DEFAULT_LOGIN_REDIRECT,
-  publicRoutes,
-} from "./routes";
+import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes.ts';
 
 export async function middleware(request: NextRequest) {
   const session = getSessionCookie(request);
@@ -25,15 +20,13 @@ export async function middleware(request: NextRequest) {
 
   if (isAuthRoute()) {
     if (session) {
-      return NextResponse.redirect(
-        new URL(DEFAULT_LOGIN_REDIRECT, request.url),
-      );
+      return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
     }
     return NextResponse.next();
   }
 
-  if (!session && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/signin", request.url));
+  if (!(session || isPublicRoute)) {
+    return NextResponse.redirect(new URL('/signin', request.url));
   }
 
   return NextResponse.next();
@@ -48,6 +41,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

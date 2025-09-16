@@ -1,25 +1,22 @@
-import { cookies } from "next/headers";
-import {
-  VehiclesTable,
-  type Vehicle,
-} from "@/components/dashboard/vehicles-table";
+import { cookies } from 'next/headers';
+import { type Truck, VehiclesTable } from '@/components/dashboard/vehicles-table';
 
-async function getTrucks(): Promise<Vehicle[]> {
+async function getTrucks(): Promise<Truck[]> {
   const cookieStore = await cookies();
-  const token = cookieStore.get("better-auth.session_token");
+  const token = cookieStore.get('better-auth.session_token');
 
   if (!token) {
-    console.error("No auth token found");
+    console.error('No auth token found');
     return [];
   }
 
   try {
-    const response = await fetch("http://localhost:4000/api/admin/trucks", {
+    const response = await fetch('http://localhost:4000/api/admin/trucks', {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Cookie: `${token.name}=${token.value}`,
       },
-      cache: "no-store",
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -41,9 +38,7 @@ export default async function VehiculosPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Gestión de Vehículos</h1>
-        <p className="text-muted-foreground">
-          Administra la flota de vehículos y sus conductores asignados.
-        </p>
+        <p className="text-muted-foreground">Administra la flota de vehículos y sus conductores asignados.</p>
       </div>
       <VehiclesTable initialVehicles={trucks} />
     </div>

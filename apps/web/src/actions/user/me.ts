@@ -1,26 +1,20 @@
-"use server";
+'use server';
 
-import { db } from "@/db";
-import { user, UserType } from "@/db/schema";
-import { auth } from "@/lib/auth/server";
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
+import type { User } from '@lima-garbage/database';
+import { auth } from '@/lib/auth/server';
 
-export async function getMe(): Promise<UserType | null | undefined> {
-  const session = await auth.api.getSession({ headers: await headers() });
+export async function getMe(): Promise<User | null> {
+  const session = await auth.api.getSession();
   if (!session) {
     return null;
   }
 
-  const me = (
-    await db.select().from(user).where(eq(user.id, session.user.id))
-  )[0];
-  if (!me) {
-    return null;
-  }
-  if (me.role !== "admin" && me.role !== "supervisor") {
+  const user = session.user;
+
+  // Maintain the same role check logic as before
+  if (user.appRole !== 'admin' && user.appRole !== 'supervisor') {
     return null;
   }
 
-  return me;
+  return user;
 }

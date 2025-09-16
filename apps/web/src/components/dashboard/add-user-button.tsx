@@ -1,44 +1,21 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { redirect } from "next/navigation";
-import { signOut } from "@/lib/auth/client";
-import { useState } from "react";
-import { AddUserModal } from "@/components/dashboard/add-user-modal";
+import { useState } from 'react';
+import { AddUserModal } from '@/components/dashboard/add-user-modal';
+import { Button } from '@/components/ui/button';
 
 export function AddUserButton() {
-  const [isPending, setIsPending] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onSignOut = async () => {
-    setIsPending(true);
-    await signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          setIsPending(false);
-          redirect("/");
-        },
-      },
-    });
-  };
-
-  const handleAddUser = (user: {
-    name: string;
-    phone: string;
-    role: string;
-  }) => {
-    console.log("Nuevo usuario agregado:", user);
-    // Aquí iría la lógica para guardar el usuario en la base de datos
+  const handleAddUser = (user: { name: string; email: string; phone: string; role: string }) => {
+    console.log('Nuevo usuario agregado:', user);
+    setIsModalOpen(false);
   };
 
   return (
     <>
-      <AddUserModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddUser}
-      />
+      <Button onClick={() => setIsModalOpen(true)}>Agregar Usuario</Button>
+      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAdd={handleAddUser} />
     </>
   );
 }

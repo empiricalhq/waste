@@ -1,10 +1,7 @@
-import { type Metadata } from "next";
-import SignInForm from "./form";
-import Link from "next/link";
+import { SignInForm } from './form.tsx';
+import { metadata } from './metadata.ts';
 
-export const metadata: Metadata = {
-  title: "Sign In",
-};
+export { metadata };
 
 export default function SignInPage() {
   return (

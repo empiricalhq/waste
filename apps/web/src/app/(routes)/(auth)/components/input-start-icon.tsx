@@ -1,12 +1,6 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from 'lucide-react';
 
-export default function InputStartIcon({
-  children,
-  icon: Icon,
-}: {
-  children: React.ReactNode;
-  icon: LucideIcon;
-}) {
+export function InputStartIcon({ children, icon: Icon }: { children: React.ReactNode; icon: LucideIcon }) {
   return (
     <div className="space-y-2">
       <div className="relative">

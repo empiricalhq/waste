@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "experimentalScannerIgnores": [".next", "node_modules"]
   },
   "formatter": {
     "enabled": true,
@@ -15,14 +16,27 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "next": "recommended"
+    },
     "rules": {
       "a11y": "on",
       "complexity": "on",
-      "correctness": "on",
-      "performance": "on",
+      "correctness": {
+        "recommended": true,
+        "noNodejsModules": "off"
+      },
+      "performance": {
+        "recommended": true,
+        "noNamespaceImport": "off"
+      },
       "recommended": true,
       "security": "on",
-      "style": "on"
+      "style": "on",
+      "suspicious": {
+        "recommended": true,
+        "noUnknownAtRules": "off"
+      }
     }
   },
   "javascript": {
@@ -37,5 +51,17 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/page.tsx", "**/layout.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
 }

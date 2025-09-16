@@ -1,23 +1,23 @@
-import { cookies } from "next/headers";
-import { RoutesTable, type Route } from "@/components/dashboard/routes-table";
+import { cookies } from 'next/headers';
+import { type Route, RoutesTable } from '@/components/dashboard/routes-table';
 
 async function getRoutes(): Promise<Route[]> {
   const cookieStore = await cookies();
-  const token = cookieStore.get("better-auth.session_token");
+  const token = cookieStore.get('better-auth.session_token');
 
   if (!token) {
-    console.error("No auth token found");
+    console.error('No auth token found');
     return [];
   }
 
   try {
     // Asumimos que el endpoint para las rutas es /api/admin/routes
-    const response = await fetch("http://localhost:4000/api/admin/routes", {
+    const response = await fetch('http://localhost:4000/api/admin/routes', {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Cookie: `${token.name}=${token.value}`,
       },
-      cache: "no-store",
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -25,7 +25,7 @@ async function getRoutes(): Promise<Route[]> {
     }
 
     const data = await response.json();
-    console.log("Fetched routes:", data);
+    console.log('Fetched routes:', data);
     return data;
   } catch (error) {
     console.error(error);
@@ -40,9 +40,7 @@ export default async function RutasPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Gestión de Rutas</h1>
-        <p className="text-muted-foreground">
-          Administra las rutas de recolección y sus puntos de paso (waypoints).
-        </p>
+        <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de paso (waypoints).</p>
       </div>
       <RoutesTable initialRoutes={routes} />
     </div>

@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z } from 'zod';
+
+const MIN_PASSWORD_LENGTH = 6;
 
 export const SignInSchema = z.object({
-  username: z.string().min(4, { message: "Username is required" }),
-  password: z
-    .string()
-    .min(6, { message: "Contraseña de al menos 6 caracteres" }),
+  email: z.email({ message: 'Email is required' }),
+  password: z.string().min(MIN_PASSWORD_LENGTH, { message: 'Contraseña de al menos 6 caracteres' }),
 });
 
 export type SignInValues = z.infer<typeof SignInSchema>;

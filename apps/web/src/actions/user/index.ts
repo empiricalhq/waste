@@ -1,3 +1,1 @@
-import { getMe } from "./me";
-
-export { getMe };
+export { getMe } from './me.ts';

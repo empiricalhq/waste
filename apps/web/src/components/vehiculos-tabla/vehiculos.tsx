@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+interface VehiclesTableProps {
+  initialVehicles: Vehicle[];
+}
 
 export type Vehicle = {
   id: string;
@@ -19,19 +16,15 @@ export type Vehicle = {
   is_active: boolean;
 };
 
-interface VehiclesTableProps {
-  initialVehicles: Vehicle[];
-}
-
 export function VehiclesTable({ initialVehicles }: VehiclesTableProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   const filteredVehicles = useMemo(() => {
-    if (!searchTerm) return initialVehicles;
+    if (!searchTerm) {
+      return initialVehicles;
+    }
 
-    return initialVehicles.filter((vehicle) =>
-      vehicle.license_plate.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    return initialVehicles.filter((vehicle) => vehicle.license_plate.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [initialVehicles, searchTerm]);
 
   return (
@@ -55,15 +48,11 @@ export function VehiclesTable({ initialVehicles }: VehiclesTableProps) {
             {filteredVehicles.length > 0 ? (
               filteredVehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
-                  <TableCell className="font-medium">
-                    {vehicle.license_plate}
-                  </TableCell>
-                  <TableCell>{vehicle.driver_name || "No asignado"}</TableCell>
+                  <TableCell className="font-medium">{vehicle.license_plate}</TableCell>
+                  <TableCell>{vehicle.driver_name || 'No asignado'}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={vehicle.is_active ? "default" : "secondary"}
-                    >
-                      {vehicle.is_active ? "Activo" : "Inactivo"}
+                    <Badge variant={vehicle.is_active ? 'default' : 'secondary'}>
+                      {vehicle.is_active ? 'Activo' : 'Inactivo'}
                     </Badge>
                   </TableCell>
                 </TableRow>

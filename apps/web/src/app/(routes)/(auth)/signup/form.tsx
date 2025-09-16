@@ -1,54 +1,47 @@
-"use client";
+'use client';
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp } from "@/lib/auth/client";
-import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { SignUpSchema, SignUpValues } from "./validate";
-import InputStartIcon from "../components/input-start-icon";
-import InputPasswordContainer from "../components/input-password";
-import { cn } from "@/lib/utils";
-import { AtSign, MailIcon, UserIcon } from "lucide-react";
-import { GenderRadioGroup } from "../components/gender-radio-group";
-import { RoleSelect } from "../components/role-select";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AtSign, MailIcon, UserIcon } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import { useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { signUp } from '@/lib/auth/client';
+import { cn } from '@/lib/utils';
+import { GenderRadioGroup } from '../components/gender-radio-group.tsx';
+import { InputPasswordContainer } from '../components/input-password.tsx';
+import { InputStartIcon } from '../components/input-start-icon.tsx';
+import { RoleSelect } from '../components/role-select.tsx';
+import { SignUpSchema, type SignUpValues } from './validate.ts';
 
-export default function SignUpForm() {
+export function SignUpForm() {
   const [isPending, startTransition] = useTransition();
   const form = useForm<SignUpValues>({
     resolver: zodResolver(SignUpSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
       gender: undefined,
-      role: "driver",
+      role: 'driver',
     },
   });
 
   function onSubmit(data: SignUpValues) {
     startTransition(async () => {
-      console.log("submit data:", data);
+      console.log('submit data:', data);
       const response = await signUp.email(data);
 
       if (response.error) {
-        console.log("SIGN_UP:", response.error.status);
+        console.log('SIGN_UP:', response.error.status);
         toast.error(response.error.message);
       } else {
-        redirect("/");
+        redirect('/');
       }
     });
   }
@@ -56,15 +49,12 @@ export default function SignUpForm() {
   const getInputClassName = (fieldName: keyof SignUpValues) =>
     cn(
       form.formState.errors[fieldName] &&
-        "border-destructive/80 text-destructive focus-visible:border-destructive/80 focus-visible:ring-destructive/20",
+        'border-destructive/80 text-destructive focus-visible:border-destructive/80 focus-visible:ring-destructive/20',
     );
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="z-50 my-8 flex w-full flex-col gap-5"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="z-50 my-8 flex w-full flex-col gap-5">
         <FormField
           control={form.control}
           name="name"
@@ -74,7 +64,7 @@ export default function SignUpForm() {
                 <InputStartIcon icon={UserIcon}>
                   <Input
                     placeholder="Nombre"
-                    className={cn("peer ps-9", getInputClassName("name"))}
+                    className={cn('peer ps-9', getInputClassName('name'))}
                     disabled={isPending}
                     {...field}
                   />
@@ -93,7 +83,7 @@ export default function SignUpForm() {
                 <InputStartIcon icon={MailIcon}>
                   <Input
                     placeholder="Correo electrónico"
-                    className={cn("peer ps-9", getInputClassName("email"))}
+                    className={cn('peer ps-9', getInputClassName('email'))}
                     disabled={isPending}
                     {...field}
                   />
@@ -113,7 +103,7 @@ export default function SignUpForm() {
                 <InputStartIcon icon={AtSign}>
                   <Input
                     placeholder="usuario"
-                    className={cn("peer ps-9", getInputClassName("username"))}
+                    className={cn('peer ps-9', getInputClassName('username'))}
                     disabled={isPending}
                     {...field}
                   />
@@ -132,7 +122,7 @@ export default function SignUpForm() {
               <FormControl>
                 <InputPasswordContainer>
                   <Input
-                    className={cn("pe-9", getInputClassName("password"))}
+                    className={cn('pe-9', getInputClassName('password'))}
                     placeholder="Contraseña"
                     disabled={isPending}
                     {...field}
@@ -152,7 +142,7 @@ export default function SignUpForm() {
               <FormControl>
                 <InputPasswordContainer>
                   <Input
-                    className={cn("pe-9", getInputClassName("confirmPassword"))}
+                    className={cn('pe-9', getInputClassName('confirmPassword'))}
                     placeholder="Confirmar contraseña"
                     disabled={isPending}
                     {...field}
@@ -171,10 +161,7 @@ export default function SignUpForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Género</FormLabel>
-              <GenderRadioGroup
-                value={field.value ?? ""}
-                onChange={field.onChange}
-              />
+              <GenderRadioGroup value={field.value ?? ''} onChange={field.onChange} />
               <FormMessage />
             </FormItem>
           )}
@@ -187,11 +174,7 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Rol</FormLabel>
               <FormControl>
-                <RoleSelect
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  disabled={isPending}
-                />
+                <RoleSelect value={field.value ?? ''} onChange={field.onChange} disabled={isPending} />
               </FormControl>
               <FormMessage />
             </FormItem>

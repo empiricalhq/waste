@@ -1,30 +1,31 @@
-import { z } from "zod";
+import { z } from 'zod';
+
+const MIN_NAME_LENGTH = 4;
+const MIN_USERNAME_LENGTH = 4;
+const MIN_PASSWORD_LENGTH = 8;
 
 const disallowedUsernamePatterns = [
-  "admin",
-  "superuser",
-  "superadmin",
-  "root",
-  "jabirdev",
-  "cakfan",
-  "withcakfan",
-  "user",
+  'admin',
+  'superuser',
+  'superadmin',
+  'root',
+  'jabirdev',
+  'cakfan',
+  'withcakfan',
+  'user',
 ];
 
 export const SignUpSchema = z
   .object({
     email: z
       .string()
-      .min(1, { message: "Correo electrónico es requerido" })
-      .email({ message: "Correo electrónico no válido" }),
-    name: z.string().min(4, { message: "Debe tener al menos 4 caracteres" }),
+      .min(1, { message: 'Correo electrónico es requerido' })
+      .email({ message: 'Correo electrónico no válido' }),
+    name: z.string().min(MIN_NAME_LENGTH, { message: 'Debe tener al menos 4 caracteres' }),
     username: z
       .string()
-      .min(4, { message: "Debe tener al menos 4 caracteres" })
-      .regex(
-        /^[a-zA-Z0-9_-]+$/,
-        "Solo se permiten letras, números, guiones y guiones bajos",
-      )
+      .min(MIN_USERNAME_LENGTH, { message: 'Debe tener al menos 4 caracteres' })
+      .regex(/^[a-zA-Z0-9_-]+$/, 'Solo se permiten letras, números, guiones y guiones bajos')
       .refine(
         (username) => {
           for (const pattern of disallowedUsernamePatterns) {
@@ -34,24 +35,24 @@ export const SignUpSchema = z
           }
           return true;
         },
-        { message: "El nombre de usuario contiene palabras no permitidas" },
+        { message: 'El nombre de usuario contiene palabras no permitidas' },
       ),
-    password: z.string().min(8, {
-      message: "Debe tener al menos 8 caracteres",
+    password: z.string().min(MIN_PASSWORD_LENGTH, {
+      message: 'Debe tener al menos 8 caracteres',
     }),
-    confirmPassword: z.string().min(8, {
-      message: "Debe tener al menos 8 caracteres",
+    confirmPassword: z.string().min(MIN_PASSWORD_LENGTH, {
+      message: 'Debe tener al menos 8 caracteres',
     }),
-    gender: z.enum(["male", "female"], {
+    gender: z.enum(['male', 'female'], {
       message: "El género debe ser 'masculino' o 'femenino'.",
     }),
-    role: z.enum(["admin", "supervisor", "driver"], {
-      message: "El rol debe ser uno de: admin, supervisor o driver.",
+    role: z.enum(['admin', 'supervisor', 'driver'], {
+      message: 'El rol debe ser uno de: admin, supervisor o driver.',
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
+    message: 'Las contraseñas no coinciden',
+    path: ['confirmPassword'],
   });
 
 export type SignUpValues = z.infer<typeof SignUpSchema>;

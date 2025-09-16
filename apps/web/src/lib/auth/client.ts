@@ -1,8 +1,14 @@
-import { createAuthClient } from "better-auth/react";
-import { usernameClient } from "better-auth/client/plugins";
+import { createAuthClient } from 'better-auth/react';
 
-export const { signIn, signUp, signOut, useSession, getSession } =
-  createAuthClient({
-    plugins: [usernameClient()],
-    baseURL: process.env.NEXT_PUBLIC_BASE_URL!,
-  });
+// Point to the web app's own API route which proxies to the API service
+const getBaseUrl = () => {
+  // we do this or else build fails, TODO
+  if (typeof window === 'undefined') {
+    return 'http://localhost:3000';
+  }
+  return window.location.origin;
+};
+
+export const { signIn, signUp, signOut, useSession, getSession } = createAuthClient({
+  baseURL: getBaseUrl(),
+});
