@@ -1,7 +1,15 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    cssChunking: true,
+    useLightningcss: true,
+    viewTransition: true,
+  },
+  devIndicators: {
+    position: 'bottom-right',
+  },
+  poweredByHeader: false,
 };
 
 export default nextConfig;
