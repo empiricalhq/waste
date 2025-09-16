@@ -13,7 +13,7 @@ export function AddUserButton() {
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)}>Agregar Usuario</Button>
+      <Button className="cursor-pointer bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground" onClick={() => setIsModalOpen(true)}>Agregar Usuario</Button>
       <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAdd={handleAddUser} />
     </>
   );
