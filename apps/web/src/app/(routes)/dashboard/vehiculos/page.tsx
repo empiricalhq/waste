@@ -1,5 +1,8 @@
-import { cookies } from 'next/headers';
-import { type Vehicle, VehiclesTable } from '@/components/vehiculos-tabla/vehiculos';
+import { cookies } from "next/headers";
+import {
+  VehiclesTable,
+  type Vehicle,
+} from "@/components/dashboard/vehicles-table";
 
 async function getTrucks(): Promise<Vehicle[]> {
   const cookieStore = await cookies();
