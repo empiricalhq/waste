@@ -1,6 +1,4 @@
-"use client";
-
-import * as React from "react";
+'use client';
 
 const options = [
   { label: 'Masculino', value: 'male' },

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 const API_BASE_URL = process.env.BETTER_AUTH_URL || 'http://localhost:4000';
 
@@ -12,13 +12,13 @@ async function handler(request: NextRequest) {
       method: request.method,
       headers: {
         'Content-Type': request.headers.get('Content-Type') || 'application/json',
-        'Cookie': request.headers.get('Cookie') || '',
+        Cookie: request.headers.get('Cookie') || '',
       },
       body: request.method !== 'GET' ? await request.text() : undefined,
     });
 
     const data = await response.text();
-    
+
     return new NextResponse(data, {
       status: response.status,
       headers: {

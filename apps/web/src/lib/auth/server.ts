@@ -5,7 +5,7 @@ const API_BASE_URL = process.env.BETTER_AUTH_URL || 'http://localhost:4000';
 export async function getSession() {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('better-auth.session_token');
-  
+
   if (!sessionToken) {
     return null;
   }
@@ -13,7 +13,7 @@ export async function getSession() {
   try {
     const response = await fetch(`${API_BASE_URL}/api/auth/get-session`, {
       headers: {
-        'Cookie': `better-auth.session_token=${sessionToken.value}`,
+        Cookie: `better-auth.session_token=${sessionToken.value}`,
       },
     });
 
