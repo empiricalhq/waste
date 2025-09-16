@@ -26,7 +26,10 @@
         "recommended": true,
         "noNodejsModules": "off"
       },
-      "performance": "on",
+      "performance": {
+        "recommended": true,
+        "noNamespaceImport": "off"
+      },
       "recommended": true,
       "security": "on",
       "style": "on",

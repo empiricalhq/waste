@@ -55,9 +55,11 @@ async function getDashboardData() {
   const issues: Issue[] = issuesRes.ok ? await issuesRes.json() : [];
   const alerts: Alert[] = alertsRes.ok ? await alertsRes.json() : [];
 
+  const MaxRecentAlerts = 5;
+
   const activeRoutesCount = routes.filter((r) => r.status === 'active').length;
   const openIssuesCount = issues.filter((i) => i.status === 'open').length;
-  const recentAlerts = alerts.slice(0, 5);
+  const recentAlerts = alerts.slice(0, MaxRecentAlerts);
 
   return {
     trucks,

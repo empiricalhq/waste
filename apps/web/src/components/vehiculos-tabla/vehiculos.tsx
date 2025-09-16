@@ -5,16 +5,16 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
+interface VehiclesTableProps {
+  initialVehicles: Vehicle[];
+}
+
 export type Vehicle = {
   id: string;
   license_plate: string;
   driver_name: string | null;
   is_active: boolean;
 };
-
-interface VehiclesTableProps {
-  initialVehicles: Vehicle[];
-}
 
 export function VehiclesTable({ initialVehicles }: VehiclesTableProps) {
   const [searchTerm, setSearchTerm] = useState('');
