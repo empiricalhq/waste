@@ -1,7 +1,6 @@
 'use server';
 
 import { eq } from 'drizzle-orm';
-import { headers } from 'next/headers';
 import { db } from '@/db';
 import { type UserType, user } from '@/db/schema';
 import { auth } from '@/lib/auth/server';
