@@ -7,7 +7,7 @@ import { type UserType, user } from '@/db/schema';
 import { auth } from '@/lib/auth/server';
 
 export async function getMe(): Promise<UserType | null | undefined> {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession();
   if (!session) {
     return null;
   }
