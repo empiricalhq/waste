@@ -8,7 +8,6 @@ async function getTrucks(): Promise<Truck[]> {
   const token = cookieStore.get('better-auth.session_token');
 
   if (!token) {
-    console.error('No auth token found');
     return [];
   }
 
@@ -27,8 +26,7 @@ async function getTrucks(): Promise<Truck[]> {
 
     const data = await response.json();
     return data;
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
     return [];
   }
 }

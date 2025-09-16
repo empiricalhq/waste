@@ -28,8 +28,7 @@ async function handler(request: NextRequest) {
         'Set-Cookie': response.headers.get('Set-Cookie') || '',
       },
     });
-  } catch (error) {
-    console.error('Auth proxy error:', error);
+  } catch (_error) {
     return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 503 });
   }
 }

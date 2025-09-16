@@ -58,8 +58,7 @@ export function DashboardSidebar() {
       try {
         const userData = await getMe();
         setUser(userData || null);
-      } catch (error) {
-        console.error('Error fetching user:', error);
+      } catch (_error) {
         setUser(null);
       } finally {
         setIsLoading(false);

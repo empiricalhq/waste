@@ -37,8 +37,7 @@ export async function getSession(): Promise<SessionResponse | null> {
     }
 
     return await response.json();
-  } catch (error) {
-    console.error('Session validation error:', error);
+  } catch (_error) {
     return null;
   }
 }

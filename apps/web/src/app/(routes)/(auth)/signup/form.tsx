@@ -34,11 +34,9 @@ export function SignUpForm() {
 
   function onSubmit(data: SignUpValues) {
     startTransition(async () => {
-      console.log('submit data:', data);
       const response = await signUp.email(data);
 
       if (response.error) {
-        console.log('SIGN_UP:', response.error.status);
         toast.error(response.error.message);
       } else {
         redirect('/');

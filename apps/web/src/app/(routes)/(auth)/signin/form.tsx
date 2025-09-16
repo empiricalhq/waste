@@ -32,7 +32,6 @@ export function SignInForm() {
       const response = await signIn.email(data);
 
       if (response.error) {
-        console.log('SIGN_IN:', response.error.message);
         toast.error(response.error.message);
       } else {
         router.push('/');

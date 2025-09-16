@@ -8,7 +8,6 @@ async function getRoutes(): Promise<Route[]> {
   const token = cookieStore.get('better-auth.session_token');
 
   if (!token) {
-    console.error('No auth token found');
     return [];
   }
 
@@ -27,10 +26,8 @@ async function getRoutes(): Promise<Route[]> {
     }
 
     const data = await response.json();
-    console.log('Fetched routes:', data);
     return data;
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
     return [];
   }
 }
