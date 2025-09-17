@@ -19,16 +19,21 @@ interface ErrorResponse {
   error: string;
 }
 
-describe('Admin API - Trucks', () => {
-  let ctx: TestContext;
+let ctx: TestContext;
 
-  beforeEach(async () => {
-    ctx = await setupTest();
-    await ctx.auth.loginAs('admin');
-  });
+beforeEach(async () => {
+  ctx = await setupTest();
+});
 
-  afterAll(async () => {
+afterAll(async () => {
+  if (ctx?.db) {
     await ctx.db.close();
+  }
+});
+
+describe('Admin API - Trucks', () => {
+  beforeEach(async () => {
+    await ctx.auth.loginAs('admin');
   });
 
   test('should create a new truck', async () => {
@@ -74,15 +79,8 @@ describe('Admin API - Trucks', () => {
 });
 
 describe('Admin API - Routes', () => {
-  let ctx: TestContext;
-
   beforeEach(async () => {
-    ctx = await setupTest();
     await ctx.auth.loginAs('admin');
-  });
-
-  afterAll(async () => {
-    await ctx.db.close();
   });
 
   test('should create a new route with waypoints', async () => {
@@ -111,17 +109,6 @@ describe('Admin API - Routes', () => {
 });
 
 describe('Admin API - Authorization', () => {
-  let ctx: TestContext;
-
-  beforeEach(async () => {
-    ctx = await setupTest();
-    await ctx.auth.loginAs('admin');
-  });
-
-  afterAll(async () => {
-    await ctx.db.close();
-  });
-
   test('should forbid access from non-admin users', async () => {
     await ctx.auth.loginAs('citizen');
     const response = await ctx.client.get('/admin/trucks', ctx.auth.getHeaders('citizen'));
