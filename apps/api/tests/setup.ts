@@ -20,7 +20,11 @@ export async function setupTest(): Promise<TestContext> {
   await db.clean();
   auth.clearSessions();
 
-  // Create a default organization for staff members
+  // 1. Create the admin user account via API.
+  const adminConfig = users.getUser('admin');
+  const adminId = await users.ensureUserExists(adminConfig.email, adminConfig.password);
+
+  // 2. Create the organization directly in the database.
   const orgRes = await db.query<{ id: string }>(
     `INSERT INTO organization (id, name, slug) VALUES (gen_random_uuid(), 'Test Org', 'test-org') RETURNING id`,
   );
@@ -30,12 +34,18 @@ export async function setupTest(): Promise<TestContext> {
   }
   users.setOrgId(orgId);
 
-  // Ensure all staff users exist before tests run
-  const adminConfig = users.getUser('admin');
-  await users.ensureUserExists(adminConfig.email, adminConfig.password);
+  // 3. Create the admin's "owner" membership directly in the database.
+  await db.addMember(adminId, orgId, 'owner');
 
+  // 4. Create the driver user account via API.
   const driverConfig = users.getUser('driver');
-  await users.ensureUserExists(driverConfig.email, driverConfig.password);
+  const driverId = await users.ensureUserExists(driverConfig.email, driverConfig.password);
+
+  // 5. Create the driver's membership directly in the database, as the API endpoint is server-only.
+  await db.addMember(driverId, orgId, driverConfig.role);
+
+  // 6. Clear all sessions created during setup so tests start fresh.
+  auth.clearSessions();
 
   return { client, auth, db, users };
 }

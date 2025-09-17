@@ -51,10 +51,11 @@ export class AuthHelper {
       throw new Error(`Login failed for ${email}: Status ${signInResponse.status}`);
     }
 
-    let cookie = signInResponse.headers.get('set-cookie');
-    if (!cookie) {
+    const cookieHeader = signInResponse.headers.get('set-cookie');
+    if (!cookieHeader) {
       throw new Error('No session cookie received during login');
     }
+    let cookie = cookieHeader.split(';')[0];
 
     const userConfig = this.users.findUserByEmail(email);
     if (userConfig?.role !== 'citizen') {
@@ -67,15 +68,15 @@ export class AuthHelper {
           { organizationId: org.id },
           { Cookie: cookie },
         );
-        const newCookie = setActiveRes.headers.get('set-cookie');
-        if (newCookie) {
-          cookie = newCookie;
+        const newCookieHeader = setActiveRes.headers.get('set-cookie');
+        if (newCookieHeader) {
+          cookie = newCookieHeader.split(';')[0];
         }
       }
     }
 
     const sessionRes = await this.client.get<GetSessionResponse>('/auth/get-session', { Cookie: cookie });
-    const memberRes = await this.client.get<ActiveMemberResponse>('/auth/organization/member/active', {
+    const memberRes = await this.client.get<ActiveMemberResponse>('/auth/organization/get-active-member', {
       Cookie: cookie,
     });
 

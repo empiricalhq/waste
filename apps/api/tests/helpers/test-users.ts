@@ -13,7 +13,6 @@ interface UserConfig {
 export class TestUsers {
   private readonly client: TestClient;
   private readonly db: DbHelper;
-  private orgId: string | null = null;
   private readonly users: Record<'admin' | 'driver' | 'citizen', UserConfig> = {
     admin: {
       email: process.env.TEST_ADMIN_EMAIL || 'admin@test.com',
@@ -76,13 +75,6 @@ export class TestUsers {
     const userId = newUser.rows[0]?.id;
     if (!userId) {
       throw new Error(`Failed to retrieve new user ID for ${email}`);
-    }
-
-    if (userConfig.role !== 'citizen') {
-      if (!this.orgId) {
-        throw new Error('Organization ID must be set to create staff members.');
-      }
-      await this.db.addMember(userId, this.orgId, userConfig.role);
     }
 
     return userId;
