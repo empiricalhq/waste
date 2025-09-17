@@ -3,16 +3,10 @@
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-
-type Truck = {
-  id: string;
-  license_plate: string;
-  lat: number | null;
-  lng: number | null;
-};
+import type { Truck, TruckLocation } from '@/db/types';
 
 interface LiveMapProps {
-  trucks?: Truck[];
+  trucks?: (Truck & TruckLocation)[];
 }
 
 export default function LiveMap({ trucks = [] }: LiveMapProps) {
@@ -26,9 +20,7 @@ export default function LiveMap({ trucks = [] }: LiveMapProps) {
     shadowSize: [41, 41],
   });
 
-  const trucksWithLocation = trucks.filter(
-    (t): t is Truck & { lat: number; lng: number } => t.lat != null && t.lng != null,
-  );
+  const trucksWithLocation = trucks.filter((t): t is Truck & TruckLocation => t.lat != null && t.lng != null);
   const center: [number, number] =
     trucksWithLocation.length > 0 ? [trucksWithLocation[0].lat, trucksWithLocation[0].lng] : [-12.046, -77.042];
 
@@ -38,7 +30,7 @@ export default function LiveMap({ trucks = [] }: LiveMapProps) {
       {trucksWithLocation.map((truck) => (
         <Marker key={truck.id} position={[truck.lat, truck.lng]} icon={icon}>
           <Popup>
-            <strong>Placa:</strong> {truck.license_plate}
+            <strong>Placa:</strong> {truck.licensePlate}
           </Popup>
         </Marker>
       ))}
