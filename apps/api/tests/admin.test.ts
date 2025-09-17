@@ -2,7 +2,6 @@ import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
 import { HTTP_STATUS } from './config';
 import { setupTest, type TestContext } from './setup';
 
-// Define expected response shapes
 interface Truck {
   id: string;
   name: string;
@@ -18,6 +17,11 @@ interface SuccessResponse<T> {
 interface ErrorResponse {
   error: string;
 }
+
+const generateTestLicensePlate = (prefix: string): string => {
+  const TIMESTAMP_START_INDEX = 5;
+  return `${prefix}${Date.now().toString().substring(TIMESTAMP_START_INDEX)}`;
+};
 
 let ctx: TestContext;
 
@@ -39,7 +43,7 @@ describe('Admin API - Trucks', () => {
   test('should create a new truck', async () => {
     const truckData = {
       name: 'Garbage Truck 007',
-      license_plate: `T${Date.now().toString().substring(5)}`,
+      license_plate: generateTestLicensePlate('T'),
     };
     const response = await ctx.client.post<SuccessResponse<Truck>>(
       '/admin/trucks',
@@ -67,7 +71,7 @@ describe('Admin API - Trucks', () => {
   test('should list all active trucks', async () => {
     await ctx.client.post(
       '/admin/trucks',
-      { name: 'Listable Truck', license_plate: `L${Date.now().toString().substring(5)}` },
+      { name: 'Listable Truck', license_plate: generateTestLicensePlate('L') },
       ctx.auth.getHeaders('admin'),
     );
 
