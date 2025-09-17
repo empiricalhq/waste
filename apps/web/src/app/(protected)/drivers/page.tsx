@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { getDrivers } from '@/features/drivers/actions';
 
 export const runtime = 'edge';
@@ -10,14 +10,11 @@ export default async function DriversPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Driver Management</h1>
-        <p className="text-muted-foreground">View and manage all drivers.</p>
+        <h1 className="text-3xl font-bold">Gestión de choferes</h1>
+        <p className="text-muted-foreground">Administra los choferes de la flota</p>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Driver List</CardTitle>
-        </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {drivers.map((driver) => (
@@ -28,15 +25,15 @@ export default async function DriversPage() {
                 </div>
                 <div className="flex items-center space-x-4">
                   <Badge variant={driver.isActive ? 'default' : 'secondary'}>
-                    {driver.isActive ? 'Active' : 'Inactive'}
+                    {driver.isActive ? 'Activo' : 'Inactivo'}
                   </Badge>
                   <span className="text-muted-foreground text-xs">
-                    Joined: {new Date(driver.createdAt).toLocaleDateString()}
+                    Se agregó: {new Date(driver.createdAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
             ))}
-            {drivers.length === 0 && <p className="text-muted-foreground text-center">No drivers found.</p>}
+            {drivers.length === 0 && <p className="text-muted-foreground text-center">No se encontraron choferes.</p>}
           </div>
         </CardContent>
       </Card>

@@ -9,7 +9,7 @@ export function AddUserButtonClient() {
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)}>Add User</Button>
+      <Button onClick={() => setIsModalOpen(true)}>Añadir usuario</Button>
       <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );

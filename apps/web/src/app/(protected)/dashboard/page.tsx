@@ -7,9 +7,6 @@ import { RecentIssues } from '@/components/dashboard/recent-issues';
 import { MapWrapper } from '@/components/map/map-wrapper';
 import { getDashboardData } from '@/features/dashboard/actions';
 
-// biome-ignore lint: cloudflare requires edge runtime
-export const runtime = 'edge';
-
 async function DashboardContent() {
   const data = await getDashboardData();
 
@@ -37,7 +34,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Real-time overview of the system.</p>
+          <p className="text-muted-foreground">Vista general del sistema en tiempo real</p>
         </div>
         <AddUserButton />
       </div>
@@ -50,3 +47,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+export const runtime = 'edge';

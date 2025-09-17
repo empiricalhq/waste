@@ -17,7 +17,7 @@ export function RecentIssues({ issues }: { issues: Issue[] }) {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>Recent Issues</CardTitle>
+        <CardTitle>Incidencias recientes</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -45,7 +45,7 @@ export function RecentIssues({ issues }: { issues: Issue[] }) {
               );
             })
           ) : (
-            <p className="text-muted-foreground text-center text-sm">No recent issues.</p>
+            <p className="text-muted-foreground text-center text-sm">No hay incidencias recientes.</p>
           )}
         </div>
       </CardContent>

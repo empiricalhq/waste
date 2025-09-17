@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { getTrucks } from '@/features/trucks/actions';
 
 export const runtime = 'edge';
@@ -10,13 +10,10 @@ export default async function TrucksPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Truck Management</h1>
-        <p className="text-muted-foreground">View and manage the vehicle fleet.</p>
+        <h1 className="text-3xl font-bold">Gestión de vehículos</h1>
+        <p className="text-muted-foreground">Administra la flota de vehículos y sus conductores asignados</p>
       </div>
       <Card>
-        <CardHeader>
-          <CardTitle>Truck List</CardTitle>
-        </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {trucks.map((truck) => (
@@ -26,11 +23,11 @@ export default async function TrucksPage() {
                   <p className="text-muted-foreground text-xs">{truck.license_plate}</p>
                 </div>
                 <Badge variant={truck.is_active ? 'default' : 'secondary'}>
-                  {truck.is_active ? 'Active' : 'Inactive'}
+                  {truck.is_active ? 'Activo' : 'Inactivo'}
                 </Badge>
               </div>
             ))}
-            {trucks.length === 0 && <p className="text-muted-foreground text-center">No trucks found.</p>}
+            {trucks.length === 0 && <p className="text-muted-foreground text-center">No se encontraron vehículos.</p>}
           </div>
         </CardContent>
       </Card>

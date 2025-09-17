@@ -18,12 +18,12 @@ import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Drivers', href: '/drivers', icon: Users },
-  { name: 'Routes', href: '/routes', icon: MapPin },
-  { name: 'Trucks', href: '/trucks', icon: Truck },
+  { name: 'Choferes', href: '/drivers', icon: Users },
+  { name: 'Rutas', href: '/routes', icon: MapPin },
+  { name: 'Vehículos', href: '/trucks', icon: Truck },
 ];
 
-const adminNavigation = [{ name: 'Settings', href: '/settings', icon: Settings }];
+const adminNavigation = [{ name: 'Configuración', href: '/settings', icon: Settings }];
 
 function UserInfo() {
   const { data: session, isPending } = authClient.useSession();

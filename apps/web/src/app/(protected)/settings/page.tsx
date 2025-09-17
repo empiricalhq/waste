@@ -10,25 +10,39 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">System-wide settings and configurations.</p>
+        <h1 className="text-3xl font-bold">Configuración</h1>
+        <p className="text-muted-foreground">Ajustes del sistema, usuarios y roles</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>User Management</CardTitle>
+            <CardTitle>Gestión de usuarios</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">User creation, role assignment, and permissions are managed here.</p>
+            <p className="text-muted-foreground">Aquí irá la tabla o lista para crear, editar y desactivar usuarios.</p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
-            <CardTitle>System Preferences</CardTitle>
+            <CardTitle>Roles y permisos</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">General settings for notifications, integrations, etc.</p>
+            <p className="text-muted-foreground">
+              Aquí irá la interfaz para definir los roles (admin, supervisor) y sus permisos.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Preferencias generales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Aquí irán otros ajustes como preferencias de notificación, integraciones, etc.
+            </p>
           </CardContent>
         </Card>
       </div>

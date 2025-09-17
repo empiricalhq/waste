@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { getRoutes } from '@/features/routes/actions';
 
 export const runtime = 'edge';
@@ -10,14 +10,11 @@ export default async function RoutesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Route Management</h1>
-        <p className="text-muted-foreground">Create, view, and manage collection routes.</p>
+        <h1 className="text-3xl font-bold">Gestión de rutas</h1>
+        <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de paso (waypoints)</p>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Route List</CardTitle>
-        </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {routes.map((route) => (
@@ -29,7 +26,7 @@ export default async function RoutesPage() {
                 <Badge>{route.status}</Badge>
               </div>
             ))}
-            {routes.length === 0 && <p className="text-muted-foreground text-center">No routes found.</p>}
+            {routes.length === 0 && <p className="text-muted-foreground text-center">No se encontraron rutas.</p>}
           </div>
         </CardContent>
       </Card>
