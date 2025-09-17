@@ -1,27 +1,12 @@
-'use client';
+import { getCurrentUser } from '@/features/auth/lib';
+import { AddUserButtonClient } from './add-user-button-client';
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { authClient } from '@/features/auth/client';
-import { AddUserModal } from './add-user-modal';
+export async function AddUserButton() {
+  const user = await getCurrentUser();
 
-export function AddUserButton() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data: session, isPending } = authClient.useSession();
-
-  if (isPending) {
-    return <Skeleton className="h-9 w-24" />;
-  }
-
-  if (session?.user?.appRole !== 'admin') {
+  if (user?.appRole !== 'admin') {
     return null;
   }
 
-  return (
-    <>
-      <Button onClick={() => setIsModalOpen(true)}>Add User</Button>
-      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </>
-  );
+  return <AddUserButtonClient />;
 }

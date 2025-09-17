@@ -159,7 +159,7 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
             <FormItem>
               <FormLabel>Gender</FormLabel>
               <FormControl>
-                <GenderRadioGroup value={field.value} onValueChange={field.onChange} />
+                <GenderRadioGroup value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -172,7 +172,7 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
             <FormItem>
               <FormLabel>Role</FormLabel>
               <FormControl>
-                <RoleSelect value={field.value} onValueChange={field.onChange} disabled={isPending} />
+                <RoleSelect value={field.value} onChange={field.onChange} disabled={isPending} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -13,7 +13,6 @@ async function DashboardContent() {
   return (
     <>
       <DashboardStats
-        totalTrucks={data.trucksCount}
         activeRoutes={data.activeRoutesCount}
         openIssues={data.openIssuesCount}
         totalAlerts={data.alertsCount}
