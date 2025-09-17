@@ -33,7 +33,7 @@ function UserInfo({ user }: { user: User }) {
     <div className="flex items-center justify-between">
       <DropdownMenu>
         <DropdownMenuTrigger asChild={true}>
-          <Button variant="ghost" className="flex w-full items-center justify-start space-x-3 p-2 h-auto">
+          <Button variant="ghost" className="flex items-center justify-start space-x-3 p-2 h-auto">
             <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
               <span className="text-primary font-medium">{user.name?.[0].toUpperCase()}</span>
             </div>
