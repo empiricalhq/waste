@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AtSign, type LucideIcon, MailIcon, UserIcon } from 'lucide-react';
+import { type LucideIcon, MailIcon, UserIcon } from 'lucide-react';
 import { useTransition } from 'react';
 import { type Control, type Path, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -78,10 +78,8 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
     defaultValues: {
       name: '',
       email: '',
-      username: '',
       password: '',
       confirmPassword: '',
-      gender: undefined,
       role: 'driver',
     },
   });
@@ -92,7 +90,7 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success(`Usuario creado: ${data.username}`);
+        toast.success(`Usuario creado: ${data.name}`);
         onClose();
         form.reset();
       }
@@ -115,14 +113,6 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
           label="Correo electrónico"
           placeholder="correo@ejemplo.com"
           icon={MailIcon}
-          disabled={isPending}
-          control={form.control}
-        />
-        <TextInputField
-          name="username"
-          label="Usuario"
-          placeholder="juanperez"
-          icon={AtSign}
           disabled={isPending}
           control={form.control}
         />
