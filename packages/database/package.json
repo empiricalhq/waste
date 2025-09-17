@@ -8,7 +8,7 @@
   },
   "scripts": {
     "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
-  
+
     "db:push": "bun --env-file=../../.env drizzle-kit push --config ./drizzle.config.ts --force",
     "setup:admin": "bun --env-file=../../.env scripts/create-admin.ts",
     "db:seed": "bun --env-file=../../.env scripts/seed.ts",
