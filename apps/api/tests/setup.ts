@@ -1,7 +1,11 @@
+import { setDefaultTimeout } from 'bun:test';
+
 import { AuthHelper } from './helpers/auth-helper';
 import { DbHelper } from './helpers/db-helper';
 import { TestClient } from './helpers/test-client';
 import { TestUsers } from './helpers/test-users';
+
+const DEFAULT_TIMEOUT = 15_000; // 15 seconds
 
 export interface TestContext {
   client: TestClient;
@@ -15,6 +19,8 @@ export async function setupTest(): Promise<TestContext> {
   const db = new DbHelper();
   const users = new TestUsers(client, db);
   const auth = new AuthHelper(client, users);
+
+  setDefaultTimeout(DEFAULT_TIMEOUT);
 
   // Clean database before each test
   await db.clean();
