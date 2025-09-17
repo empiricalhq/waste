@@ -24,7 +24,7 @@ export async function getDashboardData() {
       alertsCount: alerts.length,
       recentAlerts,
     };
-  } catch (_error) {
+  } catch {
     // Return empty state on failure to prevent page crash
     return {
       trucks: [],

@@ -7,7 +7,7 @@ export async function getRoutes(): Promise<Route[]> {
   try {
     await requireUser(['admin', 'supervisor']);
     return await api.get<Route[]>('/api/admin/routes');
-  } catch (_error) {
+  } catch {
     return [];
   }
 }

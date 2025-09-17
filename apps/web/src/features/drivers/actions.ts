@@ -7,7 +7,7 @@ export async function getDrivers(): Promise<User[]> {
   try {
     await requireUser(['admin', 'supervisor']);
     return await api.get<User[]>('/api/admin/drivers');
-  } catch (_error) {
+  } catch {
     return [];
   }
 }

@@ -34,7 +34,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
 
     const session = (await response.json()) as AuthSession;
     return session?.user?.id ? session : null;
-  } catch (_error) {
+  } catch {
     return null;
   }
 });
