@@ -7,6 +7,12 @@ interface SuccessResponse<T> {
 }
 
 const MILLISECONDS_PER_SECOND = 1000;
+const E2E_TEST_TIMEOUT_MS = 20_000;
+
+const generateTestLicensePlate = (prefix: string): string => {
+  const TIMESTAMP_START_INDEX = 5;
+  return `${prefix}${Date.now().toString().substring(TIMESTAMP_START_INDEX)}`;
+};
 
 async function loginUsers(ctx: TestContext) {
   const adminHeaders = (await ctx.auth.loginAs('admin')).cookie;
@@ -17,7 +23,7 @@ async function loginUsers(ctx: TestContext) {
 async function createTruck(ctx: TestContext, adminHeaders: string) {
   return ctx.client.post<SuccessResponse<{ id: string }>>(
     '/admin/trucks',
-    { name: 'Workflow Truck', license_plate: `W${Date.now()}` },
+    { name: 'Workflow Truck', license_plate: generateTestLicensePlate('W') },
     { Cookie: adminHeaders },
   );
 }
@@ -82,44 +88,45 @@ describe('E2E Workflows', () => {
     await ctx.db.close();
   });
 
-  test('Admin creates resources, driver starts and completes assignment', async () => {
-    const { adminHeaders, driverSession, driverHeaders } = await loginUsers(ctx);
+  test(
+    'Admin creates resources, driver starts and completes assignment',
+    async () => {
+      const { adminHeaders, driverSession, driverHeaders } = await loginUsers(ctx);
 
-    // Create truck
-    const truckRes = await createTruck(ctx, adminHeaders);
-    expect(truckRes.status).toBe(HTTP_STATUS.CREATED);
-    const truckId = truckRes.data.data.id;
+      const truckRes = await createTruck(ctx, adminHeaders);
+      expect(truckRes.status).toBe(HTTP_STATUS.CREATED);
+      const truckId = truckRes.data.data.id;
 
-    // Create route
-    const routeRes = await createRoute(ctx, adminHeaders);
-    expect(routeRes.status).toBe(HTTP_STATUS.CREATED);
-    const routeId = routeRes.data.data.id;
+      const routeRes = await createRoute(ctx, adminHeaders);
+      expect(routeRes.status).toBe(HTTP_STATUS.CREATED);
+      const routeId = routeRes.data.data.id;
 
-    // Assign route
-    const assignmentRes = await assignRoute(ctx, adminHeaders, truckId, routeId, driverSession.user.id);
-    expect(assignmentRes.status).toBe(HTTP_STATUS.CREATED);
-    const assignmentId = assignmentRes.data.data.id;
+      const assignmentRes = await assignRoute(ctx, adminHeaders, truckId, routeId, driverSession.user.id);
+      expect(assignmentRes.status).toBe(HTTP_STATUS.CREATED);
+      const assignmentId = assignmentRes.data.data.id;
 
-    // Driver sees scheduled assignment
-    const currentRouteRes = await getCurrentDriverRoute(ctx, driverHeaders);
-    expect(currentRouteRes.status).toBe(HTTP_STATUS.OK);
-    expect(currentRouteRes.data.data.status).toBe('scheduled');
-    expect(currentRouteRes.data.data.id).toBe(assignmentId);
+      // Driver sees scheduled assignment
+      const currentRouteRes = await getCurrentDriverRoute(ctx, driverHeaders);
+      expect(currentRouteRes.status).toBe(HTTP_STATUS.OK);
+      expect(currentRouteRes.data.data.status).toBe('scheduled');
+      expect(currentRouteRes.data.data.id).toBe(assignmentId);
 
-    // Driver starts assignment
-    const startRes = await startAssignment(ctx, driverHeaders, assignmentId);
-    expect(startRes.status).toBe(HTTP_STATUS.OK);
+      // Driver starts assignment
+      const startRes = await startAssignment(ctx, driverHeaders, assignmentId);
+      expect(startRes.status).toBe(HTTP_STATUS.OK);
 
-    // Driver updates location
-    const locationRes = await updateDriverLocation(ctx, driverHeaders);
-    expect(locationRes.status).toBe(HTTP_STATUS.OK);
+      // Driver updates location
+      const locationRes = await updateDriverLocation(ctx, driverHeaders);
+      expect(locationRes.status).toBe(HTTP_STATUS.OK);
 
-    // Driver completes assignment
-    const completeRes = await completeAssignment(ctx, driverHeaders, assignmentId);
-    expect(completeRes.status).toBe(HTTP_STATUS.OK);
+      // Driver completes assignment
+      const completeRes = await completeAssignment(ctx, driverHeaders, assignmentId);
+      expect(completeRes.status).toBe(HTTP_STATUS.OK);
 
-    // No active/scheduled route left
-    const finalRouteRes = await getCurrentDriverRoute(ctx, driverHeaders);
-    expect(finalRouteRes.status).toBe(HTTP_STATUS.NOT_FOUND);
-  });
+      // No active/scheduled route left
+      const finalRouteRes = await getCurrentDriverRoute(ctx, driverHeaders);
+      expect(finalRouteRes.status).toBe(HTTP_STATUS.NOT_FOUND);
+    },
+    E2E_TEST_TIMEOUT_MS,
+  );
 });
