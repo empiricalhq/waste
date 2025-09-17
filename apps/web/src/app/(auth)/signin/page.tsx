@@ -45,7 +45,7 @@ function SignInForm() {
               <FormControl>
                 <InputStartIcon icon={AtSign}>
                   <Input
-                    placeholder="email@example.com"
+                    placeholder="Ingresa tu correo"
                     type="email"
                     className={cn('peer ps-9', getInputClassName(Boolean(fieldState.error)))}
                     disabled={isPending}
@@ -65,7 +65,7 @@ function SignInForm() {
               <FormControl>
                 <InputPasswordContainer>
                   <Input
-                    placeholder="Password"
+                    placeholder="Contraseña"
                     type="password"
                     className={cn('pe-9', getInputClassName(Boolean(fieldState.error)))}
                     disabled={isPending}
@@ -78,7 +78,7 @@ function SignInForm() {
           )}
         />
         <Button type="submit" disabled={isPending} className="mt-5 w-full">
-          Sign In
+          Iniciar sesión
         </Button>
       </form>
     </Form>
@@ -89,10 +89,10 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center">
       <div className="border-foreground/10 flex w-full flex-col rounded-2xl border px-8 py-5 md:w-96">
-        <h1 className="text-2xl font-bold">Sign In</h1>
+        <h1 className="text-2xl font-bold">Iniciar sesión</h1>
         <SignInForm />
         <div className="flex items-center justify-center gap-2">
-          <small>Need an account? Contact an administrator.</small>
+          <small>Solicita tu cuenta a tu supervisor directo.</small>
         </div>
       </div>
     </div>
