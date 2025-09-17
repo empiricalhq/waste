@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AtSign, MailIcon, UserIcon } from 'lucide-react';
+import { AtSign, type LucideIcon, MailIcon, UserIcon } from 'lucide-react';
 import { useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { type Control, type Path, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { InputStartIcon } from '@/components/auth/input-start-icon';
@@ -17,13 +17,13 @@ import { type SignUpSchema, signUpSchema } from '@/features/auth/schemas';
 import { cn } from '@/lib/utils';
 
 interface TextInputFieldProps {
-  name: string;
+  name: Path<SignUpSchema>;
   label: string;
   placeholder: string;
-  icon?: React.ElementType;
+  icon?: LucideIcon;
   type?: string;
   disabled?: boolean;
-  control: any;
+  control: Control<SignUpSchema>;
 }
 
 function TextInputField({
@@ -48,7 +48,7 @@ function TextInputField({
                 <Input
                   type={type}
                   placeholder={placeholder}
-                  className={cn(fieldState.error && 'border-destructive')}
+                  className={cn('peer ps-9', fieldState.error && 'border-destructive')}
                   disabled={disabled}
                   {...field}
                 />
@@ -105,30 +105,30 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
         <TextInputField
           name="name"
           label="Nombre completo"
-          placeholder="John Doe"
+          placeholder="Juan Pérez"
           icon={UserIcon}
           disabled={isPending}
           control={form.control}
         />
         <TextInputField
           name="email"
-          label="Email"
-          placeholder="user@example.com"
+          label="Correo electrónico"
+          placeholder="correo@ejemplo.com"
           icon={MailIcon}
           disabled={isPending}
           control={form.control}
         />
         <TextInputField
           name="username"
-          label="Username"
-          placeholder="johndoe"
+          label="Usuario"
+          placeholder="juanperez"
           icon={AtSign}
           disabled={isPending}
           control={form.control}
         />
         <TextInputField
           name="password"
-          label="Password"
+          label="Contraseña"
           placeholder="••••••••"
           type="password"
           disabled={isPending}
@@ -136,7 +136,7 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
         />
         <TextInputField
           name="confirmPassword"
-          label="Confirm Password"
+          label="Confirmar contraseña"
           placeholder="••••••••"
           type="password"
           disabled={isPending}
