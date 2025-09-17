@@ -1,5 +1,5 @@
 {
-  "id": "31bb018e-1d03-4967-bd85-b0350dd6d705",
+  "id": "24061037-1e0c-4568-9eab-f9330de4902d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -95,14 +95,253 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.invitation": {
+      "name": "invitation",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inviterId": {
+          "name": "inviterId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "member_role_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "invitation_inviterId_member_id_fk": {
+          "name": "invitation_inviterId_member_id_fk",
+          "tableFrom": "invitation",
+          "tableTo": "member",
+          "columnsFrom": [
+            "inviterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "invitation_organizationId_organization_id_fk": {
+          "name": "invitation_organizationId_organization_id_fk",
+          "tableFrom": "invitation",
+          "tableTo": "organization",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.member": {
+      "name": "member",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "member_role_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "member_user_org_idx": {
+          "name": "member_user_org_idx",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "organizationId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "member_userId_user_id_fk": {
+          "name": "member_userId_user_id_fk",
+          "tableFrom": "member",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "member_organizationId_organization_id_fk": {
+          "name": "member_organizationId_organization_id_fk",
+          "tableFrom": "member",
+          "tableTo": "organization",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.organization": {
+      "name": "organization",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo": {
+          "name": "logo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "organization_slug_unique": {
+          "name": "organization_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -160,6 +399,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "activeOrganizationId": {
+          "name": "activeOrganizationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -199,9 +444,26 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "session_activeOrganizationId_organization_id_fk": {
+          "name": "session_activeOrganizationId_organization_id_fk",
+          "tableFrom": "session",
+          "tableTo": "organization",
+          "columnsFrom": [
+            "activeOrganizationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -210,7 +472,9 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": ["token"]
+          "columns": [
+            "token"
+          ]
         }
       },
       "policies": {},
@@ -251,14 +515,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "appRole": {
-          "name": "appRole",
-          "type": "app_role_enum",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'citizen'"
         },
         "role": {
           "name": "role",
@@ -309,21 +565,6 @@
         }
       },
       "indexes": {
-        "user_app_role_idx": {
-          "name": "user_app_role_idx",
-          "columns": [
-            {
-              "expression": "appRole",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "user_is_active_idx": {
           "name": "user_is_active_idx",
           "columns": [
@@ -346,7 +587,9 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       },
       "policies": {},
@@ -466,8 +709,12 @@
           "name": "citizen_profile_user_id_user_id_fk",
           "tableFrom": "citizen_profile",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -520,8 +767,12 @@
           "name": "user_education_progress_user_id_user_id_fk",
           "tableFrom": "user_education_progress",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -529,7 +780,10 @@
       "compositePrimaryKeys": {
         "user_education_progress_user_id_content_id_pk": {
           "name": "user_education_progress_user_id_content_id_pk",
-          "columns": ["user_id", "content_id"]
+          "columns": [
+            "user_id",
+            "content_id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -607,8 +861,12 @@
           "name": "dispatch_message_sender_id_user_id_fk",
           "tableFrom": "dispatch_message",
           "tableTo": "user",
-          "columnsFrom": ["sender_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "sender_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -616,8 +874,12 @@
           "name": "dispatch_message_recipient_id_user_id_fk",
           "tableFrom": "dispatch_message",
           "tableTo": "user",
-          "columnsFrom": ["recipient_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "recipient_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -688,8 +950,12 @@
           "name": "push_notification_token_user_id_user_id_fk",
           "tableFrom": "push_notification_token",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -807,8 +1073,12 @@
           "name": "citizen_issue_report_user_id_user_id_fk",
           "tableFrom": "citizen_issue_report",
           "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -925,8 +1195,12 @@
           "name": "driver_issue_report_driver_id_user_id_fk",
           "tableFrom": "driver_issue_report",
           "tableTo": "user",
-          "columnsFrom": ["driver_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "driver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -934,8 +1208,12 @@
           "name": "driver_issue_report_route_assignment_id_route_assignment_id_fk",
           "tableFrom": "driver_issue_report",
           "tableTo": "route_assignment",
-          "columnsFrom": ["route_assignment_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "route_assignment_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1040,8 +1318,12 @@
           "name": "system_alert_route_assignment_id_route_assignment_id_fk",
           "tableFrom": "system_alert",
           "tableTo": "route_assignment",
-          "columnsFrom": ["route_assignment_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "route_assignment_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1049,8 +1331,12 @@
           "name": "system_alert_truck_id_truck_id_fk",
           "tableFrom": "system_alert",
           "tableTo": "truck",
-          "columnsFrom": ["truck_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "truck_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1058,8 +1344,12 @@
           "name": "system_alert_driver_id_user_id_fk",
           "tableFrom": "system_alert",
           "tableTo": "user",
-          "columnsFrom": ["driver_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "driver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1173,8 +1463,12 @@
           "name": "route_created_by_user_id_fk",
           "tableFrom": "route",
           "tableTo": "user",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1182,8 +1476,12 @@
           "name": "route_approved_by_user_id_fk",
           "tableFrom": "route",
           "tableTo": "user",
-          "columnsFrom": ["approved_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "approved_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1356,8 +1654,12 @@
           "name": "route_assignment_route_id_route_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "route",
-          "columnsFrom": ["route_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "route_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1365,8 +1667,12 @@
           "name": "route_assignment_truck_id_truck_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "truck",
-          "columnsFrom": ["truck_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "truck_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1374,8 +1680,12 @@
           "name": "route_assignment_driver_id_user_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "user",
-          "columnsFrom": ["driver_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "driver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1383,8 +1693,12 @@
           "name": "route_assignment_assigned_by_user_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "user",
-          "columnsFrom": ["assigned_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "assigned_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1461,8 +1775,12 @@
           "name": "route_schedule_route_id_route_id_fk",
           "tableFrom": "route_schedule",
           "tableTo": "route",
-          "columnsFrom": ["route_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "route_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1548,8 +1866,12 @@
           "name": "route_waypoint_route_id_route_id_fk",
           "tableFrom": "route_waypoint",
           "tableTo": "route",
-          "columnsFrom": ["route_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "route_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1604,7 +1926,9 @@
         "truck_license_plate_unique": {
           "name": "truck_license_plate_unique",
           "nullsNotDistinct": false,
-          "columns": ["license_plate"]
+          "columns": [
+            "license_plate"
+          ]
         }
       },
       "policies": {},
@@ -1665,8 +1989,12 @@
           "name": "truck_current_location_truck_id_truck_id_fk",
           "tableFrom": "truck_current_location",
           "tableTo": "truck",
-          "columnsFrom": ["truck_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "truck_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1674,8 +2002,12 @@
           "name": "truck_current_location_route_assignment_id_route_assignment_id_fk",
           "tableFrom": "truck_current_location",
           "tableTo": "route_assignment",
-          "columnsFrom": ["route_assignment_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "route_assignment_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1783,8 +2115,12 @@
           "name": "truck_location_history_truck_id_truck_id_fk",
           "tableFrom": "truck_location_history",
           "tableTo": "truck",
-          "columnsFrom": ["truck_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "truck_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1797,50 +2133,87 @@
     }
   },
   "enums": {
-    "public.app_role_enum": {
-      "name": "app_role_enum",
+    "public.member_role_enum": {
+      "name": "member_role_enum",
       "schema": "public",
-      "values": ["admin", "supervisor", "driver", "citizen"]
+      "values": [
+        "admin",
+        "supervisor",
+        "driver",
+        "owner"
+      ]
     },
     "public.device_type": {
       "name": "device_type",
       "schema": "public",
-      "values": ["ios", "android"]
+      "values": [
+        "ios",
+        "android"
+      ]
     },
     "public.alert_status": {
       "name": "alert_status",
       "schema": "public",
-      "values": ["unread", "read", "archived"]
+      "values": [
+        "unread",
+        "read",
+        "archived"
+      ]
     },
     "public.alert_type": {
       "name": "alert_type",
       "schema": "public",
-      "values": ["route_deviation", "prolonged_stop", "late_start"]
+      "values": [
+        "route_deviation",
+        "prolonged_stop",
+        "late_start"
+      ]
     },
     "public.citizen_issue_type": {
       "name": "citizen_issue_type",
       "schema": "public",
-      "values": ["missed_collection", "illegal_dumping"]
+      "values": [
+        "missed_collection",
+        "illegal_dumping"
+      ]
     },
     "public.driver_issue_type": {
       "name": "driver_issue_type",
       "schema": "public",
-      "values": ["mechanical_failure", "road_blocked", "truck_full", "other"]
+      "values": [
+        "mechanical_failure",
+        "road_blocked",
+        "truck_full",
+        "other"
+      ]
     },
     "public.issue_status": {
       "name": "issue_status",
       "schema": "public",
-      "values": ["open", "in_progress", "resolved"]
+      "values": [
+        "open",
+        "in_progress",
+        "resolved"
+      ]
     },
     "public.assignment_status": {
       "name": "assignment_status",
       "schema": "public",
-      "values": ["scheduled", "active", "completed", "cancelled"]
+      "values": [
+        "scheduled",
+        "active",
+        "completed",
+        "cancelled"
+      ]
     },
     "public.route_status": {
       "name": "route_status",
       "schema": "public",
-      "values": ["active", "inactive", "draft"]
+      "values": [
+        "active",
+        "inactive",
+        "draft"
+      ]
     }
   },
   "schemas": {},

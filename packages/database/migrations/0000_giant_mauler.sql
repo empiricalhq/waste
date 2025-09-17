@@ -1,4 +1,4 @@
-CREATE TYPE "public"."app_role_enum" AS ENUM('admin', 'supervisor', 'driver', 'citizen');--> statement-breakpoint
+CREATE TYPE "public"."member_role_enum" AS ENUM('admin', 'supervisor', 'driver', 'owner');--> statement-breakpoint
 CREATE TYPE "public"."device_type" AS ENUM('ios', 'android');--> statement-breakpoint
 CREATE TYPE "public"."alert_status" AS ENUM('unread', 'read', 'archived');--> statement-breakpoint
 CREATE TYPE "public"."alert_type" AS ENUM('route_deviation', 'prolonged_stop', 'late_start');--> statement-breakpoint
@@ -23,6 +23,34 @@ CREATE TABLE "account" (
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "invitation" (
+	"id" text PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"inviterId" text NOT NULL,
+	"organizationId" text NOT NULL,
+	"role" "member_role_enum" NOT NULL,
+	"status" text NOT NULL,
+	"expiresAt" timestamp NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "member" (
+	"id" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
+	"organizationId" text NOT NULL,
+	"role" "member_role_enum" NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "organization" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"slug" text NOT NULL,
+	"logo" text,
+	"metadata" jsonb,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "organization_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
 CREATE TABLE "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"expiresAt" timestamp NOT NULL,
@@ -32,6 +60,7 @@ CREATE TABLE "session" (
 	"ipAddress" text,
 	"userAgent" text,
 	"userId" text NOT NULL,
+	"activeOrganizationId" text,
 	CONSTRAINT "session_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
@@ -41,7 +70,6 @@ CREATE TABLE "user" (
 	"email" text NOT NULL,
 	"emailVerified" boolean DEFAULT false NOT NULL,
 	"image" text,
-	"appRole" "app_role_enum" DEFAULT 'citizen' NOT NULL,
 	"role" text DEFAULT 'user' NOT NULL,
 	"banned" boolean DEFAULT false NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
@@ -214,7 +242,12 @@ CREATE TABLE "truck_location_history" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "invitation" ADD CONSTRAINT "invitation_inviterId_member_id_fk" FOREIGN KEY ("inviterId") REFERENCES "public"."member"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "invitation" ADD CONSTRAINT "invitation_organizationId_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "member" ADD CONSTRAINT "member_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "member" ADD CONSTRAINT "member_organizationId_organization_id_fk" FOREIGN KEY ("organizationId") REFERENCES "public"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "session" ADD CONSTRAINT "session_activeOrganizationId_organization_id_fk" FOREIGN KEY ("activeOrganizationId") REFERENCES "public"."organization"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "citizen_profile" ADD CONSTRAINT "citizen_profile_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_education_progress" ADD CONSTRAINT "user_education_progress_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "dispatch_message" ADD CONSTRAINT "dispatch_message_sender_id_user_id_fk" FOREIGN KEY ("sender_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -237,9 +270,9 @@ ALTER TABLE "route_waypoint" ADD CONSTRAINT "route_waypoint_route_id_route_id_fk
 ALTER TABLE "truck_current_location" ADD CONSTRAINT "truck_current_location_truck_id_truck_id_fk" FOREIGN KEY ("truck_id") REFERENCES "public"."truck"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "truck_current_location" ADD CONSTRAINT "truck_current_location_route_assignment_id_route_assignment_id_fk" FOREIGN KEY ("route_assignment_id") REFERENCES "public"."route_assignment"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "truck_location_history" ADD CONSTRAINT "truck_location_history_truck_id_truck_id_fk" FOREIGN KEY ("truck_id") REFERENCES "public"."truck"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "member_user_org_idx" ON "member" USING btree ("userId","organizationId");--> statement-breakpoint
 CREATE INDEX "session_user_id_idx" ON "session" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "session_expires_at_idx" ON "session" USING btree ("expiresAt");--> statement-breakpoint
-CREATE INDEX "user_app_role_idx" ON "user" USING btree ("appRole");--> statement-breakpoint
 CREATE INDEX "user_is_active_idx" ON "user" USING btree ("isActive");--> statement-breakpoint
 CREATE INDEX "dispatch_message_recipient_sent_idx" ON "dispatch_message" USING btree ("recipient_id","sent_at");--> statement-breakpoint
 CREATE INDEX "push_notification_token_user_idx" ON "push_notification_token" USING btree ("user_id");--> statement-breakpoint
