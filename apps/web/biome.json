@@ -11,7 +11,8 @@
         "recommended": true,
         "noDefaultExport": "off",
         "useComponentExportOnlyModules": "off",
-        "noProcessEnv": "off"
+        "noProcessEnv": "off",
+        "useNamingConvention": "off"
       },
       "suspicious": {
         "recommended": true,
