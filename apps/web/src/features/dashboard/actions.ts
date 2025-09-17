@@ -3,6 +3,8 @@
 import type { Issue, Route, Truck } from '@/db/types';
 import { api } from '@/lib/api';
 
+const MAX_RECENT_ISSUES = 5;
+
 export async function getDashboardData() {
   try {
     const [trucks, routes, issues] = await Promise.all([
@@ -12,7 +14,7 @@ export async function getDashboardData() {
     ]);
 
     const activeRoutesCount = routes.filter((r) => r.status === 'active').length;
-    const recentIssues = issues.slice(0, 5);
+    const recentIssues = issues.slice(0, MAX_RECENT_ISSUES);
 
     return {
       trucks,

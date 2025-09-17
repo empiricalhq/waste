@@ -13,6 +13,8 @@ class ApiError extends Error {
   }
 }
 
+const HTTP_STATUS_SERVICE_UNAVAILABLE = 503;
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${ENV.API_BASE_URL}${endpoint}`;
   const sessionToken = (await cookies()).get('better-auth.session_token')?.value;
@@ -53,7 +55,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(error instanceof Error ? error.message : 'API connection failed', 503);
+    throw new ApiError(
+      error instanceof Error ? error.message : 'API connection failed',
+      HTTP_STATUS_SERVICE_UNAVAILABLE,
+    );
   }
 }
 

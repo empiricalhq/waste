@@ -6,6 +6,8 @@ import { cache } from 'react';
 import type { Session, User } from '@/db/types';
 import { ENV } from '@/lib/env';
 
+const HTTP_UNAUTHORIZED = 401;
+
 export interface AuthSession {
   user: User;
   session: Session;
@@ -23,7 +25,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
       cache: 'no-store',
     });
 
-    if (response.status === 401) {
+    if (response.status === HTTP_UNAUTHORIZED) {
       (await cookies()).delete('better-auth.session_token');
       return null;
     }
