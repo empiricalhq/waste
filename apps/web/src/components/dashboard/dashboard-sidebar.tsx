@@ -11,9 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
+import type { User } from '@/db/types';
 import { signOut } from '@/features/auth/actions';
-import { authClient } from '@/features/auth/client';
 import { cn } from '@/lib/utils';
 
 const navigation = [
@@ -25,22 +24,7 @@ const navigation = [
 
 const adminNavigation = [{ name: 'Configuración', href: '/settings', icon: Settings }];
 
-function UserInfo() {
-  const { data: session, isPending } = authClient.useSession();
-  const user = session?.user;
-
-  if (isPending) {
-    return (
-      <div className="flex items-center space-x-3">
-        <Skeleton className="h-8 w-8 rounded-full" />
-        <div className="flex-1 space-y-1">
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-3 w-32" />
-        </div>
-      </div>
-    );
-  }
-
+function UserInfo({ user }: { user: User }) {
   if (!user) {
     return null;
   }
@@ -75,12 +59,12 @@ function UserInfo() {
 }
 
 interface DashboardSidebarProps {
-  isAdmin?: boolean;
+  user: User;
 }
 
-export function DashboardSidebar({ isAdmin = false }: DashboardSidebarProps) {
+export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname();
-
+  const isAdmin = user.appRole === 'admin';
   const navItems = isAdmin ? [...navigation, ...adminNavigation] : navigation;
 
   const SidebarContent = () => (
@@ -113,7 +97,7 @@ export function DashboardSidebar({ isAdmin = false }: DashboardSidebarProps) {
       </nav>
 
       <div className="border-t p-4">
-        <UserInfo />
+        <UserInfo user={user} />
       </div>
     </div>
   );

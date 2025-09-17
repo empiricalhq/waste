@@ -8,7 +8,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardSidebar isAdmin={user.appRole === 'admin'} />
+      <DashboardSidebar user={user} />
       <div className="lg:pl-64">
         <main className="p-6">{children}</main>
       </div>
