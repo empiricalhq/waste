@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { ENV } from './env.ts';
 
 class ApiError extends Error {
-  public status: number;
+  status: number;
 
   constructor(message: string, status: number) {
     super(message);
