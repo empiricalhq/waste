@@ -2,7 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTrucks } from '@/features/trucks/actions';
 
-// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 export default async function TrucksPage() {

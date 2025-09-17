@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { requireUser } from '@/features/auth/lib';
 
-// biome-ignore lint: cloudflare requires edge runtime
 export const runtime = 'edge';
 
 export default async function SettingsPage() {
