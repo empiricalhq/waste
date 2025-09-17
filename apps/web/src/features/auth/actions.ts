@@ -44,7 +44,7 @@ export async function signUp(data: SignUpSchema): Promise<ActionResult> {
 }
 
 export async function signOut() {
-  cookies().delete('better-auth.session_token');
+  (await cookies()).delete('better-auth.session_token');
   api.post('/api/auth/signout').catch((_err) => {});
   redirect('/signin');
 }

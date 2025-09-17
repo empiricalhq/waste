@@ -12,7 +12,7 @@ export interface AuthSession {
 }
 
 export const getSession = cache(async (): Promise<AuthSession | null> => {
-  const sessionToken = cookies().get('better-auth.session_token')?.value;
+  const sessionToken = (await cookies()).get('better-auth.session_token')?.value;
   if (!sessionToken) {
     return null;
   }
@@ -24,7 +24,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
     });
 
     if (response.status === 401) {
-      cookies().delete('better-auth.session_token');
+      (await cookies()).delete('better-auth.session_token');
       return null;
     }
 

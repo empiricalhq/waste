@@ -15,7 +15,7 @@ class ApiError extends Error {
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${ENV.API_BASE_URL}${endpoint}`;
-  const sessionToken = cookies().get('better-auth.session_token')?.value;
+  const sessionToken = (await cookies()).get('better-auth.session_token')?.value;
 
   const headers = new Headers(options.headers);
   headers.set('Content-Type', 'application/json');
@@ -31,7 +31,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     const setCookieHeader = response.headers.get('Set-Cookie');
     if (setCookieHeader) {
       const tokenValue = setCookieHeader.split(';')[0].split('=')[1];
-      cookies().set('better-auth.session_token', tokenValue, {
+      (await cookies()).set('better-auth.session_token', tokenValue, {
         httpOnly: true,
         path: '/',
         secure: ENV.NODE_ENV === 'production',
