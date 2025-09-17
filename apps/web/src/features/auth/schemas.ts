@@ -20,7 +20,10 @@ export const signUpSchema = z
     password: z
       .string()
       .min(MIN_PASSWORD_LENGTH, `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`)
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain an uppercase, lowercase, and number.'),
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'La contraseña debe contener una mayúscula, una minúscula y un número.',
+      ),
     confirmPassword: z.string(),
     role: z.enum(['admin', 'supervisor', 'driver'], { error: 'Please select a role.' }),
   })
