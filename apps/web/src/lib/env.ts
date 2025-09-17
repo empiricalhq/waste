@@ -1,3 +1,4 @@
+// biome-ignore-all lint/style/useNamingConvention: env vars dont need to use camelCase
 import { z } from 'zod';
 
 const envSchema = z.object({
