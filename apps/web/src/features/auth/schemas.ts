@@ -6,10 +6,10 @@ const MIN_SIGNIN_PASSWORD_LENGTH = 6;
 const MIN_NAME_LENGTH = 2;
 
 export const signInSchema = z.object({
-  email: z.email('Invalid email format.').min(1, 'Email is required.'),
+  email: z.email('Formato de correo electrónico inválido').min(1, 'El correo electrónico es obligatorio.'),
   password: z
     .string()
-    .min(MIN_SIGNIN_PASSWORD_LENGTH, `Password must be at least ${MIN_SIGNIN_PASSWORD_LENGTH} characters.`),
+    .min(MIN_SIGNIN_PASSWORD_LENGTH, `La contraseña debe tener al menos ${MIN_SIGNIN_PASSWORD_LENGTH} caracteres.`),
 });
 export type SignInSchema = z.infer<typeof signInSchema>;
 
@@ -25,7 +25,7 @@ export const signUpSchema = z
     role: z.enum(['admin', 'supervisor', 'driver'], { error: 'Por favor selecciona un rol' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match.",
+    message: 'Las contraseñas no coinciden',
     path: ['confirmPassword'],
   });
 
