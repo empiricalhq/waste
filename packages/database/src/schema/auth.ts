@@ -1,4 +1,4 @@
-import { boolean, index, pgEnum, pgTable, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { boolean, index, jsonb, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const memberRoleEnum = pgEnum('member_role_enum', ['admin', 'supervisor', 'driver', 'owner']);
 
