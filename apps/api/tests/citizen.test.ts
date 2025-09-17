@@ -87,7 +87,7 @@ test('citizen can list their issues', async () => {
   expect(response.data.length).toBeGreaterThan(0);
 });
 
-test('non-citizen cannot access citizen endpoints', async () => {
+test('non-citizen (staff) cannot access citizen endpoints', async () => {
   await ctx.auth.loginAs('admin');
 
   const response = await ctx.client.get('/citizen/truck/status', ctx.auth.getHeaders('admin'));

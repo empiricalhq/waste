@@ -1,14 +1,9 @@
 import { z } from 'zod';
 
-export const roleSchema = z.enum(['admin', 'supervisor', 'driver', 'citizen']);
-export type Role = z.infer<typeof roleSchema>;
-
 export const IdSchema = z.union([
   z.uuid(),
   // IDs created by better-auth don't use standard UUID format
-  z
-    .string()
-    .regex(/^[a-zA-Z0-9]{20,40}$/),
+  z.string().regex(/^[a-zA-Z0-9]{20,40}$/),
 ]);
 export const IdParamSchema = z.object({ id: IdSchema });
 
@@ -68,7 +63,7 @@ export const createAssignmentSchema = z.object({
   route_id: IdSchema,
   truck_id: IdSchema,
   driver_id: IdSchema,
-  scheduled_start_time: z.iso.datetime(),
-  scheduled_end_time: z.iso.datetime(),
+  scheduled_start_time: z.string().datetime(),
+  scheduled_end_time: z.string().datetime(),
   notes: z.string().max(500).optional(),
 });

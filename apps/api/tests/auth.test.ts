@@ -11,7 +11,7 @@ test('admin user can login and has correct role', async () => {
   const session = await ctx.auth.loginAs('admin');
 
   expect(session.user.email).toBe('admin@test.com');
-  expect(session.user.appRole).toBe('admin');
+  expect(session.member?.role).toBe('owner');
   expect(session.cookie).toContain('better-auth.session_token');
 });
 
@@ -19,15 +19,15 @@ test('driver user can login and has correct role', async () => {
   const session = await ctx.auth.loginAs('driver');
 
   expect(session.user.email).toBe('driver@test.com');
-  expect(session.user.appRole).toBe('driver');
+  expect(session.member?.role).toBe('driver');
   expect(session.cookie).toContain('better-auth.session_token');
 });
 
-test('citizen user can login and has correct role', async () => {
+test('citizen user can login and is not a staff member', async () => {
   const session = await ctx.auth.loginAs('citizen');
 
   expect(session.user.email).toBe('citizen@test.com');
-  expect(session.user.appRole).toBe('citizen');
+  expect(session.member).toBeNull();
   expect(session.cookie).toContain('better-auth.session_token');
 });
 

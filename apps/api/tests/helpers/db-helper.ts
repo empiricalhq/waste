@@ -30,11 +30,14 @@ export class DbHelper {
       'route_assignment',
       'route_waypoint',
       'route_schedule',
-      'route',
-      'truck',
-      'verification',
+      'invitation',
+      'member',
       'session',
       'account',
+      'verification',
+      'route',
+      'truck',
+      'organization',
       '"user"',
     ];
 
@@ -49,8 +52,12 @@ export class DbHelper {
     }
   }
 
-  async updateUserRole(email: string, role: string): Promise<void> {
-    await this.pool.query('UPDATE "user" SET "appRole" = $1 WHERE email = $2', [role, email]);
+  async addMember(userId: string, orgId: string, role: string): Promise<void> {
+    await this.pool.query('INSERT INTO member (id, user_id, organization_id, role) VALUES (gen_random_uuid(), $1, $2, $3)', [
+      userId,
+      orgId,
+      role,
+    ]);
   }
 
   async query(text: string, params?: any[]): Promise<any> {

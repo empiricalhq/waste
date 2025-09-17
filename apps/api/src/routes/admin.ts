@@ -20,10 +20,11 @@ adminRouter.use('*', authMiddleware(['admin', 'supervisor']));
 adminRouter.get('/drivers', async (c) => {
   try {
     const result = await db.query(`
-      SELECT id, name, email, "appRole", "isActive", "createdAt"
-      FROM "user"
-      WHERE "appRole" = 'driver'
-      ORDER BY "createdAt" DESC
+      SELECT u.id, u.name, u.email, u."isActive", u."createdAt", m.role
+      FROM "user" u
+      JOIN member m ON u.id = m.user_id
+      WHERE m.role = 'driver'
+      ORDER BY u."createdAt" DESC
     `);
     return c.json(result.rows);
   } catch (error) {
@@ -264,7 +265,7 @@ adminRouter.get('/issues', async (c) => {
     ]);
 
     const allIssues = [...driverIssues.rows, ...citizenIssues.rows].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
 
     return c.json(allIssues);

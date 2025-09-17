@@ -7,8 +7,12 @@ interface Session {
     id: string;
     email: string;
     name: string;
-    appRole: string;
   };
+  member: {
+    id: string;
+    role: string;
+    organizationId: string;
+  } | null;
 }
 
 export class AuthHelper {
@@ -40,7 +44,7 @@ export class AuthHelper {
     });
 
     if (signInResponse.status !== 200) {
-      throw new Error(`Login failed: ${signInResponse.status}`);
+      throw new Error(`Login failed for ${email}: ${signInResponse.status}`);
     }
 
     const cookie = signInResponse.headers.get('set-cookie');
@@ -48,14 +52,28 @@ export class AuthHelper {
       throw new Error('No session cookie received');
     }
 
+    // Set active organization in session for staff members
+    const userConfig = this.testUsers.findUserByEmail(email);
+    if (userConfig && userConfig.role !== 'citizen') {
+      const orgRes = await this.client.get('/auth/organization/list', { Cookie: cookie });
+      const org = orgRes.data?.[0];
+      if (org) {
+        await this.client.post('/auth/organization/active', { organizationId: org.id }, { Cookie: cookie });
+      }
+    }
+
     const sessionResponse = await this.client.get('/auth/get-session', { Cookie: cookie });
     if (sessionResponse.status !== 200) {
       throw new Error('Session verification failed');
     }
 
+    const memberResponse = await this.client.get('/auth/organization/member/active', { Cookie: cookie });
+    const member = memberResponse.status === 200 ? memberResponse.data : null;
+
     const session: Session = {
       cookie,
       user: sessionResponse.data.user,
+      member: member,
     };
 
     this.sessions.set(email, session);

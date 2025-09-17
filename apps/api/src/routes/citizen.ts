@@ -2,7 +2,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import type { Session, User } from '@/lib/auth.ts';
 import { db } from '@/lib/db.ts';
-import { authMiddleware } from '@/lib/middleware.ts';
+import { citizenOnlyMiddleware } from '@/lib/middleware.ts';
 import { createIssueSchema, updateLocationSchema } from '@/lib/validation.ts';
 
 type AuthEnv = {
@@ -14,7 +14,7 @@ type AuthEnv = {
 
 export const citizenRouter = new Hono<AuthEnv>();
 
-citizenRouter.use('*', authMiddleware(['citizen']));
+citizenRouter.use('*', citizenOnlyMiddleware());
 
 citizenRouter.get('/truck/status', async (c) => {
   const user = c.get('user');

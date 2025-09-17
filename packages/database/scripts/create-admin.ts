@@ -82,7 +82,7 @@ async function main() {
     );
 
     s.start('Creando usuario propietario...');
-    const ownerUser = await auth.api.createUser({
+    const ownerUser = await auth.api.signUpEmail({
       body: {
         email,
         password,
