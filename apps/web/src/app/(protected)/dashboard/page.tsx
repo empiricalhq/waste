@@ -3,7 +3,7 @@ import { ErrorBoundary } from '@/components/common/error-boundary';
 import { DashboardSkeleton } from '@/components/common/loading-skeleton';
 import { AddUserButton } from '@/components/dashboard/add-user-button';
 import { DashboardStats } from '@/components/dashboard/dashboard-stats';
-import { RecentAlerts } from '@/components/dashboard/recent-alerts';
+import { RecentIssues } from '@/components/dashboard/recent-issues';
 import { MapWrapper } from '@/components/map/map-wrapper';
 import { getDashboardData } from '@/features/dashboard/actions';
 
@@ -15,11 +15,7 @@ async function DashboardContent() {
 
   return (
     <>
-      <DashboardStats
-        activeRoutes={data.activeRoutesCount}
-        openIssues={data.openIssuesCount}
-        totalAlerts={data.alertsCount}
-      />
+      <DashboardStats activeRoutes={data.activeRoutesCount} openIssues={data.openIssuesCount} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="h-[500px] w-full rounded-lg border lg:col-span-2">
@@ -28,7 +24,7 @@ async function DashboardContent() {
           </ErrorBoundary>
         </div>
         <div className="h-[500px]">
-          <RecentAlerts alerts={data.recentAlerts} />
+          <RecentIssues issues={data.recentIssues} />
         </div>
       </div>
     </>

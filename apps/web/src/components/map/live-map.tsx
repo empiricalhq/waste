@@ -3,10 +3,10 @@
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import type { Truck, TruckLocation } from '@/db/types';
+import type { Truck } from '@/db/types';
 
 interface LiveMapProps {
-  trucks?: (Truck & TruckLocation)[];
+  trucks?: Truck[];
 }
 
 // Default map constants
@@ -30,18 +30,20 @@ export default function LiveMap({ trucks = [] }: LiveMapProps) {
     shadowSize: [SHADOW_SIZE.width, SHADOW_SIZE.height],
   });
 
-  const trucksWithLocation = trucks.filter((t): t is Truck & TruckLocation => t.lat != null && t.lng != null);
+  const trucksWithLocation = trucks.filter((t) => t.lat != null && t.lng != null);
 
   const center: [number, number] =
-    trucksWithLocation.length > 0 ? [trucksWithLocation[0].lat, trucksWithLocation[0].lng] : DEFAULT_CENTER;
+    trucksWithLocation.length > 0 && trucksWithLocation[0].lat && trucksWithLocation[0].lng
+      ? [trucksWithLocation[0].lat, trucksWithLocation[0].lng]
+      : DEFAULT_CENTER;
 
   return (
     <MapContainer center={center} zoom={DEFAULT_ZOOM} style={{ height: '100%', width: '100%' }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {trucksWithLocation.map((truck) => (
-        <Marker key={truck.id} position={[truck.lat, truck.lng]} icon={icon}>
+        <Marker key={truck.id} position={[truck.lat!, truck.lng!]} icon={icon}>
           <Popup>
-            <strong>Placa:</strong> {truck.licensePlate}
+            <strong>Placa:</strong> {truck.license_plate}
           </Popup>
         </Marker>
       ))}

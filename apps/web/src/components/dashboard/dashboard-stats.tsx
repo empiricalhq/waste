@@ -1,21 +1,19 @@
-import { AlertTriangle, Route, Siren } from 'lucide-react';
+import { AlertTriangle, Route } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface DashboardStatsProps {
   activeRoutes: number;
   openIssues: number;
-  totalAlerts: number;
 }
 
-export function DashboardStats({ activeRoutes, openIssues, totalAlerts }: DashboardStatsProps) {
+export function DashboardStats({ activeRoutes, openIssues }: DashboardStatsProps) {
   const stats = [
-    { title: 'Rutas Activas', value: activeRoutes, icon: Route },
-    { title: 'Incidencias Abiertas', value: openIssues, icon: AlertTriangle },
-    { title: 'Alertas Hoy', value: totalAlerts, icon: Siren },
+    { title: 'Rutas activas', value: activeRoutes, icon: Route },
+    { title: 'Incidencias abiertas', value: openIssues, icon: AlertTriangle },
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2">
       {stats.map((stat) => (
         <Card key={stat.title}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

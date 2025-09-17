@@ -23,10 +23,10 @@ export default async function TrucksPage() {
               <div key={truck.id} className="bg-muted/30 flex items-center justify-between rounded-lg p-3">
                 <div>
                   <p className="font-medium">{truck.name}</p>
-                  <p className="text-muted-foreground text-xs">{truck.licensePlate}</p>
+                  <p className="text-muted-foreground text-xs">{truck.license_plate}</p>
                 </div>
-                <Badge variant={truck.isActive ? 'default' : 'secondary'}>
-                  {truck.isActive ? 'Active' : 'Inactive'}
+                <Badge variant={truck.is_active ? 'default' : 'secondary'}>
+                  {truck.is_active ? 'Active' : 'Inactive'}
                 </Badge>
               </div>
             ))}

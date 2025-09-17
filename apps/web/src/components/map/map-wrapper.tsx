@@ -1,11 +1,11 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import type { Truck, TruckLocation } from '@/db/types';
+import type { Truck } from '@/db/types';
 
 // El MapWrapper ahora acepta la lista de camiones con ubicación
 interface MapWrapperProps {
-  trucks: (Truck & TruckLocation)[];
+  trucks: Truck[];
 }
 
 const LiveMap = dynamic(() => import('@/components/map/live-map'), {

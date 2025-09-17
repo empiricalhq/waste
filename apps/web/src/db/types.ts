@@ -28,14 +28,14 @@ export interface Session {
 export interface Truck {
   id: string;
   name: string;
-  licensePlate: string;
-  isActive: boolean;
-}
-
-export interface TruckLocation {
-  truckId: string;
-  lat: number;
-  lng: number;
+  license_plate: string;
+  is_active: boolean;
+  created_at: string;
+  lat?: number | null;
+  lng?: number | null;
+  location_updated_at?: string | null;
+  driver_name?: string | null;
+  assignment_status?: string | null;
 }
 
 export interface Route {
@@ -43,6 +43,8 @@ export interface Route {
   name: string;
   description?: string;
   status: RouteStatus;
+  created_by_name?: string;
+  waypoint_count?: number;
 }
 
 export interface SystemAlert {
@@ -51,4 +53,15 @@ export interface SystemAlert {
   type: AlertType;
   status: AlertStatus;
   createdAt: string; // ISO Date String
+}
+
+export interface Issue {
+  source: 'driver' | 'citizen';
+  id: string;
+  type: string;
+  status: string;
+  created_at: string;
+  description: string | null;
+  lat: number;
+  lng: number;
 }

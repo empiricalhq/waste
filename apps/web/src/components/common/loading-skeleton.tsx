@@ -1,13 +1,13 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function DashboardSkeleton() {
-  const statKeys = ['stat-1', 'stat-2', 'stat-3', 'stat-4'];
+  const statKeys = ['stat-1', 'stat-2'];
   const listItemKeys = ['item-1', 'item-2', 'item-3', 'item-4', 'item-5'];
 
   return (
     <div className="space-y-6">
       {/* Stats skeleton */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {statKeys.map((key) => (
           <div key={key} className="rounded-lg border p-4">
             <Skeleton className="h-4 w-24 mb-2" />
