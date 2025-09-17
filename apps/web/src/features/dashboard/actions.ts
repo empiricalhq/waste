@@ -20,7 +20,7 @@ export async function getDashboardData() {
       openIssuesCount: issues.length,
       recentIssues,
     };
-  } catch (_error) {
+  } catch {
     return {
       trucks: [],
       activeRoutesCount: 0,
