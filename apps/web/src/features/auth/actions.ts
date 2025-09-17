@@ -45,6 +45,7 @@ export async function signUp(data: SignUpSchema): Promise<ActionResult> {
 
 export async function signOut() {
   (await cookies()).delete('better-auth.session_token');
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: backend signout is secondary; failure shouldn't block cookie deletion or redirect.
   api.post('/api/auth/signout').catch(() => {});
   redirect('/signin');
 }
