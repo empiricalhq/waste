@@ -4,12 +4,12 @@ import { cookies } from 'next/headers';
 import { ENV } from './env.ts';
 
 class ApiError extends Error {
-  constructor(
-    public message: string,
-    public status: number,
-  ) {
+  public status: number;
+
+  constructor(message: string, status: number) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
   }
 }
 
