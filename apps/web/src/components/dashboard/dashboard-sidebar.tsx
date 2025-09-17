@@ -148,9 +148,11 @@ export function DashboardSidebar() {
               <div className="border-sidebar-border p-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild={true}>
-                    <Button variant="ghost" size="sm" className="flex w-full items-center space-x-3 px-0">
+                    <Button variant="ghost" size="sm" className="flex w-full cursor-pointer items-center space-x-3 px-0 hover:bg-accent">
                       <div className="bg-sidebar-accent flex h-8 w-8 items-center justify-center rounded-full">
-                        <span className="text-sidebar-accent-foreground text-sm font-medium">A</span>
+                        <span className="text-sidebar-accent-foreground text-sm font-medium">
+                          A
+                        </span>
                       </div>
                       <div className="min-w-0 flex-1 text-left">
                         <p className="text-sidebar-foreground truncate text-sm font-medium">
@@ -181,7 +183,7 @@ export function DashboardSidebar() {
                 </DropdownMenu>
               </div>
 
-              <Button variant="ghost" size="icon" className="relative h-8 w-8 shrink-0">
+              <Button variant="ghost" size="icon" className="relative h-8 w-8 shrink-0 cursor-pointer hover:bg-accent">
                 <Bell className="h-5 w-5" />
                 <span className="bg-destructive text-destructive-foreground absolute -top-0 -right-0 flex h-3 w-3 items-center justify-center rounded-full text-[10px]">
                   3
