@@ -6,8 +6,6 @@ import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { GenderRadioGroup } from '@/components/auth/gender-radio-group';
-import { InputPasswordContainer } from '@/components/auth/input-password';
 import { InputStartIcon } from '@/components/auth/input-start-icon';
 import { RoleSelect } from '@/components/auth/role-select';
 import { Button } from '@/components/ui/button';
@@ -17,6 +15,60 @@ import { Input } from '@/components/ui/input';
 import { signUp } from '@/features/auth/actions';
 import { type SignUpSchema, signUpSchema } from '@/features/auth/schemas';
 import { cn } from '@/lib/utils';
+
+interface TextInputFieldProps {
+  name: string;
+  label: string;
+  placeholder: string;
+  icon?: React.ElementType;
+  type?: string;
+  disabled?: boolean;
+  control: any;
+}
+
+function TextInputField({
+  name,
+  label,
+  placeholder,
+  icon: Icon,
+  type = 'text',
+  disabled,
+  control,
+}: TextInputFieldProps) {
+  return (
+    <FormField
+      name={name}
+      control={control}
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            {Icon ? (
+              <InputStartIcon icon={Icon}>
+                <Input
+                  type={type}
+                  placeholder={placeholder}
+                  className={cn(fieldState.error && 'border-destructive')}
+                  disabled={disabled}
+                  {...field}
+                />
+              </InputStartIcon>
+            ) : (
+              <Input
+                type={type}
+                placeholder={placeholder}
+                className={cn(fieldState.error && 'border-destructive')}
+                disabled={disabled}
+                {...field}
+              />
+            )}
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
 
 function AddUserForm({ onClose }: { onClose: () => void }) {
   const [isPending, startTransition] = useTransition();
@@ -40,7 +92,7 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success('User created successfully!');
+        toast.success(`Usuario creado: ${data.username}`);
         onClose();
         form.reset();
       }
@@ -50,127 +102,53 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-4">
-        <FormField
+        <TextInputField
           name="name"
+          label="Nombre completo"
+          placeholder="John Doe"
+          icon={UserIcon}
+          disabled={isPending}
           control={form.control}
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Full Name</FormLabel>
-              <FormControl>
-                <InputStartIcon icon={UserIcon}>
-                  <Input
-                    placeholder="John Doe"
-                    className={cn(fieldState.error && 'border-destructive')}
-                    disabled={isPending}
-                    {...field}
-                  />
-                </InputStartIcon>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
         />
-        <FormField
+        <TextInputField
           name="email"
+          label="Email"
+          placeholder="user@example.com"
+          icon={MailIcon}
+          disabled={isPending}
           control={form.control}
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <InputStartIcon icon={MailIcon}>
-                  <Input
-                    placeholder="user@example.com"
-                    className={cn(fieldState.error && 'border-destructive')}
-                    disabled={isPending}
-                    {...field}
-                  />
-                </InputStartIcon>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
         />
-        <FormField
+        <TextInputField
           name="username"
+          label="Username"
+          placeholder="johndoe"
+          icon={AtSign}
+          disabled={isPending}
           control={form.control}
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <InputStartIcon icon={AtSign}>
-                  <Input
-                    placeholder="johndoe"
-                    className={cn(fieldState.error && 'border-destructive')}
-                    disabled={isPending}
-                    {...field}
-                  />
-                </InputStartIcon>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
         />
-        <FormField
+        <TextInputField
           name="password"
+          label="Password"
+          placeholder="••••••••"
+          type="password"
+          disabled={isPending}
           control={form.control}
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <InputPasswordContainer>
-                  <Input
-                    placeholder="••••••••"
-                    className={cn(fieldState.error && 'border-destructive')}
-                    disabled={isPending}
-                    type="password"
-                    {...field}
-                  />
-                </InputPasswordContainer>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
         />
-        <FormField
+        <TextInputField
           name="confirmPassword"
+          label="Confirm Password"
+          placeholder="••••••••"
+          type="password"
+          disabled={isPending}
           control={form.control}
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <InputPasswordContainer>
-                  <Input
-                    placeholder="••••••••"
-                    className={cn(fieldState.error && 'border-destructive')}
-                    disabled={isPending}
-                    type="password"
-                    {...field}
-                  />
-                </InputPasswordContainer>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
         />
-        <FormField
-          name="gender"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Gender</FormLabel>
-              <FormControl>
-                <GenderRadioGroup value={field.value} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           name="role"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Role</FormLabel>
+              <FormLabel>Rol</FormLabel>
               <FormControl>
                 <RoleSelect value={field.value} onChange={field.onChange} disabled={isPending} />
               </FormControl>
@@ -178,8 +156,9 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
             </FormItem>
           )}
         />
+
         <Button type="submit" disabled={isPending} className="mt-2 w-full">
-          Create User
+          Crear usuario
         </Button>
       </form>
     </Form>
@@ -196,7 +175,7 @@ export function AddUserModal({ isOpen, onClose }: AddUserModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
+          <DialogTitle>Añadir nuevo usuario</DialogTitle>
         </DialogHeader>
         <AddUserForm onClose={onClose} />
       </DialogContent>

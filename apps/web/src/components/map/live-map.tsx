@@ -10,7 +10,9 @@ interface LiveMapProps {
 }
 
 // Default map constants
-const DEFAULT_CENTER: [number, number] = [-12.046, -77.042]; // Lima, Peru
+const X_COORDINATE = -77.0428;
+const Y_COORDINATE = -12.0464;
+const DEFAULT_CENTER: [number, number] = [Y_COORDINATE, X_COORDINATE]; // Lima, Peru
 const DEFAULT_ZOOM = 12;
 
 // Marker icon config
