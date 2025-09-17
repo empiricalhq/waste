@@ -95,12 +95,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -203,12 +199,8 @@
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -218,9 +210,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -356,9 +346,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -478,12 +466,8 @@
           "name": "citizen_profile_user_id_user_id_fk",
           "tableFrom": "citizen_profile",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -536,12 +520,8 @@
           "name": "user_education_progress_user_id_user_id_fk",
           "tableFrom": "user_education_progress",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -549,10 +529,7 @@
       "compositePrimaryKeys": {
         "user_education_progress_user_id_content_id_pk": {
           "name": "user_education_progress_user_id_content_id_pk",
-          "columns": [
-            "user_id",
-            "content_id"
-          ]
+          "columns": ["user_id", "content_id"]
         }
       },
       "uniqueConstraints": {},
@@ -630,12 +607,8 @@
           "name": "dispatch_message_sender_id_user_id_fk",
           "tableFrom": "dispatch_message",
           "tableTo": "user",
-          "columnsFrom": [
-            "sender_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sender_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -643,12 +616,8 @@
           "name": "dispatch_message_recipient_id_user_id_fk",
           "tableFrom": "dispatch_message",
           "tableTo": "user",
-          "columnsFrom": [
-            "recipient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["recipient_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -719,12 +688,8 @@
           "name": "push_notification_token_user_id_user_id_fk",
           "tableFrom": "push_notification_token",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -842,12 +807,8 @@
           "name": "citizen_issue_report_user_id_user_id_fk",
           "tableFrom": "citizen_issue_report",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -964,12 +925,8 @@
           "name": "driver_issue_report_driver_id_user_id_fk",
           "tableFrom": "driver_issue_report",
           "tableTo": "user",
-          "columnsFrom": [
-            "driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -977,12 +934,8 @@
           "name": "driver_issue_report_route_assignment_id_route_assignment_id_fk",
           "tableFrom": "driver_issue_report",
           "tableTo": "route_assignment",
-          "columnsFrom": [
-            "route_assignment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_assignment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1087,12 +1040,8 @@
           "name": "system_alert_route_assignment_id_route_assignment_id_fk",
           "tableFrom": "system_alert",
           "tableTo": "route_assignment",
-          "columnsFrom": [
-            "route_assignment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_assignment_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1100,12 +1049,8 @@
           "name": "system_alert_truck_id_truck_id_fk",
           "tableFrom": "system_alert",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1113,12 +1058,8 @@
           "name": "system_alert_driver_id_user_id_fk",
           "tableFrom": "system_alert",
           "tableTo": "user",
-          "columnsFrom": [
-            "driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1232,12 +1173,8 @@
           "name": "route_created_by_user_id_fk",
           "tableFrom": "route",
           "tableTo": "user",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1245,12 +1182,8 @@
           "name": "route_approved_by_user_id_fk",
           "tableFrom": "route",
           "tableTo": "user",
-          "columnsFrom": [
-            "approved_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["approved_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1423,12 +1356,8 @@
           "name": "route_assignment_route_id_route_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "route",
-          "columnsFrom": [
-            "route_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1436,12 +1365,8 @@
           "name": "route_assignment_truck_id_truck_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1449,12 +1374,8 @@
           "name": "route_assignment_driver_id_user_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "user",
-          "columnsFrom": [
-            "driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1462,12 +1383,8 @@
           "name": "route_assignment_assigned_by_user_id_fk",
           "tableFrom": "route_assignment",
           "tableTo": "user",
-          "columnsFrom": [
-            "assigned_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["assigned_by"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1544,12 +1461,8 @@
           "name": "route_schedule_route_id_route_id_fk",
           "tableFrom": "route_schedule",
           "tableTo": "route",
-          "columnsFrom": [
-            "route_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1635,12 +1548,8 @@
           "name": "route_waypoint_route_id_route_id_fk",
           "tableFrom": "route_waypoint",
           "tableTo": "route",
-          "columnsFrom": [
-            "route_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1695,9 +1604,7 @@
         "truck_license_plate_unique": {
           "name": "truck_license_plate_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "license_plate"
-          ]
+          "columns": ["license_plate"]
         }
       },
       "policies": {},
@@ -1758,12 +1665,8 @@
           "name": "truck_current_location_truck_id_truck_id_fk",
           "tableFrom": "truck_current_location",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1771,12 +1674,8 @@
           "name": "truck_current_location_route_assignment_id_route_assignment_id_fk",
           "tableFrom": "truck_current_location",
           "tableTo": "route_assignment",
-          "columnsFrom": [
-            "route_assignment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["route_assignment_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1884,12 +1783,8 @@
           "name": "truck_location_history_truck_id_truck_id_fk",
           "tableFrom": "truck_location_history",
           "tableTo": "truck",
-          "columnsFrom": [
-            "truck_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["truck_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1905,84 +1800,47 @@
     "public.app_role_enum": {
       "name": "app_role_enum",
       "schema": "public",
-      "values": [
-        "admin",
-        "supervisor",
-        "driver",
-        "citizen"
-      ]
+      "values": ["admin", "supervisor", "driver", "citizen"]
     },
     "public.device_type": {
       "name": "device_type",
       "schema": "public",
-      "values": [
-        "ios",
-        "android"
-      ]
+      "values": ["ios", "android"]
     },
     "public.alert_status": {
       "name": "alert_status",
       "schema": "public",
-      "values": [
-        "unread",
-        "read",
-        "archived"
-      ]
+      "values": ["unread", "read", "archived"]
     },
     "public.alert_type": {
       "name": "alert_type",
       "schema": "public",
-      "values": [
-        "route_deviation",
-        "prolonged_stop",
-        "late_start"
-      ]
+      "values": ["route_deviation", "prolonged_stop", "late_start"]
     },
     "public.citizen_issue_type": {
       "name": "citizen_issue_type",
       "schema": "public",
-      "values": [
-        "missed_collection",
-        "illegal_dumping"
-      ]
+      "values": ["missed_collection", "illegal_dumping"]
     },
     "public.driver_issue_type": {
       "name": "driver_issue_type",
       "schema": "public",
-      "values": [
-        "mechanical_failure",
-        "road_blocked",
-        "truck_full",
-        "other"
-      ]
+      "values": ["mechanical_failure", "road_blocked", "truck_full", "other"]
     },
     "public.issue_status": {
       "name": "issue_status",
       "schema": "public",
-      "values": [
-        "open",
-        "in_progress",
-        "resolved"
-      ]
+      "values": ["open", "in_progress", "resolved"]
     },
     "public.assignment_status": {
       "name": "assignment_status",
       "schema": "public",
-      "values": [
-        "scheduled",
-        "active",
-        "completed",
-        "cancelled"
-      ]
+      "values": ["scheduled", "active", "completed", "cancelled"]
     },
     "public.route_status": {
       "name": "route_status",
       "schema": "public",
-      "values": [
-        "active",
-        "inactive",
-        "draft"
-      ]
+      "values": ["active", "inactive", "draft"]
     }
   },
   "schemas": {},
