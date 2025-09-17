@@ -1,5 +1,6 @@
+'use server';
+
 import { cookies } from 'next/headers';
-import 'server-only';
 import { ENV } from './env.ts';
 
 class ApiError extends Error {
