@@ -43,7 +43,7 @@ const citizenService = new CitizenService(issueRepo, db);
 
 // 4. Middleware
 const corsMiddleware = createCorsMiddleware(config);
-const authMiddleware = createAuthMiddleware(authService);
+const authMiddleware = createAuthMiddleware(authService, db);
 const citizenOnlyMiddleware = createCitizenOnlyMiddleware(authService);
 
 // 5. Handlers (Presentation Layer)
