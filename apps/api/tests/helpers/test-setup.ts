@@ -26,8 +26,6 @@ export async function setupTest(): Promise<TestContext> {
     throw new Error('Failed to create organization during test setup.');
   }
 
-  testUsers.setOrgId(orgId);
-
   const adminConfig = testUsers.getUser('admin');
   await testUsers.ensureUserExists(adminConfig.email, adminConfig.password);
 

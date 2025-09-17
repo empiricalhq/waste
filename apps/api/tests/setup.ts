@@ -32,7 +32,6 @@ export async function setupTest(): Promise<TestContext> {
   if (!orgId) {
     throw new Error('Failed to create organization during test setup.');
   }
-  users.setOrgId(orgId);
 
   // 3. Create the admin's "owner" membership directly in the database.
   await db.addMember(adminId, orgId, 'owner');

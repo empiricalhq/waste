@@ -39,10 +39,6 @@ export class TestUsers {
     this.db = db;
   }
 
-  setOrgId(id: string) {
-    this.orgId = id;
-  }
-
   getUser(type: 'admin' | 'driver' | 'citizen'): UserConfig {
     return this.users[type];
   }
