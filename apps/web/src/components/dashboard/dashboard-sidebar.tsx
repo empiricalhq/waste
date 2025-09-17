@@ -74,10 +74,12 @@ function UserInfo() {
   );
 }
 
-export function DashboardSidebar() {
+interface DashboardSidebarProps {
+  isAdmin?: boolean;
+}
+
+export function DashboardSidebar({ isAdmin = false }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const { data: session } = authClient.useSession();
-  const isAdmin = session?.user?.appRole === 'admin';
 
   const navItems = isAdmin ? [...navigation, ...adminNavigation] : navigation;
 
