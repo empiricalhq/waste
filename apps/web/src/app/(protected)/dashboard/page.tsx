@@ -15,7 +15,7 @@ async function DashboardContent() {
       <DashboardStats activeRoutes={data.activeRoutesCount} openIssues={data.openIssuesCount} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="h-[500px] w-full rounded-lg border lg:col-span-2">
+        <div className="isolate h-[500px] w-full rounded-lg border lg:col-span-2">
           <ErrorBoundary fallback={<div className="flex h-full items-center justify-center">Failed to load map</div>}>
             <MapWrapper trucks={data.trucks} />
           </ErrorBoundary>
