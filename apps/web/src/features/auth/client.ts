@@ -9,6 +9,6 @@ const getBaseUrl = () => {
   return window.location.origin;
 };
 
-export const { SessionProvider, useSession, getSession } = createAuthClient({
+export const authClient = createAuthClient({
   baseURL: getBaseUrl(),
 });
