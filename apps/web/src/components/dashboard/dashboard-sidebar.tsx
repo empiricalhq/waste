@@ -46,7 +46,7 @@ function UserInfo({ user }: { user: User }) {
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive">
             <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
+            Cerrar sesión
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
