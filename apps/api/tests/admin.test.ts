@@ -32,7 +32,10 @@ describe('Admin API - Trucks', () => {
   });
 
   test('should create a new truck', async () => {
-    const truckData = { name: 'Garbage Truck 007', license_plate: `T${Date.now()}` };
+    const truckData = {
+      name: 'Garbage Truck 007',
+      license_plate: `T${Date.now().toString().substring(5)}`,
+    };
     const response = await ctx.client.post<SuccessResponse<Truck>>(
       '/admin/trucks',
       truckData,
@@ -59,7 +62,7 @@ describe('Admin API - Trucks', () => {
   test('should list all active trucks', async () => {
     await ctx.client.post(
       '/admin/trucks',
-      { name: 'Listable Truck', license_plate: `L${Date.now()}` },
+      { name: 'Listable Truck', license_plate: `L${Date.now().toString().substring(5)}` },
       ctx.auth.getHeaders('admin'),
     );
 
