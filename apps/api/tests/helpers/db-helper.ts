@@ -53,11 +53,10 @@ export class DbHelper {
   }
 
   async addMember(userId: string, orgId: string, role: string): Promise<void> {
-    await this.pool.query('INSERT INTO member (id, user_id, organization_id, role) VALUES (gen_random_uuid(), $1, $2, $3)', [
-      userId,
-      orgId,
-      role,
-    ]);
+    await this.pool.query(
+      'INSERT INTO member (id, "userId", "organizationId", role) VALUES (gen_random_uuid(), $1, $2, $3)',
+      [userId, orgId, role],
+    );
   }
 
   async query(text: string, params?: any[]): Promise<any> {

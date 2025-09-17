@@ -32,7 +32,7 @@ export const auth = betterAuth({
           if (role && organizationId) {
             try {
               await db.query(
-                'INSERT INTO member (id, user_id, organization_id, role) VALUES (gen_random_uuid(), $1, $2, $3)',
+                'INSERT INTO member (id, "userId", "organizationId", role) VALUES (gen_random_uuid(), $1, $2, $3)',
                 [user.id, organizationId, role],
               );
             } catch (_error) {}
