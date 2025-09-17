@@ -17,7 +17,7 @@ async function handler(request: NextRequest) {
         Cookie: request.headers.get('Cookie') || '',
       },
       body: request.method !== 'GET' ? await request.text() : undefined,
-      ...(request.method !== 'GET' && ({ duplex: 'auto' } as any)),
+      ...(request.method !== 'GET' && ({ duplex: 'auto' } as RequestInit)),
     });
 
     const responseHeaders = new Headers(response.headers);
@@ -27,7 +27,7 @@ async function handler(request: NextRequest) {
       status: response.status,
       headers: responseHeaders,
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 503 });
   }
 }
