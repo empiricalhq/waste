@@ -1,9 +1,8 @@
 'use client';
 
-import { Bell, LayoutDashboard, Leaf, LogOut, MapPin, Menu, Settings, Truck, Users } from 'lucide-react';
+import { Bell, LayoutDashboard, Leaf, LogOut, MapPin, Settings, Truck, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,10 +29,6 @@ function UserInfo() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
-  const onSignOut = () => {
-    signOut();
-  };
-
   if (isPending) {
     return (
       <div className="flex items-center space-x-3">
@@ -47,13 +42,7 @@ function UserInfo() {
   }
 
   if (!user) {
-    return (
-      <div className="flex items-center space-x-3">
-        <div className="flex-1">
-          <p className="text-sm text-muted-foreground">Not signed in</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -62,7 +51,7 @@ function UserInfo() {
         <DropdownMenuTrigger asChild={true}>
           <Button variant="ghost" className="flex w-full items-center justify-start space-x-3 p-2 h-auto">
             <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
-              <span className="text-primary font-medium">{user.name?.[0]}</span>
+              <span className="text-primary font-medium">{user.name?.[0].toUpperCase()}</span>
             </div>
             <div className="min-w-0 flex-1 text-left">
               <p className="truncate text-sm font-medium">{user.name}</p>
@@ -71,7 +60,7 @@ function UserInfo() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onClick={onSignOut} className="text-destructive focus:text-destructive">
+          <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive">
             <LogOut className="mr-2 h-4 w-4" />
             Sign Out
           </DropdownMenuItem>
@@ -86,7 +75,6 @@ function UserInfo() {
 }
 
 export function DashboardSidebar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
   const isAdmin = session?.user?.appRole === 'admin';
@@ -96,23 +84,22 @@ export function DashboardSidebar() {
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="border-b px-6 py-4">
-        <div className="flex items-center space-x-2">
+        <Link href="/dashboard" className="flex items-center space-x-2">
           <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg">
             <Leaf className="text-primary h-5 w-5" />
           </div>
           <h1 className="text-lg font-bold">Lima Limpia</h1>
-        </div>
+        </Link>
       </div>
 
       <nav className="flex-1 space-y-1 px-4 py-4">
         {navItems.map((item) => (
           <Link
             key={item.name}
-            href={`/dashboard${item.href}`}
-            onClick={() => setIsMobileMenuOpen(false)}
+            href={item.href}
             className={cn(
               'flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-              pathname.endsWith(item.href)
+              pathname === item.href
                 ? 'bg-primary/10 text-primary'
                 : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
             )}
@@ -130,31 +117,8 @@ export function DashboardSidebar() {
   );
 
   return (
-    <>
-      <div className="fixed top-4 left-4 z-50 lg:hidden">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-background"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-      </div>
-
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r lg:block">
-        <SidebarContent />
-      </aside>
-
-      {/* Mobile Sidebar */}
-      {isMobileMenuOpen && (
-        <>
-          <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="fixed inset-y-0 left-0 z-40 w-64 border-r bg-background">
-            <SidebarContent />
-          </div>
-        </>
-      )}
-    </>
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r bg-background lg:block">
+      <SidebarContent />
+    </aside>
   );
 }

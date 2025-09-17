@@ -1,20 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { AddUserModal } from '@/components/dashboard/add-user-modal';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { authClient } from '@/features/auth/client';
+import { AddUserModal } from './add-user-modal';
 
 export function AddUserButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: session, isPending } = authClient.useSession();
 
-  const handleAddUser = (_user: { name: string; email: string; phone: string; role: string }) => {
-    setIsModalOpen(false);
-  };
+  if (isPending) {
+    return <Skeleton className="h-9 w-24" />;
+  }
+
+  if (session?.user?.appRole !== 'admin') {
+    return null;
+  }
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)}>Agregar Usuario</Button>
-      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAdd={handleAddUser} />
+      <Button onClick={() => setIsModalOpen(true)}>Add User</Button>
+      <AddUserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }

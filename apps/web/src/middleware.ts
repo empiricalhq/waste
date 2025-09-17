@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { getSession } from './features/auth/lib';
 
-const AUTH_ROUTES = ['/signin', '/signup'];
+const AUTH_ROUTES = ['/signin'];
 const PROTECTED_ROUTE_PREFIX = '/dashboard';
 
 export async function middleware(request: NextRequest) {

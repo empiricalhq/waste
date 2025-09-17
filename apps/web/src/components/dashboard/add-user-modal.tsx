@@ -5,18 +5,20 @@ import { AtSign, MailIcon, UserIcon } from 'lucide-react';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+
 import { GenderRadioGroup } from '@/components/auth/gender-radio-group';
 import { InputPasswordContainer } from '@/components/auth/input-password';
 import { InputStartIcon } from '@/components/auth/input-start-icon';
 import { RoleSelect } from '@/components/auth/role-select';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { signUp } from '@/features/auth/actions';
 import { type SignUpSchema, signUpSchema } from '@/features/auth/schemas';
 import { cn } from '@/lib/utils';
 
-function SignUpForm() {
+function AddUserForm({ onClose }: { onClose: () => void }) {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<SignUpSchema>({
@@ -38,24 +40,27 @@ function SignUpForm() {
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success('User created successfully! Redirecting...');
+        toast.success('User created successfully!');
+        onClose();
+        form.reset();
       }
     });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="z-50 my-8 flex w-full flex-col gap-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-4">
         <FormField
-          control={form.control}
           name="name"
+          control={form.control}
           render={({ field, fieldState }) => (
             <FormItem>
+              <FormLabel>Full Name</FormLabel>
               <FormControl>
                 <InputStartIcon icon={UserIcon}>
                   <Input
-                    placeholder="Full Name"
-                    className={cn('peer ps-9', fieldState.error && 'border-destructive')}
+                    placeholder="John Doe"
+                    className={cn(fieldState.error && 'border-destructive')}
                     disabled={isPending}
                     {...field}
                   />
@@ -65,17 +70,17 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
         <FormField
-          control={form.control}
           name="email"
+          control={form.control}
           render={({ field, fieldState }) => (
             <FormItem>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <InputStartIcon icon={MailIcon}>
                   <Input
-                    placeholder="Email Address"
-                    className={cn('peer ps-9', fieldState.error && 'border-destructive')}
+                    placeholder="user@example.com"
+                    className={cn(fieldState.error && 'border-destructive')}
                     disabled={isPending}
                     {...field}
                   />
@@ -85,17 +90,17 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
         <FormField
-          control={form.control}
           name="username"
+          control={form.control}
           render={({ field, fieldState }) => (
             <FormItem>
+              <FormLabel>Username</FormLabel>
               <FormControl>
                 <InputStartIcon icon={AtSign}>
                   <Input
-                    placeholder="username"
-                    className={cn('peer ps-9', fieldState.error && 'border-destructive')}
+                    placeholder="johndoe"
+                    className={cn(fieldState.error && 'border-destructive')}
                     disabled={isPending}
                     {...field}
                   />
@@ -105,17 +110,17 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
         <FormField
-          control={form.control}
           name="password"
+          control={form.control}
           render={({ field, fieldState }) => (
             <FormItem>
+              <FormLabel>Password</FormLabel>
               <FormControl>
                 <InputPasswordContainer>
                   <Input
-                    placeholder="Password"
-                    className={cn('pe-9', fieldState.error && 'border-destructive')}
+                    placeholder="••••••••"
+                    className={cn(fieldState.error && 'border-destructive')}
                     disabled={isPending}
                     type="password"
                     {...field}
@@ -126,17 +131,17 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
         <FormField
-          control={form.control}
           name="confirmPassword"
+          control={form.control}
           render={({ field, fieldState }) => (
             <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <InputPasswordContainer>
                   <Input
-                    placeholder="Confirm Password"
-                    className={cn('pe-9', fieldState.error && 'border-destructive')}
+                    placeholder="••••••••"
+                    className={cn(fieldState.error && 'border-destructive')}
                     disabled={isPending}
                     type="password"
                     {...field}
@@ -147,10 +152,9 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
         <FormField
-          control={form.control}
           name="gender"
+          control={form.control}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Gender</FormLabel>
@@ -161,10 +165,9 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
         <FormField
-          control={form.control}
           name="role"
+          control={form.control}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Role</FormLabel>
@@ -175,23 +178,28 @@ function SignUpForm() {
             </FormItem>
           )}
         />
-
-        <Button type="submit" disabled={isPending} className="mt-5 w-full">
-          Add User
+        <Button type="submit" disabled={isPending} className="mt-2 w-full">
+          Create User
         </Button>
       </form>
     </Form>
   );
 }
 
-export default function SignUpPage() {
+interface AddUserModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function AddUserModal({ isOpen, onClose }: AddUserModalProps) {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center">
-      <div className="border-foreground/10 flex w-full flex-col rounded-2xl border px-8 py-5 md:w-96">
-        <h1 className="text-2xl font-bold">Create User</h1>
-        <p className="text-muted-foreground text-sm">For internal use by administrators.</p>
-        <SignUpForm />
-      </div>
-    </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add New User</DialogTitle>
+        </DialogHeader>
+        <AddUserForm onClose={onClose} />
+      </DialogContent>
+    </Dialog>
   );
 }
