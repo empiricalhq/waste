@@ -1,9 +1,6 @@
 import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar';
 import { requireUser } from '@/features/auth/lib';
 
-// biome-ignore lint: cloudflare requires edge runtime
-export const runtime = 'edge';
-
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   // This layout is only for admins and supervisors.
   // The middleware also enforces this, but this check provides an extra layer of security.
