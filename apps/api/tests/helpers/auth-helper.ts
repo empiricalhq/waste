@@ -55,7 +55,11 @@ export class AuthHelper {
     if (!cookieHeader) {
       throw new Error('No session cookie received during login');
     }
-    let cookie = cookieHeader.split(';')[0];
+    const mainCookie = cookieHeader.split(';')[0];
+    if (!mainCookie) {
+      throw new Error('Invalid session cookie format received');
+    }
+    let cookie = mainCookie;
 
     const userConfig = this.users.findUserByEmail(email);
     if (userConfig?.role !== 'citizen') {
@@ -70,7 +74,10 @@ export class AuthHelper {
         );
         const newCookieHeader = setActiveRes.headers.get('set-cookie');
         if (newCookieHeader) {
-          cookie = newCookieHeader.split(';')[0];
+          const newMainCookie = newCookieHeader.split(';')[0];
+          if (newMainCookie) {
+            cookie = newMainCookie;
+          }
         }
       }
     }
