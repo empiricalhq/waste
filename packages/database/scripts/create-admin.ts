@@ -82,7 +82,7 @@ async function main() {
     );
 
     s.start('Creando usuario propietario...');
-    const ownerUser = await auth.api.signUpEmail({
+    const { user: ownerUser } = await auth.api.signUpEmail({
       body: {
         email,
         password,
@@ -96,7 +96,7 @@ async function main() {
       body: {
         name: 'Lima Limpia',
         slug: 'lima-limpia',
-        userId: ownerUser.id, // This makes the user the 'owner'
+        userId: ownerUser.id,
       },
     });
     s.stop('Organización creada correctamente.');
