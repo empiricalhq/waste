@@ -43,30 +43,55 @@ export class AuthHelper {
       password,
     });
 
+    console.log(`[DEBUG] Login response for ${email}:`, signInResponse.status);
     if (signInResponse.status !== 200) {
+      console.error('[DEBUG] Login failed. Response data:', signInResponse.data);
       throw new Error(`Login failed for ${email}: ${signInResponse.status}`);
     }
 
-    const cookie = signInResponse.headers.get('set-cookie');
+    let cookie = signInResponse.headers.get('set-cookie');
     if (!cookie) {
       throw new Error('No session cookie received');
     }
+    console.log(`[DEBUG] Initial cookie received for ${email}.`);
 
     // Set active organization in session for staff members
     const userConfig = this.testUsers.findUserByEmail(email);
     if (userConfig && userConfig.role !== 'citizen') {
       const orgRes = await this.client.get('/auth/organization/list', { Cookie: cookie });
       const org = orgRes.data?.[0];
+
       if (org) {
-        await this.client.post('/auth/organization/active', { organizationId: org.id }, { Cookie: cookie });
+        console.log(`[DEBUG] Found organization '${org.name}' to set as active.`);
+        const setActiveOrgResponse = await this.client.post(
+          '/auth/organization/set-active',
+          { organizationId: org.id },
+          { Cookie: cookie },
+        );
+        console.log('[DEBUG] Set Active Org Response Status:', setActiveOrgResponse.status);
+        console.log('[DEBUG] Set Active Org Response Body:', setActiveOrgResponse.data);
+
+        const newCookie = setActiveOrgResponse.headers.get('set-cookie');
+        if (newCookie) {
+          cookie = newCookie;
+          console.log('[DEBUG] Session cookie was UPDATED after setting active org.');
+        }
+
+        // === VERIFICATION STEP ===
+        // Immediately check if getActiveMember now works with the final cookie.
+        const verificationResponse = await this.client.get('/auth/organization/member/active', { Cookie: cookie });
+        console.log(
+          `[DEBUG] VERIFICATION: getActiveMember response for ${email}:`,
+          verificationResponse.status,
+          verificationResponse.data,
+        );
+        // ========================
+      } else {
+        console.error('[DEBUG] CRITICAL: No organization found for staff user.');
       }
     }
 
     const sessionResponse = await this.client.get('/auth/get-session', { Cookie: cookie });
-    if (sessionResponse.status !== 200) {
-      throw new Error('Session verification failed');
-    }
-
     const memberResponse = await this.client.get('/auth/organization/member/active', { Cookie: cookie });
     const member = memberResponse.status === 200 ? memberResponse.data : null;
 

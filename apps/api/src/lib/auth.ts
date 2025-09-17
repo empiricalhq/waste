@@ -17,30 +17,6 @@ export const auth = betterAuth({
     // requireEmailVerification: false,
   },
   plugins: [organization({})],
-  databaseHooks: {
-    user: {
-      create: {
-        after: async (user, { input }) => {
-          // Every new user gets a citizen profile by default.
-          try {
-            await db.query('INSERT INTO citizen_profile (user_id) VALUES ($1)', [user.id]);
-          } catch (_error) {}
-
-          // If role and organizationId are passed then add user as a member.
-          // This is used by the Add User modal in the web app.
-          const { role, organizationId } = (input.data || {}) as { role?: string; organizationId?: string };
-          if (role && organizationId) {
-            try {
-              await db.query(
-                'INSERT INTO member (id, "userId", "organizationId", role) VALUES (gen_random_uuid(), $1, $2, $3)',
-                [user.id, organizationId, role],
-              );
-            } catch (_error) {}
-          }
-        },
-      },
-    },
-  },
 });
 
 export type User = typeof auth.$Infer.Session.user;
