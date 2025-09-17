@@ -1,7 +1,7 @@
 import process from 'node:process';
 import * as p from '@clack/prompts';
 import { betterAuth } from 'better-auth';
-import { admin } from 'better-auth/plugins';
+import { organization } from 'better-auth/plugins';
 import { Pool } from 'pg';
 import color from 'picocolors';
 
@@ -21,36 +21,23 @@ const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
   emailAndPassword: { enabled: true },
-  user: {
-    additionalFields: {
-      appRole: {
-        type: ['admin', 'supervisor', 'driver', 'citizen'],
-        required: true,
-        defaultValue: 'citizen',
-      },
-    },
-  },
   telemetry: { enabled: false },
-  plugins: [
-    admin({
-      adminRoles: ['admin'],
-    }),
-  ],
+  plugins: [organization({})],
 });
 
 async function main() {
-  p.intro(color.inverse(' @packages/database: creación de usuario (admin) '));
+  p.intro(color.inverse(' @packages/database: creación de organización y propietario '));
 
   const s = p.spinner();
 
   try {
-    s.start('Revisando si ya existe un usuario con rol administrador...');
-    const { rows } = await db.query(`SELECT 1 FROM "user" WHERE role = 'admin' LIMIT 1`);
+    s.start('Revisando si ya existe una organización...');
+    const { rows } = await db.query(`SELECT 1 FROM "organization" LIMIT 1`);
     s.stop('Revisión completada.');
 
     if (rows.length > 0) {
-      p.log.warn('Ya existe un usuario con rol administrador.');
-      p.outro('No se puede crear otro administrador desde este script. Usa la aplicación web para añadir más.');
+      p.log.warn('Ya existe una organización.');
+      p.outro('Este script solo puede crear la primera organización y su propietario.');
       return;
     }
 
@@ -58,7 +45,7 @@ async function main() {
       {
         name: () =>
           p.text({
-            message: 'Nombre completo del administrador:',
+            message: 'Nombre completo del propietario:',
             placeholder: 'Ejemplo: Juan Pérez',
             validate: (value) => {
               if (value.trim().length < 5) {
@@ -68,7 +55,7 @@ async function main() {
           }),
         email: () =>
           p.text({
-            message: 'Correo electrónico del administrador:',
+            message: 'Correo electrónico del propietario:',
             placeholder: 'Ejemplo: admin@dominio.xyz',
             validate: (value) => {
               if (!/^\S+@\S+\.\S+$/.test(value)) {
@@ -94,19 +81,25 @@ async function main() {
       },
     );
 
-    s.start('Creando usuario administrador...');
-    await auth.api.createUser({
+    s.start('Creando usuario propietario...');
+    const ownerUser = await auth.api.createUser({
       body: {
         email,
         password,
         name,
-        role: 'admin',
-        data: {
-          appRole: 'admin',
-        },
       },
     });
-    s.stop('Usuario administrador creado correctamente.');
+    s.stop('Usuario propietario creado.');
+
+    s.start('Creando organización principal...');
+    await auth.api.createOrganization({
+      body: {
+        name: 'Lima Limpia',
+        slug: 'lima-limpia',
+        userId: ownerUser.id, // This makes the user the 'owner'
+      },
+    });
+    s.stop('Organización creada correctamente.');
 
     const noteMessage = `
 Agrega estas credenciales al archivo ${color.bold('.env')} en la raíz del proyecto:
@@ -115,12 +108,12 @@ ${color.green(`SYSTEM_ADMIN_EMAIL="${email}"`)}
 ${color.green(`SYSTEM_ADMIN_PASSWORD="${password}"`)}
 `;
     p.note(noteMessage, 'Próximos pasos (apps/api/test):');
-    p.outro(color.green('Usuario administrador configurado correctamente.'));
+    p.outro(color.green('Propietario de la organización configurado correctamente.'));
     p.outro('Ahora puedes usar esta cuenta para la prueba de la API via "bun run test".');
   } catch (error: any) {
     s.stop('Ocurrió un error durante la creación.');
-    p.log.error('No se pudo crear el usuario administrador.');
-    if (error.message.includes('unique constraint')) {
+    p.log.error('No se pudo configurar la organización y el propietario.');
+    if (error.message?.includes('unique constraint')) {
       p.log.warn('Ya existe un usuario con este correo electrónico en la base de datos.');
     } else {
       p.log.error(error.message);
