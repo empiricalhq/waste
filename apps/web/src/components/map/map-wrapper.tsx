@@ -1,16 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import type { Truck } from '@/db/types';
 
-// Asumimos que el tipo Truck está definido en otro lugar y lo importamos
-type Truck = {
-  id: string;
-  license_plate: string;
-  lat: number | null;
-  lng: number | null;
-};
-
-// El MapWrapper ahora acepta la lista de camiones
+// El MapWrapper ahora acepta la lista de camiones con ubicación
 interface MapWrapperProps {
   trucks: Truck[];
 }
@@ -24,7 +17,7 @@ const LiveMap = dynamic(() => import('@/components/map/live-map'), {
   ),
 });
 
-export default function MapWrapper({ trucks }: MapWrapperProps) {
+export function MapWrapper({ trucks }: MapWrapperProps) {
   // Pasamos la lista de camiones al componente LiveMap
   return <LiveMap trucks={trucks} />;
 }

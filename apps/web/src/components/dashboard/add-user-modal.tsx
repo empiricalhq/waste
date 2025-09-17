@@ -1,24 +1,183 @@
 'use client';
 
-import { SignUpForm } from '@/app/(routes)/(auth)/signup/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AtSign, type LucideIcon, MailIcon, UserIcon } from 'lucide-react';
+import { useTransition } from 'react';
+import { type Control, type Path, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+import { InputStartIcon } from '@/components/auth/input-start-icon';
+import { RoleSelect } from '@/components/auth/role-select';
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { signUp } from '@/features/auth/actions';
+import { type SignUpSchema, signUpSchema } from '@/features/auth/schemas';
+import { cn } from '@/lib/utils';
+
+interface TextInputFieldProps {
+  name: Path<SignUpSchema>;
+  label: string;
+  placeholder: string;
+  icon?: LucideIcon;
+  type?: string;
+  disabled?: boolean;
+  control: Control<SignUpSchema>;
+}
+
+function TextInputField({
+  name,
+  label,
+  placeholder,
+  icon: Icon,
+  type = 'text',
+  disabled,
+  control,
+}: TextInputFieldProps) {
+  return (
+    <FormField
+      name={name}
+      control={control}
+      render={({ field, fieldState }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            {Icon ? (
+              <InputStartIcon icon={Icon}>
+                <Input
+                  type={type}
+                  placeholder={placeholder}
+                  className={cn('peer ps-9', fieldState.error && 'border-destructive')}
+                  disabled={disabled}
+                  {...field}
+                />
+              </InputStartIcon>
+            ) : (
+              <Input
+                type={type}
+                placeholder={placeholder}
+                className={cn(fieldState.error && 'border-destructive')}
+                disabled={disabled}
+                {...field}
+              />
+            )}
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function AddUserForm({ onClose }: { onClose: () => void }) {
+  const [isPending, startTransition] = useTransition();
+
+  const form = useForm<SignUpSchema>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+      gender: undefined,
+      role: 'driver',
+    },
+  });
+
+  function onSubmit(data: SignUpSchema) {
+    startTransition(async () => {
+      const result = await signUp(data);
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(`Usuario creado: ${data.username}`);
+        onClose();
+        form.reset();
+      }
+    });
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-4">
+        <TextInputField
+          name="name"
+          label="Nombre completo"
+          placeholder="Juan Pérez"
+          icon={UserIcon}
+          disabled={isPending}
+          control={form.control}
+        />
+        <TextInputField
+          name="email"
+          label="Correo electrónico"
+          placeholder="correo@ejemplo.com"
+          icon={MailIcon}
+          disabled={isPending}
+          control={form.control}
+        />
+        <TextInputField
+          name="username"
+          label="Usuario"
+          placeholder="juanperez"
+          icon={AtSign}
+          disabled={isPending}
+          control={form.control}
+        />
+        <TextInputField
+          name="password"
+          label="Contraseña"
+          placeholder="••••••••"
+          type="password"
+          disabled={isPending}
+          control={form.control}
+        />
+        <TextInputField
+          name="confirmPassword"
+          label="Confirmar contraseña"
+          placeholder="••••••••"
+          type="password"
+          disabled={isPending}
+          control={form.control}
+        />
+
+        <FormField
+          name="role"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rol</FormLabel>
+              <FormControl>
+                <RoleSelect value={field.value} onChange={field.onChange} disabled={isPending} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" disabled={isPending} className="mt-2 w-full">
+          Crear usuario
+        </Button>
+      </form>
+    </Form>
+  );
+}
 
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (user: { name: string; email: string; phone: string; role: string }) => void;
 }
 
 export function AddUserModal({ isOpen, onClose }: AddUserModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Agregar nuevo usuario</DialogTitle>
+          <DialogTitle>Añadir nuevo usuario</DialogTitle>
         </DialogHeader>
-        <div>
-          <SignUpForm />
-        </div>
+        <AddUserForm onClose={onClose} />
       </DialogContent>
     </Dialog>
   );

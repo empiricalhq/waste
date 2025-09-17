@@ -1,47 +1,53 @@
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { getSession } from './features/auth/lib';
 
-import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './routes.ts';
+const AUTH_ROUTES = ['/signin'];
+const PROTECTED_ROUTE_PREFIX = '/dashboard';
 
 export async function middleware(request: NextRequest) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('better-auth.session_token');
+  const { pathname } = request.nextUrl;
 
-  const isApiAuth = request.nextUrl.pathname.startsWith(apiAuthPrefix);
-
-  const isPublicRoute = publicRoutes.includes(request.nextUrl.pathname);
-
-  const isAuthRoute = () => {
-    return authRoutes.some((path) => request.nextUrl.pathname.startsWith(path));
-  };
-
-  if (isApiAuth) {
+  // Skip middleware for static files and Next.js internals
+  if (pathname.startsWith('/_next/') || pathname.includes('.')) {
     return NextResponse.next();
   }
 
-  if (isAuthRoute()) {
-    if (session) {
-      return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
+  const session = await getSession();
+  const isAuthenticated = Boolean(session?.user);
+
+  // Allow API routes to pass through
+  if (pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
+  const isAuthRoute = AUTH_ROUTES.includes(pathname);
+  const isProtectedRoute = pathname.startsWith(PROTECTED_ROUTE_PREFIX);
+
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
+  }
+
+  if (isProtectedRoute && !isAuthenticated) {
+    const signInUrl = new URL('/signin', request.url);
+    signInUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  if (isProtectedRoute && session?.user) {
+    const userRole = session.user.appRole;
+    if (userRole !== 'admin' && userRole !== 'supervisor') {
+      return NextResponse.redirect(new URL('/', request.url));
     }
-    return NextResponse.next();
-  }
 
-  if (!(session || isPublicRoute)) {
-    return NextResponse.redirect(new URL('/signin', request.url));
+    // Prevent supervisors from accessing admin-only settings page
+    if (pathname.startsWith('/settings') && userRole !== 'admin') {
+      return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

@@ -1,14 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { ENV } from '@/lib/env';
 
-// biome-ignore lint: cloudflare requires edge runtime
-export const runtime = 'edge';
-
-const API_BASE_URL = process.env.BETTER_AUTH_URL || 'http://localhost:4000';
-
+// This route acts as a proxy to the authentication service.
+// This is used by the client-side `better-auth/react` library to fetch session data
+// without exposing the external auth service URL to the browser.
 async function handler(request: NextRequest) {
   const url = new URL(request.url);
-  const path = url.pathname.replace('/api/auth', '');
-  const apiUrl = `${API_BASE_URL}/api/auth${path}${url.search}`;
+  const path = url.pathname;
+  const apiUrl = `${ENV.API_BASE_URL}${path}${url.search}`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -18,21 +17,22 @@ async function handler(request: NextRequest) {
         Cookie: request.headers.get('Cookie') || '',
       },
       body: request.method !== 'GET' ? await request.text() : undefined,
+      ...(request.method !== 'GET' && ({ duplex: 'auto' } as RequestInit)),
     });
 
-    const data = await response.text();
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.delete('Content-Encoding');
 
-    return new NextResponse(data, {
+    return new NextResponse(response.body, {
       status: response.status,
-      headers: {
-        'Content-Type': response.headers.get('Content-Type') || 'application/json',
-        'Set-Cookie': response.headers.get('Set-Cookie') || '',
-      },
+      headers: responseHeaders,
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 503 });
   }
 }
+
+export const runtime = 'edge';
 
 export const GET = handler;
 export const POST = handler;
