@@ -4,6 +4,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { getCurrentUser } from '@/features/auth/lib';
 import { cn } from '@/lib/utils';
 
+export const runtime = 'edge';
+
 export default async function HomePage() {
   const user = await getCurrentUser();
   if (user) {
