@@ -24,8 +24,8 @@ export const signUpSchema = z
       .min(8, 'Password must be at least 8 characters.')
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain an uppercase, lowercase, and number.'),
     confirmPassword: z.string(),
-    gender: z.enum(['male', 'female'], { required_error: 'Please select a gender.' }),
-    role: z.enum(['admin', 'supervisor', 'driver'], { required_error: 'Please select a role.' }),
+    gender: z.enum(['male', 'female'], { error: 'Please select a gender.' }),
+    role: z.enum(['admin', 'supervisor', 'driver'], { error: 'Please select a role.' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match.",
