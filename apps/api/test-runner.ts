@@ -1,11 +1,13 @@
 import process from 'node:process';
 
-const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/index.ts'], {
+const SERVER_STARTUP_DELAY_MS = 6000;
+
+const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/cmd/server.ts'], {
   stdout: 'inherit',
   stderr: 'inherit',
 });
 
-await Bun.sleep(6000);
+await Bun.sleep(SERVER_STARTUP_DELAY_MS);
 
 const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', '--sequential'], {
   stdout: 'inherit',
@@ -13,10 +15,11 @@ const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', '--sequent
 });
 
 const code = await tests.exited;
-console.log(`Tests exited with code ${code}`);
 
 try {
   server.kill();
-} catch {}
+} catch {
+  // ignore errors if the server is already dead
+}
 
 process.exit(code ?? 1);

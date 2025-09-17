@@ -1,92 +1,127 @@
-import { afterAll, beforeEach, expect, test } from 'bun:test';
-import { setupTest, type TestContext } from './helpers/test-setup.ts';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
+import { HTTP_STATUS } from './config';
+import { setupTest, type TestContext } from './setup';
 
-let ctx: TestContext;
+// Define expected response shapes
+interface Truck {
+  id: string;
+  name: string;
+  license_plate: string;
+}
+interface Route {
+  id: string;
+  name: string;
+}
+interface SuccessResponse<T> {
+  data: T;
+}
+interface ErrorResponse {
+  error: string;
+}
 
-beforeEach(async () => {
-  ctx = await setupTest();
-  await ctx.auth.loginAs('admin');
-});
+describe('Admin API - Trucks', () => {
+  let ctx: TestContext;
 
-test('admin can create truck', async () => {
-  const truckData = {
-    name: 'Test Truck',
-    license_plate: `T${Date.now().toString().slice(-8)}`,
-  };
+  beforeEach(async () => {
+    ctx = await setupTest();
+    await ctx.auth.loginAs('admin');
+  });
 
-  const response = await ctx.client.post('/admin/trucks', truckData, ctx.auth.getHeaders('admin'));
+  afterAll(async () => {
+    await ctx.db.close();
+  });
 
-  expect(response.status).toBe(201);
-  expect(response.data).toMatchObject({
-    id: expect.any(String),
-    name: truckData.name,
-    license_plate: truckData.license_plate,
+  test('should create a new truck', async () => {
+    const truckData = { name: 'Garbage Truck 007', license_plate: `T${Date.now()}` };
+    const response = await ctx.client.post<SuccessResponse<Truck>>(
+      '/admin/trucks',
+      truckData,
+      ctx.auth.getHeaders('admin'),
+    );
+
+    expect(response.status).toBe(HTTP_STATUS.CREATED);
+    expect(response.data.data).toMatchObject({
+      id: expect.any(String),
+      name: truckData.name,
+      license_plate: truckData.license_plate,
+    });
+  });
+
+  test('should fail to create a truck with a duplicate license plate', async () => {
+    const truckData = { name: 'Garbage Truck 008', license_plate: 'DUPLICATE' };
+    await ctx.client.post('/admin/trucks', truckData, ctx.auth.getHeaders('admin'));
+
+    const response = await ctx.client.post<ErrorResponse>('/admin/trucks', truckData, ctx.auth.getHeaders('admin'));
+    expect(response.status).toBe(HTTP_STATUS.CONFLICT);
+    expect(response.data.error).toBe('License plate already exists');
+  });
+
+  test('should list all active trucks', async () => {
+    await ctx.client.post(
+      '/admin/trucks',
+      { name: 'Listable Truck', license_plate: `L${Date.now()}` },
+      ctx.auth.getHeaders('admin'),
+    );
+
+    const response = await ctx.client.get<SuccessResponse<Truck[]>>('/admin/trucks', ctx.auth.getHeaders('admin'));
+    expect(response.status).toBe(HTTP_STATUS.OK);
+    expect(Array.isArray(response.data.data)).toBe(true);
+    expect(response.data.data.length).toBeGreaterThan(0);
   });
 });
 
-test('admin can list trucks', async () => {
-  await ctx.client.post(
-    '/admin/trucks',
-    {
-      name: 'Test Truck',
-      license_plate: `L${Date.now().toString().slice(-8)}`,
-    },
-    ctx.auth.getHeaders('admin'),
-  );
+describe('Admin API - Routes', () => {
+  let ctx: TestContext;
 
-  const response = await ctx.client.get('/admin/trucks', ctx.auth.getHeaders('admin'));
+  beforeEach(async () => {
+    ctx = await setupTest();
+    await ctx.auth.loginAs('admin');
+  });
 
-  expect(response.status).toBe(200);
-  expect(Array.isArray(response.data)).toBe(true);
-  expect(response.data.length).toBeGreaterThan(0);
-});
+  afterAll(async () => {
+    await ctx.db.close();
+  });
 
-test('admin cannot create duplicate license plate', async () => {
-  const truckData = {
-    name: 'Test Truck',
-    license_plate: 'DUPLICATE',
-  };
-  const headers = ctx.auth.getHeaders('admin');
-
-  await ctx.client.post('/admin/trucks', truckData, headers);
-
-  const response = await ctx.client.post('/admin/trucks', truckData, headers);
-
-  expect(response.status).toBe(409);
-  expect(response.data.error).toContain('License plate already exists');
-});
-
-test('admin can create route with waypoints', async () => {
-  const routeData = {
-    name: 'Ruta del Centro de Lima',
-    description: 'Ruta principal por el centro de Lima',
-    start_lat: -12.0464,
-    start_lng: -77.0428,
-    estimated_duration_minutes: 120,
-    waypoints: [
-      { lat: -12.0464, lng: -77.0428, sequence_order: 1 },
-      { lat: -12.05, lng: -77.04, sequence_order: 2 },
-    ],
-  };
-
-  const response = await ctx.client.post('/admin/routes', routeData, ctx.auth.getHeaders('admin'));
-
-  expect(response.status).toBe(201);
-  expect(response.data).toMatchObject({
-    id: expect.any(String),
-    name: routeData.name,
-    description: routeData.description,
+  test('should create a new route with waypoints', async () => {
+    const routeData = {
+      name: 'Downtown Route',
+      description: 'Main route for the city center.',
+      start_lat: -12.04,
+      start_lng: -77.04,
+      estimated_duration_minutes: 90,
+      waypoints: [
+        { lat: -12.04, lng: -77.04, sequence_order: 1 },
+        { lat: -12.05, lng: -77.03, sequence_order: 2 },
+      ],
+    };
+    const response = await ctx.client.post<SuccessResponse<Route>>(
+      '/admin/routes',
+      routeData,
+      ctx.auth.getHeaders('admin'),
+    );
+    expect(response.status).toBe(HTTP_STATUS.CREATED);
+    expect(response.data.data).toMatchObject({
+      id: expect.any(String),
+      name: routeData.name,
+    });
   });
 });
 
-test('non-admin cannot access admin endpoints', async () => {
-  await ctx.auth.loginAs('citizen');
+describe('Admin API - Authorization', () => {
+  let ctx: TestContext;
 
-  const response = await ctx.client.get('/admin/trucks', ctx.auth.getHeaders('citizen'));
+  beforeEach(async () => {
+    ctx = await setupTest();
+    await ctx.auth.loginAs('admin');
+  });
 
-  expect(response.status).toBe(403);
-});
+  afterAll(async () => {
+    await ctx.db.close();
+  });
 
-afterAll(async () => {
-  await ctx.db.close();
+  test('should forbid access from non-admin users', async () => {
+    await ctx.auth.loginAs('citizen');
+    const response = await ctx.client.get('/admin/trucks', ctx.auth.getHeaders('citizen'));
+    expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
+  });
 });

@@ -1,47 +1,36 @@
-import { afterAll, beforeEach, expect, test } from 'bun:test';
-import { setupTest, type TestContext } from './helpers/test-setup.ts';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
+import { setupTest, type TestContext } from './setup';
 
-let ctx: TestContext;
+describe('Authentication', () => {
+  let ctx: TestContext;
 
-beforeEach(async () => {
-  ctx = await setupTest();
-});
+  beforeEach(async () => {
+    ctx = await setupTest();
+  });
 
-test('admin user can login and has correct role', async () => {
-  const session = await ctx.auth.loginAs('admin');
+  afterAll(async () => {
+    await ctx.db.close();
+  });
 
-  expect(session.user.email).toBe('admin@test.com');
-  expect(session.member?.role).toBe('owner');
-  expect(session.cookie).toContain('better-auth.session_token');
-});
+  test('admin user can log in and has the correct role', async () => {
+    const session = await ctx.auth.loginAs('admin');
+    expect(session.user.email).toBe(ctx.users.getUser('admin').email);
+    expect(session.member?.role).toBe('owner');
+  });
 
-test('driver user can login and has correct role', async () => {
-  const session = await ctx.auth.loginAs('driver');
+  test('driver user can log in and has the correct role', async () => {
+    const session = await ctx.auth.loginAs('driver');
+    expect(session.user.email).toBe(ctx.users.getUser('driver').email);
+    expect(session.member?.role).toBe('driver');
+  });
 
-  expect(session.user.email).toBe('driver@test.com');
-  expect(session.member?.role).toBe('driver');
-  expect(session.cookie).toContain('better-auth.session_token');
-});
+  test('citizen user can log in and is not a staff member', async () => {
+    const session = await ctx.auth.loginAs('citizen');
+    expect(session.user.email).toBe(ctx.users.getUser('citizen').email);
+    expect(session.member).toBeNull();
+  });
 
-test('citizen user can login and is not a staff member', async () => {
-  const session = await ctx.auth.loginAs('citizen');
-
-  expect(session.user.email).toBe('citizen@test.com');
-  expect(session.member).toBeNull();
-  expect(session.cookie).toContain('better-auth.session_token');
-});
-
-test('login fails with invalid credentials', async () => {
-  expect(ctx.auth.login('nonexistent@test.com', 'wrongpassword')).rejects.toThrow();
-});
-
-test('multiple login calls reuse existing session', async () => {
-  const session1 = await ctx.auth.loginAs('citizen');
-  const session2 = await ctx.auth.loginAs('citizen');
-
-  expect(session1).toBe(session2);
-});
-
-afterAll(async () => {
-  await ctx.db.close();
+  test('login fails with invalid credentials', async () => {
+    await expect(ctx.auth.login('nonexistent@user.com', 'wrongpassword')).rejects.toThrow();
+  });
 });

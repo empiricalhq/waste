@@ -1,56 +1,50 @@
-import { afterAll, beforeEach, expect, test } from 'bun:test';
-import { setupTest, type TestContext } from './helpers/test-setup.ts';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
+import { HTTP_STATUS } from './config';
+import { setupTest, type TestContext } from './setup';
 
-let ctx: TestContext;
+interface ErrorResponse {
+  error: string;
+}
 
-beforeEach(async () => {
-  ctx = await setupTest();
-  await ctx.auth.loginAs('driver');
-});
+describe('Driver API', () => {
+  let ctx: TestContext;
 
-test('driver gets 404 when no route assigned', async () => {
-  const response = await ctx.client.get('/driver/route/current', ctx.auth.getHeaders('driver'));
+  beforeEach(async () => {
+    ctx = await setupTest();
+    await ctx.auth.loginAs('driver');
+  });
 
-  expect(response.status).toBe(404);
-  expect(response.data.error).toContain('No upcoming or active route found');
-});
+  afterAll(async () => {
+    await ctx.db.close();
+  });
 
-test('driver cannot update location without active assignment', async () => {
-  const locationData = {
-    lat: -12.0464,
-    lng: -77.0428,
-    speed: 25.5,
-    heading: 180,
-  };
+  test('should return 404 when no route is assigned', async () => {
+    const response = await ctx.client.get<ErrorResponse>('/driver/route/current', ctx.auth.getHeaders('driver'));
+    expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
+    expect(response.data.error).toBe('No upcoming or active route found');
+  });
 
-  const response = await ctx.client.post('/driver/location', locationData, ctx.auth.getHeaders('driver'));
+  test('should return 400 when updating location without an active assignment', async () => {
+    const locationData = { lat: -12.0464, lng: -77.0428 };
+    const response = await ctx.client.post<ErrorResponse>(
+      '/driver/location',
+      locationData,
+      ctx.auth.getHeaders('driver'),
+    );
+    expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect(response.data.error).toBe('No active assignment found for location update');
+  });
 
-  expect(response.status).toBe(500);
-  expect(response.data.error).toContain('Failed to update location');
-});
+  test('should return 400 when reporting an issue without an active assignment', async () => {
+    const issueData = { type: 'road_blocked', lat: -12.04, lng: -77.04 };
+    const response = await ctx.client.post<ErrorResponse>('/driver/issues', issueData, ctx.auth.getHeaders('driver'));
+    expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect(response.data.error).toBe('No active assignment found to report an issue');
+  });
 
-test('driver cannot report issues without active assignment', async () => {
-  const issueData = {
-    type: 'mechanical_failure',
-    notes: 'Engine overheating',
-    lat: -12.0464,
-    lng: -77.0428,
-  };
-
-  const response = await ctx.client.post('/driver/issues', issueData, ctx.auth.getHeaders('driver'));
-
-  expect(response.status).toBe(400);
-  expect(response.data.error).toContain('No active assignment found');
-});
-
-test('non-driver cannot access driver endpoints', async () => {
-  await ctx.auth.loginAs('citizen');
-
-  const response = await ctx.client.get('/driver/route/current', ctx.auth.getHeaders('citizen'));
-
-  expect(response.status).toBe(403);
-});
-
-afterAll(async () => {
-  await ctx.db.close();
+  test('should forbid access from non-driver users', async () => {
+    await ctx.auth.loginAs('citizen');
+    const response = await ctx.client.get('/driver/route/current', ctx.auth.getHeaders('citizen'));
+    expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
+  });
 });

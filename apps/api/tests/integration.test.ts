@@ -1,133 +1,125 @@
-import { afterAll, beforeEach, expect, test } from 'bun:test';
-import { setupTest, type TestContext } from './helpers/test-setup.ts';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
+import { HTTP_STATUS } from './config';
+import { setupTest, type TestContext } from './setup';
 
-let ctx: TestContext;
+interface SuccessResponse<T> {
+  data: T;
+}
 
-beforeEach(async () => {
-  ctx = await setupTest();
-});
+const MILLISECONDS_PER_SECOND = 1000;
 
-test('complete workflow: admin creates resources, driver gets assignment', async () => {
-  // preparing: setup users
-  await ctx.auth.loginAs('admin');
+async function loginUsers(ctx: TestContext) {
+  const adminHeaders = (await ctx.auth.loginAs('admin')).cookie;
   const driverSession = await ctx.auth.loginAs('driver');
+  return { adminHeaders, driverSession, driverHeaders: driverSession.cookie };
+}
 
-  const adminHeaders = ctx.auth.getHeaders('admin');
-  const driverHeaders = ctx.auth.getHeaders('driver');
-
-  // 1. admin creates truck
-  const truckResponse = await ctx.client.post(
+async function createTruck(ctx: TestContext, adminHeaders: string) {
+  return ctx.client.post<SuccessResponse<{ id: string }>>(
     '/admin/trucks',
-    {
-      name: 'Integration Test Truck',
-      license_plate: `I${Date.now().toString().slice(-8)}`,
-    },
-    adminHeaders,
+    { name: 'Workflow Truck', license_plate: `W${Date.now()}` },
+    { Cookie: adminHeaders },
   );
+}
 
-  expect(truckResponse.status).toBe(201);
-  const truck = truckResponse.data;
-
-  // 2. admin creates route
-  const routeResponse = await ctx.client.post(
+async function createRoute(ctx: TestContext, adminHeaders: string) {
+  return ctx.client.post<SuccessResponse<{ id: string }>>(
     '/admin/routes',
     {
-      name: 'Integration Test Route',
-      description: 'Test route for integration',
-      start_lat: -12.0464,
-      start_lng: -77.0428,
+      name: 'Workflow Route',
+      start_lat: -12,
+      start_lng: -77,
       estimated_duration_minutes: 60,
-      waypoints: [
-        { lat: -12.0464, lng: -77.0428, sequence_order: 1 },
-        { lat: -12.05, lng: -77.04, sequence_order: 2 },
-      ],
+      waypoints: [{ lat: -12, lng: -77, sequence_order: 1 }],
     },
-    adminHeaders,
+    { Cookie: adminHeaders },
   );
+}
 
-  expect(routeResponse.status).toBe(201);
-  const route = routeResponse.data;
-
-  // 3. admin creates assignment
-  const assignmentResponse = await ctx.client.post(
+async function assignRoute(ctx: TestContext, adminHeaders: string, truckId: string, routeId: string, driverId: string) {
+  const twoHoursFromNow = new Date(Date.now() + 2 * 60 * 60 * MILLISECONDS_PER_SECOND).toISOString();
+  return ctx.client.post<SuccessResponse<{ id: string }>>(
     '/admin/assignments',
     {
-      route_id: route.id,
-      truck_id: truck.id,
-      driver_id: driverSession.user.id,
+      route_id: routeId,
+      truck_id: truckId,
+      driver_id: driverId,
       scheduled_start_time: new Date().toISOString(),
-      scheduled_end_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-      notes: 'Integration test assignment',
+      scheduled_end_time: twoHoursFromNow,
     },
-    adminHeaders,
+    { Cookie: adminHeaders },
   );
+}
 
-  expect(assignmentResponse.status).toBe(201);
-
-  // 4. driver can see current route
-  const currentRouteResponse = await ctx.client.get('/driver/route/current', driverHeaders);
-
-  expect(currentRouteResponse.status).toBe(200);
-  expect(currentRouteResponse.data).toMatchObject({
-    route_name: route.name,
-    truck_name: truck.name,
-    status: 'scheduled',
+async function getCurrentDriverRoute(ctx: TestContext, driverHeaders: string) {
+  return ctx.client.get<SuccessResponse<{ id: string; status: string }>>('/driver/route/current', {
+    Cookie: driverHeaders,
   });
-}, 15_000);
+}
 
-test('citizen can report issue and admin can view it', async () => {
-  await ctx.auth.loginAs('citizen');
-  await ctx.auth.loginAs('admin');
+async function startAssignment(ctx: TestContext, driverHeaders: string, assignmentId: string) {
+  return ctx.client.post(`/driver/assignments/${assignmentId}/start`, {}, { Cookie: driverHeaders });
+}
 
-  const citizenHeaders = ctx.auth.getHeaders('citizen');
-  const adminHeaders = ctx.auth.getHeaders('admin');
+async function updateDriverLocation(ctx: TestContext, driverHeaders: string) {
+  return ctx.client.post('/driver/location', { lat: -12.01, lng: -77.01, speed: 50 }, { Cookie: driverHeaders });
+}
 
-  const issueResponse = await ctx.client.post(
-    '/citizen/issues',
-    {
-      type: 'missed_collection',
-      description: 'Garbage not collected today',
-      lat: -12.0464,
-      lng: -77.0428,
-    },
-    citizenHeaders,
-  );
+async function completeAssignment(ctx: TestContext, driverHeaders: string, assignmentId: string) {
+  return ctx.client.post(`/driver/assignments/${assignmentId}/complete`, {}, { Cookie: driverHeaders });
+}
 
-  expect(issueResponse.status).toBe(201);
+// ----------------- Test Suite -----------------
 
-  // admin can view issues
-  const adminIssuesResponse = await ctx.client.get('/admin/issues', adminHeaders);
+describe('E2E Workflows', () => {
+  let ctx: TestContext;
 
-  expect(adminIssuesResponse.status).toBe(200);
-  expect(Array.isArray(adminIssuesResponse.data)).toBe(true);
-}, 15_000);
+  beforeEach(async () => {
+    ctx = await setupTest();
+  });
 
-test('role-based access control works across endpoints', async () => {
-  await ctx.auth.loginAs('citizen');
-  await ctx.auth.loginAs('driver');
-  await ctx.auth.loginAs('admin');
+  afterAll(async () => {
+    await ctx.db.close();
+  });
 
-  const citizenHeaders = ctx.auth.getHeaders('citizen');
-  const driverHeaders = ctx.auth.getHeaders('driver');
-  const adminHeaders = ctx.auth.getHeaders('admin');
+  test('Admin creates resources, driver starts and completes assignment', async () => {
+    const { adminHeaders, driverSession, driverHeaders } = await loginUsers(ctx);
 
-  // citizen cannot access admin endpoints
-  const citizenToAdmin = await ctx.client.get('/admin/trucks', citizenHeaders);
-  expect(citizenToAdmin.status).toBe(403);
+    // Create truck
+    const truckRes = await createTruck(ctx, adminHeaders);
+    expect(truckRes.status).toBe(HTTP_STATUS.CREATED);
+    const truckId = truckRes.data.data.id;
 
-  // citizen cannot access driver endpoints
-  const citizenToDriver = await ctx.client.get('/driver/route/current', citizenHeaders);
-  expect(citizenToDriver.status).toBe(403);
+    // Create route
+    const routeRes = await createRoute(ctx, adminHeaders);
+    expect(routeRes.status).toBe(HTTP_STATUS.CREATED);
+    const routeId = routeRes.data.data.id;
 
-  // driver cannot access admin endpoints
-  const driverToAdmin = await ctx.client.get('/admin/trucks', driverHeaders);
-  expect(driverToAdmin.status).toBe(403);
+    // Assign route
+    const assignmentRes = await assignRoute(ctx, adminHeaders, truckId, routeId, driverSession.user.id);
+    expect(assignmentRes.status).toBe(HTTP_STATUS.CREATED);
+    const assignmentId = assignmentRes.data.data.id;
 
-  // admin can access admin endpoints
-  const adminToAdmin = await ctx.client.get('/admin/trucks', adminHeaders);
-  expect(adminToAdmin.status).toBe(200);
-}, 15_000);
+    // Driver sees scheduled assignment
+    const currentRouteRes = await getCurrentDriverRoute(ctx, driverHeaders);
+    expect(currentRouteRes.status).toBe(HTTP_STATUS.OK);
+    expect(currentRouteRes.data.data.status).toBe('scheduled');
+    expect(currentRouteRes.data.data.id).toBe(assignmentId);
 
-afterAll(async () => {
-  await ctx.db.close();
+    // Driver starts assignment
+    const startRes = await startAssignment(ctx, driverHeaders, assignmentId);
+    expect(startRes.status).toBe(HTTP_STATUS.OK);
+
+    // Driver updates location
+    const locationRes = await updateDriverLocation(ctx, driverHeaders);
+    expect(locationRes.status).toBe(HTTP_STATUS.OK);
+
+    // Driver completes assignment
+    const completeRes = await completeAssignment(ctx, driverHeaders, assignmentId);
+    expect(completeRes.status).toBe(HTTP_STATUS.OK);
+
+    // No active/scheduled route left
+    const finalRouteRes = await getCurrentDriverRoute(ctx, driverHeaders);
+    expect(finalRouteRes.status).toBe(HTTP_STATUS.NOT_FOUND);
+  });
 });

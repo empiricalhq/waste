@@ -1,0 +1,17 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "rules": {
+      "style": {
+        "recommended": true,
+        "noDefaultExport": "off",
+        "useNamingConvention": "off"
+      },
+      "suspicious": {
+        "recommended": true,
+        "useAwait": "off"
+      }
+    }
+  }
+}

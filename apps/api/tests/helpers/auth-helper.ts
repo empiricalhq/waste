@@ -1,5 +1,17 @@
-import type { TestClient } from './test-client.ts';
-import type { TestUsers } from './test-users.ts';
+import { HTTP_STATUS } from '../config';
+import type { TestClient } from './test-client';
+import type { TestUsers } from './test-users';
+
+// Define expected response shapes
+type OrgListResponse = { id: string }[];
+type GetSessionResponse = {
+  user: { id: string; email: string; name: string };
+};
+type ActiveMemberResponse = {
+  id: string;
+  role: string;
+  organizationId: string;
+};
 
 interface Session {
   cookie: string;
@@ -8,25 +20,21 @@ interface Session {
     email: string;
     name: string;
   };
-  member: {
-    id: string;
-    role: string;
-    organizationId: string;
-  } | null;
+  member: ActiveMemberResponse | null;
 }
 
 export class AuthHelper {
   private readonly client: TestClient;
+  private readonly users: TestUsers;
   private readonly sessions = new Map<string, Session>();
-  private readonly testUsers: TestUsers;
 
-  constructor(client: TestClient, testUsers: TestUsers) {
+  constructor(client: TestClient, users: TestUsers) {
     this.client = client;
-    this.testUsers = testUsers;
+    this.users = users;
   }
 
   async loginAs(userType: 'admin' | 'driver' | 'citizen'): Promise<Session> {
-    const user = this.testUsers.getUser(userType);
+    const user = this.users.getUser(userType);
     return this.login(user.email, user.password);
   }
 
@@ -36,85 +44,61 @@ export class AuthHelper {
       return existing;
     }
 
-    await this.testUsers.ensureUser(email, password);
+    await this.users.ensureUserExists(email, password);
 
-    const signInResponse = await this.client.post('/auth/sign-in/email', {
-      email,
-      password,
-    });
-
-    console.log(`[DEBUG] Login response for ${email}:`, signInResponse.status);
-    if (signInResponse.status !== 200) {
-      console.error('[DEBUG] Login failed. Response data:', signInResponse.data);
-      throw new Error(`Login failed for ${email}: ${signInResponse.status}`);
+    const signInResponse = await this.client.post('/auth/sign-in/email', { email, password });
+    if (signInResponse.status !== HTTP_STATUS.OK) {
+      throw new Error(`Login failed for ${email}: Status ${signInResponse.status}`);
     }
 
     let cookie = signInResponse.headers.get('set-cookie');
     if (!cookie) {
-      throw new Error('No session cookie received');
+      throw new Error('No session cookie received during login');
     }
-    console.log(`[DEBUG] Initial cookie received for ${email}.`);
 
-    // Set active organization in session for staff members
-    const userConfig = this.testUsers.findUserByEmail(email);
-    if (userConfig && userConfig.role !== 'citizen') {
-      const orgRes = await this.client.get('/auth/organization/list', { Cookie: cookie });
+    const userConfig = this.users.findUserByEmail(email);
+    if (userConfig?.role !== 'citizen') {
+      const orgRes = await this.client.get<OrgListResponse>('/auth/organization/list', { Cookie: cookie });
       const org = orgRes.data?.[0];
 
       if (org) {
-        console.log(`[DEBUG] Found organization '${org.name}' to set as active.`);
-        const setActiveOrgResponse = await this.client.post(
+        const setActiveRes = await this.client.post(
           '/auth/organization/set-active',
           { organizationId: org.id },
           { Cookie: cookie },
         );
-        console.log('[DEBUG] Set Active Org Response Status:', setActiveOrgResponse.status);
-        console.log('[DEBUG] Set Active Org Response Body:', setActiveOrgResponse.data);
-
-        const newCookie = setActiveOrgResponse.headers.get('set-cookie');
+        const newCookie = setActiveRes.headers.get('set-cookie');
         if (newCookie) {
           cookie = newCookie;
-          console.log('[DEBUG] Session cookie was UPDATED after setting active org.');
         }
-
-        // === VERIFICATION STEP ===
-        // Immediately check if getActiveMember now works with the final cookie.
-        const verificationResponse = await this.client.get('/auth/organization/member/active', { Cookie: cookie });
-        console.log(
-          `[DEBUG] VERIFICATION: getActiveMember response for ${email}:`,
-          verificationResponse.status,
-          verificationResponse.data,
-        );
-        // ========================
-      } else {
-        console.error('[DEBUG] CRITICAL: No organization found for staff user.');
       }
     }
 
-    const sessionResponse = await this.client.get('/auth/get-session', { Cookie: cookie });
-    const memberResponse = await this.client.get('/auth/organization/member/active', { Cookie: cookie });
-    const member = memberResponse.status === 200 ? memberResponse.data : null;
+    const sessionRes = await this.client.get<GetSessionResponse>('/auth/get-session', { Cookie: cookie });
+    const memberRes = await this.client.get<ActiveMemberResponse>('/auth/organization/member/active', {
+      Cookie: cookie,
+    });
 
     const session: Session = {
       cookie,
-      user: sessionResponse.data.user,
-      member: member,
+      user: sessionRes.data.user,
+      member: memberRes.status === HTTP_STATUS.OK ? memberRes.data : null,
     };
 
     this.sessions.set(email, session);
     return session;
   }
 
-  getHeaders(userType: 'admin' | 'driver' | 'citizen'): Record<string, string> {
-    const user = this.testUsers.getUser(userType);
+  getHeaders(userType: 'admin' | 'driver' | 'citizen'): { Cookie: string } {
+    const user = this.users.getUser(userType);
     const session = this.sessions.get(user.email);
     if (!session) {
-      throw new Error(`No session for ${userType}. Call loginAs('${userType}') first.`);
+      throw new Error(`User '${userType}' is not logged in. Call loginAs() first.`);
     }
     return { Cookie: session.cookie };
   }
 
-  clear(): void {
+  clearSessions(): void {
     this.sessions.clear();
   }
 }

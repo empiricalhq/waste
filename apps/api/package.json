@@ -1,13 +1,13 @@
 {
   "name": "@lima-garbage/api",
-  "module": "index.ts",
+  "module": "src/cmd/server.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --hot --env-file=../../.env src/index.ts",
-    "start": "bun src/index.ts",
+    "dev": "bun --hot --env-file=../../.env src/cmd/server.ts",
+    "start": "bun src/cmd/server.ts",
     "test": "bun test-runner.ts",
-    "build": "bun build src/index.ts --outdir ./dist --target bun",
+    "build": "bun build src/cmd/server.ts --outdir ./dist --target bun",
     "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },
   "dependencies": {
@@ -19,7 +19,7 @@
     "zod": "^4.1.8"
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/bun": "1.2.22",
     "@types/pg": "^8.15.5"
   }
 }

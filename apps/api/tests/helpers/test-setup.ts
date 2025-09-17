@@ -16,17 +16,20 @@ export async function setupTest(): Promise<TestContext> {
   const auth = new AuthHelper(client, testUsers);
 
   await db.clean();
-  auth.clear();
+  auth.clearSessions();
 
-  const orgRes = await db.query(
+  const orgRes = await db.query<{ id: string }>(
     `INSERT INTO organization (id, name, slug) VALUES (gen_random_uuid(), 'Test Org', 'test-org') RETURNING id`,
   );
-  const orgId = orgRes.rows[0].id;
+  const orgId = orgRes.rows[0]?.id;
+  if (!orgId) {
+    throw new Error('Failed to create organization during test setup.');
+  }
 
   testUsers.setOrgId(orgId);
 
   const adminConfig = testUsers.getUser('admin');
-  await testUsers.ensureUser(adminConfig.email, adminConfig.password);
+  await testUsers.ensureUserExists(adminConfig.email, adminConfig.password);
 
   return { client, auth, db };
 }

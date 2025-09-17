@@ -1,7 +1,7 @@
 import process from 'node:process';
-
-import type { DbHelper } from './db-helper.ts';
-import type { TestClient } from './test-client.ts';
+import { HTTP_STATUS } from '../config';
+import type { DbHelper } from './db-helper';
+import type { TestClient } from './test-client';
 
 interface UserConfig {
   email: string;
@@ -17,19 +17,19 @@ export class TestUsers {
   private readonly users: Record<'admin' | 'driver' | 'citizen', UserConfig> = {
     admin: {
       email: process.env.TEST_ADMIN_EMAIL || 'admin@test.com',
-      password: 'admin123456',
+      password: 'admin-password-123',
       name: 'Test Admin',
       role: 'owner',
     },
     driver: {
       email: 'driver@test.com',
-      password: 'driver123456',
+      password: 'driver-password-123',
       name: 'Test Driver',
       role: 'driver',
     },
     citizen: {
       email: 'citizen@test.com',
-      password: 'citizen123456',
+      password: 'citizen-password-123',
       name: 'Test Citizen',
       role: 'citizen',
     },
@@ -48,15 +48,19 @@ export class TestUsers {
     return this.users[type];
   }
 
-  async ensureUser(email: string, password: string): Promise<string> {
-    const userConfig = this.findUserByEmail(email);
-    if (!userConfig) {
-      throw new Error(`No user configuration for ${email}`);
+  findUserByEmail(email: string): UserConfig | null {
+    return Object.values(this.users).find((u) => u.email === email) || null;
+  }
+
+  async ensureUserExists(email: string, password: string): Promise<string> {
+    const existingUser = await this.db.query<{ id: string }>('SELECT id FROM "user" WHERE email = $1', [email]);
+    if (existingUser.rows[0]) {
+      return existingUser.rows[0].id;
     }
 
-    const existingUserRes = await this.db.query('SELECT id FROM "user" WHERE email = $1', [email]);
-    if (existingUserRes.rows.length > 0) {
-      return existingUserRes.rows[0].id;
+    const userConfig = this.findUserByEmail(email);
+    if (!userConfig) {
+      throw new Error(`No test user configuration found for email: ${email}`);
     }
 
     const signUpResponse = await this.client.post('/auth/sign-up/email', {
@@ -64,31 +68,23 @@ export class TestUsers {
       password,
       name: userConfig.name,
     });
-
-    if (![200, 201, 422].includes(signUpResponse.status)) {
-      const error = signUpResponse.data?.error || 'Signup failed';
-      if (signUpResponse.status !== 422) {
-        throw new Error(`Signup failed: ${signUpResponse.status} - ${error}`);
-      }
+    if (!([HTTP_STATUS.OK, HTTP_STATUS.CREATED] as number[]).includes(signUpResponse.status)) {
+      throw new Error(`Sign-up failed for ${email}: Status ${signUpResponse.status}`);
     }
 
-    const userRes = await this.db.query('SELECT id FROM "user" WHERE email = $1', [email]);
-    if (userRes.rows.length === 0) {
-      throw new Error(`Failed to create or find user ${email} after sign-up.`);
+    const newUser = await this.db.query<{ id: string }>('SELECT id FROM "user" WHERE email = $1', [email]);
+    const userId = newUser.rows[0]?.id;
+    if (!userId) {
+      throw new Error(`Failed to retrieve new user ID for ${email}`);
     }
-    const userId = userRes.rows[0].id;
 
     if (userConfig.role !== 'citizen') {
       if (!this.orgId) {
-        throw new Error('Organization ID not set in TestUsers helper. Cannot create staff members.');
+        throw new Error('Organization ID must be set to create staff members.');
       }
       await this.db.addMember(userId, this.orgId, userConfig.role);
     }
 
     return userId;
-  }
-
-  findUserByEmail(email: string): UserConfig | null {
-    return Object.values(this.users).find((u) => u.email === email) || null;
   }
 }
