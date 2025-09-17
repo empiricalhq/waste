@@ -30,9 +30,12 @@ export async function setupTest(): Promise<TestContext> {
   }
   users.setOrgId(orgId);
 
-  // Ensure the admin user exists, as they often create other resources
+  // Ensure all staff users exist before tests run
   const adminConfig = users.getUser('admin');
   await users.ensureUserExists(adminConfig.email, adminConfig.password);
+
+  const driverConfig = users.getUser('driver');
+  await users.ensureUserExists(driverConfig.email, driverConfig.password);
 
   return { client, auth, db, users };
 }
