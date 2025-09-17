@@ -3,12 +3,15 @@
   "extends": "//",
   "linter": {
     "domains": {
-      "next": "all"
+      "next": "all",
+      "solid": "none"
     },
     "rules": {
       "style": {
         "recommended": true,
-        "noDefaultExport": "off"
+        "noDefaultExport": "off",
+        "useComponentExportOnlyModules": "off",
+        "noProcessEnv": "off"
       },
       "suspicious": {
         "recommended": true,
