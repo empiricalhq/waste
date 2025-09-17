@@ -9,8 +9,8 @@ export const runtime = 'edge';
 // without exposing the external auth service URL to the browser.
 async function handler(request: NextRequest) {
   const url = new URL(request.url);
-  const path = url.pathname.replace('/api/auth', '');
-  const apiUrl = `${ENV.API_BASE_URL}/api/auth${path}${url.search}`;
+  const path = url.pathname;
+  const apiUrl = `${ENV.API_BASE_URL}${path}${url.search}`;
 
   try {
     const response = await fetch(apiUrl, {
