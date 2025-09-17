@@ -54,7 +54,7 @@ async function main() {
       return;
     }
 
-    const { name, email, username, password } = await p.group(
+    const { name, email, password } = await p.group(
       {
         name: () =>
           p.text({
@@ -73,19 +73,6 @@ async function main() {
             validate: (value) => {
               if (!/^\S+@\S+\.\S+$/.test(value)) {
                 return 'Debes ingresar un correo electrónico válido.';
-              }
-            },
-          }),
-        username: () =>
-          p.text({
-            message: 'Nombre de usuario del administrador:',
-            placeholder: 'Ejemplo: admin.system',
-            validate: (value) => {
-              if (value.trim().length < 3) {
-                return 'El nombre de usuario debe tener al menos 3 caracteres.';
-              }
-              if (!/^[a-zA-Z0-9._-]+$/.test(value)) {
-                return 'Solo se permiten letras, números, puntos, guiones y guiones bajos.';
               }
             },
           }),
@@ -116,7 +103,6 @@ async function main() {
         role: 'admin',
         data: {
           appRole: 'admin',
-          username,
         },
       },
     });

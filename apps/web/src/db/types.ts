@@ -1,6 +1,5 @@
 // Enums
 export type AppRole = 'admin' | 'supervisor' | 'driver' | 'citizen';
-export type Gender = 'male' | 'female';
 export type AlertStatus = 'unread' | 'read' | 'archived';
 export type AlertType = 'route_deviation' | 'prolonged_stop' | 'late_start';
 export type AssignmentStatus = 'scheduled' | 'active' | 'completed' | 'cancelled';
@@ -11,7 +10,6 @@ export type RouteStatus = 'active' | 'inactive' | 'draft';
 export interface User {
   id: string;
   name: string;
-  username?: string;
   email: string;
   appRole: AppRole;
   isActive: boolean;
