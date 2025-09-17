@@ -1,9 +1,6 @@
 {
   "root": false,
   "extends": "//",
-  "files": {
-    "experimentalScannerIgnores": ["ui"]
-  },
   "linter": {
     "domains": {
       "next": "all",
