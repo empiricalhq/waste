@@ -2,6 +2,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getDrivers } from '@/features/drivers/actions';
 
+// biome-ignore lint: cloudflare requires edge runtime
+export const runtime = 'edge';
+
 export default async function DriversPage() {
   const drivers = await getDrivers();
 

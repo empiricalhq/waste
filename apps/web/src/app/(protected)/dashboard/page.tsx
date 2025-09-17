@@ -7,6 +7,9 @@ import { RecentAlerts } from '@/components/dashboard/recent-alerts';
 import { MapWrapper } from '@/components/map/map-wrapper';
 import { getDashboardData } from '@/features/dashboard/actions';
 
+// biome-ignore lint: cloudflare requires edge runtime
+export const runtime = 'edge';
+
 async function DashboardContent() {
   const data = await getDashboardData();
 

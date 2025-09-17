@@ -2,6 +2,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getRoutes } from '@/features/routes/actions';
 
+// biome-ignore lint: cloudflare requires edge runtime
+export const runtime = 'edge';
+
 export default async function RoutesPage() {
   const routes = await getRoutes();
 
