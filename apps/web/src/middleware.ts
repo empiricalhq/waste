@@ -1,8 +1,45 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { getSession } from './features/auth/lib';
+import { ENV } from './lib/env';
 
 const AUTH_ROUTES = ['/signin'];
 const PROTECTED_ROUTE_PREFIX = '/dashboard';
+
+async function getSession(request: NextRequest) {
+  const token = request.cookies.get('better-auth.session_token')?.value;
+  if (!token) {
+    return null;
+  }
+
+  const res = await fetch(`${ENV.API_BASE_URL}/api/auth/get-session`, {
+    headers: { Cookie: `better-auth.session_token=${token}` },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+  return res.json();
+}
+
+async function getMemberRole(request: NextRequest) {
+  const token = request.cookies.get('better-auth.session_token')?.value;
+  if (!token) {
+    return null;
+  }
+  try {
+    const res = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/member/active`, {
+      headers: { Cookie: `better-auth.session_token=${token}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      return null;
+    }
+    const member = await res.json();
+    return member?.role ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,7 +49,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = await getSession();
+  const session = await getSession(request);
   const isAuthenticated = Boolean(session?.user);
 
   // Allow API routes to pass through
@@ -34,13 +71,13 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isProtectedRoute && session?.user) {
-    const userRole = session.user.appRole;
-    if (userRole !== 'admin' && userRole !== 'supervisor') {
+    const memberRole = await getMemberRole(request);
+    if (!(memberRole && ['admin', 'supervisor', 'owner'].includes(memberRole))) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
     // Prevent supervisors from accessing admin-only settings page
-    if (pathname.startsWith('/settings') && userRole !== 'admin') {
+    if (pathname.startsWith('/settings') && memberRole !== 'admin' && memberRole !== 'owner') {
       return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
     }
   }

@@ -1,6 +1,5 @@
 import { createMiddleware } from 'hono/factory';
 import { auth, type Session, type User } from '@/lib/auth.ts';
-import type { Role } from '@/lib/validation.ts';
 
 type AuthEnv = {
   Variables: {
@@ -9,7 +8,7 @@ type AuthEnv = {
   };
 };
 
-export const authMiddleware = (allowedRoles: Role[] = []) => {
+export const authMiddleware = (allowedRoles: string[] = []) => {
   return createMiddleware<AuthEnv>(async (c, next) => {
     try {
       const session = await auth.api.getSession({
@@ -20,8 +19,14 @@ export const authMiddleware = (allowedRoles: Role[] = []) => {
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
-      if (allowedRoles.length > 0 && !allowedRoles.includes(session.user.appRole as Role)) {
-        return c.json({ error: 'Forbidden' }, 403);
+      if (allowedRoles.length > 0) {
+        const member = await auth.api.getActiveMember({
+          headers: c.req.raw.headers,
+        });
+
+        if (!member || (member.role !== 'owner' && !allowedRoles.includes(member.role))) {
+          return c.json({ error: 'Forbidden' }, 403);
+        }
       }
 
       c.set('user', session.user);

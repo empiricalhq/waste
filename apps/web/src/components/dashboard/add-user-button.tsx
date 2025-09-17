@@ -1,10 +1,10 @@
-import { getCurrentUser } from '@/features/auth/lib';
+import { getCurrentMember } from '@/features/auth/lib';
 import { AddUserButtonClient } from './add-user-button-client';
 
 export async function AddUserButton() {
-  const user = await getCurrentUser();
+  const member = await getCurrentMember();
 
-  if (user?.appRole !== 'admin') {
+  if (member?.role !== 'admin' && member?.role !== 'owner') {
     return null;
   }
 

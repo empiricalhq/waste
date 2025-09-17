@@ -22,7 +22,7 @@ const navigation = [
   { name: 'Vehículos', href: '/trucks', icon: Truck },
 ];
 
-const adminNavigation = [{ name: 'Configuración', href: '/settings', icon: Settings }];
+const adminNavigation = [{ name: 'Configuración', href: '/settings', icon: Settings, roles: ['admin', 'owner'] }];
 
 function UserInfo({ user }: { user: User }) {
   if (!user) {
@@ -60,12 +60,13 @@ function UserInfo({ user }: { user: User }) {
 
 interface DashboardSidebarProps {
   user: User;
+  memberRole: string | null;
 }
 
-export function DashboardSidebar({ user }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, memberRole }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const isAdmin = user.appRole === 'admin';
-  const navItems = isAdmin ? [...navigation, ...adminNavigation] : navigation;
+  const allNavItems = [...navigation, ...adminNavigation];
+  const navItems = allNavItems.filter((item) => !('roles' in item) || (memberRole && item.roles.includes(memberRole)));
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">

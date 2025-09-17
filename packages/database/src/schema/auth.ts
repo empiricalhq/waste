@@ -1,6 +1,6 @@
-import { boolean, index, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, index, pgEnum, pgTable, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
-export const appRoleEnum = pgEnum('app_role_enum', ['admin', 'supervisor', 'driver', 'citizen']);
+export const memberRoleEnum = pgEnum('member_role_enum', ['admin', 'supervisor', 'driver', 'owner']);
 
 export const user = pgTable(
   'user',
@@ -10,7 +10,6 @@ export const user = pgTable(
     email: text('email').notNull().unique(),
     emailVerified: boolean('emailVerified').notNull().default(false),
     image: text('image'),
-    appRole: appRoleEnum('appRole').default('citizen').notNull(),
     role: text('role').default('user').notNull(),
     banned: boolean('banned').default(false).notNull(),
     createdAt: timestamp('createdAt').defaultNow().notNull(),
@@ -23,7 +22,6 @@ export const user = pgTable(
     lastLoginAt: timestamp('lastLoginAt'),
   },
   (table) => ({
-    appRoleIdx: index('user_app_role_idx').on(table.appRole),
     isActiveIdx: index('user_is_active_idx').on(table.isActive),
   }),
 );
@@ -65,6 +63,7 @@ export const session = pgTable(
     userId: text('userId')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    activeOrganizationId: text('activeOrganizationId').references(() => organization.id, { onDelete: 'set null' }),
   },
   (table) => [index('session_user_id_idx').on(table.userId), index('session_expires_at_idx').on(table.expiresAt)],
 );
@@ -79,4 +78,43 @@ export const verification = pgTable('verification', {
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
+});
+
+export const organization = pgTable('organization', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull().unique(),
+  logo: text('logo'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const member = pgTable(
+  'member',
+  {
+    id: text('id').primaryKey(),
+    userId: text('userId')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    organizationId: text('organizationId')
+      .notNull()
+      .references(() => organization.id, { onDelete: 'cascade' }),
+    role: memberRoleEnum('role').notNull(),
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
+  },
+  (table) => [index('member_user_org_idx').on(table.userId, table.organizationId)],
+);
+
+export const invitation = pgTable('invitation', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull(),
+  inviterId: text('inviterId')
+    .notNull()
+    .references(() => member.id),
+  organizationId: text('organizationId')
+    .notNull()
+    .references(() => organization.id, { onDelete: 'cascade' }),
+  role: memberRoleEnum('role').notNull(),
+  status: text('status').notNull(), // e.g., 'pending', 'accepted'
+  expiresAt: timestamp('expiresAt').notNull(),
 });
