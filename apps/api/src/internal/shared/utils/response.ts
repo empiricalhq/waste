@@ -33,6 +33,7 @@ export function forbidden(c: Context, message = 'Forbidden') {
   return c.json({ error: message }, HttpStatus.FORBIDDEN);
 }
 
+// currently unused, but might be useful later on
 export function conflict(c: Context, message = 'Conflict') {
   return c.json({ error: message }, HttpStatus.CONFLICT);
 }

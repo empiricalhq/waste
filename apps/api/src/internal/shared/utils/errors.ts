@@ -23,18 +23,6 @@ export class NotFoundError extends AppError {
   }
 }
 
-export class UnauthorizedError extends AppError {
-  constructor(message = 'Authentication failed') {
-    super(message, HttpStatus.UNAUTHORIZED);
-  }
-}
-
-export class ForbiddenError extends AppError {
-  constructor(message = 'Access denied') {
-    super(message, HttpStatus.FORBIDDEN);
-  }
-}
-
 export class ConflictError extends AppError {
   constructor(message = 'Resource conflict') {
     super(message, HttpStatus.CONFLICT);

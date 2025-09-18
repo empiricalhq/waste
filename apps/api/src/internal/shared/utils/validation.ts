@@ -12,10 +12,12 @@ export const CommonSchemas = {
   name: z.string().min(3).max(100),
   description: z.string().max(500).optional(),
 
+  /*
   pagination: z.object({
     page: z.number().int().positive().optional(),
     limit: z.number().int().min(1).max(100).optional(),
   }),
+  */
 
   timestamp: z.iso.datetime(),
 } as const;
