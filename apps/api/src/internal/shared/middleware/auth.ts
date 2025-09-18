@@ -37,14 +37,14 @@ export function createAuthMiddleware(authService: AuthService, db: DatabaseInter
         return unauthorized(c);
       }
 
-      // If no roles required, allow access
+      // if no roles required, allow access
       if (allowedRoles.length === 0) {
         c.set('user', session.user);
         c.set('session', session.session);
         return await next();
       }
 
-      // Check organization membership and role
+      // check organization membership and role
       const { user, session: sessionData } = session;
       const activeOrgId = (sessionData as SessionWithOrg).activeOrganizationId;
 

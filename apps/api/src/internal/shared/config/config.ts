@@ -43,14 +43,15 @@ export function loadConfig(): Config {
       idleTimeoutMs: 30_000,
       connectionTimeoutMs: 2000,
     },
+    // TODO: adjust trustedOrigins for production
     auth: {
       secret: mustGetEnv('BETTER_AUTH_SECRET'),
       baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000',
-      trustedOrigins: ['http://localhost:3000', 'http://localhost:8081'],
+      trustedOrigins: ['http://localhost:3000'],
     },
     server: {
       port: Number.parseInt(process.env.PORT || '4000', 10),
-      corsOrigins: ['http://localhost:3000', 'http://localhost:8081'],
+      corsOrigins: ['http://localhost:3000'],
     },
     nodeEnv: process.env.NODE_ENV || 'development',
   };
