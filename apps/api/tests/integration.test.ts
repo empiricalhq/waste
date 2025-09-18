@@ -39,6 +39,7 @@ describe('E2E Workflows', () => {
     const routeId = routeRes.data.data.id;
 
     // admin: creates assignment
+    const MS = 1000;
     const assignmentRes = await baseTest.ctx.client.post<SuccessResponse<{ id: string }>>(
       '/admin/assignments',
       {
@@ -46,7 +47,7 @@ describe('E2E Workflows', () => {
         truck_id: truckId,
         driver_id: driverSession.user.id,
         scheduled_start_time: new Date().toISOString(),
-        scheduled_end_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+        scheduled_end_time: new Date(Date.now() + 2 * 60 * 60 * MS).toISOString(),
       },
       baseTest.ctx.auth.getHeaders('admin'),
     );
@@ -89,5 +90,5 @@ describe('E2E Workflows', () => {
     // no more active assignments
     const finalRes = await baseTest.ctx.client.get('/driver/route/current', baseTest.ctx.auth.getHeaders('driver'));
     expect(finalRes.status).toBe(HTTP_STATUS.NOT_FOUND);
-  }, 20_000);
+  });
 });
