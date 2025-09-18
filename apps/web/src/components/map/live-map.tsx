@@ -1,9 +1,9 @@
 'use client';
 
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import type { Truck } from '@/db/types';
+import 'leaflet/dist/leaflet.css';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import type { Truck } from '@/lib/api-contract';
 
 interface LiveMapProps {
   trucks?: Truck[];
