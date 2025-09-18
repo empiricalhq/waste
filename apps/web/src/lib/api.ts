@@ -3,6 +3,9 @@ import { cookies } from 'next/headers';
 import type { Issue, Route, Truck, User } from './api-contract';
 import { ENV } from './env';
 
+const HTTP_NO_CONTENT = 204;
+const HTTP_SERVICE_UNAVAILABLE = 503;
+
 class ApiError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -45,7 +48,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       throw new ApiError(errorData.error || `API Error: ${response.status}`, response.status);
     }
 
-    if (response.status === 204) {
+    if (response.status === HTTP_NO_CONTENT) {
       return null as T;
     }
 
@@ -55,7 +58,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(error instanceof Error ? error.message : 'API connection failed', 503);
+    throw new ApiError(error instanceof Error ? error.message : 'API connection failed', HTTP_SERVICE_UNAVAILABLE);
   }
 }
 
@@ -66,6 +69,14 @@ const admin = {
   getOpenIssues: () => request<Issue[]>('/api/admin/issues'),
 };
 
+async function post<T>(endpoint: string, body?: unknown): Promise<T> {
+  return request<T>(endpoint, {
+    method: 'POST',
+    body: body ? JSON.stringify(body) : undefined,
+  });
+}
+
 export const api = {
   admin,
+  post,
 };
