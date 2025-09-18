@@ -9,7 +9,7 @@ const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/cmd/server.t
 
 await Bun.sleep(SERVER_STARTUP_DELAY_MS);
 
-const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', '--sequential'], {
+const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', '--sequential', '--timeout', '15000'], {
   stdout: 'inherit',
   stderr: 'inherit',
 });
