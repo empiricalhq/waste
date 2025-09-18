@@ -11,8 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { User } from '@/db/types';
 import { signOut } from '@/features/auth/actions';
+import type { User } from '@/lib/api-contract';
 import { cn } from '@/lib/utils';
 
 const navigation = [
