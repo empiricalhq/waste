@@ -1,11 +1,10 @@
 import 'server-only';
-
 import { cookies } from 'next/headers';
-import { ENV } from './env.ts';
+import type { Issue, Route, Truck, User } from './api-contract';
+import { ENV } from './env';
 
 class ApiError extends Error {
   status: number;
-
   constructor(message: string, status: number) {
     super(message);
     this.name = 'ApiError';
@@ -13,14 +12,14 @@ class ApiError extends Error {
   }
 }
 
-const HTTP_STATUS_SERVICE_UNAVAILABLE = 503;
-
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${ENV.API_BASE_URL}${endpoint}`;
   const sessionToken = (await cookies()).get('better-auth.session_token')?.value;
 
   const headers = new Headers(options.headers);
-  headers.set('Content-Type', 'application/json');
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
   if (sessionToken) {
     headers.set('Cookie', `better-auth.session_token=${sessionToken}`);
   }
@@ -42,33 +41,31 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     }
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: response.statusText }));
-      throw new ApiError(errorData.message || `API Error: ${response.status}`, response.status);
+      const errorData = await response.json().catch(() => ({ error: response.statusText }));
+      throw new ApiError(errorData.error || `API Error: ${response.status}`, response.status);
     }
 
-    if (response.headers.get('Content-Type')?.includes('application/json')) {
-      return (await response.json()) as T;
+    if (response.status === 204) {
+      return null as T;
     }
 
-    return response.text() as T;
+    const jsonResponse = await response.json();
+    return jsonResponse.data as T;
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(
-      error instanceof Error ? error.message : 'API connection failed',
-      HTTP_STATUS_SERVICE_UNAVAILABLE,
-    );
+    throw new ApiError(error instanceof Error ? error.message : 'API connection failed', 503);
   }
 }
 
+const admin = {
+  getDrivers: () => request<User[]>('/api/admin/drivers'),
+  getTrucks: () => request<Truck[]>('/api/admin/trucks'),
+  getRoutes: () => request<Route[]>('/api/admin/routes'),
+  getOpenIssues: () => request<Issue[]>('/api/admin/issues'),
+};
+
 export const api = {
-  get: <T>(endpoint: string, options?: Omit<RequestInit, 'method' | 'body'>) =>
-    request<T>(endpoint, { ...options, method: 'GET' }),
-  post: <T>(endpoint: string, body?: unknown, options?: Omit<RequestInit, 'method' | 'body'>) =>
-    request<T>(endpoint, { ...options, method: 'POST', body: body ? JSON.stringify(body) : null }),
-  put: <T>(endpoint: string, body?: unknown, options?: Omit<RequestInit, 'method' | 'body'>) =>
-    request<T>(endpoint, { ...options, method: 'PUT', body: body ? JSON.stringify(body) : null }),
-  delete: <T>(endpoint: string, options?: Omit<RequestInit, 'method' | 'body'>) =>
-    request<T>(endpoint, { ...options, method: 'DELETE' }),
+  admin,
 };
