@@ -27,7 +27,7 @@ export class CitizenService extends BaseService {
 
     const profile = profileResult.rows[0];
     if (!profile?.lat) {
-      return { status: 'LOCATION_NOT_SET', message: 'Please set your location first' };
+      return { message: 'Please set your location first', status: 'LOCATION_NOT_SET' };
     }
 
     const { lat, lng } = profile;
@@ -48,7 +48,7 @@ export class CitizenService extends BaseService {
       };
     }
 
-    return { status: 'NOT_SCHEDULED', message: 'No trucks currently scheduled for your area' };
+    return { message: 'No trucks currently scheduled for your area', status: 'NOT_SCHEDULED' };
   }
 
   async updateLocation(userId: string, lat: number, lng: number): Promise<void> {
