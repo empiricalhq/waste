@@ -8,6 +8,7 @@ export interface DatabaseInterface {
   ): Promise<{ rows: T[]; rowCount: number }>;
   getClient(): Promise<PoolClient>;
   withTransaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T>;
+  getPool(): Pool;
   close(): Promise<void>;
 }
 

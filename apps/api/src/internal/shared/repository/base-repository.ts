@@ -1,8 +1,12 @@
 import type { QueryResultRow } from 'pg';
 import type { DatabaseInterface } from '@/internal/shared/database/database';
 
-export abstract class BaseRepository<_T = any> {
-  constructor(protected readonly db: DatabaseInterface) {}
+export abstract class BaseRepository {
+  protected readonly db: DatabaseInterface;
+
+  constructor(db: DatabaseInterface) {
+    this.db = db;
+  }
 
   protected async executeQuery<R extends QueryResultRow>(query: string, params?: unknown[]): Promise<R[]> {
     const result = await this.db.query<R>(query, params);
@@ -14,7 +18,10 @@ export abstract class BaseRepository<_T = any> {
     return rows[0] || null;
   }
 
-  protected async executeQueryWithCount(query: string, params?: unknown[]): Promise<{ rows: any[]; count: number }> {
+  protected async executeQueryWithCount(
+    query: string,
+    params?: unknown[],
+  ): Promise<{ rows: QueryResultRow[]; count: number }> {
     const result = await this.db.query(query, params);
     return {
       rows: result.rows,

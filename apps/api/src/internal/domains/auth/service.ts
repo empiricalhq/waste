@@ -8,7 +8,7 @@ export class AuthService {
 
   constructor(config: Config, db: DatabaseInterface) {
     this.auth = betterAuth({
-      database: (db as any).getPool(),
+      database: db.getPool(),
       secret: config.auth.secret,
       baseURL: config.auth.baseURL,
       trustedOrigins: config.auth.trustedOrigins,

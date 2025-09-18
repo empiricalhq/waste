@@ -10,13 +10,22 @@ import { LocationQueries } from '../locations/queries';
 import type { RouteRepository } from '../routes/repository';
 
 export class DriverService extends BaseService {
+  private readonly assignmentRepo: AssignmentRepository;
+  private readonly routeRepo: RouteRepository;
+  private readonly issueRepo: IssueRepository;
+  private readonly db: DatabaseInterface;
+
   constructor(
-    private readonly assignmentRepo: AssignmentRepository,
-    private readonly routeRepo: RouteRepository,
-    private readonly issueRepo: IssueRepository,
-    private readonly db: DatabaseInterface,
+    assignmentRepo: AssignmentRepository,
+    routeRepo: RouteRepository,
+    issueRepo: IssueRepository,
+    db: DatabaseInterface,
   ) {
     super();
+    this.assignmentRepo = assignmentRepo;
+    this.routeRepo = routeRepo;
+    this.issueRepo = issueRepo;
+    this.db = db;
   }
 
   async getCurrentRoute(driverId: string): Promise<AssignmentWithDetails> {

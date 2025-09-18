@@ -10,11 +10,13 @@ const NEARBY_DISTANCE_THRESHOLD_KM = 0.1;
 const MINIMUM_ETA_MINUTES = 1;
 
 export class CitizenService extends BaseService {
-  constructor(
-    private readonly issueRepo: IssueRepository,
-    private readonly db: DatabaseInterface,
-  ) {
+  private readonly issueRepo: IssueRepository;
+  private readonly db: DatabaseInterface;
+
+  constructor(issueRepo: IssueRepository, db: DatabaseInterface) {
     super();
+    this.issueRepo = issueRepo;
+    this.db = db;
   }
 
   async getTruckStatus(userId: string): Promise<TruckStatusResponse> {
