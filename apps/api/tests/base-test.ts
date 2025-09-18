@@ -50,8 +50,7 @@ export class BaseTest {
     // create admin user and membership
     const adminConfig = TEST_USERS.admin;
     const adminResult = await db.query<{ id: string }>(
-      `INSERT INTO "user" (id, email, name) VALUES (gen_random_uuid(), $1, $2) RETURNING id
-       ON CONFLICT (email) DO UPDATE SET name = $2 RETURNING id`,
+      `INSERT INTO "user" (id, email, name) VALUES (gen_random_uuid(), $1, $2) RETURNING id`,
       [adminConfig.email, adminConfig.name],
     );
     const adminId = adminResult[0]?.id;
@@ -61,16 +60,14 @@ export class BaseTest {
 
     await db.query(
       `INSERT INTO member (id, "userId", "organizationId", role) 
-       VALUES (gen_random_uuid(), $1, $2, $3)
-       ON CONFLICT ("userId", "organizationId") DO NOTHING`,
+     VALUES (gen_random_uuid(), $1, $2, $3)`,
       [adminId, orgId, 'owner'],
     );
 
     // create driver user and membership
     const driverConfig = TEST_USERS.driver;
     const driverResult = await db.query<{ id: string }>(
-      `INSERT INTO "user" (id, email, name) VALUES (gen_random_uuid(), $1, $2) RETURNING id
-       ON CONFLICT (email) DO UPDATE SET name = $2 RETURNING id`,
+      `INSERT INTO "user" (id, email, name) VALUES (gen_random_uuid(), $1, $2) RETURNING id`,
       [driverConfig.email, driverConfig.name],
     );
     const driverId = driverResult[0]?.id;
@@ -80,8 +77,7 @@ export class BaseTest {
 
     await db.query(
       `INSERT INTO member (id, "userId", "organizationId", role)
-       VALUES (gen_random_uuid(), $1, $2, $3)
-       ON CONFLICT ("userId", "organizationId") DO NOTHING`,
+     VALUES (gen_random_uuid(), $1, $2, $3)`,
       [driverId, orgId, 'driver'],
     );
   }
