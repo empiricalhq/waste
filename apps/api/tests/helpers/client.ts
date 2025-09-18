@@ -1,21 +1,14 @@
 import { TEST_CONFIG } from '../config';
-
-interface ApiResponse<T = unknown> {
-  data: T;
-  status: number;
-  headers: Headers;
-}
+import type { ApiResponse } from '../types';
 
 export class TestClient {
-  private readonly baseUrl = TEST_CONFIG.apiBaseUrl;
-
   private async request<T = unknown>(
     method: string,
     endpoint: string,
     body?: unknown,
     headers?: Record<string, string>,
   ): Promise<ApiResponse<T>> {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response = await fetch(`${TEST_CONFIG.apiBaseUrl}${endpoint}`, {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -34,7 +27,7 @@ export class TestClient {
     return this.request<T>('GET', endpoint, undefined, headers);
   }
 
-  async post<T = unknown>(endpoint: string, body: unknown, headers?: Record<string, string>): Promise<ApiResponse<T>> {
+  async post<T = unknown>(endpoint: string, body?: unknown, headers?: Record<string, string>): Promise<ApiResponse<T>> {
     return this.request<T>('POST', endpoint, body, headers);
   }
 
