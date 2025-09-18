@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type LucideIcon, MailIcon, UserIcon } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { type ReactNode, useState, useTransition } from 'react';
 import { type Control, type Path, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { InputPasswordContainer } from '@/components/auth/input-password';
@@ -40,43 +40,42 @@ function TextInputField({
     <FormField
       name={name}
       control={control}
-      render={({ field, fieldState }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            {isPassword ? (
-              <InputPasswordContainer>
-                <Input
-                  type="password"
-                  placeholder={placeholder}
-                  className={cn('pe-9', fieldState.error && 'border-destructive')}
-                  disabled={disabled}
-                  {...field}
-                />
-              </InputPasswordContainer>
-            ) : Icon ? (
-              <InputStartIcon icon={Icon}>
-                <Input
-                  type={type}
-                  placeholder={placeholder}
-                  className={cn('peer ps-9', fieldState.error && 'border-destructive')}
-                  disabled={disabled}
-                  {...field}
-                />
-              </InputStartIcon>
-            ) : (
+      render={({ field, fieldState }) => {
+        let inputElement: ReactNode;
+        const inputProps = {
+          placeholder,
+          disabled,
+          ...field,
+        };
+
+        if (isPassword) {
+          inputElement = (
+            <InputPasswordContainer>
+              <Input type="password" className={cn('pe-9', fieldState.error && 'border-destructive')} {...inputProps} />
+            </InputPasswordContainer>
+          );
+        } else if (Icon) {
+          inputElement = (
+            <InputStartIcon icon={Icon}>
               <Input
                 type={type}
-                placeholder={placeholder}
-                className={cn(fieldState.error && 'border-destructive')}
-                disabled={disabled}
-                {...field}
+                className={cn('peer ps-9', fieldState.error && 'border-destructive')}
+                {...inputProps}
               />
-            )}
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
+            </InputStartIcon>
+          );
+        } else {
+          inputElement = <Input type={type} className={cn(fieldState.error && 'border-destructive')} {...inputProps} />;
+        }
+
+        return (
+          <FormItem>
+            <FormLabel>{label}</FormLabel>
+            <FormControl>{inputElement}</FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 }
