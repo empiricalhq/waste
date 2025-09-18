@@ -1,9 +1,9 @@
-import { HttpStatus } from './http-status';
+import { type ContentfulStatusCode, HttpStatus } from './http-status';
 
 export class AppError extends Error {
-  readonly statusCode: number;
+  readonly statusCode: ContentfulStatusCode;
 
-  constructor(message: string, statusCode: number) {
+  constructor(message: string, statusCode: ContentfulStatusCode) {
     super(message);
     this.statusCode = statusCode;
     Object.setPrototypeOf(this, new.target.prototype);
