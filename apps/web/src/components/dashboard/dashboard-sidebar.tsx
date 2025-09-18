@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, LayoutDashboard, Leaf, LogOut, MapPin, Settings, Truck, Users } from 'lucide-react';
+import { Bell, LayoutDashboard, Leaf, LogOut, type LucideIcon, MapPin, Settings, Truck, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -15,14 +15,23 @@ import { signOut } from '@/features/auth/actions';
 import type { User } from '@/lib/api-contract';
 import { cn } from '@/lib/utils';
 
-const navigation = [
+interface NavItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  roles?: ('admin' | 'owner')[];
+}
+
+const navigation: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Choferes', href: '/drivers', icon: Users },
   { name: 'Rutas', href: '/routes', icon: MapPin },
   { name: 'Vehículos', href: '/trucks', icon: Truck },
 ];
 
-const adminNavigation = [{ name: 'Configuración', href: '/settings', icon: Settings, roles: ['admin', 'owner'] }];
+const adminNavigation: NavItem[] = [
+  { name: 'Configuración', href: '/settings', icon: Settings, roles: ['admin', 'owner'] },
+];
 
 function UserInfo({ user }: { user: User }) {
   if (!user) {
@@ -66,7 +75,9 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ user, memberRole }: DashboardSidebarProps) {
   const pathname = usePathname();
   const allNavItems = [...navigation, ...adminNavigation];
-  const navItems = allNavItems.filter((item) => !('roles' in item) || (memberRole && item.roles.includes(memberRole)));
+  const navItems = allNavItems.filter(
+    (item) => !item.roles || (memberRole && item.roles.includes(memberRole as 'admin' | 'owner')),
+  );
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
