@@ -11,7 +11,7 @@ export class Database {
   }
 
   async clean(): Promise<void> {
-    // Clean in dependency order
+    // clean in dependency order
     const tables = [
       'truck_location_history',
       'truck_current_location',
