@@ -1,13 +1,14 @@
 'use server';
-import type { Route } from '@/db/types';
+
 import { requireUser } from '@/features/auth/lib';
 import { api } from '@/lib/api';
+import type { Route } from '@/lib/api-contract';
 
 export async function getRoutes(): Promise<Route[]> {
   try {
     await requireUser(['admin', 'supervisor']);
-    return await api.get<Route[]>('/api/admin/routes');
-  } catch {
+    return await api.admin.getRoutes();
+  } catch (_error) {
     return [];
   }
 }
