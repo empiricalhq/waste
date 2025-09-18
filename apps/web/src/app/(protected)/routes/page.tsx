@@ -2,8 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { getRoutes } from '@/features/routes/actions';
 
-export const runtime = 'edge';
-
 export default async function RoutesPage() {
   const routes = await getRoutes();
 
@@ -33,3 +31,5 @@ export default async function RoutesPage() {
     </div>
   );
 }
+
+export const runtime = 'edge';
