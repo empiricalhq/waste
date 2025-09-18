@@ -28,9 +28,9 @@ jobs:
       - name: setup bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.21
+          bun-version: 1.2.22
 
-      - run: bun install
+      - run: bun install --filter @lima-garbage/api
 
       - run: bun run test
         env:
