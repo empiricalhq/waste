@@ -37,4 +37,4 @@ app.notFound((c) => {
   return notFound(c, 'Not found');
 });
 
-export default app;
+export { app };
