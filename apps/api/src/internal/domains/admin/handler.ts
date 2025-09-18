@@ -1,4 +1,5 @@
 import { Hono, type MiddlewareHandler } from 'hono';
+import { z } from 'zod';
 import { created, noContent, success } from '@/internal/shared/utils/response';
 import { CommonSchemas, validateJson, validateParam } from '@/internal/shared/utils/validation';
 import { CreateAssignmentSchema } from '../assignments/schemas';
@@ -7,7 +8,7 @@ import { CreateRouteSchema } from '../routes/schemas';
 import { CreateTruckSchema } from '../trucks/schemas';
 import type { AdminService } from './service';
 
-const IdParamSchema = CommonSchemas.id.transform((val) => ({ id: val }));
+const IdParamSchema = z.object({ id: CommonSchemas.id });
 
 export function createAdminHandler(
   adminService: AdminService,

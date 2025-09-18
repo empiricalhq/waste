@@ -1,4 +1,5 @@
 import { Hono, type MiddlewareHandler } from 'hono';
+import { z } from 'zod';
 import { created, success } from '@/internal/shared/utils/response';
 import { CommonSchemas, validateJson, validateParam } from '@/internal/shared/utils/validation';
 import type { AuthEnv } from '../auth/types';
@@ -6,7 +7,7 @@ import { CreateDriverIssueSchema } from '../issues/schemas';
 import { UpdateDriverLocationSchema } from '../locations/schemas';
 import type { DriverService } from './service';
 
-const IdParamSchema = CommonSchemas.id.transform((val) => ({ id: val }));
+const IdParamSchema = z.object({ id: CommonSchemas.id });
 
 export function createDriverHandler(
   driverService: DriverService,
