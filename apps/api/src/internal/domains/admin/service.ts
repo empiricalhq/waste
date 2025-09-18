@@ -12,14 +12,25 @@ import type { UserWithRole } from '../users/models';
 import type { UserRepository } from '../users/repository';
 
 export class AdminService extends BaseService {
+  private readonly truckRepo: TruckRepository;
+  private readonly routeRepo: RouteRepository;
+  private readonly assignmentRepo: AssignmentRepository;
+  private readonly userRepo: UserRepository;
+  private readonly issueRepo: IssueRepository;
+
   constructor(
-    private readonly truckRepo: TruckRepository,
-    private readonly routeRepo: RouteRepository,
-    private readonly assignmentRepo: AssignmentRepository,
-    private readonly userRepo: UserRepository,
-    private readonly issueRepo: IssueRepository,
+    truckRepo: TruckRepository,
+    routeRepo: RouteRepository,
+    assignmentRepo: AssignmentRepository,
+    userRepo: UserRepository,
+    issueRepo: IssueRepository,
   ) {
     super();
+    this.truckRepo = truckRepo;
+    this.routeRepo = routeRepo;
+    this.assignmentRepo = assignmentRepo;
+    this.userRepo = userRepo;
+    this.issueRepo = issueRepo;
   }
 
   async getDrivers(): Promise<UserWithRole[]> {
