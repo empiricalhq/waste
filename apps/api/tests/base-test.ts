@@ -25,7 +25,7 @@ export class BaseTest {
     auth.clearSessions();
 
     // setup organization and admin user
-    await this.setupOrganization(db);
+    await this.setupOrganization(db, auth);
 
     this.ctx = { client, auth, db };
     return this.ctx;
@@ -37,7 +37,7 @@ export class BaseTest {
     }
   }
 
-  private async setupOrganization(db: Database): Promise<void> {
+  private async setupOrganization(db: Database, auth: Auth): Promise<void> {
     // create organization
     const orgResult = await db.query<{ id: string }>(
       `INSERT INTO organization (id, name, slug) VALUES (gen_random_uuid(), 'Test Org', 'test-org') RETURNING id`,
@@ -49,14 +49,7 @@ export class BaseTest {
 
     // create admin user and membership
     const adminConfig = TEST_USERS.admin;
-    const adminResult = await db.query<{ id: string }>(
-      `INSERT INTO "user" (id, email, name) VALUES (gen_random_uuid(), $1, $2) RETURNING id`,
-      [adminConfig.email, adminConfig.name],
-    );
-    const adminId = adminResult[0]?.id;
-    if (!adminId) {
-      throw new Error('Failed to create admin user');
-    }
+    const adminId = await auth.ensureUserExists(adminConfig.email, adminConfig.password);
 
     await db.query(
       `INSERT INTO member (id, "userId", "organizationId", role) 
@@ -66,14 +59,7 @@ export class BaseTest {
 
     // create driver user and membership
     const driverConfig = TEST_USERS.driver;
-    const driverResult = await db.query<{ id: string }>(
-      `INSERT INTO "user" (id, email, name) VALUES (gen_random_uuid(), $1, $2) RETURNING id`,
-      [driverConfig.email, driverConfig.name],
-    );
-    const driverId = driverResult[0]?.id;
-    if (!driverId) {
-      throw new Error('Failed to create driver user');
-    }
+    const driverId = await auth.ensureUserExists(driverConfig.email, driverConfig.password);
 
     await db.query(
       `INSERT INTO member (id, "userId", "organizationId", role)

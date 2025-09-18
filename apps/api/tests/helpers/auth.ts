@@ -67,7 +67,7 @@ export class Auth {
     this.sessions.clear();
   }
 
-  private async ensureUserExists(email: string, password: string): Promise<string> {
+  async ensureUserExists(email: string, password: string): Promise<string> {
     const existing = await this.db.query<{ id: string }>('SELECT id FROM "user" WHERE email = $1', [email]);
     if (existing[0]) {
       return existing[0].id;
