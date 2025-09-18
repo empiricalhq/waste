@@ -3,8 +3,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
-import type { Session, User } from '@/db/types';
-import { api } from '@/lib/api';
+import type { Session, User } from '@/lib/api-contract';
 import { ENV } from '@/lib/env';
 
 const HTTP_UNAUTHORIZED = 401;
@@ -23,7 +22,7 @@ export interface Member {
 }
 
 export const getSession = cache(async (): Promise<AuthSession | null> => {
-  const sessionToken = (await cookies()).get('better-auth.session_token')?.value;
+  const sessionToken = cookies().get('better-auth.session_token')?.value;
   if (!sessionToken) {
     return null;
   }
@@ -35,7 +34,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
     });
 
     if (response.status === HTTP_UNAUTHORIZED) {
-      (await cookies()).delete('better-auth.session_token');
+      cookies().delete('better-auth.session_token');
       return null;
     }
 
@@ -61,7 +60,15 @@ export const getCurrentMember = cache(async (): Promise<Member | null> => {
     return null;
   }
   try {
-    return await api.get<Member | null>('/api/auth/organization/member/active');
+    const sessionToken = cookies().get('better-auth.session_token')?.value;
+    const res = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/member/active`, {
+      headers: { Cookie: `better-auth.session_token=${sessionToken}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      return null;
+    }
+    return res.json();
   } catch {
     return null;
   }
