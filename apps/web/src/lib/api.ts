@@ -69,7 +69,7 @@ const admin = {
   getOpenIssues: () => request<Issue[]>('/api/admin/issues'),
 };
 
-async function post<T>(endpoint: string, body?: unknown): Promise<T> {
+function post<T>(endpoint: string, body?: unknown): Promise<T> {
   return request<T>(endpoint, {
     method: 'POST',
     body: body ? JSON.stringify(body) : undefined,
