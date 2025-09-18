@@ -5,7 +5,6 @@
     "rules": {
       "style": {
         "recommended": true,
-        "noDefaultExport": "off",
         "useNamingConvention": "off",
         "noProcessEnv": "off",
         "noMagicNumbers": "off"
