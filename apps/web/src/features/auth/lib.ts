@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import type { Session, User } from '@/db/types';
+import { api } from '@/lib/api';
 import { ENV } from '@/lib/env';
 
 const HTTP_UNAUTHORIZED = 401;
@@ -11,6 +12,14 @@ const HTTP_UNAUTHORIZED = 401;
 export interface AuthSession {
   user: User;
   session: Session;
+}
+
+export interface Member {
+  id: string;
+  userId: string;
+  organizationId: string;
+  role: 'admin' | 'supervisor' | 'driver' | 'owner';
+  createdAt: string;
 }
 
 export const getSession = cache(async (): Promise<AuthSession | null> => {
@@ -46,15 +55,30 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
   return session?.user ?? null;
 });
 
-export const requireUser = cache(async (allowedRoles?: User['appRole'][]): Promise<User> => {
+export const getCurrentMember = cache(async (): Promise<Member | null> => {
+  const session = await getSession();
+  if (!session?.session.activeOrganizationId) {
+    return null;
+  }
+  try {
+    return await api.get<Member | null>('/api/auth/organization/member/active');
+  } catch {
+    return null;
+  }
+});
+
+export const requireUser = cache(async (allowedRoles?: string[]): Promise<User> => {
   const user = await getCurrentUser();
 
   if (!user) {
     redirect('/signin');
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.appRole)) {
-    redirect('/dashboard');
+  if (allowedRoles && allowedRoles.length > 0) {
+    const member = await getCurrentMember();
+    if (!member || (member.role !== 'owner' && !allowedRoles.includes(member.role))) {
+      redirect('/dashboard');
+    }
   }
 
   return user;

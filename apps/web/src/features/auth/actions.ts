@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { api } from '@/lib/api';
+import { getSession } from './lib';
 import { type SignInSchema, type SignUpSchema, signInSchema, signUpSchema } from './schemas';
 
 type ActionResult = {
@@ -27,20 +28,34 @@ export async function signIn(data: SignInSchema): Promise<ActionResult> {
   redirect('/dashboard');
 }
 
-export async function signUp(data: SignUpSchema): Promise<ActionResult> {
+export async function signUp(data: SignUpSchema) {
   const validatedFields = signUpSchema.safeParse(data);
   if (!validatedFields.success) {
     return { error: 'Invalid fields.' };
   }
 
   try {
-    await api.post('/api/auth/sign-up/email', validatedFields.data);
+    const session = await getSession();
+    const orgId = session?.session.activeOrganizationId;
+
+    if (!orgId) {
+      return { error: 'No active organization found to add user to.' };
+    }
+    await api.post('/api/auth/sign-up/email', {
+      ...validatedFields.data,
+      data: {
+        organizationId: orgId,
+        role: validatedFields.data.role,
+      },
+    });
   } catch (error: unknown) {
+    if (error instanceof Error && error.message.toLowerCase().includes('unique constraint')) {
+      return { error: 'A user with this email already exists.' };
+    }
     return { error: error instanceof Error ? error.message : 'Failed to create user.' };
   }
 
   revalidatePath('/drivers', 'page');
-  redirect('/dashboard');
 }
 
 export async function signOut() {

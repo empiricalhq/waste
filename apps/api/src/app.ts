@@ -1,56 +1,40 @@
 import { Hono } from 'hono';
-import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import * as z from 'zod';
-import { adminRouter } from '@/routes/admin.ts';
-import { authRouter } from '@/routes/auth.ts';
-import { citizenRouter } from '@/routes/citizen.ts';
-import { driverRouter } from '@/routes/driver.ts';
+import { z } from 'zod';
+
+import { createContainer } from '@/internal/container/container';
+import { AppError } from '@/internal/shared/utils/errors';
+import { HttpStatus } from '@/internal/shared/utils/http-status';
+import { error as errorResponse, notFound, validationError } from '@/internal/shared/utils/response';
+
+const container = createContainer();
+const handlers = container.getHandlers();
 
 const app = new Hono();
 
-app.use(
-  '*',
-  cors({
-    origin: ['http://localhost:3000', 'http://localhost:8081'],
-    credentials: true,
-  }),
-);
-
+app.use('*', container.getCorsMiddleware());
 app.use('*', secureHeaders());
 
-app.route('/api/auth', authRouter);
-app.route('/api/admin', adminRouter);
-app.route('/api/driver', driverRouter);
-app.route('/api/citizen', citizenRouter);
-
-app.get('/api/health', (c) =>
-  c.json({
-    status: 'ok',
-    timestamp: Date.now(),
-  }),
-);
+app.route('/api', handlers.health);
+app.route('/api/auth', handlers.auth);
+app.route('/api/admin', handlers.admin);
+app.route('/api/driver', handlers.driver);
+app.route('/api/citizen', handlers.citizen);
 
 app.onError((err, c) => {
-  if (err instanceof z.ZodError) {
-    const { formErrors, fieldErrors } = z.flattenError(err);
-
-    return c.json(
-      {
-        error: 'Validation failed',
-        formErrors,
-        fieldErrors,
-      },
-      400,
-    );
+  if (err instanceof AppError) {
+    return errorResponse(c, err.message, err.statusCode);
   }
 
-  console.error(`[API Error] ${err.message}`, err.stack);
-  return c.json({ error: 'Internal server error' }, 500);
+  if (err instanceof z.ZodError) {
+    const { formErrors, fieldErrors } = err.flatten();
+    return validationError(c, formErrors, fieldErrors);
+  }
+  return errorResponse(c, 'Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
 });
 
 app.notFound((c) => {
-  return c.json({ error: 'Not found' }, 404);
+  return notFound(c, 'Not found');
 });
 
-export default app;
+export { app };

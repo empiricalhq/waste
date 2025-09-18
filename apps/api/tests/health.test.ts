@@ -1,13 +1,14 @@
 import { expect, test } from 'bun:test';
-import { TEST_CONFIG } from './config.ts';
+import { HTTP_STATUS, TEST_CONFIG } from './config';
 
 test('health endpoint returns ok', async () => {
-  const response = await fetch(`${TEST_CONFIG.baseUrl}/health`);
-  const data = await response.json();
+  const response = await fetch(`${TEST_CONFIG.apiBaseUrl}/health`);
+  const data = (await response.json()) as { status: string; timestamp: string };
 
-  expect(response.status).toBe(200);
+  expect(response.status).toBe(HTTP_STATUS.OK);
   expect(data).toEqual({
     status: 'ok',
-    timestamp: expect.any(Number),
+    timestamp: expect.any(String),
   });
+  expect(new Date(data.timestamp).getTime()).not.toBeNaN();
 });

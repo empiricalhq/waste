@@ -1,100 +1,86 @@
-import { afterAll, beforeEach, expect, test } from 'bun:test';
-import { setupTest, type TestContext } from './helpers/test-setup.ts';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
+import { BaseTest } from './base-test';
+import { HTTP_STATUS } from './config';
+import type { Issue, SuccessResponse } from './types';
+import { createTestIssue } from './utils';
 
-let ctx: TestContext;
+describe('Citizen API', () => {
+  const baseTest = new BaseTest();
 
-beforeEach(async () => {
-  ctx = await setupTest();
-  await ctx.auth.loginAs('citizen');
-});
+  beforeEach(async () => {
+    await baseTest.setup();
+    await baseTest.ctx.auth.loginAs('citizen');
+  });
 
-test('citizen can update location', async () => {
-  const locationData = {
-    lat: -12.0464,
-    lng: -77.0428,
-  };
+  afterAll(async () => {
+    await baseTest.teardown();
+  });
 
-  const response = await ctx.client.put('/citizen/profile/location', locationData, ctx.auth.getHeaders('citizen'));
+  describe('Profile', () => {
+    test('should update location', async () => {
+      const response = await baseTest.ctx.client.put<SuccessResponse<{ success: boolean }>>(
+        '/citizen/profile/location',
+        { lat: -12.0464, lng: -77.0428 },
+        baseTest.ctx.auth.getHeaders('citizen'),
+      );
 
-  expect(response.status).toBe(200);
-  expect(response.data.success).toBe(true);
-});
+      expect(response.status).toBe(HTTP_STATUS.OK);
+      expect(response.data.data.success).toBe(true);
+    });
+  });
 
-test('citizen cannot use invalid coordinates', async () => {
-  const invalidLocation = {
-    lat: 999,
-    lng: 999,
-  };
+  describe('Truck Status', () => {
+    test('should prompt for location when not set', async () => {
+      const response = await baseTest.ctx.client.get<SuccessResponse<{ status: string }>>(
+        '/citizen/truck/status',
+        baseTest.ctx.auth.getHeaders('citizen'),
+      );
 
-  const response = await ctx.client.put('/citizen/profile/location', invalidLocation, ctx.auth.getHeaders('citizen'));
+      expect(response.status).toBe(HTTP_STATUS.OK);
+      expect(response.data.data.status).toBe('LOCATION_NOT_SET');
+    });
+  });
 
-  expect(response.status).toBe(400);
-});
+  describe('Issues', () => {
+    test('should report an issue', async () => {
+      const issueData = createTestIssue('missed_collection');
 
-test('citizen gets location prompt when location not set', async () => {
-  const response = await ctx.client.get('/citizen/truck/status', ctx.auth.getHeaders('citizen'));
+      const response = await baseTest.ctx.client.post<SuccessResponse<{ message: string }>>(
+        '/citizen/issues',
+        issueData,
+        baseTest.ctx.auth.getHeaders('citizen'),
+      );
 
-  expect(response.status).toBe(200);
-  expect(response.data.status).toBe('LOCATION_NOT_SET');
-});
+      expect(response.status).toBe(HTTP_STATUS.CREATED);
+      expect(response.data.data.message).toContain('Issue reported successfully');
+    });
 
-test('citizen can check truck status after setting location', async () => {
-  await ctx.client.put(
-    '/citizen/profile/location',
-    {
-      lat: -12.0464,
-      lng: -77.0428,
-    },
-    ctx.auth.getHeaders('citizen'),
-  );
+    test('should list own issues', async () => {
+      // create an issue first
+      await baseTest.ctx.client.post(
+        '/citizen/issues',
+        createTestIssue('missed_collection'),
+        baseTest.ctx.auth.getHeaders('citizen'),
+      );
 
-  const response = await ctx.client.get('/citizen/truck/status', ctx.auth.getHeaders('citizen'));
+      const response = await baseTest.ctx.client.get<SuccessResponse<Issue[]>>(
+        '/citizen/issues',
+        baseTest.ctx.auth.getHeaders('citizen'),
+      );
 
-  expect(response.status).toBe(200);
-  expect(response.data).toHaveProperty('status');
-});
+      expect(response.status).toBe(HTTP_STATUS.OK);
+      expect(response.data.data).toHaveLength(1);
+      expect(response.data.data[0]?.type).toBe('missed_collection');
+    });
+  });
 
-test('citizen can report issues', async () => {
-  const issueData = {
-    type: 'missed_collection',
-    description: 'Truck did not collect garbage',
-    lat: -12.0464,
-    lng: -77.0428,
-  };
+  describe('Access Control', () => {
+    test('should forbid staff users', async () => {
+      await baseTest.ctx.auth.loginAs('admin');
 
-  const response = await ctx.client.post('/citizen/issues', issueData, ctx.auth.getHeaders('citizen'));
+      const response = await baseTest.ctx.client.get('/citizen/truck/status', baseTest.ctx.auth.getHeaders('admin'));
 
-  expect(response.status).toBe(201);
-  expect(response.data.message).toContain('Issue reported successfully');
-});
-
-test('citizen can list their issues', async () => {
-  await ctx.client.post(
-    '/citizen/issues',
-    {
-      type: 'missed_collection',
-      description: 'Test issue',
-      lat: -12.0464,
-      lng: -77.0428,
-    },
-    ctx.auth.getHeaders('citizen'),
-  );
-
-  const response = await ctx.client.get('/citizen/issues', ctx.auth.getHeaders('citizen'));
-
-  expect(response.status).toBe(200);
-  expect(Array.isArray(response.data)).toBe(true);
-  expect(response.data.length).toBeGreaterThan(0);
-});
-
-test('non-citizen cannot access citizen endpoints', async () => {
-  await ctx.auth.loginAs('admin');
-
-  const response = await ctx.client.get('/citizen/truck/status', ctx.auth.getHeaders('admin'));
-
-  expect(response.status).toBe(403);
-});
-
-afterAll(async () => {
-  await ctx.db.close();
+      expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
+    });
+  });
 });

@@ -1,5 +1,5 @@
 // Enums
-export type AppRole = 'admin' | 'supervisor' | 'driver' | 'citizen';
+export type MemberRole = 'admin' | 'supervisor' | 'driver' | 'owner';
 export type AlertStatus = 'unread' | 'read' | 'archived';
 export type AlertType = 'route_deviation' | 'prolonged_stop' | 'late_start';
 export type AssignmentStatus = 'scheduled' | 'active' | 'completed' | 'cancelled';
@@ -11,7 +11,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  appRole: AppRole;
   isActive: boolean;
   createdAt: string; // ISO Date String
 }
@@ -21,6 +20,7 @@ export interface Session {
   userId: string;
   token: string;
   expiresAt: string; // ISO Date String
+  activeOrganizationId?: string | null;
 }
 
 export interface Truck {

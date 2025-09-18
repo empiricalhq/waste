@@ -1,0 +1,22 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off",
+        "recommended": true
+      },
+      "style": {
+        "noMagicNumbers": "off",
+        "noProcessEnv": "off",
+        "recommended": true,
+        "useNamingConvention": "off"
+      },
+      "suspicious": {
+        "recommended": true,
+        "useAwait": "off"
+      }
+    }
+  }
+}

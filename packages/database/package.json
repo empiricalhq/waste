@@ -8,12 +8,17 @@
   },
   "scripts": {
     "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
+
     "db:push": "bun --env-file=../../.env drizzle-kit push --config ./drizzle.config.ts --force",
+    "setup:admin": "bun --env-file=../../.env scripts/create-admin.ts",
+    "db:seed": "bun --env-file=../../.env scripts/seed.ts",
+
     "db:push:test": "bun --env-file=../../.env.test drizzle-kit push --config ./drizzle.config.ts --force",
+    "setup:admin:test": "bun --env-file=../../.env.test scripts/create-admin.ts",
+
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "bun --env-file=../../.env scripts/seed.ts",
-    "setup:admin": "bun --env-file=../../.env scripts/create-admin.ts",
+
     "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
   },
   "dependencies": {
