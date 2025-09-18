@@ -1,0 +1,58 @@
+import process from 'node:process';
+
+function mustGetEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+}
+
+export interface DatabaseConfig {
+  url: string;
+  ssl: boolean;
+  maxConnections: number;
+  idleTimeoutMs: number;
+  connectionTimeoutMs: number;
+}
+
+export interface AuthConfig {
+  secret: string;
+  baseURL: string;
+  trustedOrigins: string[];
+}
+
+export interface ServerConfig {
+  port: number;
+  corsOrigins: string[];
+}
+
+export interface Config {
+  database: DatabaseConfig;
+  auth: AuthConfig;
+  server: ServerConfig;
+  nodeEnv: string;
+}
+
+export function loadConfig(): Config {
+  return {
+    database: {
+      url: mustGetEnv('DATABASE_URL'),
+      ssl: process.env.NODE_ENV === 'production',
+      maxConnections: 20,
+      idleTimeoutMs: 30_000,
+      connectionTimeoutMs: 2000,
+    },
+    // TODO: adjust trustedOrigins for production
+    auth: {
+      secret: mustGetEnv('BETTER_AUTH_SECRET'),
+      baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000',
+      trustedOrigins: ['http://localhost:3000'],
+    },
+    server: {
+      port: Number.parseInt(process.env.PORT || '4000', 10),
+      corsOrigins: ['http://localhost:3000'],
+    },
+    nodeEnv: process.env.NODE_ENV || 'development',
+  };
+}

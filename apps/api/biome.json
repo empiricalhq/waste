@@ -3,19 +3,19 @@
   "extends": "//",
   "linter": {
     "rules": {
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off",
+        "recommended": true
+      },
       "style": {
+        "noMagicNumbers": "off",
+        "noProcessEnv": "off",
         "recommended": true,
-        "noDefaultExport": "off",
-        "useNamingConvention": "off",
-        "noProcessEnv": "off"
+        "useNamingConvention": "off"
       },
       "suspicious": {
         "recommended": true,
         "useAwait": "off"
-      },
-      "complexity": {
-        "recommended": true,
-        "noExcessiveLinesPerFunction": "off"
       }
     }
   }

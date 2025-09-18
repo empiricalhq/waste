@@ -48,7 +48,7 @@ describe('Admin API', () => {
       );
 
       expect(response.status).toBe(HTTP_STATUS.CONFLICT);
-      expect(response.data.error).toBe('License plate already exists');
+      expect(response.data.error).toBe('Resource already exists');
     });
 
     test('should list all trucks', async () => {
