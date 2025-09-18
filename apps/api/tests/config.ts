@@ -1,7 +1,8 @@
-import process from 'node:process';
+import type { UserConfig, UserType } from './types';
 
 export const TEST_CONFIG = {
-  apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:4000/api',
+  apiBaseUrl: 'http://localhost:4000/api',
+  defaultTimeout: 15_000,
 } as const;
 
 export const HTTP_STATUS = {
@@ -12,3 +13,24 @@ export const HTTP_STATUS = {
   NOT_FOUND: 404,
   CONFLICT: 409,
 } as const;
+
+export const TEST_USERS: Record<UserType, UserConfig> = {
+  admin: {
+    email: 'admin@test.com',
+    password: 'admin-password-123',
+    name: 'Test Admin',
+    role: 'owner',
+  },
+  driver: {
+    email: 'driver@test.com',
+    password: 'driver-password-123',
+    name: 'Test Driver',
+    role: 'driver',
+  },
+  citizen: {
+    email: 'citizen@test.com',
+    password: 'citizen-password-123',
+    name: 'Test Citizen',
+    role: 'citizen',
+  },
+};

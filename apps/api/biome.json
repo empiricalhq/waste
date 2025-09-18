@@ -6,7 +6,8 @@
       "style": {
         "recommended": true,
         "noDefaultExport": "off",
-        "useNamingConvention": "off"
+        "useNamingConvention": "off",
+        "noProcessEnv": "off"
       },
       "suspicious": {
         "recommended": true,

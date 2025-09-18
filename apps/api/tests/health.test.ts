@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { HTTP_STATUS, TEST_CONFIG } from './config.ts';
+import { HTTP_STATUS, TEST_CONFIG } from './config';
 
 test('health endpoint returns ok', async () => {
   const response = await fetch(`${TEST_CONFIG.apiBaseUrl}/health`);
