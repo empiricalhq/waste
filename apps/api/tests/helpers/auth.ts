@@ -84,7 +84,7 @@ export class Auth {
       name: userConfig.name,
     });
 
-    if (![HTTP_STATUS.OK, HTTP_STATUS.CREATED].includes(signUpRes.status)) {
+    if (signUpRes.status !== HTTP_STATUS.OK && signUpRes.status !== HTTP_STATUS.CREATED) {
       throw new Error(`Sign-up failed for ${email}: ${signUpRes.status}`);
     }
 

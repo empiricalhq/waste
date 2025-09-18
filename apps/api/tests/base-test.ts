@@ -11,7 +11,7 @@ export interface TestContext {
 }
 
 export class BaseTest {
-  protected ctx!: TestContext;
+  ctx!: TestContext;
 
   async setup(): Promise<TestContext> {
     setDefaultTimeout(TEST_CONFIG.defaultTimeout);
