@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type LucideIcon, MailIcon, UserIcon } from 'lucide-react';
-import { type ReactNode, useState, useTransition } from 'react';
-import { type Control, type Path, useForm } from 'react-hook-form';
+import { MailIcon, UserIcon } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { type Control, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { InputPasswordContainer } from '@/components/auth/input-password';
 import { InputStartIcon } from '@/components/auth/input-start-icon';
@@ -16,104 +16,89 @@ import { signUp } from '@/features/auth/actions';
 import { type SignUpSchema, signUpSchema } from '@/features/auth/schemas';
 import { cn } from '@/lib/utils';
 
-interface TextInputFieldProps {
-  name: Path<SignUpSchema>;
-  label: string;
-  placeholder: string;
-  icon?: LucideIcon;
-  type?: string;
-  disabled?: boolean;
-  control: Control<SignUpSchema>;
-}
-
-function TextInputField({
-  name,
-  label,
-  placeholder,
-  icon: Icon,
-  type = 'text',
-  disabled,
-  control,
-}: TextInputFieldProps) {
-  const isPassword = type === 'password';
-  return (
-    <FormField
-      name={name}
-      control={control}
-      render={({ field, fieldState }) => {
-        let inputElement: ReactNode;
-        const inputProps = {
-          placeholder,
-          disabled,
-          ...field,
-        };
-
-        if (isPassword) {
-          inputElement = (
-            <InputPasswordContainer>
-              <Input type="password" className={cn('pe-9', fieldState.error && 'border-destructive')} {...inputProps} />
-            </InputPasswordContainer>
-          );
-        } else if (Icon) {
-          inputElement = (
-            <InputStartIcon icon={Icon}>
-              <Input
-                type={type}
-                className={cn('peer ps-9', fieldState.error && 'border-destructive')}
-                {...inputProps}
-              />
-            </InputStartIcon>
-          );
-        } else {
-          inputElement = <Input type={type} className={cn(fieldState.error && 'border-destructive')} {...inputProps} />;
-        }
-
-        return (
-          <FormItem>
-            <FormLabel>{label}</FormLabel>
-            <FormControl>{inputElement}</FormControl>
-            <FormMessage />
-          </FormItem>
-        );
-      }}
-    />
-  );
-}
-
 function AddUserFormFields({ control, isPending }: { control: Control<SignUpSchema>; isPending: boolean }) {
+  const getInputClassName = (hasError: boolean) => cn(hasError && 'border-destructive');
+
   return (
     <>
-      <TextInputField
+      <FormField
+        control={control}
         name="name"
-        label="Nombre completo"
-        placeholder="Juan Pérez"
-        icon={UserIcon}
-        disabled={isPending}
-        control={control}
+        render={({ field, fieldState }) => (
+          <FormItem>
+            <FormLabel>Nombre completo</FormLabel>
+            <FormControl>
+              <InputStartIcon icon={UserIcon}>
+                <Input
+                  className={cn('peer ps-9', getInputClassName(Boolean(fieldState.error)))}
+                  disabled={isPending}
+                  {...field}
+                />
+              </InputStartIcon>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
-      <TextInputField
+      <FormField
+        control={control}
         name="email"
-        label="Correo electrónico"
-        placeholder="correo@ejemplo.com"
-        icon={MailIcon}
-        disabled={isPending}
-        control={control}
+        render={({ field, fieldState }) => (
+          <FormItem>
+            <FormLabel>Correo electrónico</FormLabel>
+            <FormControl>
+              <InputStartIcon icon={MailIcon}>
+                <Input
+                  type="email"
+                  className={cn('peer ps-9', getInputClassName(Boolean(fieldState.error)))}
+                  disabled={isPending}
+                  {...field}
+                />
+              </InputStartIcon>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
-      <TextInputField
+      <FormField
+        control={control}
         name="password"
-        label="Contraseña"
-        placeholder="••••••••"
-        type="password"
-        disabled={isPending}
-        control={control}
+        render={({ field, fieldState }) => (
+          <FormItem>
+            <FormLabel>Contraseña</FormLabel>
+            <FormControl>
+              <InputPasswordContainer>
+                <Input
+                  type="password"
+                  className={cn('pe-9', getInputClassName(Boolean(fieldState.error)))}
+                  disabled={isPending}
+                  {...field}
+                />
+              </InputPasswordContainer>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
-      <TextInputField
-        name="confirmPassword"
-        label="Confirmar contraseña"
-        placeholder="••••••••"
-        type="password"
-        disabled={isPending}
+      <FormField
         control={control}
+        name="confirmPassword"
+        render={({ field, fieldState }) => (
+          <FormItem>
+            <FormLabel>Confirmar contraseña</FormLabel>
+            <FormControl>
+              <InputPasswordContainer>
+                <Input
+                  type="password"
+                  className={cn('pe-9', getInputClassName(Boolean(fieldState.error)))}
+                  disabled={isPending}
+                  {...field}
+                />
+              </InputPasswordContainer>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
       <FormField
         name="role"
