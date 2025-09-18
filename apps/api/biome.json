@@ -12,6 +12,10 @@
       "suspicious": {
         "recommended": true,
         "useAwait": "off"
+      },
+      "complexity": {
+        "recommended": true,
+        "noExcessiveLinesPerFunction": "off"
       }
     }
   }
