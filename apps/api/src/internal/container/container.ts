@@ -51,10 +51,10 @@ export function createContainer() {
 
   return {
     getHandlers: () => ({
-      auth: authHandler,
       admin: adminHandler,
-      driver: driverHandler,
+      auth: authHandler,
       citizen: citizenHandler,
+      driver: driverHandler,
       health: healthHandler,
     }),
     getCorsMiddleware: () => corsMiddleware,
