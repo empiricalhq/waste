@@ -14,6 +14,73 @@ type ActionResult = {
   error?: string;
 };
 
+async function performSignInRequest(credentials: SignInSchema): Promise<{ tempCookie: string }> {
+  const signInResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/sign-in/email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!signInResponse.ok) {
+    throw new Error('Invalid email or password.');
+  }
+
+  const tempCookie = signInResponse.headers.get('Set-Cookie');
+  if (!tempCookie) {
+    throw new Error('Authentication failed: no session token received.');
+  }
+
+  return { tempCookie };
+}
+
+async function setupOrganization(tempCookie: string): Promise<{ finalCookie: string }> {
+  const orgsResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/list`, {
+    headers: { Cookie: tempCookie },
+  });
+  const orgs = await orgsResponse.json();
+  if (!orgs || orgs.length === 0) {
+    throw new Error('You are not a member of any organization.');
+  }
+  const orgId = orgs[0].id;
+
+  const setActiveResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/set-active`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: tempCookie },
+    body: JSON.stringify({ organizationId: orgId }),
+  });
+
+  if (!setActiveResponse.ok) {
+    throw new Error('Failed to set active organization.');
+  }
+
+  const finalCookie = setActiveResponse.headers.get('Set-Cookie') || tempCookie;
+  return { finalCookie };
+}
+
+async function validateUserRole(finalCookie: string): Promise<void> {
+  const memberResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/get-active-member`, {
+    headers: { Cookie: finalCookie },
+  });
+  if (!memberResponse.ok) {
+    throw new Error('Could not retrieve user role.');
+  }
+  const member = (await memberResponse.json()) as Member;
+
+  if (!PROTECTED_ROLES.includes(member.role)) {
+    throw new Error('You do not have permission to access this application.');
+  }
+}
+
+async function setSessionCookie(finalCookie: string): Promise<void> {
+  const tokenValue = finalCookie.split(';')[0].split('=')[1];
+  (await cookies()).set('better-auth.session_token', tokenValue, {
+    httpOnly: true,
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+}
+
 export async function signIn(data: SignInSchema): Promise<ActionResult> {
   const validatedFields = signInSchema.safeParse(data);
   if (!validatedFields.success) {
@@ -21,63 +88,12 @@ export async function signIn(data: SignInSchema): Promise<ActionResult> {
   }
 
   try {
-    const signInResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/sign-in/email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(validatedFields.data),
-    });
-
-    if (!signInResponse.ok) {
-      return { error: 'Invalid email or password.' };
-    }
-
-    const tempCookie = signInResponse.headers.get('Set-Cookie');
-    if (!tempCookie) {
-      return { error: 'Authentication failed: no session token received.' };
-    }
-
-    const orgsResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/list`, {
-      headers: { Cookie: tempCookie },
-    });
-    const orgs = await orgsResponse.json();
-    if (!orgs || orgs.length === 0) {
-      return { error: 'You are not a member of any organization.' };
-    }
-    const orgId = orgs[0].id;
-
-    const setActiveResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/set-active`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Cookie: tempCookie },
-      body: JSON.stringify({ organizationId: orgId }),
-    });
-
-    if (!setActiveResponse.ok) {
-      return { error: 'Failed to set active organization.' };
-    }
-
-    const finalCookie = setActiveResponse.headers.get('Set-Cookie') || tempCookie;
-
-    const memberResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/get-active-member`, {
-      headers: { Cookie: finalCookie },
-    });
-    if (!memberResponse.ok) {
-      return { error: 'Could not retrieve user role.' };
-    }
-    const member = (await memberResponse.json()) as Member;
-
-    if (!PROTECTED_ROLES.includes(member.role)) {
-      return { error: 'You do not have permission to access this application.' };
-    }
-
-    const tokenValue = finalCookie.split(';')[0].split('=')[1];
-    (await cookies()).set('better-auth.session_token', tokenValue, {
-      httpOnly: true,
-      path: '/',
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    });
-  } catch (_error) {
-    return { error: 'An unexpected error occurred. Please try again.' };
+    const { tempCookie } = await performSignInRequest(validatedFields.data);
+    const { finalCookie } = await setupOrganization(tempCookie);
+    await validateUserRole(finalCookie);
+    await setSessionCookie(finalCookie);
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.' };
   }
 
   revalidatePath('/', 'layout');
