@@ -1,4 +1,5 @@
 import { AddDriverDialog } from '@/components/drivers/add-driver-dialog';
+import { DriverActions } from '@/components/drivers/driver-actions';
 import { Card, CardContent } from '@/components/ui/card';
 import { getDrivers } from '@/features/drivers/actions';
 
@@ -24,11 +25,7 @@ export default async function DriversPage() {
                   <p className="font-medium">{driver.name}</p>
                   <p className="text-muted-foreground text-xs">{driver.email}</p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <span className="text-muted-foreground text-xs">
-                    Se agregó: {new Date(driver.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
+                <DriverActions driver={driver} />
               </div>
             ))}
             {drivers.length === 0 && <p className="text-muted-foreground text-center">No se encontraron choferes.</p>}

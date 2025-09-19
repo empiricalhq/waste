@@ -38,14 +38,15 @@ export function AddDriverDialog() {
 
   return (
     <FormDialog
-      title="Agregar Nuevo Chofer"
-      description="Crea una cuenta para un nuevo chofer y asigna sus credenciales."
+      title="Registro de datos"
+      description="El conductor podrá usar estas credenciales para iniciar sesión en la app móvil disponible solo para conductores"
       trigger={
         <Button size="sm">
           <Plus className="me-2 size-4" />
-          Agregar Chofer
+          Añadir conductor
         </Button>
       }
+      contentClassName="sm:max-w-lg"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -102,7 +103,7 @@ export function AddDriverDialog() {
             )}
           />
           <Button type="submit" className="w-full" disabled={isPending}>
-            Agregar Chofer
+            Guardar
           </Button>
         </form>
       </Form>

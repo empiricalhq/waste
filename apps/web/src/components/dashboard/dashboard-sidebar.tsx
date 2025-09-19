@@ -23,8 +23,8 @@ interface NavItem {
 }
 
 const navigation: NavItem[] = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Choferes', href: '/drivers', icon: Users },
+  { name: 'Inicio', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Conductores', href: '/drivers', icon: Users },
   { name: 'Rutas', href: '/routes', icon: MapPin },
   { name: 'Vehículos', href: '/trucks', icon: Truck },
 ];

@@ -13,3 +13,12 @@ export const CreateDriverIssueSchema = z.object({
   notes: CommonSchemas.description,
   ...CommonSchemas.location.shape,
 });
+
+export const CreateAdminIssueSchema = z.object({
+  type: z.string().min(1, 'Type is required').max(100, 'Type cannot exceed 100 characters'),
+  description: CommonSchemas.description,
+  ...CommonSchemas.location.shape,
+});
+
+export type CreateCitizenIssueRequest = z.infer<typeof CreateCitizenIssueSchema>;
+export type CreateDriverIssueRequest = z.infer<typeof CreateDriverIssueSchema>;

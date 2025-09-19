@@ -50,12 +50,12 @@ export function AddRouteDialog() {
 
   return (
     <FormDialog
-      title="Crear nueva ruta"
-      description="Define una nueva ruta de recolección con sus puntos de inicio y waypoints."
+      title="Registro de datos"
+      description="Las rutas de recolección son las rutas que los conductores seguirán para recoger la basura. Es necesario asignar un conductor a cada ruta"
       trigger={
         <Button size="sm">
           <Plus className="me-2 size-4" />
-          Crear ruta
+          Añadir ruta
         </Button>
       }
       contentClassName="sm:max-w-lg"
@@ -152,8 +152,7 @@ export function AddRouteDialog() {
               )}
             />
 
-            {/* Waypoints section */}
-            <h3 className="text-md font-semibold mt-6">Waypoints</h3>
+            <h3 className="text-md font-semibold mt-6">Puntos del recorrido</h3>
             {fields.map((item, index) => (
               <div key={item.id} className="grid grid-cols-[70px_auto_auto_1fr] gap-2 items-end border p-3 rounded-md">
                 <FormField
@@ -239,13 +238,13 @@ export function AddRouteDialog() {
               disabled={isPending}
             >
               <Plus className="me-2 size-4" />
-              Añadir waypoint
+              Añadir nuevo punto
             </Button>
           </div>
 
           <div className="shrink-0 border-t pt-3">
             <Button type="submit" className="w-full" disabled={isPending}>
-              Crear ruta
+              Guardar
             </Button>
           </div>
         </form>

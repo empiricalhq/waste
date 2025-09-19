@@ -3,7 +3,7 @@ import { z } from 'zod';
 const MIN_PASSWORD_LENGTH = 8;
 const MIN_NAME_LENGTH = 2;
 
-export const createDriverSchema = z
+export const createSupervisorSchema = z
   .object({
     name: z.string().min(MIN_NAME_LENGTH, `El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`),
     email: z.email('Formato de correo electrónico inválido'),
@@ -18,9 +18,9 @@ export const createDriverSchema = z
     path: ['confirmPassword'],
   });
 
-export type CreateDriverSchema = z.infer<typeof createDriverSchema>;
+export type CreateSupervisorSchema = z.infer<typeof createSupervisorSchema>;
 
-export const updateDriverSchema = z
+export const updateSupervisorSchema = z
   .object({
     id: z.string(),
     name: z.string().min(MIN_NAME_LENGTH, `El nombre debe tener al menos ${MIN_NAME_LENGTH} caracteres`),
@@ -38,4 +38,4 @@ export const updateDriverSchema = z
     path: ['confirmPassword'],
   });
 
-export type UpdateDriverSchema = z.infer<typeof updateDriverSchema>;
+export type UpdateSupervisorSchema = z.infer<typeof updateSupervisorSchema>;

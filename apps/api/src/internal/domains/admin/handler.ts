@@ -4,6 +4,7 @@ import { created, noContent, success } from '@/internal/shared/utils/response';
 import { CommonSchemas, validateJson, validateParam } from '@/internal/shared/utils/validation';
 import { CreateAssignmentSchema } from '../assignments/schemas';
 import type { AuthEnv } from '../auth/types';
+import { CreateAdminIssueSchema } from '../issues/schemas';
 import { CreateRouteSchema } from '../routes/schemas';
 import { CreateTruckSchema } from '../trucks/schemas';
 import { CreateDriverSchema } from './schemas';
@@ -75,6 +76,13 @@ export function createAdminHandler(
   admin.get('/issues', async (c) => {
     const issues = await adminService.getOpenIssues();
     return success(c, issues);
+  });
+
+  admin.post('/issues', validateJson(CreateAdminIssueSchema), async (c) => {
+    const issueData = c.req.valid('json');
+    const user = c.get('user');
+    await adminService.createIssue(issueData, user.id);
+    return created(c, { message: 'Issue created successfully' });
   });
 
   return admin;

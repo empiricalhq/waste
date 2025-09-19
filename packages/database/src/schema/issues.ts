@@ -6,13 +6,6 @@ import { truck } from './trucks.ts';
 export const alertTypeEnum = pgEnum('alert_type', ['route_deviation', 'prolonged_stop', 'late_start']);
 export const alertStatusEnum = pgEnum('alert_status', ['unread', 'read', 'archived']);
 export const issueStatusEnum = pgEnum('issue_status', ['open', 'in_progress', 'resolved']);
-export const driverIssueTypeEnum = pgEnum('driver_issue_type', [
-  'mechanical_failure',
-  'road_blocked',
-  'truck_full',
-  'other',
-]);
-export const citizenIssueTypeEnum = pgEnum('citizen_issue_type', ['missed_collection', 'illegal_dumping']);
 
 export const systemAlert = pgTable(
   'system_alert',
@@ -42,7 +35,7 @@ export const driverIssueReport = pgTable(
     routeAssignmentId: text('route_assignment_id')
       .notNull()
       .references(() => routeAssignment.id, { onDelete: 'cascade' }),
-    type: driverIssueTypeEnum('type').notNull(),
+    type: text('type').notNull(),
     status: issueStatusEnum('status').default('open').notNull(),
     notes: text('notes'),
     lat: doublePrecision('lat').notNull(),
@@ -63,7 +56,7 @@ export const citizenIssueReport = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    type: citizenIssueTypeEnum('type').notNull(),
+    type: text('type').notNull(),
     status: issueStatusEnum('status').default('open').notNull(),
     description: text('description'),
     photoUrl: text('photo_url'),
