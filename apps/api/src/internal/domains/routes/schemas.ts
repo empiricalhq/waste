@@ -14,9 +14,3 @@ export const CreateRouteSchema = z.object({
   estimated_duration_minutes: z.number().int().positive().max(1440),
   waypoints: z.array(WaypointSchema).min(1).max(50),
 });
-
-export const CreateAdminIssueSchema = z.object({
-  type: z.string().min(1, 'Type is required'),
-  description: CommonSchemas.description,
-  ...CommonSchemas.location.shape,
-});

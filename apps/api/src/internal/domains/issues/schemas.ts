@@ -13,3 +13,9 @@ export const CreateDriverIssueSchema = z.object({
   notes: CommonSchemas.description,
   ...CommonSchemas.location.shape,
 });
+
+export const CreateAdminIssueSchema = z.object({
+  type: z.enum(['missed_collection', 'illegal_dumping']),
+  description: CommonSchemas.description,
+  ...CommonSchemas.location.shape,
+});
