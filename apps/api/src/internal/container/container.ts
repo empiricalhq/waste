@@ -12,7 +12,7 @@ import { createHealthHandler } from '@/internal/domains/health/handler';
 import { IssueRepository } from '@/internal/domains/issues/repository';
 import { RouteRepository } from '@/internal/domains/routes/repository';
 import { TruckRepository } from '@/internal/domains/trucks/repository';
-import { UserRepository } from '@/internal/domains/users/repository';
+import { appAc, appPluginRoles } from '@/internal/shared/auth/roles';
 import { loadConfig } from '@/internal/shared/config/config';
 import { Database } from '@/internal/shared/database/database';
 import { createAuthMiddleware, createCitizenOnlyMiddleware } from '@/internal/shared/middleware/auth';
@@ -23,21 +23,20 @@ export function createContainer() {
   const db = new Database(config.database);
 
   // repositories: data access layer
-  const userRepo = new UserRepository(db);
   const truckRepo = new TruckRepository(db);
   const routeRepo = new RouteRepository(db);
   const assignmentRepo = new AssignmentRepository(db);
   const issueRepo = new IssueRepository(db);
 
   // services: business logic layer
-  const authService = new AuthService(config, db);
-  const adminService = new AdminService(truckRepo, routeRepo, assignmentRepo, userRepo, issueRepo);
+  const authService = new AuthService(config, db, appAc, appPluginRoles);
+  const adminService = new AdminService(truckRepo, routeRepo, assignmentRepo, issueRepo, authService);
   const driverService = new DriverService(assignmentRepo, routeRepo, issueRepo, db);
   const citizenService = new CitizenService(issueRepo, db);
 
   // middleware
   const corsMiddleware = createCorsMiddleware(config);
-  const authMiddleware = createAuthMiddleware(authService, db);
+  const authMiddleware = createAuthMiddleware(authService);
   const citizenOnlyMiddleware = createCitizenOnlyMiddleware(authService);
 
   // handlers (presentation layer)

@@ -6,6 +6,7 @@ import { CreateAssignmentSchema } from '../assignments/schemas';
 import type { AuthEnv } from '../auth/types';
 import { CreateRouteSchema } from '../routes/schemas';
 import { CreateTruckSchema } from '../trucks/schemas';
+import { CreateDriverSchema } from './schemas';
 import type { AdminService } from './service';
 
 const IdParamSchema = z.object({ id: CommonSchemas.id });
@@ -19,8 +20,14 @@ export function createAdminHandler(
   admin.use('*', authMiddleware(['admin', 'supervisor', 'owner']));
 
   admin.get('/drivers', async (c) => {
-    const drivers = await adminService.getDrivers();
+    const drivers = await adminService.getDrivers(c.req.raw.headers);
     return success(c, drivers);
+  });
+
+  admin.post('/drivers', validateJson(CreateDriverSchema), async (c) => {
+    const driverData = c.req.valid('json');
+    const newDriver = await adminService.createDriver(driverData);
+    return created(c, newDriver);
   });
 
   admin.get('/trucks', async (c) => {

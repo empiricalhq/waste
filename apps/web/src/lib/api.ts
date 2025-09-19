@@ -1,6 +1,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import type { AuthContext } from '@/features/auth/lib';
+import type { CreateRouteSchema } from '@/features/routes/schemas';
 import type { Issue, Route, Truck, User } from './api-contract';
 import { ENV } from './env';
 
@@ -16,7 +17,11 @@ class ApiError extends Error {
   }
 }
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  apiOptions: { ignoreSetCookie?: boolean } = {},
+): Promise<T> {
   const url = `${ENV.API_BASE_URL}${endpoint}`;
   const sessionToken = (await cookies()).get('better-auth.session_token')?.value;
 
@@ -33,15 +38,17 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   try {
     const response = await fetch(url, config);
 
-    const setCookieHeader = response.headers.get('Set-Cookie');
-    if (setCookieHeader) {
-      const tokenValue = setCookieHeader.split(';')[0].split('=')[1];
-      (await cookies()).set('better-auth.session_token', tokenValue, {
-        httpOnly: true,
-        path: '/',
-        secure: ENV.NODE_ENV === 'production',
-        sameSite: 'lax',
-      });
+    if (!apiOptions.ignoreSetCookie) {
+      const setCookieHeader = response.headers.get('Set-Cookie');
+      if (setCookieHeader) {
+        const tokenValue = setCookieHeader.split(';')[0].split('=')[1];
+        (await cookies()).set('better-auth.session_token', tokenValue, {
+          httpOnly: true,
+          path: '/',
+          secure: ENV.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+      }
     }
 
     if (!response.ok) {
@@ -63,23 +70,31 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 }
 
+function post<T>(endpoint: string, body?: unknown, apiOptions?: { ignoreSetCookie?: boolean }): Promise<T> {
+  return request<T>(
+    endpoint,
+    {
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    },
+    apiOptions,
+  );
+}
+
 const admin = {
-  getDrivers: () => request<User[]>('/api/admin/drivers'),
-  getTrucks: () => request<Truck[]>('/api/admin/trucks'),
-  getRoutes: () => request<Route[]>('/api/admin/routes'),
-  getOpenIssues: () => request<Issue[]>('/api/admin/issues'),
+  getDrivers: () => request<User[]>('/api/admin/drivers', {}, { ignoreSetCookie: true }),
+  createDriver: (data: { name: string; email: string; password: string }) =>
+    post<User>('/api/admin/drivers', data, { ignoreSetCookie: true }),
+
+  getTrucks: () => request<Truck[]>('/api/admin/trucks', {}, { ignoreSetCookie: true }),
+  getRoutes: () => request<Route[]>('/api/admin/routes', {}, { ignoreSetCookie: true }),
+  getOpenIssues: () => request<Issue[]>('/api/admin/issues', {}, { ignoreSetCookie: true }),
+  createRoute: (data: CreateRouteSchema) => post<Route>('/api/admin/routes', data, { ignoreSetCookie: true }),
 };
 
 const auth = {
-  getAuthContext: () => request<AuthContext | null>('/api/auth/get-session'),
+  getSession: () => request<AuthContext | null>('/api/auth/get-session'),
 };
-
-function post<T>(endpoint: string, body?: unknown): Promise<T> {
-  return request<T>(endpoint, {
-    method: 'POST',
-    body: body ? JSON.stringify(body) : undefined,
-  });
-}
 
 export const api = {
   admin,

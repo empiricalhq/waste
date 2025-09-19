@@ -4,7 +4,6 @@ export const userSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.email(),
-  isActive: z.boolean(),
   createdAt: z.iso.datetime(),
   role: z.string().optional(),
 });

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import type { AuthContext, Member } from './features/auth/lib';
+import type { AuthContext } from './features/auth/lib';
 import { PROTECTED_ROLES, SETTINGS_ROLES } from './features/auth/roles';
 import { ENV } from './lib/env';
 
@@ -16,22 +16,16 @@ async function getAuthFromRequest(request: NextRequest): Promise<AuthContext | n
   const headers = { Cookie: `better-auth.session_token=${token}` };
 
   try {
-    const [sessionRes, memberRes] = await Promise.all([
-      fetch(`${ENV.API_BASE_URL}/api/auth/get-session`, { headers, cache: 'no-store' }),
-      fetch(`${ENV.API_BASE_URL}/api/auth/organization/get-active-member`, { headers, cache: 'no-store' }),
-    ]);
+    const sessionRes = await fetch(`${ENV.API_BASE_URL}/api/auth/get-session`, { headers, cache: 'no-store' });
 
     if (!sessionRes.ok) {
       return null;
     }
     const sessionData = await sessionRes.json();
 
-    const memberData = memberRes.ok ? ((await memberRes.json()) as Member) : null;
-
     return {
       user: sessionData.user,
       session: sessionData.session,
-      member: memberData,
     };
   } catch {
     return null;
@@ -47,7 +41,8 @@ export async function middleware(request: NextRequest) {
 
   const auth = await getAuthFromRequest(request);
   const isAuthenticated = Boolean(auth?.user);
-  const memberRole = auth?.member?.role;
+  const userRole = auth?.user?.role;
+  const userRoles = userRole?.split(',') ?? [];
 
   if (pathname.startsWith('/api')) {
     return NextResponse.next();
@@ -67,11 +62,16 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isProtectedRoute && isAuthenticated) {
-    if (!(memberRole && PROTECTED_ROLES.includes(memberRole))) {
-      return NextResponse.redirect(new URL('/', request.url));
+    const hasAccess = PROTECTED_ROLES.some((role) => userRoles.includes(role));
+    if (!hasAccess) {
+      const signInUrl = new URL('/signin', request.url);
+      const response = NextResponse.redirect(signInUrl);
+      response.cookies.delete('better-auth.session_token');
+      return response;
     }
 
-    if (pathname.startsWith(SETTINGS_ROUTE_PREFIX) && !SETTINGS_ROLES.includes(memberRole)) {
+    const hasSettingsAccess = SETTINGS_ROLES.some((role) => userRoles.includes(role));
+    if (pathname.startsWith(SETTINGS_ROUTE_PREFIX) && !hasSettingsAccess) {
       return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
     }
   }

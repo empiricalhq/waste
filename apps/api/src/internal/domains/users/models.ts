@@ -1,10 +1,11 @@
-export type MemberRole = 'admin' | 'supervisor' | 'driver' | 'owner';
+import type { AppRole } from '@/internal/shared/auth/roles';
+
+export type MemberRole = AppRole;
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  isActive: boolean;
   createdAt: Date;
 }
 

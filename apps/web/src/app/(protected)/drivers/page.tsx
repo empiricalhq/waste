@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge';
+import { AddDriverDialog } from '@/components/drivers/add-driver-dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { getDrivers } from '@/features/drivers/actions';
 
@@ -9,7 +9,10 @@ export default async function DriversPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Gestión de choferes</h1>
-        <p className="text-muted-foreground">Administra los choferes de la flota</p>
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground">Administra los choferes de la flota</p>
+          <AddDriverDialog />
+        </div>
       </div>
 
       <Card>
@@ -22,9 +25,6 @@ export default async function DriversPage() {
                   <p className="text-muted-foreground text-xs">{driver.email}</p>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <Badge variant={driver.isActive ? 'default' : 'secondary'}>
-                    {driver.isActive ? 'Activo' : 'Inactivo'}
-                  </Badge>
                   <span className="text-muted-foreground text-xs">
                     Se agregó: {new Date(driver.createdAt).toLocaleDateString()}
                   </span>

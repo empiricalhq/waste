@@ -1,3 +1,4 @@
+import { AddRouteDialog } from '@/components/routes/add-route-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { getRoutes } from '@/features/routes/actions';
@@ -9,7 +10,10 @@ export default async function RoutesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Gestión de rutas</h1>
-        <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de paso (waypoints)</p>
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de paso (waypoints)</p>
+          <AddRouteDialog />
+        </div>
       </div>
 
       <Card>

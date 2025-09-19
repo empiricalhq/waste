@@ -7,9 +7,11 @@ export default async function SettingsPage() {
   await requireUser();
 
   const auth = await getAuth();
-  const userRole = auth?.member?.role;
+  const userRoles = auth?.user?.role?.split(',') ?? [];
 
-  if (!(userRole && SETTINGS_ROLES.includes(userRole))) {
+  const hasSettingsAccess = SETTINGS_ROLES.some((settingRole) => userRoles.includes(settingRole));
+
+  if (!hasSettingsAccess) {
     redirect('/dashboard');
   }
 

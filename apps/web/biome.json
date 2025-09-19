@@ -16,8 +16,7 @@
       },
       "suspicious": {
         "recommended": true,
-        "noUnknownAtRules": "off",
-        "noReactSpecificProps": "off"
+        "noUnknownAtRules": "off"
       },
       "performance": {
         "recommended": true,

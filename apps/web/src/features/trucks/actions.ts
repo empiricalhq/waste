@@ -10,9 +10,9 @@ export async function getTrucks(): Promise<Truck[]> {
     await requireUser();
 
     const auth = await getAuth();
-    const userRole = auth?.member?.role;
+    const userRoles = auth?.user?.role?.split(',') ?? [];
 
-    if (!(userRole && PROTECTED_ROLES.includes(userRole))) {
+    if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
       throw new Error('Unauthorized');
     }
 

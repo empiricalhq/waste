@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { CommonSchemas } from '@/internal/shared/utils/validation';
 
-const WaypointSchema = z.object({
+export const WaypointSchema = z.object({
   ...CommonSchemas.location.shape,
   sequence_order: z.number().int().min(1),
 });

@@ -1,12 +1,18 @@
 import { betterAuth } from 'better-auth';
-import { organization } from 'better-auth/plugins';
+import { admin } from 'better-auth/plugins';
+import type { AppRole, appAc } from '@/internal/shared/auth/roles';
 import type { Config } from '@/internal/shared/config/config';
 import type { DatabaseInterface } from '@/internal/shared/database/database';
 
 export class AuthService {
-  readonly auth: ReturnType<typeof betterAuth>;
+  readonly auth;
 
-  constructor(config: Config, db: DatabaseInterface) {
+  constructor(
+    config: Config,
+    db: DatabaseInterface,
+    accessControl: typeof appAc,
+    roles: { [key in AppRole]: ReturnType<(typeof appAc)['newRole']> },
+  ) {
     this.auth = betterAuth({
       database: db.getPool(),
       secret: config.auth.secret,
@@ -15,7 +21,13 @@ export class AuthService {
       emailAndPassword: {
         enabled: true,
       },
-      plugins: [organization({})],
+      plugins: [
+        admin({
+          ac: accessControl,
+          roles,
+          defaultRole: 'citizen',
+        }),
+      ],
     });
   }
 
