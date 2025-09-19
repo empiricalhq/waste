@@ -1,5 +1,6 @@
 import 'server-only';
 import { cookies } from 'next/headers';
+import type { AuthContext } from '@/features/auth/lib';
 import type { Issue, Route, Truck, User } from './api-contract';
 import { ENV } from './env';
 
@@ -53,7 +54,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     }
 
     const jsonResponse = await response.json();
-    return jsonResponse.data as T;
+    return 'data' in jsonResponse ? (jsonResponse.data as T) : (jsonResponse as T);
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
@@ -69,6 +70,10 @@ const admin = {
   getOpenIssues: () => request<Issue[]>('/api/admin/issues'),
 };
 
+const auth = {
+  getAuthContext: () => request<AuthContext | null>('/api/auth/get-session'),
+};
+
 function post<T>(endpoint: string, body?: unknown): Promise<T> {
   return request<T>(endpoint, {
     method: 'POST',
@@ -78,5 +83,6 @@ function post<T>(endpoint: string, body?: unknown): Promise<T> {
 
 export const api = {
   admin,
+  auth,
   post,
 };

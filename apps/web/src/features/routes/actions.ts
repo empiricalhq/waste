@@ -1,12 +1,21 @@
 'use server';
 
-import { requireUser } from '@/features/auth/lib';
+import { getAuth, requireUser } from '@/features/auth/lib';
+import { PROTECTED_ROLES } from '@/features/auth/roles';
 import { api } from '@/lib/api';
 import type { Route } from '@/lib/api-contract';
 
 export async function getRoutes(): Promise<Route[]> {
   try {
-    await requireUser(['admin', 'supervisor']);
+    await requireUser();
+
+    const auth = await getAuth();
+    const userRole = auth?.member?.role;
+
+    if (!(userRole && PROTECTED_ROLES.includes(userRole))) {
+      throw new Error('Unauthorized');
+    }
+
     return await api.admin.getRoutes();
   } catch (_error) {
     return [];
