@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getAuth, requireUser } from '@/features/auth/lib';
 import { SETTINGS_ROLES } from '@/features/auth/roles';
+import { AddUserButton } from '@/components/dashboard/add-user-button';
 
 export default async function SettingsPage() {
   await requireUser();
@@ -17,11 +18,13 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Configuración</h1>
-        <p className="text-muted-foreground">Ajustes del sistema, usuarios y roles</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Configuración</h1>
+          <p className="text-muted-foreground">Ajustes del sistema, usuarios y roles</p>
+        </div>
+        <AddUserButton />
       </div>
-
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
