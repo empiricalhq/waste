@@ -4,22 +4,22 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 final uuid = Uuid();
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  
+  await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
-  url: 'https://stcldqkzdpeyvfrdgtyc.supabase.co',
-  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0Y2xkcWt6ZHBleXZmcmRndHljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMDQ0OTQsImV4cCI6MjA3MjU4MDQ5NH0.yW256Dg8CZCVRDb3JfDuxBS9Hhzh0H0-MGyGi6fpLqs',
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-  },
-);
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  );
   
   runApp(const MyApp());
 }
