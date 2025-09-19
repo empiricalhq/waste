@@ -2,8 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import { type Resolver, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import type { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,9 +28,8 @@ export function AddIssueDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<CreateIssueSchema>({
-    // biome-ignore lint/suspicious/noExplicitAny: TODO: fix type issue
-    resolver: zodResolver(createIssueSchema as any),
+  const form = useForm<z.infer<typeof createIssueSchema>>({
+    resolver: zodResolver(createIssueSchema) as Resolver<z.infer<typeof createIssueSchema>>,
     defaultValues: { type: '', description: '', lat: 0, lng: 0 },
   });
 
