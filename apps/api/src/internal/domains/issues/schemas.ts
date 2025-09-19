@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { CommonSchemas } from '@/internal/shared/utils/validation';
 
 export const CreateCitizenIssueSchema = z.object({
-  type: z.enum(['missed_collection', 'illegal_dumping']),
+  type: z.string().min(1),
   description: CommonSchemas.description,
   photo_url: z.url().optional(),
   ...CommonSchemas.location.shape,
@@ -15,7 +15,7 @@ export const CreateDriverIssueSchema = z.object({
 });
 
 export const CreateAdminIssueSchema = z.object({
-  type: z.enum(['missed_collection', 'illegal_dumping']),
+  type: z.string().min(1, 'Type is required').max(100, 'Type cannot exceed 100 characters'),
   description: CommonSchemas.description,
   ...CommonSchemas.location.shape,
 });
