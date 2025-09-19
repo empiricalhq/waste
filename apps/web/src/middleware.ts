@@ -1,41 +1,38 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import type { AuthContext, Member } from './features/auth/lib';
+import { PROTECTED_ROLES, SETTINGS_ROLES } from './features/auth/roles';
 import { ENV } from './lib/env';
 
 const AUTH_ROUTES = ['/signin'];
 const PROTECTED_ROUTE_PREFIX = '/dashboard';
+const SETTINGS_ROUTE_PREFIX = '/settings';
 
-async function getSession(request: NextRequest) {
+async function getAuthFromRequest(request: NextRequest): Promise<AuthContext | null> {
   const token = request.cookies.get('better-auth.session_token')?.value;
   if (!token) {
     return null;
   }
 
-  const res = await fetch(`${ENV.API_BASE_URL}/api/auth/get-session`, {
-    headers: { Cookie: `better-auth.session_token=${token}` },
-    cache: 'no-store',
-  });
+  const headers = { Cookie: `better-auth.session_token=${token}` };
 
-  if (!res.ok) {
-    return null;
-  }
-  return res.json();
-}
-
-async function getMemberRole(request: NextRequest) {
-  const token = request.cookies.get('better-auth.session_token')?.value;
-  if (!token) {
-    return null;
-  }
   try {
-    const res = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/member/active`, {
-      headers: { Cookie: `better-auth.session_token=${token}` },
-      cache: 'no-store',
-    });
-    if (!res.ok) {
+    const [sessionRes, memberRes] = await Promise.all([
+      fetch(`${ENV.API_BASE_URL}/api/auth/get-session`, { headers, cache: 'no-store' }),
+      fetch(`${ENV.API_BASE_URL}/api/auth/organization/get-active-member`, { headers, cache: 'no-store' }),
+    ]);
+
+    if (!sessionRes.ok) {
       return null;
     }
-    const member = await res.json();
-    return member?.role ?? null;
+    const sessionData = await sessionRes.json();
+
+    const memberData = memberRes.ok ? ((await memberRes.json()) as Member) : null;
+
+    return {
+      user: sessionData.user,
+      session: sessionData.session,
+      member: memberData,
+    };
   } catch {
     return null;
   }
@@ -44,15 +41,14 @@ async function getMemberRole(request: NextRequest) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip middleware for static files and Next.js internals
   if (pathname.startsWith('/_next/') || pathname.includes('.')) {
     return NextResponse.next();
   }
 
-  const session = await getSession(request);
-  const isAuthenticated = Boolean(session?.user);
+  const auth = await getAuthFromRequest(request);
+  const isAuthenticated = Boolean(auth?.user);
+  const memberRole = auth?.member?.role;
 
-  // Allow API routes to pass through
   if (pathname.startsWith('/api')) {
     return NextResponse.next();
   }
@@ -70,14 +66,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
-  if (isProtectedRoute && session?.user) {
-    const memberRole = await getMemberRole(request);
-    if (!(memberRole && ['admin', 'supervisor', 'owner'].includes(memberRole))) {
+  if (isProtectedRoute && isAuthenticated) {
+    if (!(memberRole && PROTECTED_ROLES.includes(memberRole))) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Prevent supervisors from accessing admin-only settings page
-    if (pathname.startsWith('/settings') && memberRole !== 'admin' && memberRole !== 'owner') {
+    if (pathname.startsWith(SETTINGS_ROUTE_PREFIX) && !SETTINGS_ROLES.includes(memberRole)) {
       return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
     }
   }

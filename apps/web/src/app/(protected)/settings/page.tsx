@@ -1,11 +1,17 @@
+import { redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { requireUser } from '@/features/auth/lib';
-
-export const runtime = 'edge';
+import { getAuth, requireUser } from '@/features/auth/lib';
+import { SETTINGS_ROLES } from '@/features/auth/roles';
 
 export default async function SettingsPage() {
-  // Only admins can access this page.
-  await requireUser(['admin']);
+  await requireUser();
+
+  const auth = await getAuth();
+  const userRole = auth?.member?.role;
+
+  if (!(userRole && SETTINGS_ROLES.includes(userRole))) {
+    redirect('/dashboard');
+  }
 
   return (
     <div className="space-y-6">
@@ -49,3 +55,5 @@ export default async function SettingsPage() {
     </div>
   );
 }
+
+export const runtime = 'edge';

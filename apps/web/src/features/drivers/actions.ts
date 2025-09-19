@@ -1,13 +1,23 @@
 'use server';
-import type { User } from '@/db/types';
-import { requireUser } from '@/features/auth/lib';
+
+import { getAuth, requireUser } from '@/features/auth/lib';
+import { PROTECTED_ROLES } from '@/features/auth/roles';
 import { api } from '@/lib/api';
+import type { User } from '@/lib/api-contract';
 
 export async function getDrivers(): Promise<User[]> {
   try {
-    await requireUser(['admin', 'supervisor']);
-    return await api.get<User[]>('/api/admin/drivers');
-  } catch {
+    await requireUser();
+
+    const auth = await getAuth();
+    const userRole = auth?.member?.role;
+
+    if (!(userRole && PROTECTED_ROLES.includes(userRole))) {
+      throw new Error('Unauthorized');
+    }
+
+    return await api.admin.getDrivers();
+  } catch (_error) {
     return [];
   }
 }

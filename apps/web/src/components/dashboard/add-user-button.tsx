@@ -1,5 +1,5 @@
 import { getCurrentMember } from '@/features/auth/lib';
-import { AddUserButtonClient } from './add-user-button-client';
+import { AddUserDialog } from './add-user-dialog';
 
 export async function AddUserButton() {
   const member = await getCurrentMember();
@@ -8,5 +8,5 @@ export async function AddUserButton() {
     return null;
   }
 
-  return <AddUserButtonClient />;
+  return <AddUserDialog />;
 }

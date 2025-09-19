@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import type { Truck } from '@/db/types';
+import type { Truck } from '@/lib/api-contract';
 
 // El MapWrapper ahora acepta la lista de camiones con ubicación
 interface MapWrapperProps {

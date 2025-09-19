@@ -2,8 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { getDrivers } from '@/features/drivers/actions';
 
-export const runtime = 'edge';
-
 export default async function DriversPage() {
   const drivers = await getDrivers();
 
@@ -40,3 +38,5 @@ export default async function DriversPage() {
     </div>
   );
 }
+
+export const runtime = 'edge';

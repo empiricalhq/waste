@@ -2,8 +2,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { getTrucks } from '@/features/trucks/actions';
 
-export const runtime = 'edge';
-
 export default async function TrucksPage() {
   const trucks = await getTrucks();
 
@@ -34,3 +32,5 @@ export default async function TrucksPage() {
     </div>
   );
 }
+
+export const runtime = 'edge';
