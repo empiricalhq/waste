@@ -4,7 +4,7 @@ import { ConflictError, NotFoundError, ValidationError } from '@/internal/shared
 import type { CreateAssignmentRequest, RouteAssignment } from '../assignments/models';
 import type { AssignmentRepository } from '../assignments/repository';
 import type { AuthService } from '../auth/service';
-import type { IssueReportSummary } from '../issues/models';
+import type { CitizenIssueType, IssueReportSummary } from '../issues/models';
 import type { IssueRepository } from '../issues/repository';
 import type { CreateRouteRequest, Route, RouteWaypoint, RouteWithDetails } from '../routes/models';
 import type { RouteRepository } from '../routes/repository';
@@ -114,6 +114,16 @@ export class AdminService extends BaseService {
 
   async getOpenIssues(): Promise<IssueReportSummary[]> {
     return this.issueRepo.findAllOpen();
+  }
+
+  async createIssue(
+    data: { type: string; description?: string; lat: number; lng: number },
+    createdBy: string,
+  ): Promise<void> {
+    await this.issueRepo.createCitizenIssue(createdBy, {
+      ...data,
+      type: data.type as CitizenIssueType,
+    });
   }
 
   private handleAuthApiError(error: unknown): never {
