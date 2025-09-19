@@ -11,7 +11,7 @@ export default async function RoutesPage() {
       <div>
         <h1 className="text-3xl font-bold">Gestión de rutas</h1>
         <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de paso (waypoints)</p>
+          <p className="text-muted-foreground">Administra las rutas de recolección y sus puntos de recorrido</p>
           <AddRouteDialog />
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { AlertTriangle, User, Wrench } from 'lucide-react';
+import { AddIssueDialog } from '@/components/issues/add-issue-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Issue } from '@/lib/api-contract';
@@ -16,8 +17,9 @@ const sourceColors: Record<Issue['source'], string> = {
 export function RecentIssues({ issues }: { issues: Issue[] }) {
   return (
     <Card className="h-full">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Incidencias recientes</CardTitle>
+        <AddIssueDialog />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

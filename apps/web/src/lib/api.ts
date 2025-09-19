@@ -1,6 +1,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import type { AuthContext } from '@/features/auth/lib';
+import type { CreateIssueSchema } from '@/features/issues/schemas';
 import type { CreateRouteSchema } from '@/features/routes/schemas';
 import type { Issue, Route, Truck, User } from './api-contract';
 import { ENV } from './env';
@@ -85,11 +86,20 @@ const admin = {
   getDrivers: () => request<User[]>('/api/admin/drivers', {}, { ignoreSetCookie: true }),
   createDriver: (data: { name: string; email: string; password: string }) =>
     post<User>('/api/admin/drivers', data, { ignoreSetCookie: true }),
+  updateDriver: (id: string, data: { name: string; email: string; password?: string }) =>
+    post<User>(`/api/admin/drivers/${id}`, data, { ignoreSetCookie: true }),
+
+  getSupervisors: () => request<User[]>('/api/admin/supervisors', {}, { ignoreSetCookie: true }),
+  createSupervisor: (data: { name: string; email: string; password: string }) =>
+    post<User>('/api/admin/supervisors', data, { ignoreSetCookie: true }),
+  updateSupervisor: (id: string, data: { name: string; email: string; password?: string }) =>
+    post<User>(`/api/admin/supervisors/${id}`, data, { ignoreSetCookie: true }),
 
   getTrucks: () => request<Truck[]>('/api/admin/trucks', {}, { ignoreSetCookie: true }),
   getRoutes: () => request<Route[]>('/api/admin/routes', {}, { ignoreSetCookie: true }),
   getOpenIssues: () => request<Issue[]>('/api/admin/issues', {}, { ignoreSetCookie: true }),
   createRoute: (data: CreateRouteSchema) => post<Route>('/api/admin/routes', data, { ignoreSetCookie: true }),
+  createIssue: (data: CreateIssueSchema) => post<Issue>('/api/admin/issues', data, { ignoreSetCookie: true }),
 };
 
 const auth = {

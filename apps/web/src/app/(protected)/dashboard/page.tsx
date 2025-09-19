@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { ErrorBoundary } from '@/components/common/error-boundary';
 import { DashboardSkeleton } from '@/components/common/loading-skeleton';
-import { AddUserButton } from '@/components/dashboard/add-user-button';
 import { DashboardStats } from '@/components/dashboard/dashboard-stats';
 import { RecentIssues } from '@/components/dashboard/recent-issues';
 import { MapWrapper } from '@/components/map/map-wrapper';
@@ -36,7 +35,6 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">Vista general del sistema en tiempo real</p>
         </div>
-        <AddUserButton />
       </div>
 
       <ErrorBoundary>
