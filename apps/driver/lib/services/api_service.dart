@@ -5,12 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Supabase.initialize(
-    url: 'https://hqvxqwakmxdhtkgsuggt.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhxdnhxd2FrbXhkaHRrZ3N1Z2d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODY1ODIsImV4cCI6MjA3Mjc2MjU4Mn0.jx1naBei09H6CTITZjPvqwfqxhc8sPfTSeTXGEB91ew',
+    // url:
+    // anonkey:
   );
-  
+
   runApp(const MyApp());
 }
 
@@ -49,9 +49,9 @@ class _AuthCheckerState extends State<AuthChecker> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('user_id');
     final userEmail = prefs.getString('user_email');
-    
+
     await Future.delayed(const Duration(seconds: 1));
-    
+
     if (mounted) {
       if (userId != null && userEmail != null) {
         final userData = {
@@ -59,7 +59,7 @@ class _AuthCheckerState extends State<AuthChecker> {
           'email': userEmail,
           'username': prefs.getString('user_name') ?? 'Conductor',
         };
-        
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -129,30 +129,30 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       // CORREGIDO: Especificar el esquema 'public'
       final supabase = Supabase.instance.client;
-      
+
       // Primero verificar que exista la tabla user
       final response = await supabase
           .from('user')  // Supabase automáticamente usa el esquema public
           .select('*')
           .eq('email', _emailController.text.trim())
           .maybeSingle();
-      
+
       if (response != null) {
         // Verificar el rol - la columna es 'appRole' según tu BD
         final appRole = response['appRole'];
-        
+
         // Verificar que sea driver
         if (appRole != 'driver') {
           throw Exception('Solo conductores pueden acceder. Tu rol es: $appRole');
         }
-        
+
         // Guardar datos del usuario
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('user_id', response['id']);
         await prefs.setString('user_email', response['email'] ?? _emailController.text);
         await prefs.setString('user_name', response['username'] ?? response['display_username'] ?? 'Conductor');
         await prefs.setBool('is_logged_in', true);
-        
+
         if (mounted) {
           Navigator.pushReplacement(
             context,
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.blue,
                 ),
                 const SizedBox(height: 20),
-                
+
                 const Text(
                   'Sistema de Recolección',
                   style: TextStyle(
@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                
+
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   enabled: !_isLoading,
                 ),
                 const SizedBox(height: 16),
-                
+
                 TextField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onSubmitted: (_) => _login(),
                 ),
                 const SizedBox(height: 20),
-                
+
                 if (_errorMessage.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -261,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 const SizedBox(height: 20),
-                
+
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -289,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
                 Text(
                   'Emails disponibles:\ndriver1@example.com\ndriver@example.com',
@@ -351,7 +351,7 @@ class _LocationScreenState extends State<LocationScreen> {
       setState(() {
         _status = 'GPS activado, obteniendo coordenadas...';
       });
-      
+
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high
       );
@@ -460,14 +460,14 @@ class _LocationScreenState extends State<LocationScreen> {
                   ],
                 ),
               ),
-              
+
               Icon(
                 Icons.location_on,
                 size: 80,
                 color: _isLoading ? Colors.orange : Colors.blue,
               ),
               const SizedBox(height: 30),
-              
+
               ElevatedButton(
                 onPressed: _isLoading ? null : _enviarUbicacion,
                 style: ElevatedButton.styleFrom(
@@ -486,9 +486,9 @@ class _LocationScreenState extends State<LocationScreen> {
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text('📍 Enviar Mi Ubicación'),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -501,7 +501,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
-              
+
               if (_lastPosition != null) ...[
                 const SizedBox(height: 20),
                 Container(
