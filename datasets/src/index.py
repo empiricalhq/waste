@@ -34,7 +34,8 @@ def _(DATA_DIR, download, mo):
     datasets = [
         "https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente",
         "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
-        "https://datosabiertos.gob.pe/dataset/composici%C3%B3n-de-residuos-s%C3%B3lidos-domiciliarios"
+        "https://datosabiertos.gob.pe/dataset/composici%C3%B3n-de-residuos-s%C3%B3lidos-domiciliarios",
+        "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
     ]
 
     all_files = download(datasets, DATA_DIR)
@@ -42,6 +43,8 @@ def _(DATA_DIR, download, mo):
     dataset_paths = {
         "residuos_municipales": all_files[1] if len(all_files) > 1 else None,
         "generacion_residuos": all_files[0] if len(all_files) > 0 else None,
+        "valorizacion_organicos": all_files[3] if len(all_files) > 3 else None,
+        "valorizacion_inorganicos": all_files[4] if len(all_files) > 4 else None
     }
 
     # printear los archivos
@@ -50,7 +53,7 @@ def _(DATA_DIR, download, mo):
         files_md += f"- {file}\n"
 
     mo.md(files_md)
-    return (dataset_paths,)
+    return all_files, dataset_paths
 
 
 @app.cell
@@ -342,6 +345,47 @@ def _(df2, mo, pl):
     mo.md(
         f"### Generación per cápita ({ultimo_año}): {ultimo_valor:.1f} kg/persona/año"
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r""" """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""# Análisis de Valorización de Resuidos Orgánicos e Inorgánicos""")
+    return
+
+
+@app.cell
+def _(all_files):
+    all_files
+    return
+
+
+@app.cell
+def _(dataset_paths, pl):
+    df_valorizacion_organicos = pl.read_csv(
+            dataset_paths["valorizacion_organicos"],
+            encoding="latin1",
+            separator=";",
+            truncate_ragged_lines=True,
+        )
+    return
+
+
+@app.cell
+def _(df_valorizacion):
+    df_valorizacion.head()
+    return
+
+
+@app.cell
+def _(pr):
+    pr
     return
 
 
