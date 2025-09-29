@@ -20,7 +20,7 @@
     "zod": "^4.1.8"
   },
   "devDependencies": {
-    "@types/bun": "1.2.22",
+    "@types/bun": "1.2.23",
     "@types/pg": "^8.15.5"
   }
 }
