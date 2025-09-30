@@ -8,6 +8,9 @@ import { ENV } from './env';
 
 const HTTP_NO_CONTENT = 204;
 const HTTP_SERVICE_UNAVAILABLE = 503;
+const ERROR_MESSAGES: Record<number,string> = {
+  422: "El usuario ya ha sido registrado"
+}
 
 class ApiError extends Error {
   status: number;
@@ -54,7 +57,8 @@ async function request<T>(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: response.statusText }));
-      throw new ApiError(errorData.error || `API Error: ${response.status}`, response.status);
+      const message = ERROR_MESSAGES[response.status] || errorData.error || `API Error: ${response.status}`;
+      throw new ApiError(message, response.status);
     }
 
     if (response.status === HTTP_NO_CONTENT) {
