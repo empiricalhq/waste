@@ -102,7 +102,7 @@ export function AddDriverDialog() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="w-full cursor-pointer" disabled={isPending}>
             Guardar
           </Button>
         </form>
