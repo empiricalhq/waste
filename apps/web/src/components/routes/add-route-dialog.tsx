@@ -53,7 +53,7 @@ export function AddRouteDialog() {
       title="Registro de datos"
       description="Las rutas de recolección son las rutas que los conductores seguirán para recoger la basura. Es necesario asignar un conductor a cada ruta"
       trigger={
-        <Button size="sm">
+        <Button className="cursor-pointer" size="sm">
           <Plus className="me-2 size-4" />
           Añadir ruta
         </Button>

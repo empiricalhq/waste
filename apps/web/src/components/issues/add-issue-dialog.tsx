@@ -49,7 +49,7 @@ export function AddIssueDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild={true}>
-        <Button>Reportar</Button>
+        <Button className="cursor-pointer">Reportar</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

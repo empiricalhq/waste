@@ -148,7 +148,7 @@ function AddUserForm({ onClose }: { onClose: () => void }) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 flex flex-col gap-4">
         <AddUserFormFields control={form.control} isPending={isPending} />
-        <Button type="submit" disabled={isPending} className="mt-2 w-full">
+        <Button type="submit" disabled={isPending} className="mt-2 w-full cursor-pointer">
           Crear usuario
         </Button>
       </form>
@@ -161,7 +161,7 @@ export function AddUserDialog() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Añadir usuario</Button>
+      <Button className="cursor-pointer" onClick={() => setIsOpen(true)}>Añadir usuario</Button>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>

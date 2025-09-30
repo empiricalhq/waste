@@ -41,7 +41,7 @@ export function AddDriverDialog() {
       title="Registro de datos"
       description="El conductor podrá usar estas credenciales para iniciar sesión en la app móvil disponible solo para conductores"
       trigger={
-        <Button size="sm">
+        <Button size="sm" className="cursor-pointer">
           <Plus className="me-2 size-4" />
           Añadir conductor
         </Button>
