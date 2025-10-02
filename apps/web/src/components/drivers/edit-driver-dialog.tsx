@@ -113,7 +113,7 @@ export function EditDriverDialog({ driver, children }: { driver: User; children:
               )}
             />
             <DialogFooter>
-              <Button className="cursor-pointer"type="submit" disabled={isPending}>
+              <Button className="cursor-pointer" type="submit" disabled={isPending}>
                 Guardar Cambios
               </Button>
             </DialogFooter>

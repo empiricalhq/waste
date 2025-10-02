@@ -161,7 +161,9 @@ export function AddUserDialog() {
 
   return (
     <>
-      <Button className="cursor-pointer" onClick={() => setIsOpen(true)}>Añadir usuario</Button>
+      <Button className="cursor-pointer" onClick={() => setIsOpen(true)}>
+        Añadir usuario
+      </Button>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>

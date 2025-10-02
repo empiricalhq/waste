@@ -8,9 +8,9 @@ import { ENV } from './env';
 
 const HTTP_NO_CONTENT = 204;
 const HTTP_SERVICE_UNAVAILABLE = 503;
-const ERROR_MESSAGES: Record<number,string> = {
-  422: "El usuario ya ha sido registrado"
-}
+const ERROR_MESSAGES: Record<number, string> = {
+  422: 'El usuario ya ha sido registrado',
+};
 
 class ApiError extends Error {
   status: number;
