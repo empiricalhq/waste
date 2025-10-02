@@ -161,7 +161,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       </Card>
 
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        Al dar click en continuar, aceptas nuestros <a href="#">Términos de Servicio</a> y <a href="#">Política de Privacidad</a>.
+        Al dar click en continuar, aceptas nuestros <a href="#">Términos de Servicio</a> y{' '}
+        <a href="#">Política de Privacidad</a>.
       </div>
     </div>
   );
