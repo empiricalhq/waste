@@ -101,7 +101,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   )}
                 />
 
-                <Button type="submit" disabled={isPending} className="mt-2 w-full">
+                <Button type="submit" disabled={isPending} className="mt-2 w-full cursor-pointer">
                   Iniciar sesión
                 </Button>
 
@@ -112,7 +112,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
                 {/* Social */}
                 <div className="grid grid-cols-3 gap-4">
-                  <Button variant="outline" type="button" className="w-full" disabled={isPending}>
+                  <Button variant="outline" type="button" className="w-full cursor-pointer" disabled={isPending}>
                     {/* Apple */}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                       <path
@@ -122,7 +122,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     </svg>
                     <span className="sr-only">Login with Apple</span>
                   </Button>
-                  <Button variant="outline" type="button" className="w-full" disabled={isPending}>
+                  <Button variant="outline" type="button" className="w-full cursor-pointer" disabled={isPending}>
                     {/* Google */}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                       <path
@@ -132,7 +132,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     </svg>
                     <span className="sr-only">Login with Google</span>
                   </Button>
-                  <Button variant="outline" type="button" className="w-full" disabled={isPending}>
+                  <Button variant="outline" type="button" className="w-full cursor-pointer" disabled={isPending}>
                     {/* Meta */}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                       <path
