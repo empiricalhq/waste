@@ -225,6 +225,7 @@ export function AddRouteDialog() {
             ))}
 
             <Button
+              className="cursor-pointer"
               type="button"
               variant="outline"
               size="sm"
@@ -243,7 +244,7 @@ export function AddRouteDialog() {
           </div>
 
           <div className="shrink-0 border-t pt-3">
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={isPending}>
               Guardar
             </Button>
           </div>

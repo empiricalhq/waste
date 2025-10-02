@@ -22,8 +22,8 @@ export const waypointSchema = z.object({
 export const createRouteSchema = z.object({
   name: z
     .string()
-    .min(NAME_MIN_LENGTH, `Name must be at least ${NAME_MIN_LENGTH} characters.`)
-    .max(NAME_MAX_LENGTH, `Name must be at most ${NAME_MAX_LENGTH} characters.`),
+    .min(NAME_MIN_LENGTH, `El nombre debe tener al menos ${NAME_MIN_LENGTH} caracteres.`)
+    .max(NAME_MAX_LENGTH, `El nombre debe tener como máximo ${NAME_MAX_LENGTH} caracteres.`),
   description: z.string().max(DESCRIPTION_MAX_LENGTH).optional(),
   start_lat: z.coerce.number().min(MIN_LATITUDE).max(MAX_LATITUDE),
   start_lng: z.coerce.number().min(MIN_LONGITUDE).max(MAX_LONGITUDE),

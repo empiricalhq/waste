@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { MailIcon, UserIcon } from 'lucide-react';
+import { MailIcon, Plus, UserIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { type Control, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -162,6 +162,7 @@ export function AddUserDialog() {
   return (
     <>
       <Button className="cursor-pointer" onClick={() => setIsOpen(true)}>
+        <Plus className="me-2 size-4" />
         Añadir usuario
       </Button>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
