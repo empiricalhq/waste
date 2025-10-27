@@ -15,7 +15,7 @@ async function DashboardContent() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="isolate h-[500px] w-full rounded-lg border lg:col-span-2">
-          <ErrorBoundary fallback={<div className="flex h-full items-center justify-center">Failed to load map</div>}>
+          <ErrorBoundary fallback={<div className="flex h-full items-center justify-center">Falló al cargar el mapa</div>}>
             <MapWrapper trucks={data.trucks} />
           </ErrorBoundary>
         </div>

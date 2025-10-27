@@ -11,10 +11,7 @@ import { signIn } from '@/features/auth/actions';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import { AtSign } from 'lucide-react';
 import { InputPasswordContainer } from '@/components/auth/input-password';
-import { InputStartIcon } from '@/components/auth/input-start-icon';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {

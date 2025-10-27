@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, LayoutDashboard, Leaf, LogOut, type LucideIcon, MapPin, Settings, Truck, Users } from 'lucide-react';
+import { BadgeAlert, Bell, LayoutDashboard, Leaf, LogOut, type LucideIcon, MapPin, Settings, Truck, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -27,6 +27,7 @@ const navigation: NavItem[] = [
   { name: 'Conductores', href: '/drivers', icon: Users },
   { name: 'Rutas', href: '/routes', icon: MapPin },
   { name: 'Vehículos', href: '/trucks', icon: Truck },
+  { name: 'Incidencias', href: '/issues', icon: BadgeAlert },
 ];
 
 const adminNavigation: NavItem[] = [
