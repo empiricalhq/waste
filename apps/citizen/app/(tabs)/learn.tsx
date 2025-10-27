@@ -4,14 +4,7 @@ import { WASTE_TYPES } from "@/constants/wasteTypes";
 import { SORTING_GUIDE, QUIZ_QUESTIONS } from "@/mocks/sortingGuide";
 import { Check, X, Trophy } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type QuizState = {
@@ -121,24 +114,15 @@ export default function LearnScreen() {
           </TouchableOpacity>
         </View>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <Image
-            source={{ uri: guide.imageUrl }}
-            style={styles.detailImage}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: guide.imageUrl }} style={styles.detailImage} resizeMode="cover" />
           <View style={styles.detailContent}>
             <View style={styles.detailTitleRow}>
               <Text style={styles.detailTitle}>{guide.name}</Text>
               <View
-                style={[
-                  styles.detailBadge,
-                  { backgroundColor: WASTE_TYPES[guide.category].color },
-                ]}
+                style={[styles.detailBadge, { backgroundColor: WASTE_TYPES[guide.category].color }]}
               />
             </View>
-            <Text style={styles.detailCategory}>
-              {WASTE_TYPES[guide.category].label}
-            </Text>
+            <Text style={styles.detailCategory}>{WASTE_TYPES[guide.category].label}</Text>
             <Text style={styles.detailDescription}>{guide.description}</Text>
             <View style={styles.detailSection}>
               <Text style={styles.detailSectionTitle}>Examples</Text>
@@ -159,11 +143,7 @@ export default function LearnScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <Text style={styles.title}>Learn</Text>
-        <TouchableOpacity
-          style={styles.quizButton}
-          onPress={startQuiz}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.quizButton} onPress={startQuiz} activeOpacity={0.7}>
           <Trophy size={18} color={Colors.light.cardBackground} />
           <Text style={styles.quizButtonText}>Quiz</Text>
         </TouchableOpacity>
@@ -194,14 +174,11 @@ export default function LearnScreen() {
           <Text style={styles.quizQuestion}>
             {QUIZ_QUESTIONS[quizState.currentQuestion].question}
           </Text>
-          <Text style={styles.quizItem}>
-            {QUIZ_QUESTIONS[quizState.currentQuestion].item}
-          </Text>
+          <Text style={styles.quizItem}>{QUIZ_QUESTIONS[quizState.currentQuestion].item}</Text>
           <View style={styles.options}>
             {QUIZ_QUESTIONS[quizState.currentQuestion].options.map((option) => {
               const isSelected = quizState.selectedAnswer === option;
-              const isCorrect =
-                option === QUIZ_QUESTIONS[quizState.currentQuestion].correctAnswer;
+              const isCorrect = option === QUIZ_QUESTIONS[quizState.currentQuestion].correctAnswer;
               const showCorrect = quizState.showResult && isCorrect;
               const showWrong = quizState.showResult && isSelected && !isCorrect;
 
@@ -214,14 +191,12 @@ export default function LearnScreen() {
                     showWrong && styles.optionWrong,
                   ]}
                   onPress={() => !quizState.showResult && handleAnswer(option)}
-                  disabled={quizState.showResult}
-                >
+                  disabled={quizState.showResult}>
                   <Text
                     style={[
                       styles.optionText,
                       (showCorrect || showWrong) && styles.optionTextActive,
-                    ]}
-                  >
+                    ]}>
                     {WASTE_TYPES[option].label}
                   </Text>
                   {showCorrect && <Check size={18} color="#FFFFFF" />}
@@ -250,8 +225,7 @@ export default function LearnScreen() {
                   key={item.id}
                   style={styles.roadmapItem}
                   onPress={() => setSelectedGuide(item.id)}
-                  activeOpacity={0.7}
-                >
+                  activeOpacity={0.7}>
                   <View style={styles.roadmapLeft}>
                     <View
                       style={[
@@ -259,9 +233,7 @@ export default function LearnScreen() {
                         { backgroundColor: WASTE_TYPES[item.category].color },
                       ]}
                     />
-                    {index < SORTING_GUIDE.length - 1 && (
-                      <View style={styles.roadmapLine} />
-                    )}
+                    {index < SORTING_GUIDE.length - 1 && <View style={styles.roadmapLine} />}
                   </View>
                   <View style={styles.roadmapCard}>
                     <Text style={styles.roadmapItemTitle}>{item.name}</Text>

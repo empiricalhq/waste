@@ -3,13 +3,7 @@ import Colors from "@/constants/colors";
 import { WASTE_TYPES, WasteType } from "@/constants/wasteTypes";
 import { Check, ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
@@ -19,9 +13,8 @@ export default function ScheduleScreen() {
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState<WasteType | "all">("all");
 
-  const filteredCollections = selectedFilter === "all"
-    ? collections
-    : collections.filter((c) => c.type === selectedFilter);
+  const filteredCollections =
+    selectedFilter === "all" ? collections : collections.filter((c) => c.type === selectedFilter);
 
   const upcomingCollections = filteredCollections
     .filter((c) => !c.completed)
@@ -54,45 +47,21 @@ export default function ScheduleScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.filterScroll}
-        contentContainerStyle={styles.filterContent}
-      >
+        contentContainerStyle={styles.filterContent}>
         <TouchableOpacity
-          style={[
-            styles.filterChip,
-            selectedFilter === "all" && styles.filterChipActive,
-          ]}
-          onPress={() => setSelectedFilter("all")}
-        >
-          <Text
-            style={[
-              styles.filterText,
-              selectedFilter === "all" && styles.filterTextActive,
-            ]}
-          >
+          style={[styles.filterChip, selectedFilter === "all" && styles.filterChipActive]}
+          onPress={() => setSelectedFilter("all")}>
+          <Text style={[styles.filterText, selectedFilter === "all" && styles.filterTextActive]}>
             All
           </Text>
         </TouchableOpacity>
         {(Object.keys(WASTE_TYPES) as WasteType[]).map((type) => (
           <TouchableOpacity
             key={type}
-            style={[
-              styles.filterChip,
-              selectedFilter === type && styles.filterChipActive,
-            ]}
-            onPress={() => setSelectedFilter(type)}
-          >
-            <View
-              style={[
-                styles.filterDot,
-                { backgroundColor: WASTE_TYPES[type].color },
-              ]}
-            />
-            <Text
-              style={[
-                styles.filterText,
-                selectedFilter === type && styles.filterTextActive,
-              ]}
-            >
+            style={[styles.filterChip, selectedFilter === type && styles.filterChipActive]}
+            onPress={() => setSelectedFilter(type)}>
+            <View style={[styles.filterDot, { backgroundColor: WASTE_TYPES[type].color }]} />
+            <Text style={[styles.filterText, selectedFilter === type && styles.filterTextActive]}>
               {WASTE_TYPES[type].label}
             </Text>
           </TouchableOpacity>
@@ -118,13 +87,9 @@ export default function ScheduleScreen() {
                       ]}
                     />
                     <View style={styles.cardInfo}>
-                      <Text style={styles.cardType}>
-                        {WASTE_TYPES[collection.type].label}
-                      </Text>
+                      <Text style={styles.cardType}>{WASTE_TYPES[collection.type].label}</Text>
                       <View style={styles.cardDetails}>
-                        <Text style={styles.cardDetail}>
-                          {formatDate(collection.date)}
-                        </Text>
+                        <Text style={styles.cardDetail}>{formatDate(collection.date)}</Text>
                         <Text style={styles.cardDetailDot}>·</Text>
                         <Text style={styles.cardDetail}>{collection.time}</Text>
                       </View>
@@ -151,9 +116,7 @@ export default function ScheduleScreen() {
                         {WASTE_TYPES[collection.type].label}
                       </Text>
                       <View style={styles.cardDetails}>
-                        <Text style={styles.cardDetail}>
-                          {formatDate(collection.date)}
-                        </Text>
+                        <Text style={styles.cardDetail}>{formatDate(collection.date)}</Text>
                         <Text style={styles.cardDetailDot}>·</Text>
                         <Text style={styles.cardDetail}>{collection.time}</Text>
                       </View>

@@ -3,13 +3,7 @@ import Colors from "@/constants/colors";
 import { WASTE_TYPES } from "@/constants/wasteTypes";
 import { Calendar, MapPin, MessageSquare } from "lucide-react-native";
 import React, { useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
@@ -23,9 +17,10 @@ export default function HomeScreen() {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
 
   const closestTruck = useMemo(() => {
-    return trucks.reduce((closest, truck) =>
-      truck.eta < closest.eta ? truck : closest
-    , trucks[0]);
+    return trucks.reduce(
+      (closest, truck) => (truck.eta < closest.eta ? truck : closest),
+      trucks[0]
+    );
   }, [trucks]);
 
   const formatDate = (dateString: string) => {
@@ -57,16 +52,15 @@ export default function HomeScreen() {
                     { backgroundColor: WASTE_TYPES[nextCollection.type].color },
                   ]}
                 />
-                <Text style={styles.badgeText}>
-                  {WASTE_TYPES[nextCollection.type].label}
-                </Text>
+                <Text style={styles.badgeText}>{WASTE_TYPES[nextCollection.type].label}</Text>
               </View>
             </View>
             <Text style={styles.nextDate}>
               {formatDate(nextCollection.date)} at {nextCollection.time}
             </Text>
             <Text style={styles.nextHint}>
-              Place your {WASTE_TYPES[nextCollection.type].label.toLowerCase()} bin outside before collection time
+              Place your {WASTE_TYPES[nextCollection.type].label.toLowerCase()} bin outside before
+              collection time
             </Text>
           </View>
         )}
@@ -74,10 +68,7 @@ export default function HomeScreen() {
         {closestTruck && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Truck nearby</Text>
-            <TouchableOpacity
-              style={styles.truckCard}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.truckCard} activeOpacity={0.7}>
               <View style={styles.truckLeft}>
                 <View
                   style={[
@@ -97,10 +88,7 @@ export default function HomeScreen() {
                 <Text style={styles.etaLabel}>min</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionButton}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
               <MapPin size={18} color={Colors.light.text} />
               <Text style={styles.actionButtonText}>Track on map</Text>
             </TouchableOpacity>
@@ -113,15 +101,11 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={styles.actionCard}
               onPress={() => router.push("/schedule")}
-              activeOpacity={0.7}
-            >
+              activeOpacity={0.7}>
               <Calendar size={20} color={Colors.light.text} />
               <Text style={styles.actionCardText}>Schedule</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionCard}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.actionCard} activeOpacity={0.7}>
               <MessageSquare size={20} color={Colors.light.text} />
               <Text style={styles.actionCardText}>Contact</Text>
             </TouchableOpacity>
@@ -217,7 +201,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: 12,
   },
-
 
   truckCard: {
     backgroundColor: Colors.light.cardBackground,

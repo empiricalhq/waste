@@ -2,14 +2,7 @@ import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
 import { Bell, ChevronRight } from "lucide-react-native";
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Switch,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {

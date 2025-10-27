@@ -13,8 +13,6 @@ type UserProgress = {
   badges: string[];
 };
 
-
-
 const STORAGE_KEYS = {
   REPORTS: "waste-app-reports",
   USER_PROGRESS: "waste-app-progress",
@@ -67,21 +65,24 @@ export const [AppProvider, useApp] = createContextHook(() => {
     }
   };
 
-  const addReport = useCallback(async (report: Omit<Report, "id" | "createdAt" | "updatedAt" | "status">) => {
-    const newReport: Report = {
-      ...report,
-      id: `rep-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: "pending",
-    };
+  const addReport = useCallback(
+    async (report: Omit<Report, "id" | "createdAt" | "updatedAt" | "status">) => {
+      const newReport: Report = {
+        ...report,
+        id: `rep-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: "pending",
+      };
 
-    setReports((prev) => {
-      const updatedReports = [newReport, ...prev];
-      AsyncStorage.setItem(STORAGE_KEYS.REPORTS, JSON.stringify(updatedReports));
-      return updatedReports;
-    });
-  }, []);
+      setReports((prev) => {
+        const updatedReports = [newReport, ...prev];
+        AsyncStorage.setItem(STORAGE_KEYS.REPORTS, JSON.stringify(updatedReports));
+        return updatedReports;
+      });
+    },
+    []
+  );
 
   const updateReportStatus = useCallback(async (id: string, status: Report["status"]) => {
     setReports((prev) => {

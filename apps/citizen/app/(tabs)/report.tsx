@@ -79,8 +79,7 @@ export default function ReportScreen() {
         });
         if (address[0]) {
           setLocation(
-            `${address[0].street || ""} ${address[0].city || ""}`.trim() ||
-              "Current location"
+            `${address[0].street || ""} ${address[0].city || ""}`.trim() || "Current location"
           );
         }
       } else {
@@ -139,8 +138,7 @@ export default function ReportScreen() {
                   key={type.id}
                   style={styles.typeCard}
                   onPress={() => handleTypeSelect(type.label)}
-                  activeOpacity={0.7}
-                >
+                  activeOpacity={0.7}>
                   <Text style={styles.typeLabel}>{type.label}</Text>
                 </TouchableOpacity>
               ))}
@@ -156,17 +154,8 @@ export default function ReportScreen() {
                     <View style={styles.reportHeader}>
                       <Text style={styles.reportType}>{report.type}</Text>
                       <View
-                        style={[
-                          styles.statusBadge,
-                          { backgroundColor: Colors.light.background },
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.statusText,
-                            { color: getStatusColor(report.status) },
-                          ]}
-                        >
+                        style={[styles.statusBadge, { backgroundColor: Colors.light.background }]}>
+                        <Text style={[styles.statusText, { color: getStatusColor(report.status) }]}>
                           {report.status}
                         </Text>
                       </View>
@@ -198,22 +187,14 @@ export default function ReportScreen() {
 
           <View style={styles.cameraPlaceholder}>
             <Camera size={48} color={Colors.light.textSecondary} />
-            <Text style={styles.cameraPlaceholderText}>
-              Take a photo of the issue
-            </Text>
+            <Text style={styles.cameraPlaceholderText}>Take a photo of the issue</Text>
           </View>
 
           <View style={styles.cameraActions}>
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={handleOpenCamera}
-            >
+            <TouchableOpacity style={styles.primaryButton} onPress={handleOpenCamera}>
               <Text style={styles.primaryButtonText}>Open camera</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={handleSkipPhoto}
-            >
+            <TouchableOpacity style={styles.secondaryButton} onPress={handleSkipPhoto}>
               <Text style={styles.secondaryButtonText}>Skip</Text>
             </TouchableOpacity>
           </View>
@@ -225,15 +206,11 @@ export default function ReportScreen() {
               <View style={styles.cameraOverlay}>
                 <TouchableOpacity
                   style={[styles.closeButton, { top: Platform.OS === "ios" ? 60 : 40 }]}
-                  onPress={() => setShowCamera(false)}
-                >
+                  onPress={() => setShowCamera(false)}>
                   <X size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <View style={styles.cameraControls}>
-                  <TouchableOpacity
-                    style={styles.captureButton}
-                    onPress={handleTakePhoto}
-                  >
+                  <TouchableOpacity style={styles.captureButton} onPress={handleTakePhoto}>
                     <View style={styles.captureButtonInner} />
                   </TouchableOpacity>
                 </View>
@@ -257,9 +234,7 @@ export default function ReportScreen() {
             <View style={{ width: 24 }} />
           </View>
 
-          {imageUri && (
-            <Image source={{ uri: imageUri }} style={styles.previewImage} />
-          )}
+          {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} />}
 
           <View style={styles.form}>
             <View style={styles.formGroup}>
@@ -291,13 +266,9 @@ export default function ReportScreen() {
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.submitButton,
-                !description && styles.submitButtonDisabled,
-              ]}
+              style={[styles.submitButton, !description && styles.submitButtonDisabled]}
               onPress={handleSubmit}
-              disabled={!description}
-            >
+              disabled={!description}>
               <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -313,9 +284,7 @@ export default function ReportScreen() {
           <Check size={48} color={Colors.light.text} />
         </View>
         <Text style={styles.successTitle}>Report submitted</Text>
-        <Text style={styles.successSubtitle}>
-          We&apos;ll investigate and update you soon
-        </Text>
+        <Text style={styles.successSubtitle}>We&apos;ll investigate and update you soon</Text>
         <TouchableOpacity style={styles.doneButton} onPress={handleReset}>
           <Text style={styles.doneButtonText}>Done</Text>
         </TouchableOpacity>
