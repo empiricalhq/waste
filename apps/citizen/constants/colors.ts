@@ -1,9 +1,19 @@
-import colors from 'tailwindcss/colors';
+const accent = "#000000";
 
-export const appColors = {
-  primary: colors.emerald[500],
-  error: colors.red[500],
-  background: colors.white,
-  text: colors.gray[900],
-  textSecondary: colors.gray[600],
-} as const;
+export default {
+  light: {
+    text: "#0A0A0A",
+    textSecondary: "#666666",
+    textTertiary: "#999999",
+    background: "#FAFAFA",
+    cardBackground: "#FFFFFF",
+    tint: accent,
+    tabIconDefault: "#999999",
+    tabIconSelected: accent,
+    primary: accent,
+    border: "#E5E5E5",
+    borderLight: "#F0F0F0",
+    success: "#000000",
+    danger: "#000000",
+  },
+};

@@ -1,20 +1,35 @@
-import { Stack } from 'expo-router';
-import { View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import React, { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppProvider } from "@/contexts/AppContext";
 
-import '../styles/global.css';
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
+
+function RootLayoutNav() {
+  return (
+    <Stack screenOptions={{ headerBackTitle: "Back" }}>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
+
   return (
-    <SafeAreaProvider>
-      <View style={{ flex: 1 }}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: 'slide_from_right',
-          }}
-        />
-      </View>
-    </SafeAreaProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>
+        <GestureHandlerRootView>
+          <RootLayoutNav />
+        </GestureHandlerRootView>
+      </AppProvider>
+    </QueryClientProvider>
   );
 }

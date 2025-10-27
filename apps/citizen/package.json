@@ -11,7 +11,10 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "expo": "54.0.7",
+    "expo-camera": "~17.0.8",
+    "expo-location": "~19.0.7",
     "expo-router": "~6.0.4",
     "expo-status-bar": "~3.0.8",
     "nativewind": "4.2.0",
