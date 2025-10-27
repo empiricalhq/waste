@@ -103,6 +103,8 @@ const admin = {
   getRoutes: () => request<Route[]>('/api/admin/routes', {}, { ignoreSetCookie: true }),
   getOpenIssues: () => request<Issue[]>('/api/admin/issues', {}, { ignoreSetCookie: true }),
   createRoute: (data: CreateRouteSchema) => post<Route>('/api/admin/routes', data, { ignoreSetCookie: true }),
+  deleteRoute: (id: string) =>
+    request<void>(`/api/admin/routes/${id}`, { method: 'DELETE' }, { ignoreSetCookie: true }),
   createIssue: (data: CreateIssueSchema) => post<Issue>('/api/admin/issues', data, { ignoreSetCookie: true }),
 };
 

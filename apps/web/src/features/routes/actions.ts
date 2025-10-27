@@ -51,3 +51,27 @@ export async function createRoute(data: CreateRouteSchema): Promise<ActionResult
   revalidatePath('/routes');
   return { error: undefined };
 }
+
+export async function deleteRoute(id: string): Promise<ActionResult> {
+  if (!id) {
+    return { error: 'Route id is required.' };
+  }
+
+  try {
+    await requireUser();
+
+    const auth = await getAuth();
+    const userRoles = auth?.user?.role?.split(',') ?? [];
+
+    if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
+      throw new Error('Unauthorized');
+    }
+
+    await api.admin.deleteRoute(id);
+  } catch (error: unknown) {
+    return { error: error instanceof Error ? error.message : 'Failed to delete route.' };
+  }
+
+  revalidatePath('/routes');
+  return { error: undefined };
+}
