@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.17.4"
 app = marimo.App(width="full")
 
@@ -13,13 +14,13 @@ def _(mo):
 @app.cell
 def _():
     import logging
+
     from pathlib import Path
 
     import altair as alt
+    import data_utils as downloader
     import marimo as mo
     import polars as pl
-
-    import data_utils as downloader
 
     # The "src" directory is the working directory for notebooks.
     # Paths are relative to the parent of "src", which is "datasets".
@@ -57,7 +58,9 @@ def _(DATA_DIR, downloader, mo):
         )
         mo.md(files_md)
     else:
-        mo.md("No se descargaron archivos nuevos. Puede que ya se hayan descargado en pases anteriores.")
+        mo.md(
+            "No se descargaron archivos nuevos. Puede que ya se hayan descargado en pases anteriores."
+        )
 
     dataset_paths = {
         "generacion_residuos": next(

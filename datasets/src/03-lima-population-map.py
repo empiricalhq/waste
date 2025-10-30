@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.17.4"
 app = marimo.App(width="full")
 
@@ -7,6 +8,7 @@ app = marimo.App(width="full")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
