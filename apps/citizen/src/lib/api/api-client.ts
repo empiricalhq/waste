@@ -5,7 +5,7 @@ import { APP_CONFIG } from "@/constants/app-config";
 async function request<T>(
   endpoint: string,
   options: RequestInit = {},
-  retries = APP_CONFIG.RETRY_ATTEMPTS
+  retries: number = APP_CONFIG.RETRY_ATTEMPTS
 ): Promise<T> {
   const { baseURL, timeout, headers } = await getApiConfig();
   const url = `${baseURL}${endpoint}`;
@@ -49,9 +49,9 @@ async function request<T>(
 
 export const apiClient = {
   get: <T>(endpoint: string) => request<T>(endpoint, { method: "GET" }),
-  post: <T, D>(endpoint: string, data: D) =>
+  post: <T, D = unknown>(endpoint: string, data: D) =>
     request<T>(endpoint, { method: "POST", body: JSON.stringify(data) }),
-  patch: <T, D>(endpoint: string, data: D) =>
+  patch: <T, D = unknown>(endpoint: string, data: D) =>
     request<T>(endpoint, { method: "PATCH", body: JSON.stringify(data) }),
   delete: <T>(endpoint: string) => request<T>(endpoint, { method: "DELETE" }),
 };

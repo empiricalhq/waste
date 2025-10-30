@@ -4,8 +4,6 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  ViewStyle,
-  TextStyle,
   TouchableOpacityProps,
 } from "react-native";
 import { Colors, Spacing, Typography, BorderRadius } from "@/constants/design-tokens";
@@ -24,14 +22,14 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   ...props
 }) => {
-  const containerStyle: ViewStyle[] = [
+  const containerStyle = [
     styles.container,
     variant === "primary" ? styles.primaryContainer : styles.secondaryContainer,
     (disabled || loading) && styles.disabled,
     style,
   ];
 
-  const textStyle: TextStyle[] = [
+  const textStyle = [
     styles.text,
     variant === "primary" ? styles.primaryText : styles.secondaryText,
   ];

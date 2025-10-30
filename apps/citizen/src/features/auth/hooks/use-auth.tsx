@@ -16,11 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const [hasToken, setHasToken] = useState(false);
 
-  const {
-    data: user,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["currentUser"],
     queryFn: authService.getCurrentUser,
     enabled: hasToken,

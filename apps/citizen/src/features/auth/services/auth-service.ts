@@ -9,13 +9,16 @@ type AuthResponse = {
 
 export const authService = {
   login: async (credentials: { email: string; password: string }): Promise<User> => {
-    const { token, user } = await apiClient.post<AuthResponse>("/auth/login", credentials);
+    const { token, user } = await apiClient.post<AuthResponse, typeof credentials>(
+      "/auth/login",
+      credentials
+    );
     await saveToken(token);
     return user;
   },
 
   signUp: async (data: { name: string; email: string; password: string }): Promise<User> => {
-    const { token, user } = await apiClient.post<AuthResponse>("/auth/signup", data);
+    const { token, user } = await apiClient.post<AuthResponse, typeof data>("/auth/signup", data);
     await saveToken(token);
     return user;
   },

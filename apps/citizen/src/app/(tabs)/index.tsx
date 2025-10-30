@@ -32,13 +32,12 @@ export default function HomeScreen() {
             <EmptyState title="No hay recolecciones próximas" />
           )}
 
-          {nearestTruck && (
-            <NearestTruckCard truck={nearestTruck} onTrack={() => router.push(ROUTES.TRUCK_MAP)} />
-          )}
+          {nearestTruck && <NearestTruckCard truck={nearestTruck} />}
 
           <QuickActions
             onSchedulePress={() => router.push(ROUTES.SCHEDULE)}
-            onContactPress={() => router.push(ROUTES.HELP)}
+            onMapPress={() => router.push(ROUTES.TRUCK_MAP)}
+            onHelpPress={() => router.push(ROUTES.HELP)}
           />
         </ScrollView>
       )}
