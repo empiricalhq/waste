@@ -32,7 +32,7 @@ def _():
     import matplotlib.pyplot as plt
 
     # definitions
-    PROJECT_ROOT = Path.cwd()
+    PROJECT_ROOT = Path.cwd().parent
     DATA_DIR = PROJECT_ROOT / "data"
     return DATA_DIR, gpd, plt
 

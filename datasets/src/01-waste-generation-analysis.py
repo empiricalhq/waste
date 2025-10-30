@@ -29,8 +29,8 @@ def _():
 
     # The "src" directory is the working directory for notebooks.
     # Paths are relative to the parent of "src", which is "datasets".
-    PROJECT_ROOT = Path.cwd()
-    DATA_DIR = PROJECT_ROOT / "data" / "residuos"
+    PROJECT_ROOT = Path.cwd().parent
+    DATA_DIR = PROJECT_ROOT / "data"
 
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
