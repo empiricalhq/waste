@@ -3,11 +3,10 @@
   "compilerOptions": {
     "strict": true,
 
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./*"]
-    },
-    "allowImportingTsExtensions": true
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

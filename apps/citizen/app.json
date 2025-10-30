@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "limalimpia",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "owner": "totallynotdavid",
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -15,49 +15,31 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.limalimpia.ciudadano",
-      "infoPlist": {
-        "NSCameraUsageDescription": "Permitir que $(PRODUCT_NAME) acceda a tu cámara para reportar incidentes.",
-        "NSMicrophoneUsageDescription": "Permitir que $(PRODUCT_NAME) acceda a tu micrófono.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Permitir que $(PRODUCT_NAME) use tu ubicación para reportes precisos.",
-        "NSLocationAlwaysUsageDescription": "Permitir que $(PRODUCT_NAME) use tu ubicación.",
-        "NSLocationWhenInUseUsageDescription": "Permitir que $(PRODUCT_NAME) use tu ubicación.",
-        "UIBackgroundModes": ["location"]
-      }
+      "bundleIdentifier": "com.limalimpia.ciudadano"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.limalimpia.ciudadano",
-      "permissions": [
-        "CAMERA",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "FOREGROUND_SERVICE",
-        "FOREGROUND_SERVICE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION"
-      ]
+      "package": "com.limalimpia.ciudadano"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
+      "expo-secure-store",
       [
         "expo-camera",
         {
-          "cameraPermission": "Permitir que $(PRODUCT_NAME) acceda a tu cámara para reportar incidentes.",
-          "microphonePermission": "Permitir que $(PRODUCT_NAME) acceda a tu micrófono para reportar incidentes.",
-          "recordAudioAndroid": true
+          "cameraPermission": "Permitir que $(PRODUCT_NAME) acceda a tu cámara para reportar incidentes."
         }
       ],
       [
         "expo-location",
         {
           "isAndroidForegroundServiceEnabled": true,
-          "isAndroidBackgroundLocationEnabled": true,
           "locationAlwaysAndWhenInUsePermission": "Permitir que $(PRODUCT_NAME) use tu ubicación para reportes precisos."
         }
       ]
