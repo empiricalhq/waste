@@ -45,16 +45,16 @@ def _(mo):
 
 @app.cell
 def _(DATA_DIR, downloader, mo):
-    datasets_urls = [
+    generation_datasets_urls = [
         "https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente",
         "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
     ]
 
-    all_files = downloader.download(datasets_urls, DATA_DIR)
+    generation_all_files = downloader.download(generation_datasets_urls, DATA_DIR)
 
-    if all_files:
-        files_md = "Archivos descargados:\n" + "".join(
-            f"- `{file.name}`\n" for file in all_files
+    if generation_all_files:
+        files_md = "Archivos descargados:\\n" + "".join(
+            f"- `{file.name}`\\n" for file in generation_all_files
         )
         mo.md(files_md)
     else:
@@ -62,25 +62,25 @@ def _(DATA_DIR, downloader, mo):
             "No se descargaron archivos nuevos. Puede que ya se hayan descargado en pases anteriores."
         )
 
-    dataset_paths = {
+    generation_dataset_paths = {
         "generacion_residuos": next(
-            (f for f in all_files if "generacion_anual" in f.name), None
+            (f for f in generation_all_files if "generacion_anual" in f.name), None
         )
     }
-    return (dataset_paths,)
+    return (generation_dataset_paths,)
 
 
 @app.cell
-def _(dataset_paths, pl):
+def _(generation_dataset_paths, pl):
     # Cargar el dataset principal en un dataframe de Polars.
     df_generacion = (
         pl.read_csv(
-            dataset_paths["generacion_residuos"],
+            generation_dataset_paths["generacion_residuos"],
             encoding="latin1",
             separator=";",
             truncate_ragged_lines=True,
         )
-        if dataset_paths["generacion_residuos"]
+        if generation_dataset_paths["generacion_residuos"]
         else None
     )
     return (df_generacion,)

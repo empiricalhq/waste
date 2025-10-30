@@ -1,6 +1,5 @@
 import marimo
 
-
 __generated_with = "0.17.4"
 app = marimo.App(width="medium")
 
@@ -8,7 +7,6 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
-
     return (mo,)
 
 
@@ -43,8 +41,8 @@ def _(mo):
 
 @app.cell
 def _(DATA_DIR, gpd):
-    geojson_path = DATA_DIR / "geojson" / "departamental.geojson"
-    mapa_departamental_peru = gpd.read_file(geojson_path)
+    mapa_departamental_path = DATA_DIR / "geojson" / "departamental.geojson"
+    mapa_departamental_peru = gpd.read_file(mapa_departamental_path)
     return (mapa_departamental_peru,)
 
 
@@ -72,8 +70,8 @@ def _(mo):
 
 @app.cell
 def _(DATA_DIR, gpd):
-    geojson_path2 = DATA_DIR / "geojson" / "distrital.geojson"
-    mapa_distrital = gpd.read_file(geojson_path2)
+    mapa_distrital_path = DATA_DIR / "geojson" / "distrital.geojson"
+    mapa_distrital = gpd.read_file(mapa_distrital_path)
     return (mapa_distrital,)
 
 
@@ -105,12 +103,12 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_DIR, gpd):
+def _(DATA_DIR, df, gpd):
     # This cell loads and cleans the attribute data from the DBF file.
-    dbf_path = DATA_DIR / "lima" / "manzana.dbf"
-    df = gpd.read_file(dbf_path)
-    df = df.drop(columns="geometry", errors="ignore")
-    df.columns = df.columns.str.strip()
+    manzana_dbf_path = DATA_DIR / "lima" / "manzana.dbf"
+    df_attrs = gpd.read_file(manzana_dbf_path)
+    df_attrs = df_attrs.drop(columns="geometry", errors="ignore")
+    df_attrs.columns = df_attrs.columns.str.strip()
 
     cols_to_drop = [
         "contacto",
@@ -125,25 +123,27 @@ def _(DATA_DIR, gpd):
         "LLAVE_MZS",
     ]
     df_attrs = df.drop(columns=cols_to_drop, errors="ignore")
-    return (df_attrs,)
+    return
 
 
 @app.cell
-def _(DATA_DIR, df_attrs, gpd):
+def _(DATA_DIR, gpd, manzana_attrs):
     # This cell loads the shapefile and merges it with the attribute data.
-    shp_path = DATA_DIR / "lima" / "manzana.shp"
-    gdf = gpd.read_file(shp_path)
-    gdf.columns = gdf.columns.str.strip()
-    gdf = gdf.drop(columns=["T_TOTAL"], errors="ignore")
+    manzana_shp_path = DATA_DIR / "lima" / "manzana.shp"
+    manzana_gdf = gpd.read_file(manzana_shp_path)
+    manzana_gdf.columns = manzana_gdf.columns.str.strip()
+    manzana_gdf = manzana_gdf.drop(columns=["T_TOTAL"], errors="ignore")
 
-    merged_gdf = gdf.merge(df_attrs[["Mz", "T_TOTAL"]], on="Mz", how="left")
-    return (merged_gdf,)
+    manzana_merged_gdf = manzana_gdf.merge(
+        manzana_attrs[["Mz", "T_TOTAL"]], on="Mz", how="left"
+    )
+    return (manzana_merged_gdf,)
 
 
 @app.cell
-def _(merged_gdf, mo, plt):
+def _(manzana_merged_gdf, mo, plt):
     fig, ax = plt.subplots(1, 1, figsize=(12, 12))
-    merged_gdf.plot(
+    manzana_merged_gdf.plot(
         column="T_TOTAL",
         ax=ax,
         legend=True,
@@ -165,6 +165,8 @@ def _(merged_gdf, mo, plt):
 
 @app.cell
 def _():
+
+
     return
 
 

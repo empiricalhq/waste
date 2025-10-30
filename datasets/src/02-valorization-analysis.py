@@ -14,7 +14,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# Análisis de valorización de residuos sólidos orgánicos e inorgánicos""")
+    mo.md(r"# Análisis de valorización de residuos sólidos orgánicos e inorgánicos")
     return
 
 
@@ -39,15 +39,14 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Descarga de datasets de valorización""")
+    mo.md("## Descarga de datasets de valorización")
     return
 
 
 @app.cell
 def _(DATA_DIR, downloader, mo):
-    # This single page contains links to both organic and inorganic CSVs
-    URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
-    downloaded_files = downloader.download(URL, DATA_DIR)
+    valorization_URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
+    downloaded_files = downloader.download(valorization_URL, DATA_DIR)
 
     if downloaded_files:
         files_md = "Archivos descargados:\n" + "".join(
@@ -57,39 +56,45 @@ def _(DATA_DIR, downloader, mo):
     else:
         mo.md("No se descargaron archivos nuevos. Pueden existir previamente.")
 
-    PATH_ORG = next((f for f in downloaded_files if "org" in f.name.lower()), None)
-    PATH_INORG = next((f for f in downloaded_files if "inorg" in f.name.lower()), None)
-    return PATH_INORG, PATH_ORG
+    valorization_org_path = next(
+        (f for f in downloaded_files if "org" in f.name.lower()), None
+    )
+    valorization_inorg_path = next(
+        (f for f in downloaded_files if "inorg" in f.name.lower()), None
+    )
+    return valorization_inorg_path, valorization_org_path
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Carga y limpieza de datos""")
+    mo.md("## Carga y limpieza de datos")
     return
 
 
 @app.cell
-def _(PATH_INORG, PATH_ORG, mo, pl):
-    if not PATH_ORG or not PATH_INORG:
+def _(valorization_inorg_path, valorization_org_path, mo, pl):
+    if not valorization_org_path or not valorization_inorg_path:
         mo.md(
             "No se encontraron los archivos de datos. Verifique la descarga."
         ).center()
-        df_org_raw, df_inorg_raw = None, None
+        valorization_org_raw, valorization_inorg_raw = None, None
     else:
-        df_org_raw = pl.read_csv(PATH_ORG, separator=";", encoding="latin1")
-        df_inorg_raw = pl.read_csv(PATH_INORG, separator=";", encoding="latin1")
-        mo.md(
-            f"""
-        - Orgánicos: {df_org_raw.shape[0]:,} filas cargadas.
-        - Inorgánicos: {df_inorg_raw.shape[0]:,} filas cargadas.
-        """
+        valorization_org_raw = pl.read_csv(
+            valorization_org_path, separator=";", encoding="latin1"
         )
-    return df_inorg_raw, df_org_raw
+        valorization_inorg_raw = pl.read_csv(
+            valorization_inorg_path, separator=";", encoding="latin1"
+        )
+        mo.md(
+            f"- Orgánicos: {valorization_org_raw.shape[0]:,} filas cargadas.\n"
+            f"- Inorgánicos: {valorization_inorg_raw.shape[0]:,} filas cargadas."
+        )
+    return valorization_inorg_raw, valorization_org_raw
 
 
 @app.function
-# Helper function to normalize column names for consistency
 def normalize_cols(df):
+    """Normaliza nombres de columnas a mayúsculas sin tildes ni espacios."""
     new_columns = {
         col: col.strip()
         .upper()
@@ -105,26 +110,30 @@ def normalize_cols(df):
 
 
 @app.cell
-def _(df_inorg_raw, df_org_raw):
-    if df_org_raw is not None and df_inorg_raw is not None:
-        df_org = normalize_cols(df_org_raw)
-        df_inorg = normalize_cols(df_inorg_raw)
+def _(valorization_inorg_raw, valorization_org_raw, pl):
+    if valorization_org_raw is not None and valorization_inorg_raw is not None:
+        valorization_org = normalize_cols(valorization_org_raw)
+        valorization_inorg = normalize_cols(valorization_inorg_raw)
     else:
-        df_org, df_inorg = None, None
-    return df_inorg, df_org
+        valorization_org, valorization_inorg = None, None
+    return valorization_inorg, valorization_org
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Procesamiento y agregación""")
+    mo.md("## Procesamiento y agregación")
     return
 
 
 @app.cell
-def _(df_inorg, df_org, pl):
-    # Dynamically find the valorization columns, which can have inconsistent names
-    col_val_org = next((c for c in df_org.columns if "VALORIZADOS" in c), None)
-    col_val_inorg = next((c for c in df_inorg.columns if "VALORIZADOS" in c), None)
+def _(valorization_inorg, valorization_org, pl):
+    # Buscar dinámicamente las columnas de valorización
+    valorization_org_col = next(
+        (c for c in valorization_org.columns if "VALORIZADOS" in c.upper()), None
+    )
+    valorization_inorg_col = next(
+        (c for c in valorization_inorg.columns if "VALORIZADOS" in c.upper()), None
+    )
 
     def process_df(df, val_col, new_col_name):
         if df is None or not val_col:
@@ -142,36 +151,41 @@ def _(df_inorg, df_org, pl):
             .agg(pl.col(new_col_name).sum())
         )
 
-    org_agg = process_df(df_org, col_val_org, "ORG_TON")
-    inorg_agg = process_df(df_inorg, col_val_inorg, "INORG_TON")
-    return inorg_agg, org_agg
+    valorization_org_agg = process_df(valorization_org, valorization_org_col, "ORG_TON")
+    valorization_inorg_agg = process_df(
+        valorization_inorg, valorization_inorg_col, "INORG_TON"
+    )
+
+    return valorization_inorg_agg, valorization_org_agg
 
 
 @app.cell
-def _(inorg_agg, org_agg, pl):
-    if org_agg is not None and inorg_agg is not None:
-        df_total = org_agg.join(
-            inorg_agg, on=["DEPARTAMENTO", "PROVINCIA", "DISTRITO"], how="outer"
+def _(valorization_inorg_agg, valorization_org_agg, pl):
+    if valorization_org_agg is not None and valorization_inorg_agg is not None:
+        valorization_total = valorization_org_agg.join(
+            valorization_inorg_agg,
+            on=["DEPARTAMENTO", "PROVINCIA", "DISTRITO"],
+            how="outer",
         ).with_columns([pl.all().fill_null(0.0)])
-        df_total = df_total.with_columns(
+        valorization_total = valorization_total.with_columns(
             (pl.col("ORG_TON") + pl.col("INORG_TON")).alias("TOTAL_TON")
         )
     else:
-        df_total = None
-    return (df_total,)
+        valorization_total = None
+    return (valorization_total,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Visualización: Top 10 distritos por valorización total""")
+    mo.md("## Visualización: Top 10 distritos por valorización total")
     return
 
 
 @app.cell
-def _(df_total, mo, pl, px):
-    if df_total is not None:
+def _(valorization_total, mo, pl, px):
+    if valorization_total is not None:
         top10 = (
-            df_total.sort("TOTAL_TON", descending=True)
+            valorization_total.sort("TOTAL_TON", descending=True)
             .head(10)
             .with_columns(
                 pl.concat_str(
