@@ -1,0 +1,44 @@
+[settings]
+python.uv_venv_auto = true
+
+[tools]
+bun = "1.3.1"
+uv = "0.9.6"
+ruff = "0.14.2"
+
+[tasks.install]
+description = "Install dependencies"
+alias = "i"
+run = "uv sync"
+
+[tasks.update]
+description = "Update all dependencies"
+alias = "u"
+run = "uv sync -U"
+
+[tasks.outdated]
+description = "List outdated dependencies"
+alias = "o"
+run = "uv pip list --outdated"
+
+[tasks.export]
+description = "Export deps to requirements.txt"
+run = "uv export --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file requirements.txt"
+
+[tasks.fix]
+description = "Lint & format (fix by default)"
+alias = "f"
+run = [
+  "uv run ruff format .",
+  "uv run ruff check --fix --unsafe-fixes .",
+]
+
+[tasks.dev]
+description = "Run development server"
+alias = "d"
+run = "uv run marimo edit src/03-lima-population-map.py"
+
+[tasks.dev-lan]
+description = "Run development server (LAN)"
+alias = "dl"
+run = "uv run marimo edit src/main.py --host 0.0.0.0"
