@@ -18,6 +18,8 @@ def _(mo):
     # Visualizaciones geográficas de Perú
 
     Este notebook tiene algunos experimentos que hemos estado haciendo sobre los mapas departamentales, distritales y un mapa de calor de la población de Lima por manzana.
+
+    Autor: David Duran
     """)
     return
 

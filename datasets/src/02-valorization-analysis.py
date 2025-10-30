@@ -14,7 +14,11 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"# Análisis de valorización de residuos sólidos orgánicos e inorgánicos")
+    mo.md(r"""
+    # Análisis de valorización de residuos sólidos orgánicos e inorgánicos
+
+    Idea original: Andrés Cosme
+    """)
     return
 
 
@@ -24,9 +28,10 @@ def _():
 
     from pathlib import Path
 
-    import data_utils as downloader
     import plotly.express as px
     import polars as pl
+
+    import data_utils as downloader
 
     PROJECT_ROOT = Path.cwd().parent
     DATA_DIR = PROJECT_ROOT / "data"
@@ -39,7 +44,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## Descarga de datasets de valorización")
+    mo.md("""## Descarga de datasets de valorización""")
     return
 
 
@@ -67,12 +72,12 @@ def _(DATA_DIR, downloader, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## Carga y limpieza de datos")
+    mo.md("""## Carga y limpieza de datos""")
     return
 
 
 @app.cell
-def _(valorization_inorg_path, valorization_org_path, mo, pl):
+def _(mo, pl, valorization_inorg_path, valorization_org_path):
     if not valorization_org_path or not valorization_inorg_path:
         mo.md(
             "No se encontraron los archivos de datos. Verifique la descarga."
@@ -110,7 +115,7 @@ def normalize_cols(df):
 
 
 @app.cell
-def _(valorization_inorg_raw, valorization_org_raw, pl):
+def _(valorization_inorg_raw, valorization_org_raw):
     if valorization_org_raw is not None and valorization_inorg_raw is not None:
         valorization_org = normalize_cols(valorization_org_raw)
         valorization_inorg = normalize_cols(valorization_inorg_raw)
@@ -121,12 +126,12 @@ def _(valorization_inorg_raw, valorization_org_raw, pl):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## Procesamiento y agregación")
+    mo.md("""## Procesamiento y agregación""")
     return
 
 
 @app.cell
-def _(valorization_inorg, valorization_org, pl):
+def _(pl, valorization_inorg, valorization_org):
     # Buscar dinámicamente las columnas de valorización
     valorization_org_col = next(
         (c for c in valorization_org.columns if "VALORIZADOS" in c.upper()), None
@@ -155,12 +160,11 @@ def _(valorization_inorg, valorization_org, pl):
     valorization_inorg_agg = process_df(
         valorization_inorg, valorization_inorg_col, "INORG_TON"
     )
-
     return valorization_inorg_agg, valorization_org_agg
 
 
 @app.cell
-def _(valorization_inorg_agg, valorization_org_agg, pl):
+def _(pl, valorization_inorg_agg, valorization_org_agg):
     if valorization_org_agg is not None and valorization_inorg_agg is not None:
         valorization_total = valorization_org_agg.join(
             valorization_inorg_agg,
@@ -177,12 +181,12 @@ def _(valorization_inorg_agg, valorization_org_agg, pl):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("## Visualización: Top 10 distritos por valorización total")
+    mo.md("""## Visualización: Top 10 distritos por valorización total""")
     return
 
 
 @app.cell
-def _(valorization_total, mo, pl, px):
+def _(mo, pl, px, valorization_total):
     if valorization_total is not None:
         top10 = (
             valorization_total.sort("TOTAL_TON", descending=True)

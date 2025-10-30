@@ -7,7 +7,11 @@ app = marimo.App(width="full")
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# Análisis de generación de residuos sólidos en Perú""")
+    mo.md(r"""
+    # Análisis de generación de residuos sólidos en Perú
+
+    Autor: Pedro Rojas
+    """)
     return
 
 
@@ -18,14 +22,15 @@ def _():
     from pathlib import Path
 
     import altair as alt
-    import data_utils as downloader
     import marimo as mo
     import polars as pl
 
+    import data_utils as downloader
+
     # The "src" directory is the working directory for notebooks.
     # Paths are relative to the parent of "src", which is "datasets".
-    PROJECT_ROOT = Path.cwd().parent
-    DATA_DIR = PROJECT_ROOT / "data"
+    PROJECT_ROOT = Path.cwd()
+    DATA_DIR = PROJECT_ROOT / "data" / "residuos"
 
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
