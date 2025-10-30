@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Card } from "@/components/ui/card";
 import { Collection } from "@/types";
 import { WASTE_TYPES } from "@/constants/waste-types";
-import { Spacing, Typography } from "@/constants/design-tokens";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
 import { formatDate } from "@/lib/utils/date-helpers";
 
 interface NextCollectionCardProps {
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   label: {
-    color: Spacing.textSecondary,
+    color: Colors.textSecondary,
     fontSize: Typography.fontSize.sm,
   },
   badge: {

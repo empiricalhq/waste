@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Card } from "@/components/ui/card";
 import { Truck } from "@/types";
 import { WASTE_TYPES } from "@/constants/waste-types";
-import { Spacing, Typography } from "@/constants/design-tokens";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
 
 interface NearestTruckCardProps {
   truck: Truck;
@@ -33,7 +33,7 @@ export const NearestTruckCard: React.FC<NearestTruckCardProps> = ({ truck }) => 
 
 const styles = StyleSheet.create({
   label: {
-    color: Spacing.textSecondary,
+    color: Colors.textSecondary,
     fontSize: Typography.fontSize.sm,
     marginBottom: Spacing.md,
   },
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   routeText: {
     fontSize: Typography.fontSize.sm,
-    color: Spacing.textSecondary,
+    color: Colors.textSecondary,
   },
   eta: {
     alignItems: "flex-end",
@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
   },
   etaLabel: {
     fontSize: Typography.fontSize.xs,
-    color: Spacing.textSecondary,
+    color: Colors.textSecondary,
   },
 });

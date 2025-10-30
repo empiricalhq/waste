@@ -16,6 +16,6 @@ export const reportService = {
     return apiClient.get<ReportType[]>("/report-types");
   },
   submitReport: async (payload: CreateReportPayload): Promise<Report> => {
-    return apiClient.post<Report>("/reports", payload);
+    return apiClient.post<Report, CreateReportPayload>("/reports", payload);
   },
 };

@@ -6,7 +6,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { WASTE_TYPES } from "@/constants/waste-types";
-import { Spacing, Typography } from "@/constants/design-tokens";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
 import { formatFullDate } from "@/lib/utils/date-helpers";
 import { Collection } from "@/types";
 
@@ -78,6 +78,6 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: Typography.fontSize.sm,
-    color: Spacing.textSecondary,
+    color: Colors.textSecondary,
   },
 });

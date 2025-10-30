@@ -9,6 +9,6 @@ export const learningService = {
     return apiClient.get<QuizQuestion[]>("/quiz-questions");
   },
   updateUserProgress: async (score: number): Promise<User> => {
-    return apiClient.patch<User>("/users/me/progress", { score });
+    return apiClient.patch<User, { score: number }>("/users/me/progress", { score });
   },
 };
