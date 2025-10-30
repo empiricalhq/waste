@@ -41,7 +41,7 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwindcss": "^3.4.0",
+    "tailwindcss": "^4.1.16",
     "typescript": "~5.9.2"
   },
   "main": "expo-router/entry",
