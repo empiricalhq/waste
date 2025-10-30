@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons";
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/features/auth/hooks/use-login";
 import { Colors, Spacing, Typography } from "@/constants/design-tokens";

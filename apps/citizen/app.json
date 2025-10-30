@@ -1,13 +1,13 @@
 {
   "expo": {
     "name": "Lima Limpia",
-    "slug": "lima-limpia",
+    "slug": "waste",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "limalimpia",
     "userInterfaceStyle": "automatic",
-    "owner": "totallynotdavid",
+    "owner": "empiricalhq",
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -22,7 +22,15 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.limalimpia.ciudadano"
+      "package": "com.limalimpia.ciudadano",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -46,6 +54,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "972aa22d-7de7-4e22-a380-496094e49832"
+      }
     }
   }
 }
