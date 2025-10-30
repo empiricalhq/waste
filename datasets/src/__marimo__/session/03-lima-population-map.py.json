@@ -5,6 +5,19 @@
   },
   "cells": [
     {
+      "id": "Hbol",
+      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
       "id": "MJUe",
       "code_hash": "f78fa2c835fb3b263fb0254740f1aeda",
       "outputs": [
@@ -12,6 +25,19 @@
           "type": "data",
           "data": {
             "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"visualizaciones-geograficas-de-peru\">Visualizaciones geogr\u00e1ficas de Per\u00fa</h1>\n<span class=\"paragraph\">Este notebook muestra mapas departamentales, distritales y un mapa de calor de la poblaci\u00f3n de Lima por manzana.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "5fba4d7a40bbb2d7a276518eb9c058b3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
           }
         }
       ],
@@ -31,6 +57,38 @@
       "console": []
     },
     {
+      "id": "lEQa",
+      "code_hash": "cae3534a39be2d34826b7df7f638a943",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "f61cff0734d01f213158b5baf22a976c",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "multiple-defs",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": []
+        },
+        {
+          "type": "error",
+          "ename": "multiple-defs",
+          "evalue": "The variable 'fig' was defined by another cell",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
       "id": "Xref",
       "code_hash": "09c314aa84b4a445f63db7258c2ed82e",
       "outputs": [
@@ -39,6 +97,38 @@
           "data": {
             "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"mapa-distrital-de-peru\">Mapa distrital de Per\u00fa</h3></span>"
           }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "32d28eac52aef7c9236e170fb4e0a008",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "0795604c5528dfa09c1169852834b222",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "multiple-defs",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": []
+        },
+        {
+          "type": "error",
+          "ename": "multiple-defs",
+          "evalue": "The variable 'fig' was defined by another cell",
+          "traceback": []
         }
       ],
       "console": []
@@ -57,8 +147,8 @@
       "console": []
     },
     {
-      "id": "Hbol",
-      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
+      "id": "Kclp",
+      "code_hash": "4fceec557e9e386a90726f56f80e5039",
       "outputs": [
         {
           "type": "data",
@@ -70,50 +160,40 @@
       "console": []
     },
     {
-      "id": "vblA",
-      "code_hash": "d425fb32a4c1e8d2498e52d53c0178c3",
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "lEQa",
-      "code_hash": "7648674a58579d77509ab1a9e27ba653",
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "PKri",
-      "code_hash": "9ed0839159819ba874950c8a38225223",
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "SFPL",
-      "code_hash": "32d28eac52aef7c9236e170fb4e0a008",
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "BYtC",
-      "code_hash": "511d264dc2be61632b8f3907c59e0af5",
-      "outputs": [],
-      "console": []
-    },
-    {
-      "id": "Kclp",
-      "code_hash": "c90e9fa68fe9753b262e5af2c1d2a63e",
-      "outputs": [],
-      "console": []
-    },
-    {
       "id": "emfo",
-      "code_hash": "f9cd7e7490660d03ba92d5cda06ba61d",
-      "outputs": [],
+      "code_hash": "02c97f6fe4117dc76519c419ea7bd388",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "Hstk",
       "code_hash": "2c577bf948c8326d17201456c148a5ef",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "multiple-defs",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": []
+        },
+        {
+          "type": "error",
+          "ename": "multiple-defs",
+          "evalue": "The variable 'fig' was defined by another cell",
+          "traceback": []
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "YFhl",
+      "code_hash": null,
       "outputs": [],
       "console": []
     }

@@ -2,7 +2,7 @@ import marimo
 
 
 __generated_with = "0.17.4"
-app = marimo.App(width="full")
+app = marimo.App(width="medium")
 
 
 @app.cell
@@ -29,8 +29,9 @@ def _():
     import geopandas as gpd
     import matplotlib.pyplot as plt
 
+    # definitions
     PROJECT_ROOT = Path.cwd()
-    DATA_DIR = PROJECT_ROOT / "datasets" / "data"
+    DATA_DIR = PROJECT_ROOT / "data"
     return DATA_DIR, gpd, plt
 
 
@@ -42,7 +43,7 @@ def _(mo):
 
 @app.cell
 def _(DATA_DIR, gpd):
-    geojson_path = DATA_DIR / "geojson" / "peru_departamental_simple.geojson"
+    geojson_path = DATA_DIR / "geojson" / "departamental.geojson"
     mapa_departamental_peru = gpd.read_file(geojson_path)
     return (mapa_departamental_peru,)
 
@@ -51,9 +52,13 @@ def _(DATA_DIR, gpd):
 def _(mapa_departamental_peru, mo, plt):
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     mapa_departamental_peru.plot(ax=ax, edgecolor="gray", cmap="Pastel1")
+
+    # set up the figure
     ax.set_title("Mapa departamental del Perú")
     ax.set_ylabel("Latitud")
     ax.set_xlabel("Longitud")
+
+    # plot
     plt.tight_layout()
     mo.mpl.interactive(fig)
     return
@@ -75,10 +80,15 @@ def _(DATA_DIR, gpd):
 @app.cell
 def _(mapa_distrital, mo, plt):
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+
     mapa_distrital.plot(ax=ax, edgecolor="gray", linewidth=0.2, cmap="Pastel2")
+
+    # set up the figure
     ax.set_title("Mapa distrital del Perú")
     ax.set_ylabel("Latitud")
     ax.set_xlabel("Longitud")
+
+    # plot
     plt.tight_layout()
     mo.mpl.interactive(fig)
     return
@@ -97,7 +107,7 @@ def _(mo):
 @app.cell
 def _(DATA_DIR, gpd):
     # This cell loads and cleans the attribute data from the DBF file.
-    dbf_path = DATA_DIR / "lima-manzanas" / "test.dbf"
+    dbf_path = DATA_DIR / "lima" / "manzana.dbf"
     df = gpd.read_file(dbf_path)
     df = df.drop(columns="geometry", errors="ignore")
     df.columns = df.columns.str.strip()
@@ -121,7 +131,7 @@ def _(DATA_DIR, gpd):
 @app.cell
 def _(DATA_DIR, df_attrs, gpd):
     # This cell loads the shapefile and merges it with the attribute data.
-    shp_path = DATA_DIR / "lima-manzanas" / "test.shp"
+    shp_path = DATA_DIR / "lima" / "manzana.shp"
     gdf = gpd.read_file(shp_path)
     gdf.columns = gdf.columns.str.strip()
     gdf = gdf.drop(columns=["T_TOTAL"], errors="ignore")
@@ -142,10 +152,19 @@ def _(merged_gdf, mo, plt):
         linewidth=0.3,
         missing_kwds={"color": "lightgrey"},
     )
+
+    # set up the figure
     ax.set_title("Distribución de la población por manzana en Lima", fontsize=14)
     ax.set_axis_off()
     plt.tight_layout()
+
+    # plot
     mo.mpl.interactive(fig)
+    return
+
+
+@app.cell
+def _():
     return
 
 
