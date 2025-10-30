@@ -31,7 +31,8 @@ def _():
     import geopandas as gpd
     import matplotlib.pyplot as plt
 
-    # definitions
+    # Notebooks are run via `mise run dev` from the datasets directory.
+    # The working directory is the datasets root.
     PROJECT_ROOT = Path.cwd()
     DATA_DIR = PROJECT_ROOT / "data"
     return DATA_DIR, gpd, plt

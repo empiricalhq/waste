@@ -27,8 +27,8 @@ def _():
 
     import data_utils as downloader
 
-    # The "src" directory is the working directory for notebooks.
-    # Paths are relative to the parent of "src", which is "datasets".
+    # Notebooks are run via `mise run dev` from the datasets directory.
+    # The working directory is the datasets root.
     PROJECT_ROOT = Path.cwd()
     DATA_DIR = PROJECT_ROOT / "data" / "residuos"
 
