@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.17.4"
 app = marimo.App(width="medium")
 
@@ -7,6 +8,7 @@ app = marimo.App(width="medium")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -15,7 +17,7 @@ def _(mo):
     mo.md(r"""
     # Visualizaciones geográficas de Perú
 
-    Este notebook muestra mapas departamentales, distritales y un mapa de calor de la población de Lima por manzana.
+    Este notebook tiene algunos experimentos que hemos estado haciendo sobre los mapas departamentales, distritales y un mapa de calor de la población de Lima por manzana.
     """)
     return
 
@@ -48,17 +50,17 @@ def _(DATA_DIR, gpd):
 
 @app.cell
 def _(mapa_departamental_peru, mo, plt):
-    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    mapa_departamental_peru.plot(ax=ax, edgecolor="gray", cmap="Pastel1")
+    fig_dep, ax_dep = plt.subplots(1, 1, figsize=(8, 8))
+    mapa_departamental_peru.plot(ax=ax_dep, edgecolor="gray", cmap="Pastel1")
 
     # set up the figure
-    ax.set_title("Mapa departamental del Perú")
-    ax.set_ylabel("Latitud")
-    ax.set_xlabel("Longitud")
+    ax_dep.set_title("Mapa departamental del Perú")
+    ax_dep.set_ylabel("Latitud")
+    ax_dep.set_xlabel("Longitud")
 
     # plot
     plt.tight_layout()
-    mo.mpl.interactive(fig)
+    mo.mpl.interactive(fig_dep)
     return
 
 
@@ -77,18 +79,18 @@ def _(DATA_DIR, gpd):
 
 @app.cell
 def _(mapa_distrital, mo, plt):
-    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    fig_dist, ax_dist = plt.subplots(1, 1, figsize=(8, 8))
 
-    mapa_distrital.plot(ax=ax, edgecolor="gray", linewidth=0.2, cmap="Pastel2")
+    mapa_distrital.plot(ax=ax_dist, edgecolor="gray", linewidth=0.2, cmap="Pastel2")
 
     # set up the figure
-    ax.set_title("Mapa distrital del Perú")
-    ax.set_ylabel("Latitud")
-    ax.set_xlabel("Longitud")
+    ax_dist.set_title("Mapa distrital del Perú")
+    ax_dist.set_ylabel("Latitud")
+    ax_dist.set_xlabel("Longitud")
 
     # plot
     plt.tight_layout()
-    mo.mpl.interactive(fig)
+    mo.mpl.interactive(fig_dist)
     return
 
 
@@ -103,7 +105,7 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_DIR, df, gpd):
+def _(DATA_DIR, gpd):
     # This cell loads and cleans the attribute data from the DBF file.
     manzana_dbf_path = DATA_DIR / "lima" / "manzana.dbf"
     df_attrs = gpd.read_file(manzana_dbf_path)
@@ -122,12 +124,12 @@ def _(DATA_DIR, df, gpd):
         "CODCCPP",
         "LLAVE_MZS",
     ]
-    df_attrs = df.drop(columns=cols_to_drop, errors="ignore")
-    return
+    df_attrs = df_attrs.drop(columns=cols_to_drop, errors="ignore")
+    return (df_attrs,)
 
 
 @app.cell
-def _(DATA_DIR, gpd, manzana_attrs):
+def _(DATA_DIR, df_attrs, gpd):
     # This cell loads the shapefile and merges it with the attribute data.
     manzana_shp_path = DATA_DIR / "lima" / "manzana.shp"
     manzana_gdf = gpd.read_file(manzana_shp_path)
@@ -135,7 +137,7 @@ def _(DATA_DIR, gpd, manzana_attrs):
     manzana_gdf = manzana_gdf.drop(columns=["T_TOTAL"], errors="ignore")
 
     manzana_merged_gdf = manzana_gdf.merge(
-        manzana_attrs[["Mz", "T_TOTAL"]], on="Mz", how="left"
+        df_attrs[["Mz", "T_TOTAL"]], on="Mz", how="left"
     )
     return (manzana_merged_gdf,)
 
@@ -160,13 +162,6 @@ def _(manzana_merged_gdf, mo, plt):
 
     # plot
     mo.mpl.interactive(fig)
-    return
-
-
-@app.cell
-def _():
-
-
     return
 
 
