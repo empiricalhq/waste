@@ -1,32 +1,56 @@
-import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
-import { WASTE_TYPES, WasteType } from "@/constants/wasteTypes";
-import { Check, ChevronLeft } from "lucide-react-native";
-import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WASTE_TYPES } from "@/constants/wasteTypes";
+import { getCollections } from "@/services/api";
+import { Collection, WasteType } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import { Check, ChevronLeft } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ScheduleScreen() {
-  const { collections } = useApp();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState<WasteType | "all">("all");
 
-  const filteredCollections =
-    selectedFilter === "all" ? collections : collections.filter((c) => c.type === selectedFilter);
+  const { data: collections = [], isLoading } = useQuery<Collection[]>({
+    queryKey: ["collections"],
+    queryFn: getCollections,
+  });
 
-  const upcomingCollections = filteredCollections
-    .filter((c) => !c.completed)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const filteredCollections = useMemo(() => {
+    return selectedFilter === "all"
+      ? collections
+      : collections.filter((c) => c.type === selectedFilter);
+  }, [collections, selectedFilter]);
 
-  const pastCollections = filteredCollections
-    .filter((c) => c.completed)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const upcomingCollections = useMemo(
+    () =>
+      filteredCollections
+        .filter((c) => !c.completed)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
+    [filteredCollections]
+  );
+
+  const pastCollections = useMemo(
+    () =>
+      filteredCollections
+        .filter((c) => c.completed)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    [filteredCollections]
+  );
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("es-ES", {
       weekday: "short",
       month: "short",
       day: "numeric",
@@ -39,7 +63,7 @@ export default function ScheduleScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <ChevronLeft size={24} color={Colors.light.text} />
         </TouchableOpacity>
-        <Text style={styles.title}>Schedule</Text>
+        <Text style={styles.title}>Calendario</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -52,7 +76,7 @@ export default function ScheduleScreen() {
           style={[styles.filterChip, selectedFilter === "all" && styles.filterChipActive]}
           onPress={() => setSelectedFilter("all")}>
           <Text style={[styles.filterText, selectedFilter === "all" && styles.filterTextActive]}>
-            All
+            Todos
           </Text>
         </TouchableOpacity>
         {(Object.keys(WASTE_TYPES) as WasteType[]).map((type) => (
@@ -67,67 +91,70 @@ export default function ScheduleScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Upcoming</Text>
-          {upcomingCollections.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>No upcoming collections</Text>
-            </View>
-          ) : (
-            <View style={styles.list}>
-              {upcomingCollections.map((collection) => (
-                <View key={collection.id} style={styles.card}>
-                  <View style={styles.cardLeft}>
-                    <View
-                      style={[
-                        styles.cardDot,
-                        { backgroundColor: WASTE_TYPES[collection.type].color },
-                      ]}
-                    />
-                    <View style={styles.cardInfo}>
-                      <Text style={styles.cardType}>{WASTE_TYPES[collection.type].label}</Text>
-                      <View style={styles.cardDetails}>
-                        <Text style={styles.cardDetail}>{formatDate(collection.date)}</Text>
-                        <Text style={styles.cardDetailDot}>·</Text>
-                        <Text style={styles.cardDetail}>{collection.time}</Text>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={Colors.light.text} style={{ flex: 1 }} />
+      ) : (
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Próximas</Text>
+            {upcomingCollections.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>No hay recolecciones próximas</Text>
+              </View>
+            ) : (
+              <View style={styles.list}>
+                {upcomingCollections.map((collection) => (
+                  <View key={collection.id} style={styles.card}>
+                    <View style={styles.cardLeft}>
+                      <View
+                        style={[
+                          styles.cardDot,
+                          { backgroundColor: WASTE_TYPES[collection.type].color },
+                        ]}
+                      />
+                      <View style={styles.cardInfo}>
+                        <Text style={styles.cardType}>{WASTE_TYPES[collection.type].label}</Text>
+                        <View style={styles.cardDetails}>
+                          <Text style={styles.cardDetail}>{formatDate(collection.date)}</Text>
+                          <Text style={styles.cardDetailDot}>·</Text>
+                          <Text style={styles.cardDetail}>{collection.time}</Text>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              ))}
+                ))}
+              </View>
+            )}
+          </View>
+
+          {pastCollections.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Pasadas</Text>
+              <View style={styles.list}>
+                {pastCollections.map((collection) => (
+                  <View key={collection.id} style={[styles.card, styles.cardCompleted]}>
+                    <View style={styles.cardLeft}>
+                      <View style={styles.checkIcon}>
+                        <Check size={12} color={Colors.light.textSecondary} />
+                      </View>
+                      <View style={styles.cardInfo}>
+                        <Text style={styles.cardTypeCompleted}>
+                          {WASTE_TYPES[collection.type].label}
+                        </Text>
+                        <View style={styles.cardDetails}>
+                          <Text style={styles.cardDetail}>{formatDate(collection.date)}</Text>
+                          <Text style={styles.cardDetailDot}>·</Text>
+                          <Text style={styles.cardDetail}>{collection.time}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                ))}
+              </View>
             </View>
           )}
-        </View>
-
-        {pastCollections.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Past</Text>
-            <View style={styles.list}>
-              {pastCollections.map((collection) => (
-                <View key={collection.id} style={[styles.card, styles.cardCompleted]}>
-                  <View style={styles.cardLeft}>
-                    <View style={styles.checkIcon}>
-                      <Check size={12} color={Colors.light.textSecondary} />
-                    </View>
-                    <View style={styles.cardInfo}>
-                      <Text style={styles.cardTypeCompleted}>
-                        {WASTE_TYPES[collection.type].label}
-                      </Text>
-                      <View style={styles.cardDetails}>
-                        <Text style={styles.cardDetail}>{formatDate(collection.date)}</Text>
-                        <Text style={styles.cardDetailDot}>·</Text>
-                        <Text style={styles.cardDetail}>{collection.time}</Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-      </ScrollView>
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -153,10 +180,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
   },
   filterScroll: {
+    flexGrow: 0,
     marginBottom: 24,
   },
   filterContent: {
@@ -186,7 +214,7 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 13,
     color: Colors.light.text,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
   filterTextActive: {
     color: Colors.light.cardBackground,
@@ -200,10 +228,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 13,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.textSecondary,
     marginBottom: 12,
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   list: {
@@ -242,13 +270,13 @@ const styles = StyleSheet.create({
   },
   cardType: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
     marginBottom: 4,
   },
   cardTypeCompleted: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.textSecondary,
     marginBottom: 4,
   },

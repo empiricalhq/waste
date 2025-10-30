@@ -1,53 +1,89 @@
-import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
+import { getUser, updateUserSettings } from "@/services/api";
+import { User } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bell, ChevronRight } from "lucide-react-native";
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Switch,
+  ActivityIndicator,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
-  const { userProgress, notificationsEnabled, toggleNotifications } = useApp();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
+
+  const { data: user, isLoading } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: getUser,
+  });
+
+  const { mutate: updateSettings } = useMutation({
+    mutationFn: updateUserSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+
+  const toggleNotifications = () => {
+    if (user) {
+      updateSettings({ notificationsEnabled: !user.settings.notificationsEnabled });
+    }
+  };
 
   const accuracy =
-    userProgress.totalQuestions > 0
-      ? Math.round((userProgress.correctAnswers / userProgress.totalQuestions) * 100)
+    user && user.progress.totalQuestions > 0
+      ? Math.round((user.progress.correctAnswers / user.progress.totalQuestions) * 100)
       : 0;
+
+  if (isLoading || !user) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color={Colors.light.text} />
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Profile</Text>
+        <Text style={styles.title}>Perfil</Text>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.statsCard}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{userProgress.streak}</Text>
-            <Text style={styles.statLabel}>day streak</Text>
+            <Text style={styles.statValue}>{user.progress.streak}</Text>
+            <Text style={styles.statLabel}>días de racha</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{accuracy}%</Text>
-            <Text style={styles.statLabel}>accuracy</Text>
+            <Text style={styles.statLabel}>precisión</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{userProgress.totalQuestions}</Text>
-            <Text style={styles.statLabel}>quizzes</Text>
+            <Text style={styles.statValue}>{user.progress.totalQuestions}</Text>
+            <Text style={styles.statLabel}>tests</Text>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
+          <Text style={styles.sectionTitle}>Ajustes</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Bell size={20} color={Colors.light.text} />
-                <Text style={styles.settingTitle}>Notifications</Text>
+                <Text style={styles.settingTitle}>Notificaciones</Text>
               </View>
               <Switch
-                value={notificationsEnabled}
+                value={user.settings.notificationsEnabled}
                 onValueChange={toggleNotifications}
                 trackColor={{
                   false: Colors.light.border,
@@ -60,27 +96,27 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.sectionTitle}>Acerca de</Text>
           <View style={styles.settingsList}>
             <TouchableOpacity style={styles.settingItem}>
-              <Text style={styles.settingTitle}>Help & Support</Text>
+              <Text style={styles.settingTitle}>Ayuda y soporte</Text>
               <ChevronRight size={20} color={Colors.light.textSecondary} />
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity style={styles.settingItem}>
-              <Text style={styles.settingTitle}>Privacy Policy</Text>
+              <Text style={styles.settingTitle}>Política de privacidad</Text>
               <ChevronRight size={20} color={Colors.light.textSecondary} />
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity style={styles.settingItem}>
-              <Text style={styles.settingTitle}>Terms of Service</Text>
+              <Text style={styles.settingTitle}>Términos de servicio</Text>
               <ChevronRight size={20} color={Colors.light.textSecondary} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Version 1.0.0</Text>
+          <Text style={styles.footerText}>Versión 1.0.0</Text>
         </View>
       </ScrollView>
     </View>
@@ -99,7 +135,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     letterSpacing: -0.5,
   },
@@ -122,7 +158,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 22,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     marginBottom: 4,
     letterSpacing: -0.5,
@@ -142,10 +178,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 13,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.textSecondary,
     marginBottom: 12,
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   settingsList: {
@@ -169,7 +205,7 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
   },
   divider: {

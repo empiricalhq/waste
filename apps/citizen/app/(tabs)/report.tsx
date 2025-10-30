@@ -1,11 +1,11 @@
-import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
-import { REPORT_TYPES } from "@/mocks/reports";
+import { addReport, getReports, getReportTypes } from "@/services/api";
+import { Report, ReportType } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Location from "expo-location";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Camera, X, Check } from "lucide-react-native";
-import React, { useState, useRef } from "react";
+import { Camera, Check, X } from "lucide-react-native";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,21 +16,46 @@ import {
   Image,
   Modal,
   Platform,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ReportStep = "type" | "camera" | "details" | "success";
 
 export default function ReportScreen() {
-  const { reports, addReport } = useApp();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
+
   const [step, setStep] = useState<ReportStep>("type");
   const [selectedType, setSelectedType] = useState("");
   const [description, setDescription] = useState("");
   const [imageUri, setImageUri] = useState<string | undefined>();
-  const [location, setLocation] = useState("Fetching location...");
+  const [location, setLocation] = useState("Obteniendo ubicación...");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [showCamera, setShowCamera] = useState(false);
   const cameraRef = useRef<CameraView>(null);
+
+  const { data: reports = [], isLoading: isLoadingReports } = useQuery<Report[]>({
+    queryKey: ["reports"],
+    queryFn: getReports,
+  });
+
+  const { data: reportTypes = [], isLoading: isLoadingTypes } = useQuery<ReportType[]>({
+    queryKey: ["reportTypes"],
+    queryFn: getReportTypes,
+  });
+
+  const { mutate: submitReport, isPending: isSubmitting } = useMutation({
+    mutationFn: addReport,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
+      setStep("success");
+    },
+    onError: (error) => {
+      Alert.alert("Error", `No se pudo enviar el reporte: ${error.message}`);
+    },
+  });
 
   const handleTypeSelect = (type: string) => {
     setSelectedType(type);
@@ -41,6 +66,10 @@ export default function ReportScreen() {
     if (!cameraPermission?.granted) {
       const result = await requestCameraPermission();
       if (!result.granted) {
+        Alert.alert(
+          "Permiso denegado",
+          "Necesitamos acceso a la cámara para tomar una foto del incidente."
+        );
         return;
       }
     }
@@ -58,7 +87,7 @@ export default function ReportScreen() {
           fetchLocation();
         }
       } catch (error) {
-        console.error("Error taking photo:", error);
+        console.error("Error al tomar foto:", error);
       }
     }
   };
@@ -73,32 +102,30 @@ export default function ReportScreen() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
         const loc = await Location.getCurrentPositionAsync({});
-        const address = await Location.reverseGeocodeAsync({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-        });
+        const address = await Location.reverseGeocodeAsync(loc.coords);
         if (address[0]) {
           setLocation(
-            `${address[0].street || ""} ${address[0].city || ""}`.trim() || "Current location"
+            `${address[0].street || ""} ${address[0].streetNumber || ""}, ${address[0].city || ""}`.trim()
           );
+        } else {
+          setLocation("Ubicación actual");
         }
       } else {
-        setLocation("Current location");
+        setLocation("Permiso de ubicación denegado");
       }
     } catch (error) {
-      console.error("Error fetching location:", error);
-      setLocation("Current location");
+      console.error("Error al obtener ubicación:", error);
+      setLocation("Ubicación actual");
     }
   };
 
   const handleSubmit = () => {
-    addReport({
+    submitReport({
       type: selectedType,
       description,
       location,
       imageUri,
     });
-    setStep("success");
   };
 
   const handleReset = () => {
@@ -106,7 +133,7 @@ export default function ReportScreen() {
     setSelectedType("");
     setDescription("");
     setImageUri(undefined);
-    setLocation("Fetching location...");
+    setLocation("Obteniendo ubicación...");
   };
 
   const getStatusColor = (status: string) => {
@@ -126,46 +153,58 @@ export default function ReportScreen() {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.header}>
-          <Text style={styles.title}>Report Issue</Text>
+          <Text style={styles.title}>Reportar un problema</Text>
         </View>
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Select type</Text>
-            <View style={styles.typeGrid}>
-              {REPORT_TYPES.map((type) => (
-                <TouchableOpacity
-                  key={type.id}
-                  style={styles.typeCard}
-                  onPress={() => handleTypeSelect(type.label)}
-                  activeOpacity={0.7}>
-                  <Text style={styles.typeLabel}>{type.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text style={styles.sectionTitle}>Selecciona un tipo</Text>
+            {isLoadingTypes ? (
+              <ActivityIndicator />
+            ) : (
+              <View style={styles.typeGrid}>
+                {reportTypes.map((type) => (
+                  <TouchableOpacity
+                    key={type.id}
+                    style={styles.typeCard}
+                    onPress={() => handleTypeSelect(type.label)}
+                    activeOpacity={0.7}>
+                    <Text style={styles.typeLabel}>{type.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
 
           {reports.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Recent reports</Text>
-              <View style={styles.reportsList}>
-                {reports.slice(0, 3).map((report) => (
-                  <View key={report.id} style={styles.reportCard}>
-                    <View style={styles.reportHeader}>
-                      <Text style={styles.reportType}>{report.type}</Text>
-                      <View
-                        style={[styles.statusBadge, { backgroundColor: Colors.light.background }]}>
-                        <Text style={[styles.statusText, { color: getStatusColor(report.status) }]}>
-                          {report.status}
-                        </Text>
+              <Text style={styles.sectionTitle}>Reportes recientes</Text>
+              {isLoadingReports ? (
+                <ActivityIndicator />
+              ) : (
+                <View style={styles.reportsList}>
+                  {reports.slice(0, 3).map((report) => (
+                    <View key={report.id} style={styles.reportCard}>
+                      <View style={styles.reportHeader}>
+                        <Text style={styles.reportType}>{report.type}</Text>
+                        <View
+                          style={[
+                            styles.statusBadge,
+                            { backgroundColor: Colors.light.background },
+                          ]}>
+                          <Text
+                            style={[styles.statusText, { color: getStatusColor(report.status) }]}>
+                            {report.status}
+                          </Text>
+                        </View>
                       </View>
+                      <Text style={styles.reportDescription} numberOfLines={2}>
+                        {report.description}
+                      </Text>
                     </View>
-                    <Text style={styles.reportDescription} numberOfLines={2}>
-                      {report.description}
-                    </Text>
-                  </View>
-                ))}
-              </View>
+                  ))}
+                </View>
+              )}
             </View>
           )}
         </ScrollView>
@@ -181,21 +220,21 @@ export default function ReportScreen() {
             <TouchableOpacity onPress={() => setStep("type")}>
               <X size={24} color={Colors.light.text} />
             </TouchableOpacity>
-            <Text style={styles.stepTitle}>Add photo</Text>
+            <Text style={styles.stepTitle}>Añadir foto</Text>
             <View style={{ width: 24 }} />
           </View>
 
           <View style={styles.cameraPlaceholder}>
             <Camera size={48} color={Colors.light.textSecondary} />
-            <Text style={styles.cameraPlaceholderText}>Take a photo of the issue</Text>
+            <Text style={styles.cameraPlaceholderText}>Toma una foto del problema</Text>
           </View>
 
           <View style={styles.cameraActions}>
             <TouchableOpacity style={styles.primaryButton} onPress={handleOpenCamera}>
-              <Text style={styles.primaryButtonText}>Open camera</Text>
+              <Text style={styles.primaryButtonText}>Abrir cámara</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.secondaryButton} onPress={handleSkipPhoto}>
-              <Text style={styles.secondaryButtonText}>Skip</Text>
+              <Text style={styles.secondaryButtonText}>Omitir</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -230,7 +269,7 @@ export default function ReportScreen() {
             <TouchableOpacity onPress={() => setStep("camera")}>
               <X size={24} color={Colors.light.text} />
             </TouchableOpacity>
-            <Text style={styles.stepTitle}>Details</Text>
+            <Text style={styles.stepTitle}>Detalles</Text>
             <View style={{ width: 24 }} />
           </View>
 
@@ -238,24 +277,24 @@ export default function ReportScreen() {
 
           <View style={styles.form}>
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Type</Text>
+              <Text style={styles.label}>Tipo</Text>
               <View style={styles.readOnlyField}>
                 <Text style={styles.readOnlyText}>{selectedType}</Text>
               </View>
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Location</Text>
+              <Text style={styles.label}>Ubicación</Text>
               <View style={styles.readOnlyField}>
                 <Text style={styles.readOnlyText}>{location}</Text>
               </View>
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Description</Text>
+              <Text style={styles.label}>Descripción</Text>
               <TextInput
                 style={styles.textArea}
-                placeholder="Describe the issue..."
+                placeholder="Describe el problema..."
                 placeholderTextColor={Colors.light.textSecondary}
                 value={description}
                 onChangeText={setDescription}
@@ -266,10 +305,17 @@ export default function ReportScreen() {
             </View>
 
             <TouchableOpacity
-              style={[styles.submitButton, !description && styles.submitButtonDisabled]}
+              style={[
+                styles.submitButton,
+                (!description || isSubmitting) && styles.submitButtonDisabled,
+              ]}
               onPress={handleSubmit}
-              disabled={!description}>
-              <Text style={styles.submitButtonText}>Submit</Text>
+              disabled={!description || isSubmitting}>
+              {isSubmitting ? (
+                <ActivityIndicator color={Colors.light.cardBackground} />
+              ) : (
+                <Text style={styles.submitButtonText}>Enviar</Text>
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -283,10 +329,12 @@ export default function ReportScreen() {
         <View style={styles.successIcon}>
           <Check size={48} color={Colors.light.text} />
         </View>
-        <Text style={styles.successTitle}>Report submitted</Text>
-        <Text style={styles.successSubtitle}>We&apos;ll investigate and update you soon</Text>
+        <Text style={styles.successTitle}>Reporte enviado</Text>
+        <Text style={styles.successSubtitle}>
+          Investigaremos el problema y te mantendremos informado.
+        </Text>
         <TouchableOpacity style={styles.doneButton} onPress={handleReset}>
-          <Text style={styles.doneButtonText}>Done</Text>
+          <Text style={styles.doneButtonText}>Hecho</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -305,7 +353,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     letterSpacing: -0.5,
   },
@@ -318,10 +366,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 13,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.textSecondary,
     marginBottom: 12,
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   typeGrid: {
@@ -336,7 +384,7 @@ const styles = StyleSheet.create({
   },
   typeLabel: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
   },
   reportsList: {
@@ -357,7 +405,7 @@ const styles = StyleSheet.create({
   },
   reportType: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
   },
   statusBadge: {
@@ -367,7 +415,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 11,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
   reportDescription: {
     fontSize: 14,
@@ -387,7 +435,7 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: 16,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
   },
   cameraPlaceholder: {
@@ -398,7 +446,7 @@ const styles = StyleSheet.create({
   },
   cameraPlaceholderText: {
     fontSize: 16,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
     marginTop: 16,
     textAlign: "center",
@@ -414,7 +462,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.cardBackground,
   },
   secondaryButton: {
@@ -427,7 +475,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
   },
   cameraContainer: {
@@ -486,7 +534,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
     marginBottom: 8,
   },
@@ -523,7 +571,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.cardBackground,
   },
   successContainer: {
@@ -545,7 +593,7 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     fontSize: 22,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     marginBottom: 8,
     letterSpacing: -0.5,
@@ -565,7 +613,7 @@ const styles = StyleSheet.create({
   },
   doneButtonText: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.cardBackground,
   },
 });

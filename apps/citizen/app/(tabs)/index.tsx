@@ -1,26 +1,44 @@
-import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
 import { WASTE_TYPES } from "@/constants/wasteTypes";
+import { getCollections, getTrucks } from "@/services/api";
+import { Collection, Truck } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { Calendar, MapPin, MessageSquare } from "lucide-react-native";
 import React, { useMemo } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
-  const { trucks, collections } = useApp();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const nextCollection = collections
-    .filter((c) => !c.completed)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+  const { data: trucks = [], isLoading: isLoadingTrucks } = useQuery<Truck[]>({
+    queryKey: ["trucks"],
+    queryFn: getTrucks,
+  });
+
+  const { data: collections = [], isLoading: isLoadingCollections } = useQuery<Collection[]>({
+    queryKey: ["collections"],
+    queryFn: getCollections,
+  });
+
+  const nextCollection = useMemo(() => {
+    return collections
+      .filter((c) => !c.completed)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+  }, [collections]);
 
   const closestTruck = useMemo(() => {
-    return trucks.reduce(
-      (closest, truck) => (truck.eta < closest.eta ? truck : closest),
-      trucks[0]
-    );
+    if (trucks.length === 0) return null;
+    return trucks.reduce((closest, truck) => (truck.eta < closest.eta ? truck : closest));
   }, [trucks]);
 
   const formatDate = (dateString: string) => {
@@ -29,89 +47,95 @@ export default function HomeScreen() {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    if (date.toDateString() === today.toDateString()) return "Today";
-    if (date.toDateString() === tomorrow.toDateString()) return "Tomorrow";
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    if (date.toDateString() === today.toDateString()) return "Hoy";
+    if (date.toDateString() === tomorrow.toDateString()) return "Mañana";
+    return date.toLocaleDateString("es-ES", { month: "short", day: "numeric" });
   };
+
+  const isLoading = isLoadingTrucks || isLoadingCollections;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Waste Collection</Text>
+        <Text style={styles.title}>Recolección de residuos</Text>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {nextCollection && (
-          <View style={styles.nextCard}>
-            <View style={styles.nextHeader}>
-              <Text style={styles.nextLabel}>Next collection</Text>
-              <View style={styles.nextBadge}>
-                <View
-                  style={[
-                    styles.badgeDot,
-                    { backgroundColor: WASTE_TYPES[nextCollection.type].color },
-                  ]}
-                />
-                <Text style={styles.badgeText}>{WASTE_TYPES[nextCollection.type].label}</Text>
-              </View>
-            </View>
-            <Text style={styles.nextDate}>
-              {formatDate(nextCollection.date)} at {nextCollection.time}
-            </Text>
-            <Text style={styles.nextHint}>
-              Place your {WASTE_TYPES[nextCollection.type].label.toLowerCase()} bin outside before
-              collection time
-            </Text>
-          </View>
-        )}
-
-        {closestTruck && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Truck nearby</Text>
-            <TouchableOpacity style={styles.truckCard} activeOpacity={0.7}>
-              <View style={styles.truckLeft}>
-                <View
-                  style={[
-                    styles.truckDot,
-                    { backgroundColor: WASTE_TYPES[closestTruck.type].color },
-                  ]}
-                />
-                <View style={styles.truckInfo}>
-                  <Text style={styles.truckType}>
-                    {WASTE_TYPES[closestTruck.type].label} collection
-                  </Text>
-                  <Text style={styles.truckRoute}>{closestTruck.route}</Text>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={Colors.light.text} style={{ flex: 1 }} />
+      ) : (
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {nextCollection && (
+            <View style={styles.nextCard}>
+              <View style={styles.nextHeader}>
+                <Text style={styles.nextLabel}>Próxima recolección</Text>
+                <View style={styles.nextBadge}>
+                  <View
+                    style={[
+                      styles.badgeDot,
+                      { backgroundColor: WASTE_TYPES[nextCollection.type].color },
+                    ]}
+                  />
+                  <Text style={styles.badgeText}>{WASTE_TYPES[nextCollection.type].label}</Text>
                 </View>
               </View>
-              <View style={styles.truckEta}>
-                <Text style={styles.etaNumber}>{closestTruck.eta}</Text>
-                <Text style={styles.etaLabel}>min</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
-              <MapPin size={18} color={Colors.light.text} />
-              <Text style={styles.actionButtonText}>Track on map</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              <Text style={styles.nextDate}>
+                {formatDate(nextCollection.date)} a las {nextCollection.time}
+              </Text>
+              <Text style={styles.nextHint}>
+                Coloca tu contenedor de {WASTE_TYPES[nextCollection.type].label.toLowerCase()}{" "}
+                afuera antes de la hora de recolección.
+              </Text>
+            </View>
+          )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick actions</Text>
-          <View style={styles.actionGrid}>
-            <TouchableOpacity
-              style={styles.actionCard}
-              onPress={() => router.push("/schedule")}
-              activeOpacity={0.7}>
-              <Calendar size={20} color={Colors.light.text} />
-              <Text style={styles.actionCardText}>Schedule</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionCard} activeOpacity={0.7}>
-              <MessageSquare size={20} color={Colors.light.text} />
-              <Text style={styles.actionCardText}>Contact</Text>
-            </TouchableOpacity>
+          {closestTruck && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Camión cercano</Text>
+              <TouchableOpacity style={styles.truckCard} activeOpacity={0.7}>
+                <View style={styles.truckLeft}>
+                  <View
+                    style={[
+                      styles.truckDot,
+                      { backgroundColor: WASTE_TYPES[closestTruck.type].color },
+                    ]}
+                  />
+                  <View style={styles.truckInfo}>
+                    <Text style={styles.truckType}>
+                      Recolección de {WASTE_TYPES[closestTruck.type].label.toLowerCase()}
+                    </Text>
+                    <Text style={styles.truckRoute}>{closestTruck.route}</Text>
+                  </View>
+                </View>
+                <View style={styles.truckEta}>
+                  <Text style={styles.etaNumber}>{closestTruck.eta}</Text>
+                  <Text style={styles.etaLabel}>min</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
+                <MapPin size={18} color={Colors.light.text} />
+                <Text style={styles.actionButtonText}>Seguir en el mapa</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Acciones rápidas</Text>
+            <View style={styles.actionGrid}>
+              <TouchableOpacity
+                style={styles.actionCard}
+                onPress={() => router.push("/schedule")}
+                activeOpacity={0.7}>
+                <Calendar size={20} color={Colors.light.text} />
+                <Text style={styles.actionCardText}>Calendario</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionCard} activeOpacity={0.7}>
+                <MessageSquare size={20} color={Colors.light.text} />
+                <Text style={styles.actionCardText}>Contacto</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -122,16 +146,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 20,
   },
   title: {
     fontSize: 28,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     letterSpacing: -0.5,
   },
@@ -156,7 +177,7 @@ const styles = StyleSheet.create({
   nextLabel: {
     fontSize: 14,
     color: Colors.light.textSecondary,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
   nextBadge: {
     flexDirection: "row",
@@ -175,12 +196,12 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 13,
     color: Colors.light.text,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
   nextDate: {
     fontSize: 18,
     color: Colors.light.text,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     marginBottom: 8,
   },
   nextHint: {
@@ -192,16 +213,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 32,
   },
-
   sectionTitle: {
     fontSize: 13,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.textSecondary,
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 12,
   },
-
   truckCard: {
     backgroundColor: Colors.light.cardBackground,
     borderRadius: 12,
@@ -228,7 +247,7 @@ const styles = StyleSheet.create({
   },
   truckType: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
     marginBottom: 2,
   },
@@ -241,7 +260,7 @@ const styles = StyleSheet.create({
   },
   etaNumber: {
     fontSize: 20,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     letterSpacing: -0.5,
   },
@@ -264,7 +283,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     fontSize: 15,
     color: Colors.light.text,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
   actionGrid: {
     flexDirection: "row",
@@ -285,6 +304,6 @@ const styles = StyleSheet.create({
   actionCardText: {
     fontSize: 15,
     color: Colors.light.text,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
 });

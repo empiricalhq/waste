@@ -1,23 +1,55 @@
-import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
 import { WASTE_TYPES } from "@/constants/wasteTypes";
-import { SORTING_GUIDE, QUIZ_QUESTIONS } from "@/mocks/sortingGuide";
-import { Check, X, Trophy } from "lucide-react-native";
+import { getLearningGuides, getQuizQuestions, getUser, updateUserProgress } from "@/services/api";
+import { LearningGuide, QuizQuestion, User, WasteType } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Check, Trophy, X } from "lucide-react-native";
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type QuizState = {
   active: boolean;
   currentQuestion: number;
-  selectedAnswer: string | null;
+  selectedAnswer: WasteType | null;
   showResult: boolean;
   isCorrect: boolean;
 };
 
 export default function LearnScreen() {
-  const { userProgress, updateUserProgress } = useApp();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
+
+  const { data: user, isLoading: isLoadingUser } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: getUser,
+  });
+
+  const { data: learningGuides = [], isLoading: isLoadingGuides } = useQuery<LearningGuide[]>({
+    queryKey: ["learningGuides"],
+    queryFn: getLearningGuides,
+  });
+
+  const { data: quizQuestions = [], isLoading: isLoadingQuiz } = useQuery<QuizQuestion[]>({
+    queryKey: ["quizQuestions"],
+    queryFn: getQuizQuestions,
+  });
+
+  const { mutate: updateUser } = useMutation({
+    mutationFn: updateUserProgress,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+
   const [selectedGuide, setSelectedGuide] = useState<string | null>(null);
   const [quizState, setQuizState] = useState<QuizState>({
     active: false,
@@ -37,31 +69,22 @@ export default function LearnScreen() {
     });
   };
 
-  const handleAnswer = (answer: string) => {
-    const currentQ = QUIZ_QUESTIONS[quizState.currentQuestion];
+  const handleAnswer = (answer: WasteType) => {
+    if (!user) return;
+    const currentQ = quizQuestions[quizState.currentQuestion];
     const isCorrect = answer === currentQ.correctAnswer;
 
-    setQuizState({
-      ...quizState,
-      selectedAnswer: answer,
-      showResult: true,
-      isCorrect,
-    });
+    setQuizState({ ...quizState, selectedAnswer: answer, showResult: true, isCorrect });
 
-    if (isCorrect) {
-      updateUserProgress({
-        correctAnswers: userProgress.correctAnswers + 1,
-        totalQuestions: userProgress.totalQuestions + 1,
-      });
-    } else {
-      updateUserProgress({
-        totalQuestions: userProgress.totalQuestions + 1,
-      });
-    }
+    updateUser({
+      ...user.progress,
+      correctAnswers: user.progress.correctAnswers + (isCorrect ? 1 : 0),
+      totalQuestions: user.progress.totalQuestions + 1,
+    });
   };
 
   const nextQuestion = () => {
-    if (quizState.currentQuestion < QUIZ_QUESTIONS.length - 1) {
+    if (quizState.currentQuestion < quizQuestions.length - 1) {
       setQuizState({
         ...quizState,
         currentQuestion: quizState.currentQuestion + 1,
@@ -69,48 +92,56 @@ export default function LearnScreen() {
         showResult: false,
       });
     } else {
-      const today = new Date().toISOString().split("T")[0];
-      const lastQuizDate = userProgress.lastQuizDate;
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split("T")[0];
+      // Logic for quiz completion and streak update
+      if (user) {
+        const today = new Date().toISOString().split("T")[0];
+        const lastQuizDate = user.progress.lastQuizDate;
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-      let newStreak = userProgress.streak;
-      if (lastQuizDate === yesterdayStr) {
-        newStreak += 1;
-      } else if (lastQuizDate !== today) {
-        newStreak = 1;
+        let newStreak = user.progress.streak;
+        if (lastQuizDate === yesterdayStr) {
+          newStreak += 1;
+        } else if (lastQuizDate !== today) {
+          newStreak = 1;
+        }
+
+        updateUser({
+          ...user.progress,
+          streak: newStreak,
+          lastQuizDate: today,
+        });
       }
 
-      updateUserProgress({
-        streak: newStreak,
-        lastQuizDate: today,
-      });
-
-      setQuizState({
-        active: false,
-        currentQuestion: 0,
-        selectedAnswer: null,
-        showResult: false,
-        isCorrect: false,
-      });
+      setQuizState({ ...quizState, active: false, currentQuestion: 0 });
     }
   };
 
   const accuracy =
-    userProgress.totalQuestions > 0
-      ? Math.round((userProgress.correctAnswers / userProgress.totalQuestions) * 100)
+    user && user.progress.totalQuestions > 0
+      ? Math.round((user.progress.correctAnswers / user.progress.totalQuestions) * 100)
       : 0;
 
+  const isLoading = isLoadingUser || isLoadingGuides || isLoadingQuiz;
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color={Colors.light.text} />
+      </View>
+    );
+  }
+
   if (selectedGuide) {
-    const guide = SORTING_GUIDE.find((g) => g.id === selectedGuide);
+    const guide = learningGuides.find((g) => g.id === selectedGuide);
     if (!guide) return null;
 
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.detailHeader}>
           <TouchableOpacity onPress={() => setSelectedGuide(null)}>
-            <Text style={styles.backButton}>← Back</Text>
+            <Text style={styles.backButton}>← Atrás</Text>
           </TouchableOpacity>
         </View>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -125,7 +156,7 @@ export default function LearnScreen() {
             <Text style={styles.detailCategory}>{WASTE_TYPES[guide.category].label}</Text>
             <Text style={styles.detailDescription}>{guide.description}</Text>
             <View style={styles.detailSection}>
-              <Text style={styles.detailSectionTitle}>Examples</Text>
+              <Text style={styles.detailSectionTitle}>Ejemplos</Text>
               {guide.examples.map((example, idx) => (
                 <View key={idx} style={styles.detailExample}>
                   <View style={styles.detailExampleDot} />
@@ -142,10 +173,10 @@ export default function LearnScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Learn</Text>
+        <Text style={styles.title}>Aprender</Text>
         <TouchableOpacity style={styles.quizButton} onPress={startQuiz} activeOpacity={0.7}>
           <Trophy size={18} color={Colors.light.cardBackground} />
-          <Text style={styles.quizButtonText}>Quiz</Text>
+          <Text style={styles.quizButtonText}>Test</Text>
         </TouchableOpacity>
       </View>
 
@@ -153,32 +184,32 @@ export default function LearnScreen() {
         <ScrollView style={styles.quizActive} showsVerticalScrollIndicator={false}>
           <View style={styles.quizHeader}>
             <TouchableOpacity onPress={() => setQuizState({ ...quizState, active: false })}>
-              <Text style={styles.backButton}>← Back</Text>
+              <Text style={styles.backButton}>← Volver</Text>
             </TouchableOpacity>
             <View style={styles.quizStats}>
-              <Text style={styles.quizStatText}>{userProgress.streak} day streak</Text>
+              <Text style={styles.quizStatText}>{user?.progress.streak} días de racha</Text>
               <View style={styles.statDivider} />
-              <Text style={styles.quizStatText}>{accuracy}% accuracy</Text>
+              <Text style={styles.quizStatText}>{accuracy}% precisión</Text>
             </View>
           </View>
           <View style={styles.quizProgress}>
             <Text style={styles.quizProgressText}>
-              Question {quizState.currentQuestion + 1} of {QUIZ_QUESTIONS.length}
+              Pregunta {quizState.currentQuestion + 1} de {quizQuestions.length}
             </Text>
           </View>
           <Image
-            source={{ uri: QUIZ_QUESTIONS[quizState.currentQuestion].imageUrl }}
+            source={{ uri: quizQuestions[quizState.currentQuestion].imageUrl }}
             style={styles.quizImage}
             resizeMode="cover"
           />
           <Text style={styles.quizQuestion}>
-            {QUIZ_QUESTIONS[quizState.currentQuestion].question}
+            {quizQuestions[quizState.currentQuestion].question}
           </Text>
-          <Text style={styles.quizItem}>{QUIZ_QUESTIONS[quizState.currentQuestion].item}</Text>
+          <Text style={styles.quizItem}>{quizQuestions[quizState.currentQuestion].item}</Text>
           <View style={styles.options}>
-            {QUIZ_QUESTIONS[quizState.currentQuestion].options.map((option) => {
+            {quizQuestions[quizState.currentQuestion].options.map((option) => {
               const isSelected = quizState.selectedAnswer === option;
-              const isCorrect = option === QUIZ_QUESTIONS[quizState.currentQuestion].correctAnswer;
+              const isCorrect = option === quizQuestions[quizState.currentQuestion].correctAnswer;
               const showCorrect = quizState.showResult && isCorrect;
               const showWrong = quizState.showResult && isSelected && !isCorrect;
 
@@ -208,9 +239,9 @@ export default function LearnScreen() {
           {quizState.showResult && (
             <TouchableOpacity style={styles.nextButton} onPress={nextQuestion}>
               <Text style={styles.nextButtonText}>
-                {quizState.currentQuestion < QUIZ_QUESTIONS.length - 1
-                  ? "Next question"
-                  : "Finish quiz"}
+                {quizState.currentQuestion < quizQuestions.length - 1
+                  ? "Siguiente pregunta"
+                  : "Finalizar test"}
               </Text>
             </TouchableOpacity>
           )}
@@ -218,9 +249,9 @@ export default function LearnScreen() {
       ) : (
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.roadmapSection}>
-            <Text style={styles.roadmapTitle}>Your learning path</Text>
+            <Text style={styles.roadmapTitle}>Tu ruta de aprendizaje</Text>
             <View style={styles.roadmap}>
-              {SORTING_GUIDE.map((item, index) => (
+              {learningGuides.map((item, index) => (
                 <TouchableOpacity
                   key={item.id}
                   style={styles.roadmapItem}
@@ -233,7 +264,7 @@ export default function LearnScreen() {
                         { backgroundColor: WASTE_TYPES[item.category].color },
                       ]}
                     />
-                    {index < SORTING_GUIDE.length - 1 && <View style={styles.roadmapLine} />}
+                    {index < learningGuides.length - 1 && <View style={styles.roadmapLine} />}
                   </View>
                   <View style={styles.roadmapCard}>
                     <Text style={styles.roadmapItemTitle}>{item.name}</Text>
@@ -260,10 +291,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   title: {
     fontSize: 28,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     letterSpacing: -0.5,
   },
@@ -278,7 +312,7 @@ const styles = StyleSheet.create({
   },
   quizButtonText: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.cardBackground,
   },
   statDivider: {
@@ -289,7 +323,7 @@ const styles = StyleSheet.create({
   backButton: {
     fontSize: 16,
     color: Colors.light.text,
-    fontWeight: "500" as const,
+    fontWeight: "500",
   },
   content: {
     flex: 1,
@@ -300,15 +334,13 @@ const styles = StyleSheet.create({
   },
   roadmapTitle: {
     fontSize: 13,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.textSecondary,
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 20,
   },
-  roadmap: {
-    gap: 0,
-  },
+  roadmap: {},
   roadmapItem: {
     flexDirection: "row",
     gap: 16,
@@ -340,7 +372,7 @@ const styles = StyleSheet.create({
   },
   roadmapItemTitle: {
     fontSize: 16,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
     marginBottom: 4,
   },
@@ -368,7 +400,7 @@ const styles = StyleSheet.create({
   },
   detailTitle: {
     fontSize: 24,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     flex: 1,
     letterSpacing: -0.5,
@@ -395,9 +427,9 @@ const styles = StyleSheet.create({
   },
   detailSectionTitle: {
     fontSize: 13,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.textSecondary,
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 4,
   },
@@ -440,7 +472,7 @@ const styles = StyleSheet.create({
   },
   quizProgressText: {
     fontSize: 14,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.textSecondary,
   },
   quizImage: {
@@ -450,14 +482,14 @@ const styles = StyleSheet.create({
   },
   quizQuestion: {
     fontSize: 15,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.textSecondary,
     marginBottom: 4,
     paddingHorizontal: 20,
   },
   quizItem: {
     fontSize: 22,
-    fontWeight: "600" as const,
+    fontWeight: "600",
     color: Colors.light.text,
     marginBottom: 20,
     letterSpacing: -0.5,
@@ -488,7 +520,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.text,
   },
   optionTextActive: {
@@ -504,7 +536,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 16,
-    fontWeight: "500" as const,
+    fontWeight: "500",
     color: Colors.light.cardBackground,
   },
 });
