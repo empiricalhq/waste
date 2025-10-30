@@ -30,7 +30,7 @@ def _():
     # Notebooks are run via `mise run dev` from the datasets directory.
     # The working directory is the datasets root.
     PROJECT_ROOT = Path.cwd()
-    DATA_DIR = PROJECT_ROOT / "data"
+    DATA_DIR = PROJECT_ROOT / "data" / "residuos"
 
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
