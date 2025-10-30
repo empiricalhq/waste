@@ -27,17 +27,14 @@ run = "uv export --format requirements-txt --no-hashes --no-header --no-dev --no
 [tasks.fix]
 description = "Lint & format (fix by default)"
 alias = "f"
-run = [
-  "uv run ruff format .",
-  "uv run ruff check --fix --unsafe-fixes .",
-]
+run = ["uv run ruff format .", "uv run ruff check --fix --unsafe-fixes ."]
 
 [tasks.dev]
-description = "Run development server"
+description = "Run development server for a notebook"
 alias = "d"
-run = "uv run marimo edit src/03-lima-population-map.py"
+run = "uv run marimo edit"
 
 [tasks.dev-lan]
-description = "Run development server (LAN)"
+description = "Run development server for a notebook (LAN)"
 alias = "dl"
-run = "uv run marimo edit src/main.py --host 0.0.0.0"
+run = "uv run marimo edit --host 0.0.0.0"

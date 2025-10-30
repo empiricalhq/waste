@@ -1,41 +1,34 @@
 [project]
-name = "src"
-version = "0.1.0"
-description = "Add your description here"
+name = "datasets"
+version = "0.2.0"
+description = "A collection of notebooks we wrote to analyze the datasets released for #dataton2025."
 
 license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.13"
 
 authors = [
-    { name = "Pedro Rojas", email = "pedro.rojas.f24@gmail.com" },
     { name = "David Duran", email = "davidamos.duran@unmsm.edu.pe" },
+    { name = "Pedro Rojas", email = "pedro.rojas.f24@gmail.com" },
 ]
 
 dependencies = [
     "altair>=5.5.0",
-    "beautifulsoup4>=4.13.5",
+    "beautifulsoup4>=4.14.2",
     "fiona>=1.10.1",
-    "folium>=0.20.0",
     "geopandas>=1.1.1",
-    "jupyterlab>=4.4.7",
-    "marimo==0.15.2",
-    "matplotlib>=3.10.6",
-    "numpy>=2.3.3",
-    "pandas>=2.3.2",
-    "plotly[express]>=6.3.0",
-    "polars>=1.33.1",
+    "marimo==0.17.5",
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.4",
+    "pandas>=2.3.3",
+    "plotly[express]>=6.3.1",
+    "polars>=1.35.1",
     "pyproj>=3.7.2",
     "requests>=2.32.5",
-    "scikit-learn>=1.7.2",
-    "seaborn>=0.13.2",
-    "shapely>=2.1.1",
+    "shapely>=2.1.2",
 ]
 
 [tool.ruff]
-# extend-exclude = [
-#     "datasets/src/main.py",
-# ]
 fix = true
 line-length = 88
 target-version = "py39"
@@ -72,4 +65,4 @@ lines-after-imports = 2
 [tool.ruff.lint.pep8-naming]
 # ruff does not currently implement C0103, so ALL_CAPS constants are incorrectly flagged.
 # see: https://github.com/astral-sh/ruff/issues/2964
-ignore-names = ["*_DIR"]
+ignore-names = ["*"]
