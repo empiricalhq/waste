@@ -30,7 +30,7 @@ def _():
 def _():
     # Notebooks are run via `mise run dev` from the datasets directory.
     # The working directory is the datasets root.
-    PROJECT_ROOT = Path.cwd()
+    PROJECT_ROOT = mo.notebook_location().parent if mo.notebook_location() else Path.cwd()
     DATA_DIR = PROJECT_ROOT / "data"
 
     logging.basicConfig(
