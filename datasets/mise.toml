@@ -20,8 +20,9 @@ description = "List outdated dependencies"
 alias = "o"
 run = "uv pip list --outdated"
 
-[tasks.export]
-description = "Export deps to requirements.txt"
+[tasks.export-deps]
+description = "Export dependencies to requirements.txt"
+alias = "ed"
 run = "uv export --format requirements-txt --no-hashes --no-header --no-dev --no-annotate --output-file requirements.txt"
 
 [tasks.fix]
@@ -38,3 +39,8 @@ run = "uv run marimo edit"
 description = "Run development server for a notebook (LAN)"
 alias = "dl"
 run = "uv run marimo edit --host 0.0.0.0"
+
+[tasks.export]
+description = "Export Marimo notebooks"
+alias = "e"
+run = "uv run marimo export html-wasm src/03-population-map.py -o src/output --mode run"
