@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv --project datasets sync
-          uv add playwright
+          uv --project datasets add playwright
 
       - name: Export HTML using Marimo (initial)
         run: |
