@@ -4,7 +4,6 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["bun-types"],
 
     // Environment setup & latest features
     "lib": ["ESNext"],
