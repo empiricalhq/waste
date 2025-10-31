@@ -19,7 +19,7 @@ with app.setup(hide_code=True):
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
-    def resolve_data_path(*parts) -> str:
+    def resolve_data_path(*parts) -> PurePath:
         """
         Return a string path to a data file under 'public', compatible with local and WASM environments.
         """
@@ -62,7 +62,11 @@ def _():
 def _(DATA_DIR):
     valorization_URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
     downloaded_files = utils.datasets.download(valorization_URL, DATA_DIR)
+    return (downloaded_files,)
 
+
+@app.cell
+def _(downloaded_files):
     if downloaded_files:
         files_md = "Archivos descargados:\n" + "".join(
             f"- `{file.name}`\n" for file in downloaded_files
@@ -224,7 +228,7 @@ def _(valorization_total):
             x="ETIQUETA",
             y=["ORG_TON", "INORG_TON"],
             barmode="stack",
-            text_auto=".2s",
+            text_auto=True,
             title="Top 10 distritos por toneladas totales valorizadas",
             labels={"value": "Toneladas", "variable": "Tipo de residuo"},
         )
