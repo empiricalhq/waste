@@ -21,6 +21,7 @@ dependencies = [
     "matplotlib>=3.10.7",
     "numpy>=2.3.4",
     "pandas>=2.3.3",
+    "playwright>=1.55.0",
     "plotly[express]>=6.3.1",
     "polars>=1.35.1",
     "pyarrow>=22.0.0", # pandas dependency (see: https://github.com/pandas-dev/pandas/issues/54466)
