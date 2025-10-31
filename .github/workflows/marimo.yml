@@ -6,11 +6,11 @@ on:
       - master
     paths:
       - 'datasets/src/03-population-map.py' # currently, the only one that builds
-  #  pull_request:
-  #    branches:
-  #      - master
-  #    paths:
-  #      - 'datasets/src/03-population-map.py'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'datasets/src/03-population-map.py'
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
       - name: Export HTML using Marimo
         run: |
           cd datasets
-          uv run --project datasets marimo export html-wasm src/03-population-map.py -o src/output --mode run -f
+          uv run --project datasets marimo export html src/03-population-map.py -o src/output
 
       - name: Upload static files as artifact
         id: deployment
