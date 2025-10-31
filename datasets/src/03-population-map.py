@@ -36,7 +36,7 @@ def _():
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ### Mapa departamental de Perú
+    ## Mapa departamental de Perú
     """)
     return
 
@@ -67,7 +67,7 @@ def _(mapa_departamental_peru):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ### Mapa distrital de Perú
+    ## Mapa distrital de Perú
     """)
     return
 
