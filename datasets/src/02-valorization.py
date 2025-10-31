@@ -1,6 +1,5 @@
 import marimo
 
-
 __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
@@ -16,7 +15,7 @@ with app.setup(hide_code=True):
     import utils.datasets
 
     logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+        level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
     def resolve_data_path(*parts) -> PurePath:
@@ -63,12 +62,6 @@ def _(DATA_DIR):
     valorization_URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
     downloaded_files = utils.datasets.download(valorization_URL, DATA_DIR)
     return (downloaded_files,)
-
-
-@app.cell
-def _(downloaded_files):
-    downloaded_files
-    return
 
 
 @app.cell
