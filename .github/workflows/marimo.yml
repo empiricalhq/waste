@@ -15,6 +15,10 @@ on:
       - 'datasets/scripts/prerender_marimo.py'
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: datasets
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,24 +37,11 @@ jobs:
           uv --project datasets sync
           uv --project datasets add playwright
 
-      - name: Export HTML using Marimo (initial)
-        run: |
-          cd datasets
-          mkdir -p src/output
-          uv run --project datasets marimo export html src/03-population-map.py -o src/output/temp_index.html
+      - name: Export HTML using Marimo
+        run: uv run --project datasets marimo export html src/03-population-map.py -o src/output/temp_index.html
 
-      - name: List output files for debugging
-        run: |
-          cd datasets
-          echo "📂 Listing datasets/src/output:"
-          ls -al src/output || echo "❌ src/output not found"
-          echo ""
-          echo "📂 Listing datasets/output (in case Marimo writes there):"
-          ls -al output || echo "❌ output not found"
-
-      - name: Run prerendering script
-        run: |
-          cd datasets
+      - name: Prerender Marimo HTML
+        run:
           uv run --project datasets python scripts/prerender_marimo.py src/output/temp_index.html src/output/index.html
 
       - name: Upload static files as artifact
