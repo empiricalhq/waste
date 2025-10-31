@@ -5,10 +5,12 @@ __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
 with app.setup(hide_code=True):
-
+    # Imports & local functions
     import geopandas as gpd
     import marimo as mo
     import matplotlib.pyplot as plt
+
+    from utils.files import resolve_data_path
 
 
 @app.cell(hide_code=True)
@@ -23,15 +25,6 @@ def _():
     return
 
 
-@app.cell
-def _():
-    # Notebooks are run via `mise run dev` from the datasets directory.
-    # The working directory is the datasets root.
-    PROJECT_ROOT = mo.notebook_location().parent
-    DATA_DIR = PROJECT_ROOT / "data"
-    return (DATA_DIR,)
-
-
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
@@ -41,8 +34,8 @@ def _():
 
 
 @app.cell
-def _(DATA_DIR):
-    mapa_departamental_path = DATA_DIR / "geojson" / "departamental.geojson"
+def _():
+    mapa_departamental_path = resolve_data_path("geojson", "departamental.geojson")
     mapa_departamental_peru = gpd.read_file(mapa_departamental_path)
     return (mapa_departamental_peru,)
 
@@ -72,8 +65,8 @@ def _():
 
 
 @app.cell
-def _(DATA_DIR):
-    mapa_distrital_path = DATA_DIR / "geojson" / "distrital.geojson"
+def _():
+    mapa_distrital_path = resolve_data_path("geojson", "distrital.geojson")
     mapa_distrital = gpd.read_file(mapa_distrital_path)
     return (mapa_distrital,)
 
@@ -106,9 +99,9 @@ def _():
 
 
 @app.cell
-def _(DATA_DIR):
+def _():
     # This cell loads and cleans the attribute data from the DBF file.
-    manzana_dbf_path = DATA_DIR / "lima" / "manzana.dbf"
+    manzana_dbf_path = resolve_data_path("lima", "manzana.dbf")
     df_attrs = gpd.read_file(manzana_dbf_path)
     df_attrs = df_attrs.drop(columns="geometry", errors="ignore")
     df_attrs.columns = df_attrs.columns.str.strip()
@@ -129,10 +122,17 @@ def _(DATA_DIR):
     return (df_attrs,)
 
 
+@app.cell(hide_code=True)
+def _():
+    mo.md(r"""
+    Then we load the shapefile and merge it with the attribute data (without this step, we wouldn't know the actual locations!)
+    """)
+    return
+
+
 @app.cell
-def _(DATA_DIR, df_attrs):
-    # This cell loads the shapefile and merges it with the attribute data.
-    manzana_shp_path = DATA_DIR / "lima" / "manzana.shp"
+def _(df_attrs):
+    manzana_shp_path = resolve_data_path("lima", "manzana.shp")
     manzana_gdf = gpd.read_file(manzana_shp_path)
     manzana_gdf.columns = manzana_gdf.columns.str.strip()
     manzana_gdf = manzana_gdf.drop(columns=["T_TOTAL"], errors="ignore")
@@ -163,6 +163,11 @@ def _(manzana_merged_gdf):
 
     # plot
     mo.mpl.interactive(fig)
+    return
+
+
+@app.cell
+def _():
     return
 
 
