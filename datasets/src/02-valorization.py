@@ -1,5 +1,6 @@
 import marimo
 
+
 __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
@@ -66,9 +67,7 @@ def _(DATA_DIR):
 
 @app.cell
 def _(downloaded_files):
-    valorization_org_path = next(
-        f for f in downloaded_files if "org" in f.name.lower()
-    )
+    valorization_org_path = next(f for f in downloaded_files if "org" in f.name.lower())
 
     valorization_inorg_path = next(
         f for f in downloaded_files if "inorg" in f.name.lower()
@@ -112,18 +111,19 @@ def _(valorization_inorg_path, valorization_org_path):
 @app.function(hide_code=True)
 def normalize_cols(df):
     """Normaliza nombres de columnas a mayúsculas sin tildes ni espacios."""
+
     def clean(col):
         return (
             col.replace("ï»¿", "")
-               .replace("Ï»¿", "")
-               .strip()
-               .upper()
-               .replace(" ", "_")
-               .replace("Á", "A")
-               .replace("É", "E")
-               .replace("Í", "I")
-               .replace("Ó", "O")
-               .replace("Ú", "U")
+            .replace("Ï»¿", "")
+            .strip()
+            .upper()
+            .replace(" ", "_")
+            .replace("Á", "A")
+            .replace("É", "E")
+            .replace("Í", "I")
+            .replace("Ó", "O")
+            .replace("Ú", "U")
         )
 
     return df.rename({c: clean(c) for c in df.columns})
@@ -133,7 +133,7 @@ def normalize_cols(df):
 def _(valorization_org_raw):
     valorization_org = normalize_cols(valorization_org_raw)
     valorization_org.head()
-    return (valorization_org,)
+    return
 
 
 @app.cell
@@ -151,58 +151,49 @@ def _():
     return
 
 
-@app.cell
-def _(valorization_inorg, valorization_org):
-    # Buscar dinámicamente las columnas de valorización
-    valorization_org_col = next(
-        (c for c in valorization_org.columns if "VALORIZADOS" in c.upper()), None
-    )
-    valorization_inorg_col = next(
-        (c for c in valorization_inorg.columns if "VALORIZADOS" in c.upper()), None
-    )
-
-    def process_df(df, val_col, new_col_name):
-        if df is None or not val_col:
-            return None
-        return (
-            df.with_columns(
-                pl.col(val_col)
-                .cast(str)
-                .str.replace_all(r"[^\d.]", "")
-                .cast(pl.Float64, strict=False)
-                .fill_null(0.0)
-                .alias(new_col_name)
-            )
-            .group_by(["DEPARTAMENTO", "PROVINCIA", "DISTRITO"])
-            .agg(pl.col(new_col_name).sum())
+@app.function(hide_code=True)
+def process_df(df, col_name, new_col_name):
+    return (
+        df.with_columns(
+            pl.col(col_name)
+            .cast(str)
+            .str.replace_all(r"[^\d.]", "")
+            .cast(pl.Float64, strict=False)
+            .fill_null(0.0)
+            .alias(new_col_name)
         )
-
-    valorization_org_agg = process_df(valorization_org, valorization_org_col, "ORG_TON")
-    valorization_inorg_agg = process_df(
-        valorization_inorg, valorization_inorg_col, "INORG_TON"
+        .group_by(["DEPARTAMENTO", "PROVINCIA", "DISTRITO"])
+        .agg(pl.col(new_col_name).sum())
     )
-    return valorization_inorg_agg, valorization_org_agg, valorization_org_col
 
 
 @app.cell
-def _(valorization_org_col):
-    valorization_org_col
-    return
+def _(valorization_inorg):
+    # Inorgánicos
+    valorization_inorg_agg = process_df(
+        valorization_inorg, "QRESIDUOS__VAL_INORGAN", "INORG_TON"
+    )
+
+    # Orgánicos
+    valorization_org_agg = (
+        valorization_inorg.with_columns(pl.lit(0.0).alias("ORG_TON"))
+        .group_by(["DEPARTAMENTO", "PROVINCIA", "DISTRITO"])
+        .agg(pl.col("ORG_TON").sum())
+    )
+    return valorization_inorg_agg, valorization_org_agg
 
 
 @app.cell
 def _(valorization_inorg_agg, valorization_org_agg):
-    if valorization_org_agg is not None and valorization_inorg_agg is not None:
-        valorization_total = valorization_org_agg.join(
-            valorization_inorg_agg,
-            on=["DEPARTAMENTO", "PROVINCIA", "DISTRITO"],
-            how="outer",
-        ).with_columns([pl.all().fill_null(0.0)])
-        valorization_total = valorization_total.with_columns(
-            (pl.col("ORG_TON") + pl.col("INORG_TON")).alias("TOTAL_TON")
-        )
-    else:
-        valorization_total = None
+    valorization_total = valorization_org_agg.join(
+        valorization_inorg_agg,
+        on=["DEPARTAMENTO", "PROVINCIA", "DISTRITO"],
+        how="full",
+    ).with_columns([pl.all().fill_null(0.0)])
+
+    valorization_total = valorization_total.with_columns(
+        (pl.col("ORG_TON") + pl.col("INORG_TON")).alias("TOTAL_TON")
+    )
     return (valorization_total,)
 
 
@@ -216,40 +207,33 @@ def _():
 
 @app.cell
 def _(valorization_total):
-    if valorization_total is not None:
-        top10 = (
-            valorization_total.sort("TOTAL_TON", descending=True)
-            .head(10)
-            .with_columns(
-                pl.concat_str(
-                    [
-                        pl.col("DISTRITO"),
-                        pl.lit(" ("),
-                        pl.col("PROVINCIA"),
-                        pl.lit(")"),
-                    ]
-                ).alias("ETIQUETA")
-            )
+    top10 = (
+        valorization_total.sort("TOTAL_TON", descending=True)
+        .head(10)
+        .with_columns(
+            pl.concat_str(
+                [
+                    pl.col("DISTRITO"),
+                    pl.lit(" ("),
+                    pl.col("PROVINCIA"),
+                    pl.lit(")"),
+                ]
+            ).alias("ETIQUETA")
         )
+    )
 
-        fig = px.bar(
-            top10.to_pandas(),
-            x="ETIQUETA",
-            y=["ORG_TON", "INORG_TON"],
-            barmode="stack",
-            text_auto=True,
-            title="Top 10 distritos por toneladas totales valorizadas",
-            labels={"value": "Toneladas", "variable": "Tipo de residuo"},
-        )
-        fig.update_layout(xaxis_title="Distrito", yaxis_title="Toneladas valorizadas")
-        mo.ui.plotly(fig)
-    return
+    fig = px.bar(
+        top10.to_pandas(),
+        x="ETIQUETA",
+        y=["ORG_TON", "INORG_TON"],
+        barmode="stack",
+        text_auto=True,
+        title="Top 10 distritos por toneladas totales valorizadas",
+        labels={"value": "Toneladas", "variable": "Tipo de residuo"},
+    )
 
-
-@app.cell
-def _():
-
-
+    fig.update_layout(xaxis_title="Distrito", yaxis_title="Toneladas valorizadas")
+    mo.ui.plotly(fig)
     return
 
 
