@@ -1,6 +1,5 @@
 import marimo
 
-
 __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
@@ -28,7 +27,7 @@ def _():
 def _():
     # Notebooks are run via `mise run dev` from the datasets directory.
     # The working directory is the datasets root.
-    PROJECT_ROOT = Path.cwd()
+    PROJECT_ROOT = mo.notebook_location().parent
     DATA_DIR = PROJECT_ROOT / "data"
     return (DATA_DIR,)
 
