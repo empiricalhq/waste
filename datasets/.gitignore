@@ -10,3 +10,4 @@ src/output/
 .ruff_cache/
 
 *.csv
+*.html
