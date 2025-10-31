@@ -1,7 +1,7 @@
 import marimo
 
 
-__generated_with = "0.17.4"
+__generated_with = "0.17.5"
 app = marimo.App(width="full")
 
 
@@ -46,7 +46,9 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Descarga de datasets de valorización""")
+    mo.md("""
+    ## Descarga de datasets de valorización
+    """)
     return
 
 
@@ -74,7 +76,9 @@ def _(DATA_DIR, downloader, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Carga y limpieza de datos""")
+    mo.md("""
+    ## Carga y limpieza de datos
+    """)
     return
 
 
@@ -128,7 +132,9 @@ def _(valorization_inorg_raw, valorization_org_raw):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Procesamiento y agregación""")
+    mo.md("""
+    ## Procesamiento y agregación
+    """)
     return
 
 
@@ -183,7 +189,9 @@ def _(pl, valorization_inorg_agg, valorization_org_agg):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""## Visualización: Top 10 distritos por valorización total""")
+    mo.md("""
+    ## Visualización: Top 10 distritos por valorización total
+    """)
     return
 
 

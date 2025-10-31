@@ -1,7 +1,7 @@
 import marimo
 
 
-__generated_with = "0.17.4"
+__generated_with = "0.17.5"
 app = marimo.App(width="full")
 
 
@@ -93,7 +93,9 @@ def _(generation_dataset_paths, pl):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Dataset #1: Generación anual de residuos sólidos""")
+    mo.md(r"""
+    ## Dataset #1: Generación anual de residuos sólidos
+    """)
     return
 
 

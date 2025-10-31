@@ -1,7 +1,7 @@
 import marimo
 
 
-__generated_with = "0.17.4"
+__generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
 
@@ -40,7 +40,9 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Mapa departamental de Perú""")
+    mo.md(r"""
+    ### Mapa departamental de Perú
+    """)
     return
 
 
@@ -69,7 +71,9 @@ def _(mapa_departamental_peru, mo, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Mapa distrital de Perú""")
+    mo.md(r"""
+    ### Mapa distrital de Perú
+    """)
     return
 
 
