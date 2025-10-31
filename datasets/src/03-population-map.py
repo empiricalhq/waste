@@ -1,10 +1,10 @@
 import marimo
 
+
 __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
 with app.setup(hide_code=True):
-    from pathlib import Path
 
     import geopandas as gpd
     import marimo as mo
