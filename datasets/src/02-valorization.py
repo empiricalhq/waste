@@ -2,18 +2,22 @@ import marimo
 
 
 __generated_with = "0.17.5"
-app = marimo.App(width="full")
+app = marimo.App(width="medium")
 
+with app.setup(hide_code=True):
+    import logging
 
-@app.cell
-def _():
+    from pathlib import Path
+
     import marimo as mo
+    import plotly.express as px
+    import polars as pl
 
-    return (mo,)
+    import data_utils as downloader
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md(r"""
     # Análisis de valorización de residuos sólidos orgánicos e inorgánicos
 
@@ -24,15 +28,6 @@ def _(mo):
 
 @app.cell
 def _():
-    import logging
-
-    from pathlib import Path
-
-    import plotly.express as px
-    import polars as pl
-
-    import data_utils as downloader
-
     # Notebooks are run via `mise run dev` from the datasets directory.
     # The working directory is the datasets root.
     PROJECT_ROOT = Path.cwd()
@@ -41,11 +36,11 @@ def _():
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
-    return DATA_DIR, downloader, pl, px
+    return (DATA_DIR,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md("""
     ## Descarga de datasets de valorización
     """)
@@ -53,7 +48,7 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_DIR, downloader, mo):
+def _(DATA_DIR):
     valorization_URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
     downloaded_files = downloader.download(valorization_URL, DATA_DIR)
 
@@ -75,7 +70,7 @@ def _(DATA_DIR, downloader, mo):
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md("""
     ## Carga y limpieza de datos
     """)
@@ -83,7 +78,7 @@ def _(mo):
 
 
 @app.cell
-def _(mo, pl, valorization_inorg_path, valorization_org_path):
+def _(valorization_inorg_path, valorization_org_path):
     if not valorization_org_path or not valorization_inorg_path:
         mo.md(
             "No se encontraron los archivos de datos. Verifique la descarga."
@@ -131,7 +126,7 @@ def _(valorization_inorg_raw, valorization_org_raw):
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md("""
     ## Procesamiento y agregación
     """)
@@ -139,7 +134,7 @@ def _(mo):
 
 
 @app.cell
-def _(pl, valorization_inorg, valorization_org):
+def _(valorization_inorg, valorization_org):
     # Buscar dinámicamente las columnas de valorización
     valorization_org_col = next(
         (c for c in valorization_org.columns if "VALORIZADOS" in c.upper()), None
@@ -172,7 +167,7 @@ def _(pl, valorization_inorg, valorization_org):
 
 
 @app.cell
-def _(pl, valorization_inorg_agg, valorization_org_agg):
+def _(valorization_inorg_agg, valorization_org_agg):
     if valorization_org_agg is not None and valorization_inorg_agg is not None:
         valorization_total = valorization_org_agg.join(
             valorization_inorg_agg,
@@ -188,7 +183,7 @@ def _(pl, valorization_inorg_agg, valorization_org_agg):
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md("""
     ## Visualización: Top 10 distritos por valorización total
     """)
@@ -196,7 +191,7 @@ def _(mo):
 
 
 @app.cell
-def _(mo, pl, px, valorization_total):
+def _(valorization_total):
     if valorization_total is not None:
         top10 = (
             valorization_total.sort("TOTAL_TON", descending=True)

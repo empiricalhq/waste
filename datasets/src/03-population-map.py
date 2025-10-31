@@ -4,16 +4,16 @@ import marimo
 __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
+with app.setup(hide_code=True):
+    from pathlib import Path
 
-@app.cell
-def _():
+    import geopandas as gpd
     import marimo as mo
-
-    return (mo,)
+    import matplotlib.pyplot as plt
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md(r"""
     # Visualizaciones geográficas de Perú
 
@@ -26,20 +26,15 @@ def _(mo):
 
 @app.cell
 def _():
-    from pathlib import Path
-
-    import geopandas as gpd
-    import matplotlib.pyplot as plt
-
     # Notebooks are run via `mise run dev` from the datasets directory.
     # The working directory is the datasets root.
     PROJECT_ROOT = Path.cwd()
     DATA_DIR = PROJECT_ROOT / "data"
-    return DATA_DIR, gpd, plt
+    return (DATA_DIR,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md(r"""
     ### Mapa departamental de Perú
     """)
@@ -47,14 +42,14 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_DIR, gpd):
+def _(DATA_DIR):
     mapa_departamental_path = DATA_DIR / "geojson" / "departamental.geojson"
     mapa_departamental_peru = gpd.read_file(mapa_departamental_path)
     return (mapa_departamental_peru,)
 
 
 @app.cell
-def _(mapa_departamental_peru, mo, plt):
+def _(mapa_departamental_peru):
     fig_dep, ax_dep = plt.subplots(1, 1, figsize=(8, 8))
     mapa_departamental_peru.plot(ax=ax_dep, edgecolor="gray", cmap="Pastel1")
 
@@ -70,7 +65,7 @@ def _(mapa_departamental_peru, mo, plt):
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md(r"""
     ### Mapa distrital de Perú
     """)
@@ -78,14 +73,14 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_DIR, gpd):
+def _(DATA_DIR):
     mapa_distrital_path = DATA_DIR / "geojson" / "distrital.geojson"
     mapa_distrital = gpd.read_file(mapa_distrital_path)
     return (mapa_distrital,)
 
 
 @app.cell
-def _(mapa_distrital, mo, plt):
+def _(mapa_distrital):
     fig_dist, ax_dist = plt.subplots(1, 1, figsize=(8, 8))
 
     mapa_distrital.plot(ax=ax_dist, edgecolor="gray", linewidth=0.2, cmap="Pastel2")
@@ -102,7 +97,7 @@ def _(mapa_distrital, mo, plt):
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _():
     mo.md(r"""
     ## Mapa de población por manzana en Lima
 
@@ -112,7 +107,7 @@ def _(mo):
 
 
 @app.cell
-def _(DATA_DIR, gpd):
+def _(DATA_DIR):
     # This cell loads and cleans the attribute data from the DBF file.
     manzana_dbf_path = DATA_DIR / "lima" / "manzana.dbf"
     df_attrs = gpd.read_file(manzana_dbf_path)
@@ -136,7 +131,7 @@ def _(DATA_DIR, gpd):
 
 
 @app.cell
-def _(DATA_DIR, df_attrs, gpd):
+def _(DATA_DIR, df_attrs):
     # This cell loads the shapefile and merges it with the attribute data.
     manzana_shp_path = DATA_DIR / "lima" / "manzana.shp"
     manzana_gdf = gpd.read_file(manzana_shp_path)
@@ -150,7 +145,7 @@ def _(DATA_DIR, df_attrs, gpd):
 
 
 @app.cell
-def _(manzana_merged_gdf, mo, plt):
+def _(manzana_merged_gdf):
     fig, ax = plt.subplots(1, 1, figsize=(12, 12))
     manzana_merged_gdf.plot(
         column="T_TOTAL",
