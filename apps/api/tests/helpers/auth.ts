@@ -41,13 +41,27 @@ export class Auth {
     }
 
     // get session data
-    const sessionRes = await this.client.get<{ user: User }>('/auth/get-session', { Cookie: cookie });
-    const memberRes = await this.client.get<Member>('/auth/organization/get-active-member', { Cookie: cookie });
+    const sessionRes = await this.client.get<{ user: User; session: { activeOrganizationId?: string } }>(
+      '/auth/get-session',
+      { Cookie: cookie },
+    );
+
+    // get member info
+    let member: Member | null = null;
+    if (sessionRes.data.session?.activeOrganizationId) {
+      const orgRes = await this.client.get<{
+        members: Member[];
+      }>('/auth/organization/get-full-organization', { Cookie: cookie });
+
+      if (orgRes.status === HTTP_STATUS.OK) {
+        member = orgRes.data.members.find((m) => m.userId === sessionRes.data.user.id) || null;
+      }
+    }
 
     const session: Session = {
       cookie,
       user: sessionRes.data.user,
-      member: memberRes.status === HTTP_STATUS.OK ? memberRes.data : null,
+      member,
     };
 
     this.sessions.set(email, session);
