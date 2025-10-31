@@ -6,11 +6,13 @@ on:
       - master
     paths:
       - 'datasets/src/03-population-map.py' # currently, the only one that builds
-  # pull_request:
-  #   branches:
-  #     - master
-  #   paths:
-  #     - 'datasets/src/03-population-map.py'
+      - 'datasets/src/prerender_marimo.py'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'datasets/src/03-population-map.py'
+      - 'datasets/src/prerender_marimo.py'
   workflow_dispatch:
 
 jobs:
@@ -26,12 +28,19 @@ jobs:
           version: '0.9.6'
 
       - name: Install dependencies
-        run: uv --project datasets sync
+        run: |
+          uv --project datasets sync
+          uv add playwright
 
-      - name: Export HTML using Marimo
+      - name: Export HTML using Marimo (initial)
         run: |
           cd datasets
-          uv run --project datasets marimo export html src/03-population-map.py -o src/output/index.html
+          uv run --project datasets marimo export html src/03-population-map.py -o src/output/temp_index.html
+
+      - name: Run prerendering script
+        run: |
+          cd datasets
+          uv run --project datasets python src/prerender_marimo.py src/output/temp_index.html src/output/index.html
 
       - name: Upload static files as artifact
         id: deployment
