@@ -16,7 +16,7 @@ with app.setup(hide_code=True):
     import utils.datasets
 
     logging.basicConfig(
-        level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
     def resolve_data_path(*parts) -> PurePath:
