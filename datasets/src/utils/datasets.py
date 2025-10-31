@@ -72,7 +72,7 @@ def fetch_with_fallbacks(
     except requests.RequestException as e:
         logging.warning(f"Primary fetch failed for {url}: {e}")
 
-    archive_url = urljoin("https://web.archive.org/web/0/", url)
+    archive_url = f"https://web.archive.org/web/0/{url}"
     try:
         r = requests.get(archive_url, timeout=timeout, stream=stream)
         r.raise_for_status()

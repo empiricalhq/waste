@@ -67,6 +67,12 @@ def _(DATA_DIR):
 
 @app.cell
 def _(downloaded_files):
+    downloaded_files
+    return
+
+
+@app.cell
+def _(downloaded_files):
     if downloaded_files:
         files_md = "Archivos descargados:\n" + "".join(
             f"- `{file.name}`\n" for file in downloaded_files
