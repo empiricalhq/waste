@@ -13,7 +13,7 @@ with app.setup(hide_code=True):
     import plotly.express as px
     import polars as pl
 
-    import data_utils as downloader
+    from utils.datasets import download
 
 
 @app.cell(hide_code=True)
@@ -21,7 +21,7 @@ def _():
     mo.md(r"""
     # Análisis de valorización de residuos sólidos orgánicos e inorgánicos
 
-    Idea original: Andrés Cosme
+    **Idea original**: Andrés Cosme
     """)
     return
 
@@ -50,7 +50,7 @@ def _():
 @app.cell
 def _(DATA_DIR):
     valorization_URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
-    downloaded_files = downloader.download(valorization_URL, DATA_DIR)
+    downloaded_files = download(valorization_URL, DATA_DIR)
 
     if downloaded_files:
         files_md = "Archivos descargados:\n" + "".join(

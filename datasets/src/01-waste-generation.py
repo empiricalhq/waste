@@ -13,7 +13,7 @@ with app.setup(hide_code=True):
     import marimo as mo
     import polars as pl
 
-    import data_utils as downloader
+    from utils.datasets import download
 
 
 @app.cell(hide_code=True)
@@ -21,7 +21,7 @@ def _():
     mo.md(r"""
     # Análisis de generación de residuos sólidos en Perú
 
-    Autor: Pedro Rojas
+    **Autor**: Pedro Rojas
     """)
     return
 
@@ -56,7 +56,7 @@ def _(DATA_DIR):
         "https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente",
     ]
 
-    generation_all_files = downloader.download(generation_datasets_urls, DATA_DIR)
+    generation_all_files = download(generation_datasets_urls, DATA_DIR)
 
     if generation_all_files:
         files_md = "Archivos descargados:\\n" + "".join(

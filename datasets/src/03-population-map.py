@@ -1,16 +1,24 @@
 import marimo
 
-
 __generated_with = "0.17.5"
 app = marimo.App(width="medium")
 
 with app.setup(hide_code=True):
     # Imports & local functions
+    from pathlib import PurePath
+
     import geopandas as gpd
     import marimo as mo
     import matplotlib.pyplot as plt
 
-    from utils.files import resolve_data_path
+    def resolve_data_path(*parts) -> str:
+        """
+        Return a string path to a data file under 'public', compatible with local and WASM environments.
+        """
+        base = mo.notebook_location() or (_ for _ in ()).throw(
+            RuntimeError("Notebook location could not be determined")
+        )
+        return str(base / "public" / PurePath(*parts))
 
 
 @app.cell(hide_code=True)
@@ -20,7 +28,7 @@ def _():
 
     Este notebook tiene algunos experimentos que hemos estado haciendo sobre los mapas departamentales, distritales y un mapa de calor de la población de Lima por manzana.
 
-    Autor: David Duran
+    **Autor**: Pedro Rojas, David Duran
     """)
     return
 
@@ -163,11 +171,6 @@ def _(manzana_merged_gdf):
 
     # plot
     mo.mpl.interactive(fig)
-    return
-
-
-@app.cell
-def _():
     return
 
 
