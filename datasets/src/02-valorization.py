@@ -7,13 +7,26 @@ app = marimo.App(width="medium")
 with app.setup(hide_code=True):
     import logging
 
-    from pathlib import Path
+    from pathlib import PurePath
 
     import marimo as mo
     import plotly.express as px
     import polars as pl
 
-    from utils.datasets import download
+    import utils.datasets
+
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
+    def resolve_data_path(*parts) -> str:
+        """
+        Return a string path to a data file under 'public', compatible with local and WASM environments.
+        """
+        base = mo.notebook_location() or (_ for _ in ()).throw(
+            RuntimeError("Notebook location could not be determined")
+        )
+        return base / "public" / PurePath(*parts)
 
 
 @app.cell(hide_code=True)
@@ -22,21 +35,10 @@ def _():
     # Análisis de valorización de residuos sólidos orgánicos e inorgánicos
 
     **Idea original**: Andrés Cosme
+
+    **Re-implementación**: David Duran
     """)
     return
-
-
-@app.cell
-def _():
-    # Notebooks are run via `mise run dev` from the datasets directory.
-    # The working directory is the datasets root.
-    PROJECT_ROOT = Path.cwd()
-    DATA_DIR = PROJECT_ROOT / "data"
-
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
-    return (DATA_DIR,)
 
 
 @app.cell(hide_code=True)
@@ -48,9 +50,18 @@ def _():
 
 
 @app.cell
+def _():
+    # Run notebooks with "mise run dev" from the datasets directory.
+    # The working directory is the dataset root.
+    # All downloaded data is stored in this directory.
+    DATA_DIR = resolve_data_path("residuos")
+    return (DATA_DIR,)
+
+
+@app.cell
 def _(DATA_DIR):
     valorization_URL = "https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam"
-    downloaded_files = download(valorization_URL, DATA_DIR)
+    downloaded_files = utils.datasets.download(valorization_URL, DATA_DIR)
 
     if downloaded_files:
         files_md = "Archivos descargados:\n" + "".join(
