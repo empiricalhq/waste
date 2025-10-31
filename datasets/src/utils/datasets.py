@@ -1,7 +1,9 @@
+import json
 import logging
 import re
 import time
 
+from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 from urllib.parse import urljoin, urlparse
@@ -13,6 +15,61 @@ from bs4 import BeautifulSoup, Tag
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+METADATA_FILE = "download_manifest.json"
+
+
+def _load_metadata(data_dir: Path) -> dict:
+    """Load download history from manifest. Returns empty dict if not found."""
+    metadata_path = data_dir / METADATA_FILE
+    if metadata_path.exists():
+        try:
+            return json.loads(metadata_path.read_text())
+        except (OSError, json.JSONDecodeError) as e:
+            logging.warning(f"Failed to load metadata: {e}, starting fresh")
+    return {}
+
+
+def _save_metadata(data_dir: Path, metadata: dict):
+    """
+    Persist download history.
+    Writes atomically to avoid corruption caused by race conditions.
+    """
+    metadata_path = data_dir / METADATA_FILE
+    try:
+        # Write to temp file first, then rename
+        temp_path = metadata_path.with_suffix(".tmp")
+        temp_path.write_text(json.dumps(metadata, indent=2))
+        temp_path.replace(metadata_path)
+    except OSError as e:
+        logging.error(f"Failed to save metadata: {e}")
+
+
+def _record_download(data_dir: Path, url: str, title: str, filename: str):
+    """Record a successful download in metadata."""
+    metadata = _load_metadata(data_dir)
+    metadata[filename] = {
+        "url": url,
+        "title": title,
+        "timestamp": datetime.now().isoformat(),
+    }
+    _save_metadata(data_dir, metadata)
+
+
+def _find_cached_file(data_dir: Path, url: str) -> Path | None:
+    """Find a previously downloaded file by URL."""
+    metadata = _load_metadata(data_dir)
+    for record in metadata.values():
+        if record["url"] == url:
+            filepath = data_dir / record.get("filename", "")
+            # Check if 'filename' key exists; older metadata might not have it
+            if not filepath.name:
+                continue
+            if filepath.exists():
+                logging.info(f"Found cached file for URL: {filepath.name}")
+                return filepath
+    return None
 
 
 def find_tag(
@@ -36,7 +93,6 @@ def get_text(tag: Tag | None) -> str:
     return tag.get_text(strip=True) if tag else "unknown"
 
 
-# File fetching and sanitizing
 def fetch_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
     """Download a file with retry logic."""
     for attempt in range(max_retries):
@@ -54,17 +110,37 @@ def fetch_file(url: str, filepath: Path, max_retries: int = 3) -> bool:
     return False
 
 
+def _fetch_with_fallbacks(url: str, filepath: Path, max_retries: int = 3) -> bool:
+    """Attempt to download from primary URL, then fallback to archive.org."""
+    # Try primary source
+    if fetch_file(url, filepath, max_retries):
+        return True
+
+    logging.warning(f"Primary source unavailable, attempting archive.org: {url}")
+
+    # Try archive.org snapshot
+    archive_url = urljoin("https://web.archive.org/web/0/", url)
+    if fetch_file(archive_url, filepath, max_retries=1):
+        logging.info("Successfully fetched from archive.org")
+        return True
+
+    logging.error(f"All sources exhausted for: {url}")
+    return False
+
+
 def extract_csv_links(page_url: str) -> list[dict[str, str]]:
     """Extract CSV download links from a datosabiertos.gob.pe dataset page."""
     try:
         response = requests.get(page_url, timeout=10)
         response.raise_for_status()
-    except requests.RequestException:
+    except requests.RequestException as e:
+        logging.error(f"Failed to fetch page: {e}")
         return []
 
     soup = BeautifulSoup(response.content, "html.parser")
     resources_div = find_tag(soup, "div", id_="data-and-resources")
     if not resources_div:
+        logging.warning("Could not find resources section on page")
         return []
 
     items: Sequence[Tag] = [
@@ -88,6 +164,8 @@ def extract_csv_links(page_url: str) -> list[dict[str, str]]:
             if url.startswith("/"):
                 url = urljoin("https://datosabiertos.gob.pe", url)
             links.append({"title": title, "url": url})
+
+    logging.info(f"Found {len(links)} CSV files on page")
     return links
 
 
@@ -100,28 +178,43 @@ def sanitize_filename(title: str, url: str) -> str:
     return re.sub(r"[^\w\-.]", "_", name)
 
 
-# High-level download API
 def download_page_csvs(
     page_url: str, data_dir: Path, force: bool = False
 ) -> list[Path]:
-    """Download all CSV files from a dataset page."""
+    """Download all CSV files from a dataset page with fallback and caching."""
     data_dir.mkdir(parents=True, exist_ok=True)
     links = extract_csv_links(page_url)
     if not links:
         logging.warning(f"No CSV files found on {page_url}")
         return []
 
-    logging.info(f"Found {len(links)} CSV file(s) on page.")
+    logging.info(f"Found {len(links)} CSV file(s)")
     downloaded = []
     for link in links:
-        filename = sanitize_filename(link["title"], link["url"])
+        url = link["url"]
+        title = link["title"]
+
+        # Check cache first
+        if not force:
+            cached = _find_cached_file(data_dir, url)
+            if cached:
+                downloaded.append(cached)
+                continue
+
+        # Generate filename before attempting download
+        filename = sanitize_filename(title, url)
         filepath = data_dir / filename
-        if filepath.exists() and not force:
-            logging.info(f"{filename} already exists, skipping.")
+
+        # Attempt download with fallbacks
+        if _fetch_with_fallbacks(url, filepath):
+            _record_download(data_dir, url, title, filename)
             downloaded.append(filepath)
-            continue
-        if fetch_file(link["url"], filepath):
-            downloaded.append(filepath)
+        else:
+            # Last resort: check if file already exists locally
+            if filepath.exists():
+                logging.info(f"Using existing local file: {filename}")
+                downloaded.append(filepath)
+
     return downloaded
 
 
@@ -130,16 +223,28 @@ def download_csvs(urls: list[str], data_dir: Path, force: bool = False) -> list[
     data_dir.mkdir(parents=True, exist_ok=True)
     downloaded = []
     for url in urls:
+        # Check cache first
+        if not force:
+            cached = _find_cached_file(data_dir, url)
+            if cached:
+                downloaded.append(cached)
+                continue
+
         filename = Path(urlparse(url).path).name.replace("%20", "_").replace(" ", "_")
         if not filename.endswith(".csv"):
             filename = f"data_{hash(url) % 10000}.csv"
         filepath = data_dir / filename
-        if filepath.exists() and not force:
-            logging.info(f"{filename} already exists, skipping.")
+
+        # Attempt download with fallbacks
+        if _fetch_with_fallbacks(url, filepath):
+            _record_download(data_dir, url, filename, filename)
             downloaded.append(filepath)
-            continue
-        if fetch_file(url, filepath):
-            downloaded.append(filepath)
+        else:
+            # Last resort: check if file already exists locally
+            if filepath.exists():
+                logging.info(f"Using existing local file: {filename}")
+                downloaded.append(filepath)
+
     return downloaded
 
 
@@ -147,8 +252,17 @@ def download(url: str | list[str], data_dir: Path, force: bool = False) -> list[
     """
     Download files from a URL or list of URLs.
 
-    It handles both direct links to CSV files and dataset pages from
-    datosabiertos.gob.pe, from which it extracts all CSV links.
+    Handles both direct links to CSV files and dataset pages from
+    datosabiertos.gob.pe. Automatically falls back to archive.org if the
+    primary source is unavailable, and uses cached files from previous runs.
+
+    Args:
+        url: Single URL string or list of URL strings.
+        data_dir: Directory to store downloaded files and manifest.
+        force: If True, re-download even if cached. Default False.
+
+    Returns:
+        List of file paths that were downloaded or retrieved from cache.
     """
     url_list = [url] if isinstance(url, str) else url
     all_files = []
