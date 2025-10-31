@@ -83,7 +83,7 @@ export async function signUp(data: SignUpSchema) {
   }
 
   try {
-    await api.post('/api/auth/admin/create-user', {
+    await api.post('/api/admin/users', {
       name: validatedFields.data.name,
       email: validatedFields.data.email,
       password: validatedFields.data.password,

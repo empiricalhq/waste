@@ -73,6 +73,22 @@ export class AdminService extends BaseService {
     }
   }
 
+  async createUser(data: { name: string; email: string; password: string; role: string }): Promise<UserWithRole> {
+    try {
+      const result = await this.authService.api.createUser({
+        body: {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: data.role,
+        },
+      });
+      return { ...result.user, role: data.role, createdAt: new Date(result.user.createdAt) };
+    } catch (error) {
+      this.handleAuthApiError(error);
+    }
+  }
+
   async getTrucks(): Promise<TruckWithDetails[]> {
     return this.truckRepo.findAllActive();
   }
