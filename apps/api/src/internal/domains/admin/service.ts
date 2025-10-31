@@ -1,5 +1,6 @@
 import { APIError } from 'better-auth/api';
 import { BaseService } from '@/internal/shared/services/base-service';
+import type { DatabaseInterface } from '@/internal/shared/database/database';
 import { ConflictError, NotFoundError, ValidationError } from '@/internal/shared/utils/errors';
 import type { CreateAssignmentRequest, RouteAssignment } from '../assignments/models';
 import type { AssignmentRepository } from '../assignments/repository';
@@ -18,6 +19,7 @@ export class AdminService extends BaseService {
   private readonly assignmentRepo: AssignmentRepository;
   private readonly issueRepo: IssueRepository;
   private readonly authService: AuthService;
+  private readonly db: DatabaseInterface;
 
   constructor(
     truckRepo: TruckRepository,
@@ -25,6 +27,7 @@ export class AdminService extends BaseService {
     assignmentRepo: AssignmentRepository,
     issueRepo: IssueRepository,
     authService: AuthService,
+    db: DatabaseInterface,
   ) {
     super();
     this.truckRepo = truckRepo;
@@ -32,6 +35,7 @@ export class AdminService extends BaseService {
     this.assignmentRepo = assignmentRepo;
     this.issueRepo = issueRepo;
     this.authService = authService;
+    this.db = db;
   }
 
   async getDrivers(headers: Headers): Promise<UserWithRole[]> {
@@ -73,16 +77,23 @@ export class AdminService extends BaseService {
     }
   }
 
-  async createUser(data: { name: string; email: string; password: string; role: string }): Promise<UserWithRole> {
+  async createUser(data: { name: string; email: string; password: string; role: string }, organizationId: string): Promise<UserWithRole> {
     try {
       const result = await this.authService.api.createUser({
         body: {
           name: data.name,
           email: data.email,
           password: data.password,
-          role: data.role,
         },
       });
+      
+      // Create organization membership with the specified role
+      await this.db.query(
+        `INSERT INTO member (id, "userId", "organizationId", role) 
+         VALUES (gen_random_uuid(), $1, $2, $3)`,
+        [result.user.id, organizationId, data.role],
+      );
+      
       return { ...result.user, role: data.role, createdAt: new Date(result.user.createdAt) };
     } catch (error) {
       this.handleAuthApiError(error);
