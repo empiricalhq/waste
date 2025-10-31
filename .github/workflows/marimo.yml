@@ -31,13 +31,13 @@ jobs:
       - name: Export HTML using Marimo
         run: |
           cd datasets
-          uv run --project datasets marimo export html src/03-population-map.py -o src/output.html
+          uv run --project datasets marimo export html src/03-population-map.py -o src/output/index.html
 
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v4
         with:
-          path: datasets/src/output.html
+          path: datasets/src/output
 
   deploy:
     needs: build
