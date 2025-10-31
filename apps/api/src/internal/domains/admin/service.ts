@@ -73,7 +73,12 @@ export class AdminService extends BaseService {
     }
   }
 
-  async createUser(data: { name: string; email: string; password: string; role: string }): Promise<UserWithRole> {
+  async createUser(data: {
+    name: string;
+    email: string;
+    password: string;
+    role: 'admin' | 'supervisor' | 'driver';
+  }): Promise<UserWithRole> {
     try {
       const result = await this.authService.api.createUser({
         body: {
@@ -83,7 +88,9 @@ export class AdminService extends BaseService {
           role: data.role,
         },
       });
-      return { ...result.user, role: data.role, createdAt: new Date(result.user.createdAt) };
+      // Use the role from the result if available, otherwise use the requested role
+      const createdRole = result.user.role || data.role;
+      return { ...result.user, role: createdRole, createdAt: new Date(result.user.createdAt) };
     } catch (error) {
       this.handleAuthApiError(error);
     }
