@@ -6,11 +6,11 @@ on:
       - master
     paths:
       - 'datasets/src/03-population-map.py' # currently, the only one that builds
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'datasets/src/03-population-map.py'
+  # pull_request:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - 'datasets/src/03-population-map.py'
   workflow_dispatch:
 
 jobs:
