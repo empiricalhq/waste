@@ -20,6 +20,7 @@ export interface User {
 
 export interface Member {
   id: string;
+  userId: string;
   role: string;
   organizationId: string;
 }

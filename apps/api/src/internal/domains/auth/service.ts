@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { admin } from 'better-auth/plugins';
+import { admin, organization } from 'better-auth/plugins';
 import type { AppRole, appAc } from '@/internal/shared/auth/roles';
 import type { Config } from '@/internal/shared/config/config';
 import type { DatabaseInterface } from '@/internal/shared/database/database';
@@ -22,6 +22,10 @@ export class AuthService {
         enabled: true,
       },
       plugins: [
+        organization({
+          ac: accessControl,
+          roles,
+        }),
         admin({
           ac: accessControl,
           roles,

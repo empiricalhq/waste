@@ -1,22 +1,32 @@
 # [pkg]: @lima-garbage/api
 
 > **Base URL**: `/api`\
-> **Authentication**: session cookie obtained from `POST /auth/sign-in/email`.
+> **Authentication**: session cookie obtained from `POST /auth/sign-in/email`\
+> **Authorization**: role-based access control via organization membership
 
-You have to send the cookie on every protected call.
+Send the cookie with every protected call.
 
-Errors:
+The API supports two types of roles:
+
+- Organization members (owner, admin, supervisor, driver) are staff users with
+  an organization membership
+- Citizens are public users without organization membership
+
+## Error codes
 
 - 401 (unauthorized) – no valid session or invalid credentials
-- 403 (forbidden) – valid session, wrong role
-- 400 (bad request) – malformed body / params
+- 403 (forbidden) – valid session but wrong role or no active organization
+- 400 (bad request) – malformed body or parameters
 - 404 (not found) – resource does not exist
 
 ## Endpoints
 
 ### `/api/auth`
 
-Managed by `better-auth` library. Base path: `/api/auth`
+Managed by the `better-auth` library with the organization plugin. Base path:
+`/api/auth`
+
+Authentication operations:
 
 | Method | Endpoint                           | Description                  | Request body |
 | ------ | ---------------------------------- | ---------------------------- | ------------ |
@@ -27,6 +37,16 @@ Managed by `better-auth` library. Base path: `/api/auth`
 | `GET`  | `/api/auth/get-session`            | Get current session          | -            |
 | `POST` | `/api/auth/request-password-reset` | Request password reset       | -            |
 
+Organization management (for staff members):
+
+| Method | Endpoint                                        | Description                           | Request body                |
+| ------ | ----------------------------------------------- | ------------------------------------- | --------------------------- |
+| `GET`  | `/api/auth/organization/list`                   | List user's organizations             | -                           |
+| `GET`  | `/api/auth/organization/get-full-organization`  | Get organization details with members | -                           |
+| `POST` | `/api/auth/organization/set-active`             | Set active organization               | `{ organizationId: "..." }` |
+| `GET`  | `/api/auth/organization/get-active-member`      | Get current member details            | -                           |
+| `GET`  | `/api/auth/organization/get-active-member-role` | Get current member role               | -                           |
+
 <!-- prettier-ignore-start -->
 > [!TIP]
 > Need a path that’s not listed? Check
@@ -34,9 +54,9 @@ Managed by `better-auth` library. Base path: `/api/auth`
 > name (e.g. `signInEmail`).
 <!-- prettier-ignore-end -->
 
-### /api/admin
+### `/api/admin`
 
-Requires admin or supervisor role.
+Requires organization membership with owner, admin, or supervisor role.
 
 **Drivers**:
 
@@ -77,7 +97,7 @@ Requires admin or supervisor role.
 | `POST` | `/api/admin/routes/assign` | Assign route to driver/truck  | <pre lang="json">{&#13;  "route_id": "...",&#13;  "truck_id": "...",&#13;  "driver_id": "...",&#13;  "assigned_date": "..."&#13;}</pre> |
 <!-- prettier-ignore-end -->
 
-Note: `assigned_date` format = `YYYY-MM-DD`.
+The `assigned_date` format is `YYYY-MM-DD`.
 
 **Monitoring**:
 
@@ -87,18 +107,18 @@ Note: `assigned_date` format = `YYYY-MM-DD`.
 | `GET`  | `/api/admin/issues`            | Get open issues        | -                                                                                |
 | `POST` | `/api/admin/dispatch/messages` | Send message to driver | <pre lang="json">{&#13; "recipient_id": "...",&#13; "content": "..."&#13;}</pre> |
 
-### /api/driver
+### `/api/driver`
 
-Requires driver role.
+Requires organization membership with driver role.
 
 **Routes**:
 
-| Method | Endpoint                               | Description                           | Request body |
-| ------ | -------------------------------------- | ------------------------------------- | ------------ |
-| `GET`  | `/api/driver/route/current`            | Get current/next route details        | -            |
-| `POST` | `/api/driver/assignments/:id/start`    | Mark assigned route as 'active'.      | -            |
-| `POST` | `/api/driver/assignments/:id/complete` | Mark the active route as 'completed'. | -            |
-| `POST` | `/api/driver/assignments/:id/cancel`   | Mark the active route as 'cancelled'. | -            |
+| Method | Endpoint                               | Description                        | Request body |
+| ------ | -------------------------------------- | ---------------------------------- | ------------ |
+| `GET`  | `/api/driver/route/current`            | Get current or next route details  | -            |
+| `POST` | `/api/driver/assignments/:id/start`    | Mark assigned route as active      | -            |
+| `POST` | `/api/driver/assignments/:id/complete` | Mark the active route as completed | -            |
+| `POST` | `/api/driver/assignments/:id/cancel`   | Mark the active route as cancelled | -            |
 
 **Live operations**:
 
@@ -110,9 +130,9 @@ Requires driver role.
 | `GET`  | `/api/driver/dispatch/messages` | Get messages    | -                       |
 <!-- prettier-ignore-end -->
 
-### /api/citizen
+### `/api/citizen`
 
-Requires citizen role.
+Accessible only by authenticated users without organization membership.
 
 **Core features**:
 
@@ -146,12 +166,12 @@ For a monorepo, install dependencies from the `apps/api` folder and copy them to
 the root:
 
 ```txt
-# ignore monorepo structure and copy to root
+# Ignore monorepo structure and copy to root
 Install command:  mv package.json _package.json.bak && cp -r apps/api/* ./ && deno install
 Build command:    -
 Entrypoint:       apps/api/src/index.ts
 Args:             -
 ```
 
-Based on [.env.example](.env.example), set the required environment variables:
+Set the required environment variables [.env.example](../../.env.example):
 `DATABASE_URL`, `BETTER_AUTH_URL`, and `BETTER_AUTH_SECRET`.
