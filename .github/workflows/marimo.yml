@@ -37,7 +37,7 @@ jobs:
         id: deployment
         uses: actions/upload-pages-artifact@v4
         with:
-          path: datasets/src/output
+          path: datasets/src/output.html
 
   deploy:
     needs: build
