@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "email dev -p 3001 --dir templates",
-    "export": "email export",
+    "export": "email export --dir templates",
     "format": "biome check --write --unsafe"
   },
   "devDependencies": {
