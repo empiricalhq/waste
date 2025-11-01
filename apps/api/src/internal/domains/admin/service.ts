@@ -78,7 +78,10 @@ export class AdminService extends BaseService {
   }
 
   async createUser(data: { name: string; email: string; password: string; role: string }, organizationId: string): Promise<UserWithRole> {
+    let userId: string | undefined;
+    
     try {
+      // Create the user account
       const result = await this.authService.api.createUser({
         body: {
           name: data.name,
@@ -86,17 +89,35 @@ export class AdminService extends BaseService {
           password: data.password,
         },
       });
+      userId = result.user.id;
       
       // Create organization membership with the specified role
-      await this.db.query(
-        `INSERT INTO member (id, "userId", "organizationId", role) 
-         VALUES (gen_random_uuid(), $1, $2, $3)`,
-        [result.user.id, organizationId, data.role],
-      );
+      try {
+        await this.db.query(
+          `INSERT INTO member (id, "userId", "organizationId", role) 
+           VALUES (gen_random_uuid(), $1, $2, $3)`,
+          [userId, organizationId, data.role],
+        );
+      } catch (dbError) {
+        // If membership creation fails, delete the created user to avoid orphaned accounts
+        try {
+          await this.authService.api.deleteUser({
+            body: { userId },
+          });
+        } catch (cleanupError) {
+          // Log cleanup failure but throw original error
+          console.error('Failed to cleanup user after membership creation failure:', cleanupError);
+        }
+        this.handleDatabaseError(dbError);
+      }
       
       return { ...result.user, role: data.role, createdAt: new Date(result.user.createdAt) };
     } catch (error) {
-      this.handleAuthApiError(error);
+      // Only handle auth errors if we didn't already handle a database error
+      if (userId === undefined) {
+        this.handleAuthApiError(error);
+      }
+      throw error;
     }
   }
 
