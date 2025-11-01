@@ -3,6 +3,7 @@ import { admin, organization } from 'better-auth/plugins';
 import type { AppRole, appAc } from '@/internal/shared/auth/roles';
 import type { Config } from '@/internal/shared/config/config';
 import type { DatabaseInterface } from '@/internal/shared/database/database';
+import type { EmailService } from '@/internal/shared/services/email';
 
 export class AuthService {
   readonly auth;
@@ -12,6 +13,7 @@ export class AuthService {
     db: DatabaseInterface,
     accessControl: typeof appAc,
     roles: { [key in AppRole]: ReturnType<(typeof appAc)['newRole']> },
+    emailService: EmailService,
   ) {
     this.auth = betterAuth({
       database: db.getPool(),
@@ -20,6 +22,9 @@ export class AuthService {
       trustedOrigins: config.auth.trustedOrigins,
       emailAndPassword: {
         enabled: true,
+        sendResetPassword: async ({ user, url }) => {
+          await emailService.sendPasswordResetEmail(user.email, url, user.name);
+        },
       },
       plugins: [
         organization({
