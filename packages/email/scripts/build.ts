@@ -4,92 +4,79 @@ import { join } from 'node:path';
 const DIST_DIR = join(import.meta.dir, '../out');
 const SRC_DIR = join(import.meta.dir, '../src');
 
-interface TemplateToken {
+interface Token {
   name: string;
-  optional: boolean;
-  removeLineIfEmpty?: boolean;
+  required: boolean;
 }
 
-interface TemplateConfig {
-  filename: string;
-  outputName: string;
+interface Template {
+  id: string;
   functionName: string;
-  tokens: TemplateToken[];
+  tokens: Token[];
 }
 
-const TEMPLATES: TemplateConfig[] = [
+const TEMPLATES: Template[] = [
   {
-    filename: 'reset-password.html',
-    outputName: 'reset-password-template.ts',
+    id: 'reset-password',
     functionName: 'renderPasswordReset',
     tokens: [
-      { name: 'userName', optional: true, removeLineIfEmpty: true },
-      { name: 'resetUrl', optional: false },
+      { name: 'userName', required: false },
+      { name: 'resetUrl', required: true },
     ],
   },
 ];
 
-function generateInterface(functionName: string, tokens: TemplateToken[]): string {
+function generateInterface(functionName: string, tokens: Token[]): string {
   const interfaceName = `${functionName.charAt(0).toUpperCase() + functionName.slice(1)}Params`;
-  const fields = tokens.map((token) => `  ${token.name}${token.optional ? '?' : ''}: string;`).join('\n');
-
-  return `export interface ${interfaceName} {\n${fields}\n}`;
+  const fields = tokens.map((t) => `  ${t.name}${t.required ? '' : '?'}: string;`).join('\n');
+  return `interface ${interfaceName} {\n${fields}\n}`;
 }
 
-function generateRenderFunction(functionName: string, tokens: TemplateToken[]): string {
-  const paramsType = `${functionName.charAt(0).toUpperCase() + functionName.slice(1)}Params`;
+function generateFunction(functionName: string, tokens: Token[]): string {
+  const interfaceName = `${functionName.charAt(0).toUpperCase() + functionName.slice(1)}Params`;
+  const requiredTokens = tokens.filter((t) => t.required);
 
-  const tokenReplacements = tokens
-    .map((token) => {
-      if (token.optional && token.removeLineIfEmpty) {
-        return `  // Handle optional ${token.name} - remove the greeting line if not provided
-  if (params.${token.name}) {
-    const escapedValue = escapeHtml(params.${token.name});
-    html = html.replace(/{{${token.name}}}/g, escapedValue);
-  } else {
-    // Remove the ${token.name} greeting line entirely
-    html = html.replace(/<p[^>]*>Hola {{${token.name}}},<\\/p>/gi, '');
-  }`;
+  const validation =
+    requiredTokens.length > 0
+      ? `  ${requiredTokens.map((t) => `if (!params.${t.name}) throw new Error('Missing required: ${t.name}');`).join('\n  ')}\n`
+      : '';
+
+  const replacements = tokens
+    .map((t) => {
+      if (t.required) {
+        return `  html = html.replace(/{{${t.name}}}/g, escapeHtml(params.${t.name}));`;
       }
-      return `  html = html.replace(/{{${token.name}}}/g, escapeHtml(params.${token.name}));`;
+      return `  if (params.${t.name}) html = html.replace(/{{${t.name}}}/g, escapeHtml(params.${t.name}));
+  else html = html.replace(/<p[^>]*>.*?{{${t.name}}}.*?<\\/p>/gi, '');`;
     })
     .join('\n');
 
-  return `/**
- * Render the password reset email with provided parameters.
- * All values are HTML-escaped for security.
- */
-export function ${functionName}(
-  params: ${paramsType}
-): string {
-  let html = TEMPLATE;
-
-${tokenReplacements}
-
+  return `export function ${functionName}(params: ${interfaceName}): string {
+${validation}  let html = TEMPLATE;
+${replacements}
   return html;
 }`;
 }
 
-function processTemplate(config: TemplateConfig): void {
-  const htmlPath = join(DIST_DIR, config.filename);
+function build(): void {
+  for (const template of TEMPLATES) {
+    const htmlPath = join(DIST_DIR, `${template.id}.html`);
 
-  if (!existsSync(htmlPath)) {
-    process.exit(1);
-  }
+    if (!existsSync(htmlPath)) {
+      process.exit(1);
+    }
 
-  const htmlContent = readFileSync(htmlPath, 'utf-8');
-
-  const moduleContent = `/**
- * Auto-generated from ${config.filename}
- * DO NOT EDIT MANUALLY - run 'bun run build' to regenerate
+    const html = readFileSync(htmlPath, 'utf-8');
+    const output = `/**
+ * Auto-generated from ${template.id}.tsx
+ * DO NOT EDIT - run 'bun run build'
  */
 
-// The raw HTML template with {{placeholders}}
-const TEMPLATE = ${JSON.stringify(htmlContent)};
+const TEMPLATE = ${JSON.stringify(html)};
 
-${generateInterface(config.functionName, config.tokens)}
+${generateInterface(template.functionName, template.tokens)}
 
-${generateRenderFunction(config.functionName, config.tokens)}
+${generateFunction(template.functionName, template.tokens)}
 
 function escapeHtml(unsafe: string): string {
   return unsafe
@@ -101,10 +88,8 @@ function escapeHtml(unsafe: string): string {
 }
 `;
 
-  const outputPath = join(SRC_DIR, config.outputName);
-  writeFileSync(outputPath, moduleContent, 'utf-8');
+    writeFileSync(join(SRC_DIR, `${template.id}-template.ts`), output, 'utf-8');
+  }
 }
 
-for (const template of TEMPLATES) {
-  processTemplate(template);
-}
+build();

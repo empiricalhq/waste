@@ -1,5 +1,5 @@
 // How to use this
-// 
+//
 // import { renderPasswordReset } from '@lima-garbage/email';
 // const html = renderPasswordReset({
 //   userName: 'John Doe',
