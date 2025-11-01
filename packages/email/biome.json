@@ -9,8 +9,10 @@
     "rules": {
       "style": {
         "recommended": true,
-        "useComponentExportOnlyModules": "off",
         "noDefaultExport": "off"
+      },
+      "security": {
+        "noSecrets": "off"
       }
     }
   }
