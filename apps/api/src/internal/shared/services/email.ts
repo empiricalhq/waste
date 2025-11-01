@@ -5,14 +5,22 @@ export class EmailService {
   private resend: Resend;
   private fromEmail: string;
   private fromName: string;
+  private isTestMode: boolean;
 
   constructor(config: EmailConfig) {
     this.resend = new Resend(config.resendApiKey);
     this.fromEmail = config.fromEmail;
     this.fromName = config.fromName;
+    this.isTestMode = config.resendApiKey === 'test_key' || process.env.NODE_ENV === 'test';
   }
 
   async sendPasswordResetEmail(to: string, resetUrl: string, userName?: string): Promise<void> {
+    // In test mode, just log and return
+    if (this.isTestMode) {
+      console.log('[TEST MODE] Would send password reset email:', { to, resetUrl, userName });
+      return;
+    }
+
     try {
       await this.resend.emails.send({
         from: `${this.fromName} <${this.fromEmail}>`,
