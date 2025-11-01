@@ -1,7 +1,6 @@
 import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
 import { BaseTest } from './base-test';
-import { TEST_USERS } from './config';
-import { HTTP_STATUS } from './config';
+import { HTTP_STATUS, TEST_USERS } from './config';
 
 describe('Password Reset', () => {
   const baseTest = new BaseTest();
@@ -56,7 +55,7 @@ describe('Password Reset', () => {
   test('user can reset password with valid token', async () => {
     // First, request a password reset to get a token
     const email = TEST_USERS.citizen.email;
-    
+
     await baseTest.ctx.client.post('/auth/request-password-reset', {
       email,
       redirectTo: 'http://localhost:3000/reset-password',
@@ -118,7 +117,7 @@ describe('Password Reset', () => {
   test('reset password validates minimum password length', async () => {
     // First, get a valid token
     const email = TEST_USERS.citizen.email;
-    
+
     await baseTest.ctx.client.post('/auth/request-password-reset', {
       email,
       redirectTo: 'http://localhost:3000/reset-password',
