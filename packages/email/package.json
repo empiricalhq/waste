@@ -1,22 +1,21 @@
 {
-  "name": "email",
-  "module": "index.ts",
+  "name": "@lima-garbage/email",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
     "dev": "email dev -p 3001 --dir templates",
-    "export": "email export --dir templates",
+    "export": "email export --dir templates --outDir dist",
+    "build": "bun run export && bun run scripts/build.ts",
     "format": "biome check --write --unsafe"
   },
   "devDependencies": {
     "@react-email/components": "0.5.7",
     "@react-email/preview-server": "4.3.2",
     "@types/bun": "1.3.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-email": "4.3.2",
     "typescript": "5.9.3"
-  },
-  "overrides": {
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
   }
 }

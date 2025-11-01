@@ -1,2 +1,5 @@
 node_modules
+
+# Generated files
 out
+src/*-template.ts

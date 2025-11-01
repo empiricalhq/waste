@@ -19,8 +19,8 @@ interface PasswordResetEmailProps {
 }
 
 PasswordResetEmail.PreviewProps = {
-  userName: 'María García',
-  resetUrl: 'https://lima-limpia.pe/reset-password?token=abc123',
+  userName: '{{userName}}',
+  resetUrl: '{{resetUrl}}',
 } as PasswordResetEmailProps;
 
 function PasswordResetEmail({ userName, resetUrl }: PasswordResetEmailProps) {
