@@ -7,10 +7,12 @@ import { redirect } from 'next/navigation';
 import { PROTECTED_ROLES } from '@/features/auth/roles';
 import { api } from '@/lib/api';
 import { ENV } from '@/lib/env';
-import { type SignInSchema, type SignUpSchema, signInSchema, signUpSchema } from './schemas';
+import { type SignInSchema, type SignUpSchema, signInSchema, signUpSchema, type RequestPasswordResetSchema, requestPasswordResetSchema, type ResetPasswordSchema, resetPasswordSchema } from './schemas';
 
 type ActionResult = {
   error?: string;
+  success?: boolean;
+  message?: string;
 };
 
 async function performSignInRequest(credentials: SignInSchema): Promise<{ sessionCookie: string }> {
@@ -101,4 +103,63 @@ export async function signOut() {
   // biome-ignore lint/suspicious/noEmptyBlockStatements: backend signout is secondary; failure shouldn't block cookie deletion or redirect.
   api.post('/api/auth/sign-out').catch(() => {});
   redirect('/signin');
+}
+
+export async function requestPasswordReset(data: RequestPasswordResetSchema): Promise<ActionResult> {
+  const validatedFields = requestPasswordResetSchema.safeParse(data);
+  if (!validatedFields.success) {
+    return { error: 'Correo electrónico inválido' };
+  }
+
+  try {
+    const response = await fetch(`${ENV.API_BASE_URL}/api/auth/request-password-reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: validatedFields.data.email,
+        redirectTo: `${ENV.NEXT_PUBLIC_BASE_URL}/reset-password`,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('No se pudo enviar el correo de restablecimiento');
+    }
+
+    return { 
+      success: true, 
+      message: 'Si el correo existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña' 
+    };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Hubo un problema. Inténtalo de nuevo.' };
+  }
+}
+
+export async function resetPassword(data: ResetPasswordSchema): Promise<ActionResult> {
+  const validatedFields = resetPasswordSchema.safeParse(data);
+  if (!validatedFields.success) {
+    return { error: 'Campos inválidos' };
+  }
+
+  try {
+    const response = await fetch(`${ENV.API_BASE_URL}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: validatedFields.data.token,
+        newPassword: validatedFields.data.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'No se pudo restablecer la contraseña');
+    }
+
+    return { 
+      success: true, 
+      message: 'Tu contraseña ha sido restablecida exitosamente' 
+    };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Hubo un problema. Inténtalo de nuevo.' };
+  }
 }
