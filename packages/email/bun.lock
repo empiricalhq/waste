@@ -4,7 +4,7 @@
     "": {
       "name": "email",
       "devDependencies": {
-        "@types/bun": "latest",
+        "@types/bun": "1.3.1",
         "react-email": "4.3.2",
       },
       "peerDependencies": {
