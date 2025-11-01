@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const DIST_DIR = join(import.meta.dir, '../dist');
+const DIST_DIR = join(import.meta.dir, '../out');
 const SRC_DIR = join(import.meta.dir, '../src');
 
 interface TemplateToken {

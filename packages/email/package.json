@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "email dev -p 3001 --dir templates",
-    "export": "email export --dir templates --outDir dist",
+    "export": "email export --dir templates",
     "build": "bun run export && bun run scripts/build.ts",
     "format": "biome check --write --unsafe"
   },
