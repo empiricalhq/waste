@@ -16,6 +16,9 @@
       "suspicious": {
         "recommended": true,
         "useAwait": "off"
+      },
+      "security": {
+        "noSecrets": "off"
       }
     }
   }

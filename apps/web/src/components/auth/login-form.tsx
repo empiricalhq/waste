@@ -11,6 +11,7 @@ import { signIn } from '@/features/auth/actions';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 import { AtSign } from 'lucide-react';
 import { InputPasswordContainer } from '@/components/auth/input-password';
@@ -80,9 +81,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     <FormItem>
                       <div className="flex items-center">
                         <Label htmlFor="password">Contraseña</Label>
-                        <a href="#" className="ml-auto text-sm underline-offset-2 hover:underline">
+                        <Link href="/forgot-password" className="ml-auto text-sm underline-offset-2 hover:underline">
                           ¿Olvidaste tu contraseña?
-                        </a>
+                        </Link>
                       </div>
                       <FormControl>
                         <InputPasswordContainer>

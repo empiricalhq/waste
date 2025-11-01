@@ -17,6 +17,7 @@ import { loadConfig } from '@/internal/shared/config/config';
 import { Database } from '@/internal/shared/database/database';
 import { createAuthMiddleware, createCitizenOnlyMiddleware } from '@/internal/shared/middleware/auth';
 import { createCorsMiddleware } from '@/internal/shared/middleware/cors';
+import { EmailService } from '@/internal/shared/services/email';
 
 export function createContainer() {
   const config = loadConfig();
@@ -29,7 +30,8 @@ export function createContainer() {
   const issueRepo = new IssueRepository(db);
 
   // services: business logic layer
-  const authService = new AuthService(config, db, appAc, appPluginRoles);
+  const emailService = new EmailService(config.email);
+  const authService = new AuthService(config, db, appAc, appPluginRoles, emailService);
   const adminService = new AdminService(truckRepo, routeRepo, assignmentRepo, issueRepo, authService);
   const driverService = new DriverService(assignmentRepo, routeRepo, issueRepo, db);
   const citizenService = new CitizenService(issueRepo, db);

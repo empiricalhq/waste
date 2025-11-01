@@ -1,0 +1,19 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "domains": {
+      "next": "all",
+      "solid": "none"
+    },
+    "rules": {
+      "style": {
+        "recommended": true,
+        "noDefaultExport": "off"
+      },
+      "security": {
+        "noSecrets": "off"
+      }
+    }
+  }
+}
