@@ -1,5 +1,5 @@
-import { Resend } from 'resend';
 import { renderPasswordReset } from '@lima-garbage/email';
+import { Resend } from 'resend';
 import type { EmailConfig } from '@/internal/shared/config/config';
 
 export class EmailService {
