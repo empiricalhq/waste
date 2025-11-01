@@ -15,13 +15,8 @@ import {
 
 interface PasswordResetEmailProps {
   userName?: string;
-  resetUrl?: string;
+  resetUrl: string;
 }
-
-PasswordResetEmail.PreviewProps = {
-  userName: '{{userName}}',
-  resetUrl: '{{resetUrl}}',
-} as PasswordResetEmailProps;
 
 function PasswordResetEmail({ userName, resetUrl }: PasswordResetEmailProps) {
   const previewText = 'Restablecer tu contraseña en Lima Limpia';

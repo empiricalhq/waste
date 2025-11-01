@@ -8,7 +8,6 @@
     "start": "bun src/cmd/server.ts",
     "test:dev": "bun --hot --env-file=../../.env.test src/cmd/server.ts",
     "test": "bun test-runner.ts",
-    "prebuild": "cd ../../packages/email && bun run build",
     "build": "bun build src/cmd/server.ts --outdir ./dist --target bun",
     "deploy": "wrangler deploy",
     "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."

@@ -17,7 +17,7 @@ export class EmailService {
     const frontendResetUrl = this.constructFrontendResetUrl(resetUrl);
 
     try {
-      const html = renderPasswordReset({
+      const html = await renderPasswordReset({
         userName,
         resetUrl: frontendResetUrl,
       });
