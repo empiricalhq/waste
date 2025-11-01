@@ -30,7 +30,7 @@ export function createContainer() {
 
   // services: business logic layer
   const authService = new AuthService(config, db, appAc, appPluginRoles);
-  const adminService = new AdminService(truckRepo, routeRepo, assignmentRepo, issueRepo, authService);
+  const adminService = new AdminService(truckRepo, routeRepo, assignmentRepo, issueRepo, authService, db);
   const driverService = new DriverService(assignmentRepo, routeRepo, issueRepo, db);
   const citizenService = new CitizenService(issueRepo, db);
 

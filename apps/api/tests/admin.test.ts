@@ -96,4 +96,92 @@ describe('Admin API', () => {
       expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
     });
   });
+
+  describe('User Management', () => {
+    test('should create a new user with admin role', async () => {
+      const userData = {
+        name: 'Test Admin User',
+        email: 'testadmin@example.com',
+        password: 'TestPass123',
+        role: 'admin',
+      };
+
+      const response = await baseTest.ctx.client.post<SuccessResponse<{ id: string; name: string; email: string; role: string }>>(
+        '/admin/users',
+        userData,
+        baseTest.ctx.auth.getHeaders('admin'),
+      );
+
+      expect(response.status).toBe(HTTP_STATUS.CREATED);
+      expect(response.data.data).toMatchObject({
+        id: expect.any(String),
+        name: userData.name,
+        email: userData.email,
+        role: 'admin',
+      });
+    });
+
+    test('should create a new user with supervisor role', async () => {
+      const userData = {
+        name: 'Test Supervisor User',
+        email: 'testsupervisor@example.com',
+        password: 'TestPass123',
+        role: 'supervisor',
+      };
+
+      const response = await baseTest.ctx.client.post<SuccessResponse<{ id: string; name: string; email: string; role: string }>>(
+        '/admin/users',
+        userData,
+        baseTest.ctx.auth.getHeaders('admin'),
+      );
+
+      expect(response.status).toBe(HTTP_STATUS.CREATED);
+      expect(response.data.data).toMatchObject({
+        id: expect.any(String),
+        name: userData.name,
+        email: userData.email,
+        role: 'supervisor',
+      });
+    });
+
+    test('should create a new user with driver role', async () => {
+      const userData = {
+        name: 'Test Driver User',
+        email: 'testdriver@example.com',
+        password: 'TestPass123',
+        role: 'driver',
+      };
+
+      const response = await baseTest.ctx.client.post<SuccessResponse<{ id: string; name: string; email: string; role: string }>>(
+        '/admin/users',
+        userData,
+        baseTest.ctx.auth.getHeaders('admin'),
+      );
+
+      expect(response.status).toBe(HTTP_STATUS.CREATED);
+      expect(response.data.data).toMatchObject({
+        id: expect.any(String),
+        name: userData.name,
+        email: userData.email,
+        role: 'driver',
+      });
+    });
+
+    test('should reject invalid role', async () => {
+      const userData = {
+        name: 'Test User',
+        email: 'testinvalid@example.com',
+        password: 'TestPass123',
+        role: 'invalid_role',
+      };
+
+      const response = await baseTest.ctx.client.post<ErrorResponse>(
+        '/admin/users',
+        userData,
+        baseTest.ctx.auth.getHeaders('admin'),
+      );
+
+      expect(response.status).toBe(HTTP_STATUS.UNPROCESSABLE_ENTITY);
+    });
+  });
 });

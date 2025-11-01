@@ -93,6 +93,9 @@ const admin = {
   updateDriver: (id: string, data: { name: string; email: string; password?: string }) =>
     post<User>(`/api/admin/drivers/${id}`, data, { ignoreSetCookie: true }),
 
+  createUser: (data: { name: string; email: string; password: string; role: string }) =>
+    post<User>('/api/admin/users', data, { ignoreSetCookie: true }),
+
   getSupervisors: () => request<User[]>('/api/admin/supervisors', {}, { ignoreSetCookie: true }),
   createSupervisor: (data: { name: string; email: string; password: string }) =>
     post<User>('/api/admin/supervisors', data, { ignoreSetCookie: true }),

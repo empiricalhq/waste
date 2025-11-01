@@ -1,13 +1,14 @@
 import { Hono, type MiddlewareHandler } from 'hono';
 import { z } from 'zod';
-import { created, noContent, success } from '@/internal/shared/utils/response';
+import { created, error as errorResponse, noContent, success } from '@/internal/shared/utils/response';
+import { HttpStatus } from '@/internal/shared/utils/http-status';
 import { CommonSchemas, validateJson, validateParam } from '@/internal/shared/utils/validation';
 import { CreateAssignmentSchema } from '../assignments/schemas';
 import type { AuthEnv } from '../auth/types';
 import { CreateAdminIssueSchema } from '../issues/schemas';
 import { CreateRouteSchema } from '../routes/schemas';
 import { CreateTruckSchema } from '../trucks/schemas';
-import { CreateDriverSchema } from './schemas';
+import { CreateDriverSchema, CreateUserSchema } from './schemas';
 import type { AdminService } from './service';
 
 const IdParamSchema = z.object({ id: CommonSchemas.id });
@@ -19,6 +20,18 @@ export function createAdminHandler(
   const admin = new Hono<AuthEnv>();
 
   admin.use('*', authMiddleware(['admin', 'supervisor', 'owner']));
+
+  admin.post('/users', validateJson(CreateUserSchema), async (c) => {
+    const userData = c.req.valid('json');
+    const session = c.get('session');
+    
+    if (!session.activeOrganizationId) {
+      return errorResponse(c, 'No active organization', HttpStatus.BAD_REQUEST);
+    }
+    
+    const newUser = await adminService.createUser(userData, session.activeOrganizationId);
+    return created(c, newUser);
+  });
 
   admin.get('/drivers', async (c) => {
     const drivers = await adminService.getDrivers(c.req.raw.headers);

@@ -83,8 +83,11 @@ export async function signUp(data: SignUpSchema) {
   }
 
   try {
-    await api.post('/api/auth/sign-up/email', {
-      ...validatedFields.data,
+    await api.admin.createUser({
+      name: validatedFields.data.name,
+      email: validatedFields.data.email,
+      password: validatedFields.data.password,
+      role: validatedFields.data.role,
     });
   } catch (error: unknown) {
     if (error instanceof Error && error.message.toLowerCase().includes('unique constraint')) {
