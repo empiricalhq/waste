@@ -19,7 +19,7 @@ export class EmailService {
       await this.resend.emails.send({
         from: `${this.fromName} <${this.fromEmail}>`,
         to: [to],
-        subject: 'Restablecer tu contraseña - Lima Limpia',
+        subject: 'Restablecer tu contraseña (lima-limpia.pe)',
         html: this.generatePasswordResetHtml(frontendResetUrl, userName),
       });
     } catch (_error) {
@@ -35,20 +35,19 @@ export class EmailService {
       const pathParts = url.pathname.split('/');
       const token = pathParts.at(-1);
 
-      // Extract callback URL (frontend URL) from query params
+      // Extract callback URL from query params
       const callbackURL = url.searchParams.get('callbackURL');
 
       if (!(callbackURL && token)) {
-        return betterAuthUrl; // Fallback to original URL
+        return betterAuthUrl;
       }
 
-      // Construct frontend URL with token as query parameter
       const frontendUrl = new URL(callbackURL);
       frontendUrl.searchParams.set('token', token);
 
       return frontendUrl.toString();
     } catch (_error) {
-      return betterAuthUrl; // Fallback to original URL
+      return betterAuthUrl;
     }
   }
 

@@ -58,7 +58,7 @@ export function loadConfig(): Config {
     },
     email: {
       resendApiKey: mustGetEnv('RESEND_API_KEY'),
-      fromEmail: process.env.EMAIL_FROM || 'noreply@lima-limpia.pe',
+      fromEmail: process.env.EMAIL_FROM || 'onboarding@resend.dev',
       fromName: process.env.EMAIL_FROM_NAME || 'Lima Limpia',
     },
     server: {
