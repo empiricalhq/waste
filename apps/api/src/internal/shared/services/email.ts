@@ -15,9 +15,14 @@ export class EmailService {
   }
 
   async sendPasswordResetEmail(to: string, resetUrl: string, userName?: string): Promise<void> {
+    // Parse the better-auth URL to extract token and redirect URL
+    // better-auth provides: http://api/auth/reset-password/{token}?callbackURL={frontend}
+    // We want to send: {frontend}?token={token}
+    const frontendResetUrl = this.constructFrontendResetUrl(resetUrl);
+
     // In test mode, just log and return
     if (this.isTestMode) {
-      console.log('[TEST MODE] Would send password reset email:', { to, resetUrl, userName });
+      console.log('[TEST MODE] Would send password reset email:', { to, resetUrl, frontendResetUrl, userName });
       return;
     }
 
@@ -26,11 +31,38 @@ export class EmailService {
         from: `${this.fromName} <${this.fromEmail}>`,
         to: [to],
         subject: 'Restablecer tu contraseña - Lima Limpia',
-        html: this.generatePasswordResetHtml(resetUrl, userName),
+        html: this.generatePasswordResetHtml(frontendResetUrl, userName),
       });
     } catch (error) {
       console.error('Failed to send password reset email:', error);
       throw new Error('Failed to send password reset email');
+    }
+  }
+
+  private constructFrontendResetUrl(betterAuthUrl: string): string {
+    try {
+      const url = new URL(betterAuthUrl);
+      
+      // Extract token from path: /api/auth/reset-password/{token}
+      const pathParts = url.pathname.split('/');
+      const token = pathParts[pathParts.length - 1];
+      
+      // Extract callback URL (frontend URL) from query params
+      const callbackURL = url.searchParams.get('callbackURL');
+      
+      if (!callbackURL || !token) {
+        console.error('Missing callbackURL or token in better-auth URL:', betterAuthUrl);
+        return betterAuthUrl; // Fallback to original URL
+      }
+      
+      // Construct frontend URL with token as query parameter
+      const frontendUrl = new URL(callbackURL);
+      frontendUrl.searchParams.set('token', token);
+      
+      return frontendUrl.toString();
+    } catch (error) {
+      console.error('Error parsing better-auth reset URL:', error);
+      return betterAuthUrl; // Fallback to original URL
     }
   }
 
