@@ -34,7 +34,22 @@ export class EmailService {
     }
   }
 
+  private escapeHtml(text: string): string {
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    };
+    return text.replace(/[&<>"']/g, (m) => map[m]);
+  }
+
   private generatePasswordResetHtml(resetUrl: string, userName?: string): string {
+    // Escape user-provided data
+    const safeUserName = userName ? this.escapeHtml(userName) : '';
+    const safeResetUrl = this.escapeHtml(resetUrl);
+
     return `
 <!DOCTYPE html>
 <html lang="es">
@@ -48,7 +63,7 @@ export class EmailService {
     <h1 style="color: #22c55e; margin: 0 0 20px 0; font-size: 24px;">Lima Limpia</h1>
     <h2 style="color: #333; margin: 0 0 20px 0; font-size: 20px;">Restablecer tu contraseña</h2>
     
-    ${userName ? `<p style="margin: 0 0 15px 0;">Hola ${userName},</p>` : ''}
+    ${safeUserName ? `<p style="margin: 0 0 15px 0;">Hola ${safeUserName},</p>` : ''}
     
     <p style="margin: 0 0 15px 0;">
       Recibimos una solicitud para restablecer la contraseña de tu cuenta en Lima Limpia.
@@ -69,7 +84,7 @@ export class EmailService {
       O copia y pega este enlace en tu navegador:
     </p>
     <p style="margin: 0 0 15px 0; font-size: 14px; word-break: break-all; color: #666;">
-      ${resetUrl}
+      ${safeResetUrl}
     </p>
     
     <p style="margin: 25px 0 15px 0; font-size: 14px; color: #666;">
