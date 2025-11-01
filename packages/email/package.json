@@ -1,0 +1,17 @@
+{
+  "name": "email",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "email dev",
+    "format": "biome check --write --unsafe"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "react-email": "4.3.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

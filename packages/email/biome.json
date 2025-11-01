@@ -1,0 +1,17 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "domains": {
+      "next": "all",
+      "solid": "none"
+    },
+    "rules": {
+      "style": {
+        "recommended": true,
+        "useComponentExportOnlyModules": "off",
+        "noDefaultExport": "off"
+      }
+    }
+  }
+}
