@@ -249,13 +249,14 @@ describe('Password reset', () => {
     const token = identifier?.replace('reset-password:', '');
 
     // 3. Manually expire the token by setting expiresAt to the past
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     await baseTest.ctx.db.query(
       `
       UPDATE verification
-      SET "expiresAt" = NOW() - INTERVAL '1 hour'
-      WHERE id = $1
+      SET "expiresAt" = $1
+      WHERE id = $2
       `,
-      [verificationId],
+      [oneHourAgo, verificationId],
     );
 
     // 4. Attempt to reset password with expired token
