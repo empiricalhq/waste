@@ -1,0 +1,54 @@
+name: Setup Copilot environment
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    permissions:
+      contents: read
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lima_limpia_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: jdx/mise-action@v3
+        with:
+          version: latest
+          cache: true
+          experimental: true
+          github_token: ${{ github.token }}
+
+      - name: Verify mise setup
+        run: |
+          echo "Mise version: $(mise --version)"
+          echo "Bun version: $(bun --version)"
+          echo "Biome version: $(biome --version)"
+          echo ""
+          echo "Available tools:"
+          mise list
+          echo ""
