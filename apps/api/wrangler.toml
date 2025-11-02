@@ -1,0 +1,15 @@
+name = "lima-limpia-api"
+main = "dist/server.js"
+
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Use wrangler secret for sensitive values:
+# wrangler secret put DATABASE_URL
+# wrangler secret put SUPABASE_ANON_KEY
+# wrangler secret put BETTER_AUTH_SECRET
+# wrangler secret put RESEND_API_KEY
+
+[build]
+command = "bun run build"
