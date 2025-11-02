@@ -11,20 +11,16 @@ type ActionResult = {
   error?: string;
 };
 export async function getRoutes(): Promise<Route[]> {
-  try {
-    await requireUser();
+  await requireUser();
 
-    const auth = await getAuth();
-    const userRoles = auth?.user?.role?.split(',') ?? [];
+  const auth = await getAuth();
+  const userRoles = auth?.user?.role?.split(',') ?? [];
 
-    if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
-      throw new Error('Unauthorized');
-    }
-
-    return await api.admin.getRoutes();
-  } catch (_error) {
-    return [];
+  if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
+    throw new Error('Unauthorized');
   }
+
+  return await api.admin.getRoutes();
 }
 
 export async function createRoute(data: CreateRouteSchema): Promise<ActionResult> {

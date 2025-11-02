@@ -11,20 +11,16 @@ type ActionResult = {
   error?: string;
 };
 export async function getDrivers(): Promise<User[]> {
-  try {
-    await requireUser();
+  await requireUser();
 
-    const auth = await getAuth();
-    const userRoles = auth?.user?.role?.split(',') ?? [];
+  const auth = await getAuth();
+  const userRoles = auth?.user?.role?.split(',') ?? [];
 
-    if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
-      throw new Error('Unauthorized');
-    }
-
-    return await api.admin.getDrivers();
-  } catch (_error) {
-    return [];
+  if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
+    throw new Error('Unauthorized');
   }
+
+  return await api.admin.getDrivers();
 }
 
 export async function createDriver(data: CreateDriverSchema): Promise<ActionResult> {

@@ -17,17 +17,13 @@ type ActionResult = {
 };
 
 export async function getSupervisors(): Promise<User[]> {
-  try {
-    await requireUser();
-    const auth = await getAuth();
-    const userRoles = auth?.user?.role?.split(',') ?? [];
-    if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
-      throw new Error('Unauthorized');
-    }
-    return await api.admin.getSupervisors();
-  } catch (_error) {
-    return [];
+  await requireUser();
+  const auth = await getAuth();
+  const userRoles = auth?.user?.role?.split(',') ?? [];
+  if (!PROTECTED_ROLES.some((role) => userRoles.includes(role))) {
+    throw new Error('Unauthorized');
   }
+  return await api.admin.getSupervisors();
 }
 
 export async function createSupervisor(data: CreateSupervisorSchema): Promise<ActionResult> {

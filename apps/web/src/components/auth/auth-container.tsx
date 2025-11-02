@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -22,10 +23,12 @@ export function AuthContainer({ children, showBrandImage = false, footer, classN
           {/* Brand image column (desktop only) */}
           {showBrandImage && (
             <div className='bg-muted hidden md:flex items-center justify-center overflow-hidden'>
-              <img
+              <Image
                 src='/lima-verde.webp'
                 alt='Lima Limpia'
+                fill
                 className='h-full w-full object-cover dark:brightness-[0.8]'
+                priority
               />
             </div>
           )}
