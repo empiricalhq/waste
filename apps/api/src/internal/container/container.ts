@@ -42,7 +42,7 @@ export function createContainer() {
   const citizenOnlyMiddleware = createCitizenOnlyMiddleware(authService);
 
   // handlers (presentation layer)
-  const authHandler = createAuthHandler(authService, db);
+  const authHandler = createAuthHandler(authService);
   const adminHandler = createAdminHandler(adminService, authMiddleware);
   const driverHandler = createDriverHandler(driverService, authMiddleware);
   const citizenHandler = createCitizenHandler(citizenService, citizenOnlyMiddleware);
