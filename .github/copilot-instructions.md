@@ -11,9 +11,9 @@ state.
 
 - plan.md: Before executing, you MUST write your step-by-step implementation
   plan to this file.
-- debug_log.md: For bug-fixing tasks, you MUST to log every step of your
-  debugging process: hypotheses, actions taken (e.g., "added console.log to
-  service.ts"), and outputs observed.
+- debug_log.md: For bug-fixing tasks, you MUST log every step of your debugging
+  process: hypotheses, actions taken (e.g., "added console.log to service.ts"),
+  and outputs observed.
 - knowledge.md: After completing a task, you MUST append any new, permanent
   learnings to this file. This is your long-term memory. (e.g., "Learned that
   the doThing() method from 'some-package' requires a 'cache: false' option to
@@ -211,8 +211,8 @@ bun test
 ```
 
 The tests use custom credentials. Make sure to spawn the test server in the
-background if you want to run the tests if you want to run invidual tests. This
-is done automatically by the test-runner.ts. Check "apps/api/test-runner.ts" for
+background if you want to run individual tests manually. This is done
+automatically by the test-runner.ts. Check "apps/api/test-runner.ts" for
 details.
 
 Development servers: "cd" into app directory and run "bun run dev".
