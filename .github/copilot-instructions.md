@@ -106,8 +106,9 @@ existing system.
    ACTION: Append "Hypothesis: ..." to debug_log.md.
 
 2. Investigate in this order:
-   - Official documentation for the library/framework in question. Use your tool
-     (playwright or Context7) to fetch URLs.
+   - Official documentation for the library/framework in question. Use an
+     appropriate tool or library to fetch URLs (e.g., Context7 or playwright if
+     available).
    - If docs are insufficient, navigate to node_modules and inspect type
      definitions (".d.ts" files).
    - If needed, insert temporary diagnostic code (console.log).
@@ -130,7 +131,7 @@ existing system.
 6. ACTION: Apply ONLY the minimal, targeted, and context-aware code change
    required to fix the root cause.
 
-7. GOTO "PHASE 3: FINALIZATION".
+7. GOTO "PHASE 3: VERIFY & FINALIZE".
 
 ## KNOWLEDGE BASE
 
