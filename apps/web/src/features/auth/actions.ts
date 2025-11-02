@@ -127,7 +127,7 @@ export async function requestPasswordReset(data: RequestPasswordResetSchema): Pr
 
     return { 
       success: true, 
-      message: 'Si el correo existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña' 
+      message: 'Solicitud enviada' 
     };
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Hubo un problema. Inténtalo de nuevo.' };

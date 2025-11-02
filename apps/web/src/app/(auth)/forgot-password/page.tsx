@@ -1,4 +1,4 @@
-import { ForgotPasswordForm } from '@/components/auth/forgot-password-form';
+import { PasswordResetFlow } from '@/components/auth/password-reset-flow';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ForgotPasswordPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-6">
-      <ForgotPasswordForm />
-    </div>
-  );
+  return <PasswordResetFlow mode='request' />;
 }

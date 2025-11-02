@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from '@/components/auth/reset-password-form';
+import { PasswordResetFlow } from '@/components/auth/password-reset-flow';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResetPasswordPage() {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-6">
-      <ResetPasswordForm />
-    </div>
-  );
+  return <PasswordResetFlow mode='reset' />;
 }
