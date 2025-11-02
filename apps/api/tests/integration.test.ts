@@ -4,7 +4,7 @@ import { HTTP_STATUS } from './config';
 import type { SuccessResponse } from './types';
 import { createTestRoute, createTestTruck } from './utils';
 
-describe('E2E Workflows', () => {
+describe('E2E workflows', () => {
   const baseTest = new BaseTest();
 
   beforeEach(async () => {

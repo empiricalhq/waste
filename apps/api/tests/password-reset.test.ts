@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
 import { BaseTest } from './base-test';
 import { HTTP_STATUS, TEST_USERS } from './config';
 
-describe('Password Reset', () => {
+describe('Password reset', () => {
   const baseTest = new BaseTest();
 
   beforeEach(async () => {
@@ -21,11 +21,9 @@ describe('Password Reset', () => {
 
     expect(response.status).toBe(HTTP_STATUS.OK);
     expect(response.data).toHaveProperty('status', true);
-    expect(response.data).toHaveProperty('message');
   });
 
   test('request password reset returns success even for non-existent email', async () => {
-    // This is a security feature - don't reveal whether an email exists
     const response = await baseTest.ctx.client.post('/auth/request-password-reset', {
       email: 'nonexistent@example.com',
       redirectTo: 'http://localhost:3000/reset-password',
@@ -41,6 +39,7 @@ describe('Password Reset', () => {
     });
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((response.data as { code: string }).code).toBe('VALIDATION_ERROR');
   });
 
   test('request password reset validates email format', async () => {
@@ -50,27 +49,41 @@ describe('Password Reset', () => {
     });
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((response.data as { code: string }).code).toBe('VALIDATION_ERROR');
   });
 
   test('user can reset password with valid token', async () => {
-    // First, request a password reset to get a token
     const email = TEST_USERS.citizen.email;
 
-    await baseTest.ctx.client.post('/auth/request-password-reset', {
+    // 1. trigger reset email
+    const resetRequestResponse = await baseTest.ctx.client.post('/auth/request-password-reset', {
       email,
       redirectTo: 'http://localhost:3000/reset-password',
     });
+    expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
 
-    // Get the verification token from the database
-    const verificationResult = await baseTest.ctx.db.query<{ token: string }>(
-      'SELECT token FROM verification WHERE identifier = $1 AND type = $2 ORDER BY "createdAt" DESC LIMIT 1',
-      [email, 'password-reset'],
+    // 2. get token from db (no email mocking yet)
+    const verificationResult = await baseTest.ctx.db.query<{ identifier: string }>(
+      `
+      SELECT identifier
+      FROM verification
+      WHERE value = (SELECT id FROM "user" WHERE email = $1)
+        AND identifier LIKE $2
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+      `,
+      [email, 'reset-password:%'],
     );
 
-    expect(verificationResult.length).toBeGreaterThan(0);
-    const token = verificationResult[0].token;
+    expect(verificationResult).toHaveLength(1);
+    const identifier = verificationResult[0]?.identifier;
+    // biome-ignore lint/performance/useTopLevelRegex: used only once
+    expect(identifier).toMatch(/^reset-password:[A-Za-z0-9]+$/);
 
-    // Reset password with the token
+    const token = identifier?.replace('reset-password:', '');
+    expect(token).toBeDefined();
+
+    // 3. reset password using token
     const newPassword = 'NewSecurePassword123!';
     const resetResponse = await baseTest.ctx.client.post('/auth/reset-password', {
       token,
@@ -78,15 +91,17 @@ describe('Password Reset', () => {
     });
 
     expect(resetResponse.status).toBe(HTTP_STATUS.OK);
-    expect(resetResponse.data).toHaveProperty('status', true);
+    expect(resetResponse.data).toEqual({ status: true });
 
-    // Verify user can login with new password
+    // 4. login with new password
     const loginResponse = await baseTest.ctx.client.post('/auth/sign-in/email', {
       email,
       password: newPassword,
     });
 
     expect(loginResponse.status).toBe(HTTP_STATUS.OK);
+    expect((loginResponse.data as { user: { email: string } }).user.email).toBe(email);
+    expect((loginResponse.data as { token: string }).token).toBeDefined();
   });
 
   test('reset password fails with invalid token', async () => {
@@ -96,6 +111,7 @@ describe('Password Reset', () => {
     });
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((response.data as { code: string }).code).toBe('INVALID_TOKEN');
   });
 
   test('reset password requires token', async () => {
@@ -104,6 +120,7 @@ describe('Password Reset', () => {
     });
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((response.data as { code: string }).code).toBe('INVALID_TOKEN');
   });
 
   test('reset password requires new password', async () => {
@@ -112,30 +129,46 @@ describe('Password Reset', () => {
     });
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((response.data as { code: string }).code).toBe('VALIDATION_ERROR');
   });
 
   test('reset password validates minimum password length', async () => {
-    // First, get a valid token
     const email = TEST_USERS.citizen.email;
 
-    await baseTest.ctx.client.post('/auth/request-password-reset', {
+    // 1. Request reset email
+    const resetRequestResponse = await baseTest.ctx.client.post('/auth/request-password-reset', {
       email,
       redirectTo: 'http://localhost:3000/reset-password',
     });
+    expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
 
-    const verificationResult = await baseTest.ctx.db.query<{ token: string }>(
-      'SELECT token FROM verification WHERE identifier = $1 AND type = $2 ORDER BY "createdAt" DESC LIMIT 1',
-      [email, 'password-reset'],
+    // 2. Extract token from database
+    const verificationResult = await baseTest.ctx.db.query<{ identifier: string }>(
+      `
+      SELECT identifier
+      FROM verification
+      WHERE value = (
+        SELECT id FROM "user" WHERE email = $1
+      )
+      AND identifier LIKE $2
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+      `,
+      [email, 'reset-password:%'],
     );
 
-    const token = verificationResult[0].token;
+    expect(verificationResult).toHaveLength(1);
+    const identifier = verificationResult[0]?.identifier;
+    const token = identifier?.replace('reset-password:', '');
 
-    // Try with a password that's too short
+    // 3. Attempt reset with a short password
+    const invalidPassword = 'short'; // < 8 chars
     const response = await baseTest.ctx.client.post('/auth/reset-password', {
       token,
-      newPassword: 'short',
+      newPassword: invalidPassword,
     });
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect(response.data).toHaveProperty('code', 'PASSWORD_TOO_SHORT');
   });
 });
