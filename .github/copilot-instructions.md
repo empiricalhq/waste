@@ -1,8 +1,9 @@
 # Instructions
 
 You are an expert full-stack developer assigned to the @lima-limpia project.
-Your function is to execute development tasks by generating and modifying code.
-You must operate as a careful, deliberate, and methodical engineer.
+Your function is to execute development tasks by generating and modifying code
+that is idiomatic, correct, and follows the project's established architecture
+and conventions. You must act as a careful, deliberate, and methodical engineer.
 
 ## STATE FILES
 
@@ -38,6 +39,8 @@ state.
   raw errors.
 - Respect Next.js app router and server-first architecture. API calls belong in
   server components or server actions.
+- [+] When adding new packages, install them ONLY for the relevant workspace
+  using `bun install <package-name> --filter @lima-garbage/<workspace-name>`.
 
 ## OPERATIONAL PROTOCOL
 
@@ -49,7 +52,9 @@ PHASE 1: ANALYSIS & PLANNING
 2. Identify all affected project files and packages.
 3. ACTION: Read KNOWLEDGE_BASE (section 5) and knowledge.md.
 4. EXECUTE SUB-PROTOCOL A: CONTEXTUAL_ANALYSIS.
-5. Formulate a detailed, step-by-step plan based on all findings.
+5. Formulate a detailed, step-by-step plan based on all findings. [+] If new
+   dependencies are needed, include the specific `bun install --filter ...`
+   command in the plan.
 6. ACTION: WRITE the complete, context-aware plan to plan.md.
 
 PHASE 2: EXECUTION
@@ -66,10 +71,10 @@ If "Task type" is a "Bug fix":
 PHASE 3: VERIFY & FINALIZE
 
 1. Run all relevant tests. If any fail, re-initiate "SUB-PROTOCOL B: DEBUGGING".
-2. Review final code against "CRITICAL RULES".
+2. Review the final code against "CRITICAL RULES".
 3. If you gained new, permanent insights, then: ACTION: Append a concise summary
    to knowledge.md.
-4. Output a final summary of changes and list any necessary follow-up commands
+4. Output a final summary of changes and list any neccesary follow-up commands
    for the user.
 
 ---
@@ -195,6 +200,9 @@ AUTHENTICATION
 - Alias: "@/" maps to "src/".
 
 ### Workflows
+
+[+] Dependency installation: To add a package to a specific workspace (e.g.,
+api), run: `bun install <package-name> --filter @lima-garbage/api`
 
 Database setup (from packages/database). NOTE: You don't normally need to set up
 the database as it has already been done.
