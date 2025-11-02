@@ -12,7 +12,7 @@ export class TestClient {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Origin': TEST_CONFIG.apiBaseUrl,
+        Origin: TEST_CONFIG.apiBaseUrl,
         ...headers,
       },
       body: body ? JSON.stringify(body) : undefined,

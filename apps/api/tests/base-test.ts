@@ -66,5 +66,9 @@ export class BaseTest {
      VALUES (gen_random_uuid(), $1, $2, $3)`,
       [driverId, orgId, 'driver'],
     );
+
+    // create citizen user (without organization membership)
+    const citizenConfig = TEST_USERS.citizen;
+    await auth.ensureUserExists(citizenConfig.email, citizenConfig.password);
   }
 }

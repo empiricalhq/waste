@@ -5,6 +5,7 @@
   "type": "module",
   "workspaces": [
     "packages/database",
+    "packages/email",
     "apps/*"
   ],
   "packageManager": "bun@1.2.22",

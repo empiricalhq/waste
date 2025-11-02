@@ -28,14 +28,17 @@ Managed by the `better-auth` library with the organization plugin. Base path:
 
 Authentication operations:
 
-| Method | Endpoint                           | Description                  | Request body |
-| ------ | ---------------------------------- | ---------------------------- | ------------ |
-| `POST` | `/api/auth/sign-in/email`          | Login with email/password    | -            |
-| `POST` | `/api/auth/sign-out`               | Logout user                  | -            |
-| `POST` | `/api/auth/sign-up/email`          | Register with email/password | -            |
-| `POST` | `/api/auth/change-password`        | Change user password         | -            |
-| `GET`  | `/api/auth/get-session`            | Get current session          | -            |
-| `POST` | `/api/auth/request-password-reset` | Request password reset       | -            |
+<!-- prettier-ignore-start -->
+| Method | Endpoint                           | Description                  | Request body                                                             |
+| ------ | ---------------------------------- | ---------------------------- | ------------------------------------------------------------------------ |
+| `POST` | `/api/auth/sign-in/email`          | Login with email/password    | <pre lang="json">{&#13; "email": "...",&#13; "password": "..."&#13;}</pre> |
+| `POST` | `/api/auth/sign-out`               | Logout user                  | -                                                                        |
+| `POST` | `/api/auth/sign-up/email`          | Register with email/password | <pre lang="json">{&#13; "email": "...",&#13; "password": "...",&#13; "name": "..."&#13;}</pre> |
+| `POST` | `/api/auth/change-password`        | Change user password         | <pre lang="json">{&#13; "currentPassword": "...",&#13; "newPassword": "..."&#13;}</pre> |
+| `GET`  | `/api/auth/get-session`            | Get current session          | -                                                                        |
+| `POST` | `/api/auth/request-password-reset` | Request password reset email | <pre lang="json">{&#13; "email": "...",&#13; "redirectTo": "..."&#13;}</pre> |
+| `POST` | `/api/auth/reset-password`         | Reset password with token    | <pre lang="json">{&#13; "token": "...",&#13; "newPassword": "..."&#13;}</pre> |
+<!-- prettier-ignore-end -->
 
 Organization management (for staff members):
 
