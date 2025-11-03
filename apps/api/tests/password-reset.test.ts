@@ -279,14 +279,13 @@ describe('Password reset', () => {
     });
     expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
 
-    // 2. Extract token and expiration from database
-    const verificationResult = await baseTest.ctx.db.query<{
-      identifier: string;
-      expiresAt: Date;
+    // 2. Extract token and expiration records from database
+    const [row] = await baseTest.ctx.db.query<{
       createdAt: Date;
+      expiresAt: Date;
     }>(
       `
-      SELECT identifier, "expiresAt", "createdAt"
+      SELECT "createdAt", "expiresAt"
       FROM verification
       WHERE value = (SELECT id FROM "user" WHERE email = $1)
         AND identifier LIKE $2
@@ -296,23 +295,14 @@ describe('Password reset', () => {
       [email, 'reset-password:%'],
     );
 
-    expect(verificationResult).toHaveLength(1);
-    const verification = verificationResult[0];
-
-    if (!verification) {
-      throw new Error('Verification not found');
+    if (!row) {
+      throw new Error('reset verification row not found');
     }
 
-    // 3. Verify token expiration is set correctly
-    // Better Auth default is typically 1 hour (3600000 ms)
-    const createdAt = new Date(verification.createdAt);
-    const expiresAt = new Date(verification.expiresAt);
-    const expirationDurationMs = expiresAt.getTime() - createdAt.getTime();
-
-    // Token should expire in approximately 1 hour (with some tolerance for test execution time)
-    // We'll check if it's between 55 minutes and 65 minutes to account for slight variations
-    expect(expirationDurationMs).toBeGreaterThan(55 * 60 * 1000); // > 55 minutes
-    expect(expirationDurationMs).toBeLessThan(65 * 60 * 1000); // < 65 minutes
+    // 3. Confirm 1-hour expiration (2 min for test drift)
+    const ttlMs = new Date(row.expiresAt).getTime() - new Date(row.createdAt).getTime();
+    expect(ttlMs).toBeGreaterThan(58 * 60 * 1000);
+    expect(ttlMs).toBeLessThan(62 * 60 * 1000);
   });
 
   test('token cannot be reused after successful password reset', async () => {
@@ -356,7 +346,6 @@ describe('Password reset', () => {
       newPassword: 'SecondNewPassword123!',
     });
 
-    // Should fail - token should be consumed/deleted after first use
     expect(secondResetResponse.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect((secondResetResponse.data as { code: string }).code).toBe('INVALID_TOKEN');
   });
