@@ -206,7 +206,6 @@ describe('Password reset', () => {
       newPassword: currentPassword,
     });
 
-    // Should succeed without error (no information disclosure)
     expect(resetResponse.status).toBe(HTTP_STATUS.OK);
     expect(resetResponse.data).toEqual({ status: true });
 
