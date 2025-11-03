@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { PasswordResetFlow } from '@/components/auth/password-reset-flow';
 
 export const metadata: Metadata = {
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function ForgotPasswordPage() {
-  return <PasswordResetFlow mode="request" />;
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <PasswordResetFlow mode="request" />
+    </Suspense>
+  );
 }
