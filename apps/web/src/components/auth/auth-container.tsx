@@ -26,9 +26,9 @@ export function AuthContainer({ children, showBrandImage = false, footer, classN
               <Image
                 src="/lima-verde.webp"
                 alt="Lima Limpia"
-                fill={true}
+                fill
                 className="object-cover dark:brightness-[0.8]"
-                priority={true}
+                priority
               />
             </div>
           )}
