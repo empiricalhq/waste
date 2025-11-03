@@ -6,8 +6,7 @@ export async function checkApiStatus(): Promise<boolean> {
   try {
     await api.auth.getSession();
     return true;
-  } catch (error) {
-    console.error('[API Health Check] API is unreachable:', error);
+  } catch (_error) {
     return false;
   }
 }

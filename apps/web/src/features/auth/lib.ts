@@ -19,8 +19,7 @@ export const getAuth = cache(async (): Promise<AuthContext | null> => {
     }
 
     return authContext;
-  } catch (error) {
-    console.error('[Auth] Failed to get session:', error);
+  } catch (_error) {
     return null;
   }
 });
