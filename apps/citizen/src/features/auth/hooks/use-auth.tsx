@@ -14,34 +14,45 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-  const [hasToken, setHasToken] = useState(false);
+  const [isCheckingToken, setIsCheckingToken] = useState(true);
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading: isUserLoading, isSuccess } = useQuery({
     queryKey: ["currentUser"],
     queryFn: authService.getCurrentUser,
-    enabled: hasToken,
+    enabled: false,
     retry: 1,
   });
 
   useEffect(() => {
-    const checkToken = async () => {
-      const token = await getToken();
-      setHasToken(!!token);
+    const checkTokenAndFetchUser = async () => {
+      try {
+        const token = await getToken();
+        if (token) {
+          queryClient.getQueryCache().find({ queryKey: ["currentUser"] })?.fetch();
+        }
+      } catch (e) {
+        console.error("Failed to check token", e);
+      } finally {
+        setIsCheckingToken(false);
+      }
     };
-    checkToken();
-  }, []);
+
+    queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    checkTokenAndFetchUser();
+  }, [queryClient]);
 
   const logout = async () => {
     await authService.logout();
     queryClient.setQueryData(["currentUser"], null);
-    setHasToken(false);
   };
+
+  const isLoading = isCheckingToken || (isUserLoading && !isSuccess);
 
   return (
     <AuthContext.Provider
       value={{
         user: user ?? null,
-        isLoading: isLoading || !hasToken,
+        isLoading,
         logout,
       }}>
       {children}
