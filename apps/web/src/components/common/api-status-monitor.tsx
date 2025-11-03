@@ -11,14 +11,14 @@ export function ApiStatusMonitor() {
     async function monitorApiStatus() {
       try {
         const isApiUp = await checkApiStatus();
-        
+
         if (!isApiUp && mounted) {
           toast.error('Error de conexión', {
             description: 'No se pudo conectar con el servidor. Por favor, verifica tu conexión e intenta nuevamente.',
             duration: 5000,
           });
         }
-      } catch (error) {
+      } catch (_error) {
         if (mounted) {
           toast.error('Error de conexión', {
             description: 'No se pudo conectar con el servidor. Por favor, verifica tu conexión e intenta nuevamente.',
