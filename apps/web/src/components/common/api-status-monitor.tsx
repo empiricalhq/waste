@@ -18,7 +18,7 @@ export function ApiStatusMonitor() {
             duration: 5000,
           });
         }
-      } catch (_error) {
+      } catch {
         if (mounted) {
           toast.error('Error de conexión', {
             description: 'No se pudo conectar con el servidor. Por favor, verifica tu conexión e intenta nuevamente.',

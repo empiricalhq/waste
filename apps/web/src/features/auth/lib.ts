@@ -19,7 +19,7 @@ export const getAuth = cache(async (): Promise<AuthContext | null> => {
     }
 
     return authContext;
-  } catch (_error) {
+  } catch {
     return null;
   }
 });
