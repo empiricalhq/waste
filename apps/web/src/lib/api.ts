@@ -21,6 +21,21 @@ class ApiError extends Error {
   }
 }
 
+async function handleSessionCookie(response: Response): Promise<void> {
+  const setCookieHeader = response.headers.get('Set-Cookie');
+  if (!setCookieHeader) {
+    return;
+  }
+
+  const tokenValue = setCookieHeader.split(';')[0].split('=')[1];
+  (await cookies()).set('better-auth.session_token', tokenValue, {
+    httpOnly: true,
+    path: '/',
+    secure: ENV.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestInit = {},
@@ -43,16 +58,7 @@ async function request<T>(
     const response = await fetch(url, config);
 
     if (!apiOptions.ignoreSetCookie) {
-      const setCookieHeader = response.headers.get('Set-Cookie');
-      if (setCookieHeader) {
-        const tokenValue = setCookieHeader.split(';')[0].split('=')[1];
-        (await cookies()).set('better-auth.session_token', tokenValue, {
-          httpOnly: true,
-          path: '/',
-          secure: ENV.NODE_ENV === 'production',
-          sameSite: 'lax',
-        });
-      }
+      await handleSessionCookie(response);
     }
 
     if (!response.ok) {
