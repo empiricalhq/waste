@@ -171,4 +171,182 @@ describe('Password reset', () => {
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(response.data).toHaveProperty('code', 'PASSWORD_TOO_SHORT');
   });
+
+  test('user can reset password to the same password (no information disclosure)', async () => {
+    const email = TEST_USERS.citizen.email;
+    const currentPassword = TEST_USERS.citizen.password;
+
+    // 1. Request password reset
+    const resetRequestResponse = await baseTest.ctx.client.post('/auth/request-password-reset', {
+      email,
+      redirectTo: 'http://localhost:3000/reset-password',
+    });
+    expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
+
+    // 2. Extract token from database
+    const verificationResult = await baseTest.ctx.db.query<{ identifier: string }>(
+      `
+      SELECT identifier
+      FROM verification
+      WHERE value = (SELECT id FROM "user" WHERE email = $1)
+        AND identifier LIKE $2
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+      `,
+      [email, 'reset-password:%'],
+    );
+
+    expect(verificationResult).toHaveLength(1);
+    const identifier = verificationResult[0]?.identifier;
+    const token = identifier?.replace('reset-password:', '');
+
+    // 3. Reset password to the SAME password
+    const resetResponse = await baseTest.ctx.client.post('/auth/reset-password', {
+      token,
+      newPassword: currentPassword,
+    });
+
+    expect(resetResponse.status).toBe(HTTP_STATUS.OK);
+    expect(resetResponse.data).toEqual({ status: true });
+
+    // 4. Verify user can still login with the password
+    const loginResponse = await baseTest.ctx.client.post('/auth/sign-in/email', {
+      email,
+      password: currentPassword,
+    });
+
+    expect(loginResponse.status).toBe(HTTP_STATUS.OK);
+    expect((loginResponse.data as { user: { email: string } }).user.email).toBe(email);
+  });
+
+  test('reset password fails with expired token', async () => {
+    const email = TEST_USERS.citizen.email;
+
+    // 1. Request password reset
+    const resetRequestResponse = await baseTest.ctx.client.post('/auth/request-password-reset', {
+      email,
+      redirectTo: 'http://localhost:3000/reset-password',
+    });
+    expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
+
+    // 2. Extract token from database
+    const verificationResult = await baseTest.ctx.db.query<{ identifier: string; id: string }>(
+      `
+      SELECT identifier, id
+      FROM verification
+      WHERE value = (SELECT id FROM "user" WHERE email = $1)
+        AND identifier LIKE $2
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+      `,
+      [email, 'reset-password:%'],
+    );
+
+    expect(verificationResult).toHaveLength(1);
+    const identifier = verificationResult[0]?.identifier;
+    const verificationId = verificationResult[0]?.id;
+    const token = identifier?.replace('reset-password:', '');
+
+    // 3. Manually expire the token by setting expiresAt to the past
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    await baseTest.ctx.db.query(
+      `
+      UPDATE verification
+      SET "expiresAt" = $1
+      WHERE id = $2
+      `,
+      [oneHourAgo, verificationId],
+    );
+
+    // 4. Attempt to reset password with expired token
+    const resetResponse = await baseTest.ctx.client.post('/auth/reset-password', {
+      token,
+      newPassword: 'NewPassword123!',
+    });
+
+    // Should fail with invalid/expired token error
+    expect(resetResponse.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((resetResponse.data as { code: string }).code).toBe('INVALID_TOKEN');
+  });
+
+  test('token has correct expiration time set', async () => {
+    const email = TEST_USERS.citizen.email;
+
+    // 1. Request password reset
+    const resetRequestResponse = await baseTest.ctx.client.post('/auth/request-password-reset', {
+      email,
+      redirectTo: 'http://localhost:3000/reset-password',
+    });
+    expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
+
+    // 2. Extract token and expiration records from database
+    const [row] = await baseTest.ctx.db.query<{
+      createdAt: Date;
+      expiresAt: Date;
+    }>(
+      `
+      SELECT "createdAt", "expiresAt"
+      FROM verification
+      WHERE value = (SELECT id FROM "user" WHERE email = $1)
+        AND identifier LIKE $2
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+      `,
+      [email, 'reset-password:%'],
+    );
+
+    if (!row) {
+      throw new Error('reset verification row not found');
+    }
+
+    // 3. Confirm 1-hour expiration (2 min for test drift)
+    const ttlMs = new Date(row.expiresAt).getTime() - new Date(row.createdAt).getTime();
+    expect(ttlMs).toBeGreaterThan(58 * 60 * 1000);
+    expect(ttlMs).toBeLessThan(62 * 60 * 1000);
+  });
+
+  test('token cannot be reused after successful password reset', async () => {
+    const email = TEST_USERS.citizen.email;
+
+    // 1. Request password reset
+    const resetRequestResponse = await baseTest.ctx.client.post('/auth/request-password-reset', {
+      email,
+      redirectTo: 'http://localhost:3000/reset-password',
+    });
+    expect(resetRequestResponse.status).toBe(HTTP_STATUS.OK);
+
+    // 2. Extract token from database
+    const verificationResult = await baseTest.ctx.db.query<{ identifier: string }>(
+      `
+      SELECT identifier
+      FROM verification
+      WHERE value = (SELECT id FROM "user" WHERE email = $1)
+        AND identifier LIKE $2
+      ORDER BY "createdAt" DESC
+      LIMIT 1
+      `,
+      [email, 'reset-password:%'],
+    );
+
+    expect(verificationResult).toHaveLength(1);
+    const identifier = verificationResult[0]?.identifier;
+    const token = identifier?.replace('reset-password:', '');
+
+    // 3. Reset password successfully
+    const firstResetResponse = await baseTest.ctx.client.post('/auth/reset-password', {
+      token,
+      newPassword: 'FirstNewPassword123!',
+    });
+
+    expect(firstResetResponse.status).toBe(HTTP_STATUS.OK);
+
+    // 4. Attempt to reuse the same token
+    const secondResetResponse = await baseTest.ctx.client.post('/auth/reset-password', {
+      token,
+      newPassword: 'SecondNewPassword123!',
+    });
+
+    expect(secondResetResponse.status).toBe(HTTP_STATUS.BAD_REQUEST);
+    expect((secondResetResponse.data as { code: string }).code).toBe('INVALID_TOKEN');
+  });
 });

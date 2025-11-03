@@ -12,14 +12,14 @@ export const user = pgTable(
     image: text('image'),
     role: text('role').default('user').notNull(),
     banned: boolean('banned').default(false).notNull(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
-    updatedAt: timestamp('updatedAt')
+    createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true, mode: 'date' })
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
     isActive: boolean('isActive').default(true).notNull(),
     phoneNumber: text('phoneNumber'),
-    lastLoginAt: timestamp('lastLoginAt'),
+    lastLoginAt: timestamp('lastLoginAt', { withTimezone: true, mode: 'date' }),
   },
   (table) => ({
     isActiveIdx: index('user_is_active_idx').on(table.isActive),
@@ -36,12 +36,12 @@ export const account = pgTable('account', {
   accessToken: text('accessToken'),
   refreshToken: text('refreshToken'),
   idToken: text('idToken'),
-  accessTokenExpiresAt: timestamp('accessTokenExpiresAt'),
-  refreshTokenExpiresAt: timestamp('refreshTokenExpiresAt'),
+  accessTokenExpiresAt: timestamp('accessTokenExpiresAt', { withTimezone: true, mode: 'date' }),
+  refreshTokenExpiresAt: timestamp('refreshTokenExpiresAt', { withTimezone: true, mode: 'date' }),
   scope: text('scope'),
   password: text('password'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt', { withTimezone: true, mode: 'date' })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -51,10 +51,10 @@ export const session = pgTable(
   'session',
   {
     id: text('id').primaryKey(),
-    expiresAt: timestamp('expiresAt').notNull(),
+    expiresAt: timestamp('expiresAt', { withTimezone: true, mode: 'date' }).notNull(),
     token: text('token').notNull().unique(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
-    updatedAt: timestamp('updatedAt')
+    createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt', { withTimezone: true, mode: 'date' })
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
@@ -72,9 +72,9 @@ export const verification = pgTable('verification', {
   id: text('id').primaryKey(),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
-  expiresAt: timestamp('expiresAt').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt')
+  expiresAt: timestamp('expiresAt', { withTimezone: true, mode: 'date' }).notNull(),
+  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt', { withTimezone: true, mode: 'date' })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
@@ -86,7 +86,7 @@ export const organization = pgTable('organization', {
   slug: text('slug').notNull().unique(),
   logo: text('logo'),
   metadata: jsonb('metadata'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 });
 
 export const member = pgTable(
@@ -100,7 +100,7 @@ export const member = pgTable(
       .notNull()
       .references(() => organization.id, { onDelete: 'cascade' }),
     role: memberRoleEnum('role').notNull(),
-    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
   },
   (table) => [index('member_user_org_idx').on(table.userId, table.organizationId)],
 );
@@ -116,5 +116,5 @@ export const invitation = pgTable('invitation', {
     .references(() => organization.id, { onDelete: 'cascade' }),
   role: memberRoleEnum('role').notNull(),
   status: text('status').notNull(), // e.g., 'pending', 'accepted'
-  expiresAt: timestamp('expiresAt').notNull(),
+  expiresAt: timestamp('expiresAt', { withTimezone: true, mode: 'date' }).notNull(),
 });
