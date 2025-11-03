@@ -11,13 +11,18 @@ export interface AuthContext {
 }
 
 export const getAuth = cache(async (): Promise<AuthContext | null> => {
-  const authContext = await api.auth.getSession();
+  try {
+    const authContext = await api.auth.getSession();
 
-  if (authContext && !authContext.session) {
+    if (authContext && !authContext.session) {
+      return null;
+    }
+
+    return authContext;
+  } catch (error) {
+    console.error('[Auth] Failed to get session:', error);
     return null;
   }
-
-  return authContext;
 });
 
 export const getCurrentUser = cache(async (): Promise<User | null> => {

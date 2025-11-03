@@ -27,7 +27,7 @@ export function AuthContainer({ children, showBrandImage = false, footer, classN
                 src="/lima-verde.webp"
                 alt="Lima Limpia"
                 fill={true}
-                className="h-full w-full object-cover dark:brightness-[0.8]"
+                className="object-cover dark:brightness-[0.8]"
                 priority={true}
               />
             </div>

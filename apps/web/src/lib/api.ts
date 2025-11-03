@@ -66,6 +66,9 @@ async function request<T>(
     }
 
     const jsonResponse = await response.json();
+    if (jsonResponse === null || jsonResponse === undefined) {
+      return null as T;
+    }
     return 'data' in jsonResponse ? (jsonResponse.data as T) : (jsonResponse as T);
   } catch (error) {
     if (error instanceof ApiError) {
