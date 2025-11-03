@@ -32,7 +32,7 @@ async function getAuthFromRequest(request: NextRequest): Promise<AuthContext | n
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/_next/') || pathname.includes('.')) {
