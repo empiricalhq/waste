@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 export default function NotFound() {
   return (
     <div className="bg-background text-foreground flex h-screen flex-col items-center justify-center">

@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: 'Created by EmpiricalHQ',
 };
 
+export const runtime = 'edge';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning={true}>

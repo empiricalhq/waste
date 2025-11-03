@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Restablece tu contraseña de Lima Limpia',
 };
 
+export const runtime = 'edge';
+
 export default function ForgotPasswordPage() {
   return (
     <Suspense fallback={<div>Cargando...</div>}>

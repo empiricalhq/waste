@@ -2,6 +2,8 @@ import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar';
 import { getAuth, requireUser } from '@/features/auth/lib';
 import type { Role } from '@/features/auth/roles';
 
+export const runtime = 'edge';
+
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
 

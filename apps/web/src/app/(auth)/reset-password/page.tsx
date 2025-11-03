@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Establece una nueva contraseña para tu cuenta',
 };
 
+export const runtime = 'edge';
+
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={<div>Cargando...</div>}>
