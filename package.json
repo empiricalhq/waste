@@ -1,19 +1,21 @@
 {
   "name": "workspaces",
   "private": true,
-  "module": "index.ts",
-  "type": "module",
+  "packageManager": "bun@1.3.1",
   "workspaces": [
     "packages/database",
     "packages/email",
     "apps/*"
   ],
-  "packageManager": "bun@1.2.22",
   "scripts": {
-    "clean": "rm -rf node_modules packages/database/node_modules apps/citizen/node_modules bun.lockb packages/database/bun.lockb apps/citizen/bun.lockb",
-    "format": "prettier --write ."
+    "clean": "rm -rf node_modules packages/database/node_modules apps/citizen/node_modules bun.lock packages/database/bun.lock apps/citizen/bun.lock",
+    "format": "biome check --write --unsafe ."
   },
   "devDependencies": {
-    "@types/bun": "^1.2.22"
+    "@types/bun": "^1.3.1"
+  },
+  "resolutions": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
   }
 }
