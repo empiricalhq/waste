@@ -1,9 +1,0 @@
-**/.expo/**
-**/.next/**
-**/node_modules/**
-**/migrations/**
-**/.venv/**
-
-# we ignore these as they have their own prettier config
-apps/web
-apps/citizen
