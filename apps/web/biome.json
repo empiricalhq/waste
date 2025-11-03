@@ -7,6 +7,10 @@
       "solid": "none"
     },
     "rules": {
+      "security": {
+        "recommended": true,
+        "noSecrets": "off"
+      },
       "style": {
         "recommended": true,
         "noDefaultExport": "off",

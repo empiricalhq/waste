@@ -82,7 +82,6 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
       } else if (result?.success) {
         setFlowState('success');
         toast.success(result.message);
-        // Redirect to login after 2 seconds
         setTimeout(() => {
           router.push('/signin');
         }, 2000);
@@ -92,7 +91,6 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
 
   const getInputClassName = (hasError: boolean) => cn(hasError && 'border-destructive');
 
-  // Content animation variants - only animate opacity and slight y movement
   const contentVariants = {
     initial: { opacity: 0, y: 8 },
     animate: {
