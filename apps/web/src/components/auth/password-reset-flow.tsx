@@ -1,27 +1,27 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { InputPasswordContainer } from '@/components/auth/input-password';
-import { AuthContainer } from '@/components/auth/auth-container';
-import { requestPasswordReset, resetPassword } from '@/features/auth/actions';
-import {
-  requestPasswordResetSchema,
-  resetPasswordSchema,
-  type RequestPasswordResetSchema,
-  type ResetPasswordSchema,
-} from '@/features/auth/schemas';
-import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { AuthContainer } from '@/components/auth/auth-container';
+import { InputPasswordContainer } from '@/components/auth/input-password';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { requestPasswordReset, resetPassword } from '@/features/auth/actions';
+import {
+  type RequestPasswordResetSchema,
+  type ResetPasswordSchema,
+  requestPasswordResetSchema,
+  resetPasswordSchema,
+} from '@/features/auth/schemas';
+import { cn } from '@/lib/utils';
 
 type FlowState = 'request' | 'email-sent' | 'reset' | 'success' | 'error';
 
@@ -52,14 +52,12 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
   });
 
   useEffect(() => {
-    if (mode === 'reset') {
-      if (error || !token) {
-        setFlowState('error');
-        if (error) {
-          toast.error('El enlace de restablecimiento es inválido o ha expirado');
-        } else {
-          toast.error('Falta el token de restablecimiento');
-        }
+    if (mode === 'reset' && (error || !token)) {
+      setFlowState('error');
+      if (error) {
+        toast.error('El enlace de restablecimiento es inválido o ha expirado');
+      } else {
+        toast.error('Falta el token de restablecimiento');
       }
     }
   }, [error, token, mode]);
@@ -115,30 +113,30 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
   };
 
   return (
-    <AuthContainer showBrandImage className={className} footer={<div className='h-5' />} {...props}>
-      <AnimatePresence mode='popLayout'>
+    <AuthContainer showBrandImage={true} className={className} footer={<div className="h-5" />} {...props}>
+      <AnimatePresence mode="popLayout">
         {/* Request Password Reset */}
         {flowState === 'request' && (
-          <motion.div key='request' variants={contentVariants} initial='initial' animate='animate' exit='exit'>
-            <div className='flex flex-col items-center text-center gap-2'>
-              <h1 className='text-2xl font-bold'>Restablecer contraseña</h1>
-              <p className='text-muted-foreground text-balance'>
+          <motion.div key="request" variants={contentVariants} initial="initial" animate="animate" exit="exit">
+            <div className="flex flex-col items-center text-center gap-2">
+              <h1 className="text-2xl font-bold">Restablecer contraseña</h1>
+              <p className="text-muted-foreground text-balance">
                 Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña
               </p>
             </div>
             <Form {...requestForm}>
-              <form onSubmit={requestForm.handleSubmit(onRequestSubmit)} className='mt-6 flex w-full flex-col gap-5'>
+              <form onSubmit={requestForm.handleSubmit(onRequestSubmit)} className="mt-6 flex w-full flex-col gap-5">
                 <FormField
                   control={requestForm.control}
-                  name='email'
+                  name="email"
                   render={({ field, fieldState }) => (
                     <FormItem>
-                      <Label htmlFor='email'>Correo electrónico</Label>
+                      <Label htmlFor="email">Correo electrónico</Label>
                       <FormControl>
                         <Input
-                          id='email'
-                          type='email'
-                          placeholder='Ingresa tu correo electrónico'
+                          id="email"
+                          type="email"
+                          placeholder="Ingresa tu correo electrónico"
                           className={getInputClassName(Boolean(fieldState.error))}
                           disabled={isPending}
                           {...field}
@@ -149,16 +147,16 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
                   )}
                 />
 
-                <Button type='submit' disabled={isPending} className='w-full cursor-pointer'>
+                <Button type="submit" disabled={isPending} className="w-full cursor-pointer">
                   {isPending ? 'Enviando...' : 'Enviar enlace'}
                 </Button>
 
-                <div className='text-center'>
+                <div className="text-center">
                   <Link
-                    href='/signin'
-                    className='text-muted-foreground hover:text-primary text-sm underline-offset-4 transition-colors duration-200 ease-out hover:underline'
+                    href="/signin"
+                    className="text-muted-foreground hover:text-primary text-sm underline-offset-4 transition-colors duration-200 ease-out hover:underline"
                   >
-                    <ArrowLeft className='mr-1 inline h-3 w-3' />
+                    <ArrowLeft className="mr-1 inline h-3 w-3" />
                     Volver a iniciar sesión
                   </Link>
                 </div>
@@ -169,32 +167,32 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
 
         {/* Email Sent Success */}
         {flowState === 'email-sent' && (
-          <motion.div key='email-sent' variants={contentVariants} initial='initial' animate='animate' exit='exit'>
-            <div className='flex flex-col items-center text-center'>
-              <div className='bg-green-100 text-green-600 mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
+          <motion.div key="email-sent" variants={contentVariants} initial="initial" animate="animate" exit="exit">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-green-100 text-green-600 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
                 <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
                   strokeWidth={2}
-                  stroke='currentColor'
-                  className='h-8 w-8'
+                  stroke="currentColor"
+                  className="h-8 w-8"
                 >
                   <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
               </div>
-              <h1 className='text-2xl font-bold'>Revisa tu correo</h1>
-              <p className='text-muted-foreground mt-3 text-sm'>
+              <h1 className="text-2xl font-bold">Revisa tu correo</h1>
+              <p className="text-muted-foreground mt-3 text-sm">
                 Si tu dirección está registrada, recibirás un enlace para restablecer tu contraseña.
               </p>
               <div>
-                <Link href='/signin' className='mt-8 inline-block'>
-                  <Button variant='outline' className='transition-colors duration-200 ease-out'>
-                    <ArrowLeft className='mr-2 h-4 w-4' />
+                <Link href="/signin" className="mt-8 inline-block">
+                  <Button variant="outline" className="transition-colors duration-200 ease-out">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Volver a iniciar sesión
                   </Button>
                 </Link>
@@ -205,28 +203,28 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
 
         {/* Reset Password Form */}
         {flowState === 'reset' && (
-          <motion.div key='reset' variants={contentVariants} initial='initial' animate='animate' exit='exit'>
-            <div className='flex flex-col items-center text-center'>
-              <h1 className='text-2xl font-bold'>Restablecer contraseña</h1>
-              <p className='text-muted-foreground text-balance'>Ingresa tu nueva contraseña</p>
+          <motion.div key="reset" variants={contentVariants} initial="initial" animate="animate" exit="exit">
+            <div className="flex flex-col items-center text-center">
+              <h1 className="text-2xl font-bold">Restablecer contraseña</h1>
+              <p className="text-muted-foreground text-balance">Ingresa tu nueva contraseña</p>
             </div>
             <Form {...resetForm}>
-              <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className='mt-6 flex w-full flex-col gap-5'>
+              <form onSubmit={resetForm.handleSubmit(onResetSubmit)} className="mt-6 flex w-full flex-col gap-5">
                 {/* Hidden token field */}
-                <input type='hidden' {...resetForm.register('token')} />
+                <input type="hidden" {...resetForm.register('token')} />
 
                 <FormField
                   control={resetForm.control}
-                  name='password'
+                  name="password"
                   render={({ field, fieldState }) => (
                     <FormItem>
-                      <Label htmlFor='password'>Nueva contraseña</Label>
+                      <Label htmlFor="password">Nueva contraseña</Label>
                       <FormControl>
                         <InputPasswordContainer>
                           <Input
-                            id='password'
-                            type='password'
-                            placeholder=''
+                            id="password"
+                            type="password"
+                            placeholder=""
                             className={cn('pe-9', getInputClassName(Boolean(fieldState.error)))}
                             disabled={isPending}
                             {...field}
@@ -240,16 +238,16 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
 
                 <FormField
                   control={resetForm.control}
-                  name='confirmPassword'
+                  name="confirmPassword"
                   render={({ field, fieldState }) => (
                     <FormItem>
-                      <Label htmlFor='confirmPassword'>Confirmar contraseña</Label>
+                      <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
                       <FormControl>
                         <InputPasswordContainer>
                           <Input
-                            id='confirmPassword'
-                            type='password'
-                            placeholder=''
+                            id="confirmPassword"
+                            type="password"
+                            placeholder=""
                             className={cn('pe-9', getInputClassName(Boolean(fieldState.error)))}
                             disabled={isPending}
                             {...field}
@@ -261,14 +259,14 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
                   )}
                 />
 
-                <Button type='submit' disabled={isPending} className='mt-2 w-full cursor-pointer'>
+                <Button type="submit" disabled={isPending} className="mt-2 w-full cursor-pointer">
                   {isPending ? 'Restableciendo...' : 'Restablecer contraseña'}
                 </Button>
 
-                <div className='text-center text-sm'>
+                <div className="text-center text-sm">
                   <Link
-                    href='/signin'
-                    className='text-muted-foreground hover:text-primary underline-offset-4 transition-colors duration-200 ease-out hover:underline'
+                    href="/signin"
+                    className="text-muted-foreground hover:text-primary underline-offset-4 transition-colors duration-200 ease-out hover:underline"
                   >
                     Volver a iniciar sesión
                   </Link>
@@ -280,26 +278,26 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
 
         {/* Reset Success */}
         {flowState === 'success' && (
-          <motion.div key='success' variants={contentVariants} initial='initial' animate='animate' exit='exit'>
-            <div className='flex flex-col items-center text-center'>
-              <div className='bg-green-100 text-green-600 mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
+          <motion.div key="success" variants={contentVariants} initial="initial" animate="animate" exit="exit">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-green-100 text-green-600 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
                 <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
                   strokeWidth={2}
-                  stroke='currentColor'
-                  className='h-8 w-8'
+                  stroke="currentColor"
+                  className="h-8 w-8"
                 >
                   <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
               </div>
-              <h1 className='text-2xl font-bold'>¡Contraseña actualizada!</h1>
-              <p className='text-muted-foreground mt-2 text-balance'>
+              <h1 className="text-2xl font-bold">¡Contraseña actualizada!</h1>
+              <p className="text-muted-foreground mt-2 text-balance">
                 Tu contraseña ha sido restablecida exitosamente. Serás redirigido a la página de inicio de sesión.
               </p>
             </div>
@@ -308,34 +306,34 @@ export function PasswordResetFlow({ className, mode = 'request', ...props }: Pas
 
         {/* Error State */}
         {flowState === 'error' && (
-          <motion.div key='error' variants={contentVariants} initial='initial' animate='animate' exit='exit'>
-            <div className='flex flex-col items-center text-center'>
-              <div className='bg-red-100 text-red-600 mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
+          <motion.div key="error" variants={contentVariants} initial="initial" animate="animate" exit="exit">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-red-100 text-red-600 mb-4 flex h-16 w-16 items-center justify-center rounded-full">
                 <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
                   strokeWidth={2}
-                  stroke='currentColor'
-                  className='h-8 w-8'
+                  stroke="currentColor"
+                  className="h-8 w-8"
                 >
                   <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z'
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
                   />
                 </svg>
               </div>
-              <h1 className='text-2xl font-bold'>Enlace inválido</h1>
-              <p className='text-muted-foreground mt-2 text-balance'>
+              <h1 className="text-2xl font-bold">Enlace inválido</h1>
+              <p className="text-muted-foreground mt-2 text-balance">
                 El enlace de restablecimiento es inválido o ha expirado.
               </p>
-              <div className='mt-6 flex gap-3'>
-                <Link href='/forgot-password'>
-                  <Button className='transition-colors duration-200 ease-out'>Solicitar nuevo enlace</Button>
+              <div className="mt-6 flex gap-3">
+                <Link href="/forgot-password">
+                  <Button className="transition-colors duration-200 ease-out">Solicitar nuevo enlace</Button>
                 </Link>
-                <Link href='/signin'>
-                  <Button variant='outline' className='transition-colors duration-200 ease-out'>
+                <Link href="/signin">
+                  <Button variant="outline" className="transition-colors duration-200 ease-out">
                     Iniciar sesión
                   </Button>
                 </Link>

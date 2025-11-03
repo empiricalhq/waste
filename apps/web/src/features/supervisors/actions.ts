@@ -12,9 +12,9 @@ import {
   updateSupervisorSchema,
 } from './schemas';
 
-type ActionResult = {
+interface ActionResult {
   error?: string;
-};
+}
 
 export async function getSupervisors(): Promise<User[]> {
   await requireUser();

@@ -7,13 +7,22 @@ import { redirect } from 'next/navigation';
 import { PROTECTED_ROLES } from '@/features/auth/roles';
 import { api } from '@/lib/api';
 import { ENV } from '@/lib/env';
-import { type SignInSchema, type SignUpSchema, signInSchema, signUpSchema, type RequestPasswordResetSchema, requestPasswordResetSchema, type ResetPasswordSchema, resetPasswordSchema } from './schemas';
+import {
+  type RequestPasswordResetSchema,
+  type ResetPasswordSchema,
+  requestPasswordResetSchema,
+  resetPasswordSchema,
+  type SignInSchema,
+  type SignUpSchema,
+  signInSchema,
+  signUpSchema,
+} from './schemas';
 
-type ActionResult = {
+interface ActionResult {
   error?: string;
   success?: boolean;
   message?: string;
-};
+}
 
 async function performSignInRequest(credentials: SignInSchema): Promise<{ sessionCookie: string }> {
   const signInResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/sign-in/email`, {
@@ -125,9 +134,9 @@ export async function requestPasswordReset(data: RequestPasswordResetSchema): Pr
       throw new Error('No se pudo enviar el correo de restablecimiento');
     }
 
-    return { 
-      success: true, 
-      message: 'Solicitud enviada' 
+    return {
+      success: true,
+      message: 'Solicitud enviada',
     };
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Hubo un problema. Inténtalo de nuevo.' };
@@ -155,9 +164,9 @@ export async function resetPassword(data: ResetPasswordSchema): Promise<ActionRe
       throw new Error(errorData.message || 'No se pudo restablecer la contraseña');
     }
 
-    return { 
-      success: true, 
-      message: 'Tu contraseña ha sido restablecida exitosamente' 
+    return {
+      success: true,
+      message: 'Tu contraseña ha sido restablecida exitosamente',
     };
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Hubo un problema. Inténtalo de nuevo.' };

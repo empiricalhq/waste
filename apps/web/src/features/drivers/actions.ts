@@ -7,9 +7,9 @@ import { api } from '@/lib/api';
 import type { User } from '@/lib/api-contract';
 import { type CreateDriverSchema, createDriverSchema, type UpdateDriverSchema, updateDriverSchema } from './schemas';
 
-type ActionResult = {
+interface ActionResult {
   error?: string;
-};
+}
 export async function getDrivers(): Promise<User[]> {
   await requireUser();
 

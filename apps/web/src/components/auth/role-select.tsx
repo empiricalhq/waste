@@ -14,12 +14,12 @@ export function RoleSelect({ value, onChange, disabled, required }: RoleSelectPr
   return (
     <Select onValueChange={onChange} value={value} required={required} disabled={disabled}>
       <SelectTrigger id={id}>
-        <SelectValue placeholder='Seleccionar un rol' />
+        <SelectValue placeholder="Seleccionar un rol" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value='admin'>Admin</SelectItem>
-        <SelectItem value='supervisor'>Supervisor</SelectItem>
-        <SelectItem value='driver'>Chofer</SelectItem>
+        <SelectItem value="admin">Admin</SelectItem>
+        <SelectItem value="supervisor">Supervisor</SelectItem>
+        <SelectItem value="driver">Chofer</SelectItem>
       </SelectContent>
     </Select>
   );
