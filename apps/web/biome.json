@@ -7,6 +7,10 @@
       "solid": "none"
     },
     "rules": {
+      "security": {
+        "recommended": true,
+        "noSecrets": "off"
+      },
       "style": {
         "recommended": true,
         "noDefaultExport": "off",
@@ -22,6 +26,11 @@
         "recommended": true,
         "noNamespaceImport": "off"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

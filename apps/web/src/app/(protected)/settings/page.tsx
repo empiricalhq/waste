@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
+import { AddUserButton } from '@/components/dashboard/add-user-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getAuth, requireUser } from '@/features/auth/lib';
 import { SETTINGS_ROLES } from '@/features/auth/roles';
-import { AddUserButton } from '@/components/dashboard/add-user-button';
 
 export default async function SettingsPage() {
   await requireUser();

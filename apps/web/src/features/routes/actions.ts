@@ -7,9 +7,9 @@ import { api } from '@/lib/api';
 import type { Route } from '@/lib/api-contract';
 import { type CreateRouteSchema, createRouteSchema } from './schemas';
 
-type ActionResult = {
+interface ActionResult {
   error?: string;
-};
+}
 export async function getRoutes(): Promise<Route[]> {
   await requireUser();
 

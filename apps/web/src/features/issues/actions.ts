@@ -6,9 +6,9 @@ import { PROTECTED_ROLES } from '@/features/auth/roles';
 import { api } from '@/lib/api';
 import { type CreateIssueSchema, createIssueSchema } from './schemas';
 
-type ActionResult = {
+interface ActionResult {
   error?: string;
-};
+}
 
 export async function createIssue(data: CreateIssueSchema): Promise<ActionResult> {
   const validatedFields = createIssueSchema.safeParse(data);

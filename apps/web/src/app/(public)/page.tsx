@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import { getCurrentUser } from '@/features/auth/lib';
 import { LoginForm } from '@/components/auth/login-form';
+import { getCurrentUser } from '@/features/auth/lib';
 
 export default async function HomePage() {
   const user = await getCurrentUser();

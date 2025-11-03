@@ -13,29 +13,26 @@ interface AuthContainerProps extends React.ComponentProps<'div'> {
 export function AuthContainer({ children, showBrandImage = false, footer, className, ...props }: AuthContainerProps) {
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className='overflow-hidden'>
+      <Card className="overflow-hidden">
         <CardContent className={cn('grid p-0 md:min-h-[500px]', showBrandImage && 'md:grid-cols-2')}>
-          {/* Main content */}
-          <div className='p-6 md:p-8 flex items-center'>
-            <div className='w-full'>{children}</div>
+          <div className="p-6 md:p-8 flex items-center">
+            <div className="w-full">{children}</div>
           </div>
 
-          {/* Brand image column (desktop only) */}
           {showBrandImage && (
-            <div className='bg-muted hidden md:flex items-center justify-center overflow-hidden'>
+            <div className="relative bg-muted hidden md:flex items-center justify-center overflow-hidden">
               <Image
-                src='/lima-verde.webp'
-                alt='Lima Limpia'
-                fill
-                className='h-full w-full object-cover dark:brightness-[0.8]'
-                priority
+                src="/lima-verde.webp"
+                alt="Lima Limpia"
+                fill={true}
+                className="object-cover dark:brightness-[0.8]"
+                priority={true}
               />
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Footer content (e.g., terms and privacy) */}
       {footer && <div>{footer}</div>}
     </div>
   );

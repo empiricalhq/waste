@@ -1,5 +1,5 @@
-import { PasswordResetFlow } from '@/components/auth/password-reset-flow';
 import type { Metadata } from 'next';
+import { PasswordResetFlow } from '@/components/auth/password-reset-flow';
 
 export const metadata: Metadata = {
   title: 'Olvidé mi contraseña - Lima Limpia',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function ForgotPasswordPage() {
-  return <PasswordResetFlow mode='request' />;
+  return <PasswordResetFlow mode="request" />;
 }
