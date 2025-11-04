@@ -26,6 +26,7 @@ const db = new Pool({ connectionString: DATABASE_URL });
 const auth = betterAuth({
   database: db,
   secret: AUTH_SECRET,
+  // biome-ignore lint/style/useNamingConvention: better auth requires baseURL
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
   emailAndPassword: { enabled: true },
   user: {
