@@ -124,7 +124,7 @@ function handleError(error: unknown) {
   log.error('No se pudo configurar la organización y el propietario.');
 
   if (error instanceof Error) {
-    if (error.message?.includes('unique constraint')) {
+    if (error.message.includes('unique constraint')) {
       log.warn('Ya existe un usuario con este correo electrónico en la base de datos.');
     } else {
       log.error(error.message);
