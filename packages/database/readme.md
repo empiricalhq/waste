@@ -66,7 +66,6 @@ Configuración requerida en .env en el directorio raíz (ver
 ```
 DATABASE_URL=<postgresql_connection_string>
 SUPABASE_URL=<supabase_project_url>
-SUPABASE_ANON_KEY=<supabase_public_anon_key>
 BETTER_AUTH_SECRET=<token_signing_secret>
 ```
 
