@@ -1,8 +1,7 @@
 {
   "name": "@lima-garbage/database",
-  "version": "0.1.0",
-  "type": "module",
   "private": true,
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -19,7 +18,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
 
-    "format": "prettier --config ../../.prettierrc --ignore-path ../../.prettierignore --write ."
+    "format": "biome check --write --unsafe ."
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
