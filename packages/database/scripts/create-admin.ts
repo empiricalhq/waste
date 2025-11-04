@@ -99,6 +99,7 @@ async function main() {
         userId: ownerUser.id,
       },
     });
+    // biome-ignore lint/security/noSecrets: this is not a secret
     s.stop('Organización creada correctamente.');
 
     const noteMessage = `
