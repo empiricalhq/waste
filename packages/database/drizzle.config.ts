@@ -1,10 +1,15 @@
 import process from 'node:process';
 import { defineConfig } from 'drizzle-kit';
 
-const databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL environment variable is required');
+function mustEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`La variable de entorno ${name} es obligatoria`);
+  }
+  return value;
 }
+
+const databaseUrl = mustEnv('DATABASE_URL');
 
 // biome-ignore lint/style/noDefaultExport: drizzle-kit requires default export for config files
 export default defineConfig({
