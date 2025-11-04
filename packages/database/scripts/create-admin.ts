@@ -121,8 +121,6 @@ ${color.green(`SYSTEM_ADMIN_PASSWORD="${password}"`)}
 }
 
 function handleError(error: unknown) {
-  const s = spinner();
-  s.stop('Ocurrió un error durante la creación.');
   log.error('No se pudo configurar la organización y el propietario.');
 
   if (error instanceof Error) {

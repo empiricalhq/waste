@@ -254,8 +254,6 @@ async function main() {
     outro(color.green('Datos de ejemplo añadidos correctamente.'));
   } catch (err: unknown) {
     await client.query('ROLLBACK');
-    const s = spinner();
-    s.stop('Error al crear datos');
 
     if (err instanceof Error) {
       log.error(err.message);
