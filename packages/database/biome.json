@@ -5,7 +5,8 @@
     "rules": {
       "performance": {
         "recommended": true,
-        "noReExportAll": "off"
+        "noReExportAll": "off",
+        "noBarrelFile": "off"
       }
     }
   }

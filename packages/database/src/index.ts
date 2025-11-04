@@ -1,4 +1,3 @@
-// biome-ignore lint/performance/noBarrelFile: package entry point
 export * from './schema/index.ts';
 
 export type User = typeof import('./schema').user.$inferSelect;
