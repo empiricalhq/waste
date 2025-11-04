@@ -1,5 +1,4 @@
 // biome-ignore lint/performance/noBarrelFile: package entry point
-// biome-ignore lint/performance/noReExportAll: schema tables need to be available from package root
 export * from './schema/index.ts';
 
 export type User = typeof import('./schema').user.$inferSelect;
