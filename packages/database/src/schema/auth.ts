@@ -111,7 +111,6 @@ export const invitation = pgTable('invitation', {
   inviterId: text('inviterId')
     .notNull()
     .references(() => member.id),
-  // biome-ignore lint/security/noSecrets: this is not a secret
   organizationId: text('organizationId')
     .notNull()
     .references(() => organization.id, { onDelete: 'cascade' }),

@@ -104,7 +104,6 @@ async function createOrganization(userId: string) {
       userId,
     },
   });
-  // biome-ignore lint/security/noSecrets: this is not a secret
   s.stop('Organización creada correctamente.');
 }
 

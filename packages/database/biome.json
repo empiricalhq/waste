@@ -7,6 +7,10 @@
         "recommended": true,
         "noReExportAll": "off",
         "noBarrelFile": "off"
+      },
+      "security": {
+        "recommended": true,
+        "noSecrets": "off"
       }
     }
   }
