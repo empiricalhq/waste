@@ -1,12 +1,11 @@
-import React from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-import { useRouter } from "expo-router";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authService } from "@/features/auth/services/auth-service";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
-import { ROUTES } from "@/constants/app-config";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ROUTES } from '@/constants/app-config';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { authService } from '@/features/auth/services/auth-service';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -15,17 +14,17 @@ export default function SignUpScreen() {
   const { mutate, isPending, error } = useMutation({
     mutationFn: authService.signUp,
     onSuccess: (user) => {
-      queryClient.setQueryData(["currentUser"], user);
+      queryClient.setQueryData(['currentUser'], user);
       router.replace(ROUTES.HOME);
     },
     onError: (err: any) => {
-      Alert.alert("Error de Registro", err.message || "No se pudo crear la cuenta.");
+      Alert.alert('Error de Registro', err.message || 'No se pudo crear la cuenta.');
     },
   });
 
   const handleSignUp = () => {
     // In a real app, get data from state
-    mutate({ name: "Nuevo Usuario", email: "new@example.com", password: "password" });
+    mutate({ name: 'Nuevo Usuario', email: 'new@example.com', password: 'password' });
   };
 
   return (
@@ -33,7 +32,7 @@ export default function SignUpScreen() {
       <Text style={styles.title}>Crear Cuenta</Text>
       <Input label="Nombre" placeholder="Tu nombre" />
       <Input label="Email" placeholder="tu@email.com" keyboardType="email-address" />
-      <Input label="Contraseña" placeholder="••••••••" secureTextEntry />
+      <Input label="Contraseña" placeholder="••••••••" secureTextEntry={true} />
       {error && <Text style={styles.error}>{(error as Error).message}</Text>}
       <Button title="Registrarse" onPress={handleSignUp} loading={isPending} />
       <Button
@@ -49,20 +48,20 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: Spacing.xl,
     backgroundColor: Colors.background,
   },
   title: {
     fontSize: Typography.fontSize.xxxl,
     fontWeight: Typography.fontWeight.bold,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.xxxl,
     color: Colors.text,
   },
   error: {
     color: Colors.error,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.md,
   },
 });

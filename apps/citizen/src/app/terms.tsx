@@ -1,6 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Header } from "@/components/shared/header";
+import { StyleSheet, Text, View } from 'react-native';
+import { Header } from '@/components/shared/header';
 
 export default function TermsScreen() {
   return (
@@ -15,5 +14,5 @@ export default function TermsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flex: 1, justifyContent: "center", alignItems: "center" },
+  content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });

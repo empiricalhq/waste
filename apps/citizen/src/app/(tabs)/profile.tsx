@@ -1,16 +1,17 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useAuth } from "@/features/auth/hooks/use-auth";
-import { Header } from "@/components/shared/header";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Header } from '@/components/shared/header';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { useAuth } from '@/features/auth/hooks/use-auth';
 // import { LogOut } from "lucide-react-native";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   const accuracy =
     user.progress.totalQuestions > 0
@@ -56,11 +57,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   statItem: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   statValue: {
     fontSize: Typography.fontSize.xxl,

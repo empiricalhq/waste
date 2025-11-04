@@ -1,16 +1,16 @@
 export const Colors = {
-  primary: "#0A0A0A",
-  text: "#0A0A0A",
-  textSecondary: "#666666",
-  textTertiary: "#999999",
-  textInverse: "#FFFFFF",
-  background: "#FAFAFA",
-  cardBackground: "#FFFFFF",
-  border: "#E5E5E5",
-  success: "#10B981",
-  error: "#EF4444",
-  warning: "#F59E0B",
-  info: "#3B82F6",
+  primary: '#0A0A0A',
+  text: '#0A0A0A',
+  textSecondary: '#666666',
+  textTertiary: '#999999',
+  textInverse: '#FFFFFF',
+  background: '#FAFAFA',
+  cardBackground: '#FFFFFF',
+  border: '#E5E5E5',
+  success: '#10B981',
+  error: '#EF4444',
+  warning: '#F59E0B',
+  info: '#3B82F6',
 } as const;
 
 export const Spacing = {
@@ -42,9 +42,9 @@ export const Typography = {
     xxxl: 28,
   },
   fontWeight: {
-    normal: "400",
-    medium: "500",
-    semibold: "600",
-    bold: "700",
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
   },
 } as const;

@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { CheckCircle2 } from "lucide-react-native";
-import { Button } from "@/components/ui/button";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import { CheckCircle2 } from 'lucide-react-native';
+import type React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from '@/components/ui/button';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 
 interface ReportSuccessStepProps {
   onDone: () => void;
@@ -24,8 +24,8 @@ export const ReportSuccessStep: React.FC<ReportSuccessStepProps> = ({ onDone }) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: Spacing.xxxl,
     gap: Spacing.lg,
   },
@@ -36,10 +36,10 @@ const styles = StyleSheet.create({
   message: {
     fontSize: Typography.fontSize.base,
     color: Colors.textSecondary,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.xl,
   },
   button: {
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
   },
 });

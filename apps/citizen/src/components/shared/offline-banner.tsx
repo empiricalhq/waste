@@ -1,8 +1,7 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { WifiOff } from "lucide-react-native";
-import { Colors, Spacing, Typography, BorderRadius } from "@/constants/design-tokens";
+import { WifiOff } from 'lucide-react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 
 export const OfflineBanner = () => {
   const insets = useSafeAreaInsets();
@@ -16,12 +15,12 @@ export const OfflineBanner = () => {
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
+    position: 'absolute',
     left: Spacing.lg,
     right: Spacing.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.text,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,

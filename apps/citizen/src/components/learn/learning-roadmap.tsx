@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { LearningGuide } from "@/types";
-import { Card } from "@/components/ui/card";
-import { WASTE_TYPES } from "@/constants/waste-types";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import type React from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Card } from '@/components/ui/card';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { WASTE_TYPES } from '@/constants/waste-types';
+import type { LearningGuide } from '@/types';
 
 interface LearningRoadmapProps {
   guides: LearningGuide[];
@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   badge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
   },
   dot: {
     width: 8,

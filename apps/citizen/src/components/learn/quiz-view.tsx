@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { QuizQuestion } from "@/types";
-import { Button } from "@/components/ui/button";
-import { WASTE_TYPES } from "@/constants/waste-types";
-import { Colors, Spacing, Typography, BorderRadius } from "@/constants/design-tokens";
-import { Check, X } from "lucide-react-native";
+import { Check, X } from 'lucide-react-native';
+import type React from 'react';
+import { useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button } from '@/components/ui/button';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { WASTE_TYPES } from '@/constants/waste-types';
+import type { QuizQuestion } from '@/types';
 
 interface QuizViewProps {
   questions: QuizQuestion[];
@@ -21,7 +22,9 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   const handleAnswer = (answer: string) => {
-    if (isAnswered) return;
+    if (isAnswered) {
+      return;
+    }
     setSelectedAnswer(answer);
     setIsAnswered(true);
     if (answer === currentQuestion.correctAnswer) {
@@ -40,9 +43,15 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
   };
 
   const getOptionStyle = (option: string) => {
-    if (!isAnswered) return styles.option;
-    if (option === currentQuestion.correctAnswer) return [styles.option, styles.correctOption];
-    if (option === selectedAnswer) return [styles.option, styles.incorrectOption];
+    if (!isAnswered) {
+      return styles.option;
+    }
+    if (option === currentQuestion.correctAnswer) {
+      return [styles.option, styles.correctOption];
+    }
+    if (option === selectedAnswer) {
+      return [styles.option, styles.incorrectOption];
+    }
     return styles.option;
   };
 
@@ -60,23 +69,18 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
             key={option}
             style={getOptionStyle(option)}
             onPress={() => handleAnswer(option)}
-            disabled={isAnswered}>
+            disabled={isAnswered}
+          >
             <Text style={styles.optionText}>{WASTE_TYPES[option].label}</Text>
-            {isAnswered && option === currentQuestion.correctAnswer && (
-              <Check color={Colors.success} />
+            {isAnswered && option === currentQuestion.correctAnswer && <Check color={Colors.success} />}
+            {isAnswered && option === selectedAnswer && option !== currentQuestion.correctAnswer && (
+              <X color={Colors.error} />
             )}
-            {isAnswered &&
-              option === selectedAnswer &&
-              option !== currentQuestion.correctAnswer && <X color={Colors.error} />}
           </TouchableOpacity>
         ))}
       </View>
       {isAnswered && (
-        <Button
-          title={isLastQuestion ? "Finalizar" : "Siguiente"}
-          onPress={handleNext}
-          style={styles.nextButton}
-        />
+        <Button title={isLastQuestion ? 'Finalizar' : 'Siguiente'} onPress={handleNext} style={styles.nextButton} />
       )}
     </View>
   );
@@ -88,12 +92,12 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   progress: {
-    textAlign: "center",
+    textAlign: 'center',
     color: Colors.textSecondary,
     marginBottom: Spacing.md,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 200,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.lg,
@@ -101,22 +105,22 @@ const styles = StyleSheet.create({
   question: {
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.medium,
-    textAlign: "center",
+    textAlign: 'center',
     color: Colors.textSecondary,
   },
   item: {
     fontSize: Typography.fontSize.xxl,
     fontWeight: Typography.fontWeight.bold,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: Spacing.xl,
   },
   optionsContainer: {
     gap: Spacing.md,
   },
   option: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: Colors.cardBackground,
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,
@@ -125,11 +129,11 @@ const styles = StyleSheet.create({
   },
   correctOption: {
     borderColor: Colors.success,
-    backgroundColor: "#E6F9F1",
+    backgroundColor: '#E6F9F1',
   },
   incorrectOption: {
     borderColor: Colors.error,
-    backgroundColor: "#FEEBEE",
+    backgroundColor: '#FEEBEE',
   },
   optionText: {
     fontSize: Typography.fontSize.base,

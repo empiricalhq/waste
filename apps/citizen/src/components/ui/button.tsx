@@ -1,22 +1,16 @@
-import React from "react";
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacityProps,
-} from "react-native";
-import { Colors, Spacing, Typography, BorderRadius } from "@/constants/design-tokens";
+import type React from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: "primary" | "secondary";
+  variant?: 'primary' | 'secondary';
   loading?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
-  variant = "primary",
+  variant = 'primary',
   loading = false,
   disabled,
   style,
@@ -24,24 +18,17 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const containerStyle = [
     styles.container,
-    variant === "primary" ? styles.primaryContainer : styles.secondaryContainer,
+    variant === 'primary' ? styles.primaryContainer : styles.secondaryContainer,
     (disabled || loading) && styles.disabled,
     style,
   ];
 
-  const textStyle = [
-    styles.text,
-    variant === "primary" ? styles.primaryText : styles.secondaryText,
-  ];
+  const textStyle = [styles.text, variant === 'primary' ? styles.primaryText : styles.secondaryText];
 
   return (
-    <TouchableOpacity
-      style={containerStyle}
-      disabled={disabled || loading}
-      activeOpacity={0.8}
-      {...props}>
+    <TouchableOpacity style={containerStyle} disabled={disabled || loading} activeOpacity={0.8} {...props}>
       {loading ? (
-        <ActivityIndicator color={variant === "primary" ? Colors.textInverse : Colors.primary} />
+        <ActivityIndicator color={variant === 'primary' ? Colors.textInverse : Colors.primary} />
       ) : (
         <Text style={textStyle}>{title}</Text>
       )}
@@ -54,8 +41,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.md,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   primaryContainer: {
     backgroundColor: Colors.primary,

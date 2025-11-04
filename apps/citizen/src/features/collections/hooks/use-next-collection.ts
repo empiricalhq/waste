@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useCollections } from "./use-collections";
+import { useMemo } from 'react';
+import { useCollections } from './use-collections';
 
 export const useNextCollection = () => {
   const { data: collections = [], ...queryInfo } = useCollections();

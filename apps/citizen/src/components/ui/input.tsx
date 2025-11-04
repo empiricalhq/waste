@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
-import { Colors, Spacing, Typography, BorderRadius } from "@/constants/design-tokens";
+import type React from 'react';
+import { StyleSheet, Text, TextInput, type TextInputProps, View } from 'react-native';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -12,7 +12,7 @@ export const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, !!error && styles.inputError]}
+        style={[styles.input, Boolean(error) && styles.inputError]}
         placeholderTextColor={Colors.textTertiary}
         {...props}
       />
@@ -23,7 +23,7 @@ export const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
   },
   label: {
     fontSize: Typography.fontSize.sm,

@@ -1,37 +1,37 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Header } from "@/components/shared/header";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useReportTypes } from "@/features/reports/hooks/use-reports";
-import { useSubmitReport } from "@/features/reports/hooks/use-submit-report";
-import { ReportTypeStep } from "@/components/report/report-type-step";
-import { ReportCameraStep } from "@/components/report/report-camera-step";
-import { ReportDetailsStep } from "@/components/report/report-details-step";
-import { ReportSuccessStep } from "@/components/report/report-success-step";
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ReportCameraStep } from '@/components/report/report-camera-step';
+import { ReportDetailsStep } from '@/components/report/report-details-step';
+import { ReportSuccessStep } from '@/components/report/report-success-step';
+import { ReportTypeStep } from '@/components/report/report-type-step';
+import { Header } from '@/components/shared/header';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useReportTypes } from '@/features/reports/hooks/use-reports';
+import { useSubmitReport } from '@/features/reports/hooks/use-submit-report';
 
-type ReportStep = "type" | "camera" | "details" | "success";
+type ReportStep = 'type' | 'camera' | 'details' | 'success';
 
 export default function ReportScreen() {
-  const [step, setStep] = useState<ReportStep>("type");
-  const [reportData, setReportData] = useState({ type: "", imageUri: "" });
+  const [step, setStep] = useState<ReportStep>('type');
+  const [reportData, setReportData] = useState({ type: '', imageUri: '' });
 
   const { data: reportTypes, isLoading } = useReportTypes();
   const { mutate: submitReport, isPending } = useSubmitReport({
-    onSuccess: () => setStep("success"),
+    onSuccess: () => setStep('success'),
   });
 
   const handleSelectType = (type: string) => {
     setReportData({ ...reportData, type });
-    setStep("camera");
+    setStep('camera');
   };
 
   const handlePhotoTaken = (uri: string) => {
     setReportData({ ...reportData, imageUri: uri });
-    setStep("details");
+    setStep('details');
   };
 
   const handleSkipPhoto = () => {
-    setStep("details");
+    setStep('details');
   };
 
   const handleSubmit = (details: { description: string; location: string }) => {
@@ -39,21 +39,21 @@ export default function ReportScreen() {
   };
 
   const resetFlow = () => {
-    setReportData({ type: "", imageUri: "" });
-    setStep("type");
+    setReportData({ type: '', imageUri: '' });
+    setStep('type');
   };
 
   const renderStep = () => {
     switch (step) {
-      case "type":
+      case 'type':
         return isLoading ? (
-          <LoadingSpinner fullScreen />
+          <LoadingSpinner fullScreen={true} />
         ) : (
           <ReportTypeStep reportTypes={reportTypes || []} onSelectType={handleSelectType} />
         );
-      case "camera":
+      case 'camera':
         return <ReportCameraStep onPhotoTaken={handlePhotoTaken} onSkip={handleSkipPhoto} />;
-      case "details":
+      case 'details':
         return (
           <ReportDetailsStep
             reportType={reportData.type}
@@ -62,7 +62,7 @@ export default function ReportScreen() {
             onSubmit={handleSubmit}
           />
         );
-      case "success":
+      case 'success':
         return <ReportSuccessStep onDone={resetFlow} />;
       default:
         return null;

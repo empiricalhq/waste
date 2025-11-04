@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import * as Location from "expo-location";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Spacing } from "@/constants/design-tokens";
+import * as Location from 'expo-location';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Spacing } from '@/constants/design-tokens';
 
 interface ReportDetailsStepProps {
   imageUri?: string;
@@ -19,26 +20,25 @@ export const ReportDetailsStep: React.FC<ReportDetailsStepProps> = ({
   isSubmitting,
   onSubmit,
 }) => {
-  const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("Obteniendo ubicación...");
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('Obteniendo ubicación...');
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setLocation("Permiso de ubicación denegado");
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setLocation('Permiso de ubicación denegado');
         return;
       }
       try {
-        let loc = await Location.getCurrentPositionAsync({});
+        const loc = await Location.getCurrentPositionAsync({});
         const addresses = await Location.reverseGeocodeAsync(loc.coords);
         if (addresses.length > 0) {
           const { street, streetNumber, city } = addresses[0];
-          setLocation(`${street || ""} ${streetNumber || ""}, ${city || ""}`);
+          setLocation(`${street || ''} ${streetNumber || ''}, ${city || ''}`);
         }
-      } catch (error) {
-        console.error("Error getting location:", error);
-        setLocation("No se pudo obtener la ubicación");
+      } catch (_error) {
+        setLocation('No se pudo obtener la ubicación');
       }
     })();
   }, []);
@@ -58,7 +58,7 @@ export const ReportDetailsStep: React.FC<ReportDetailsStepProps> = ({
           placeholder="Añade más detalles..."
           value={description}
           onChangeText={setDescription}
-          multiline
+          multiline={true}
           style={{ height: 100 }}
         />
       </Card>
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 200,
     borderRadius: 12,
     marginBottom: Spacing.lg,

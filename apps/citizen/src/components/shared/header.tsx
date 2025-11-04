@@ -1,7 +1,7 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import type React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 
 interface HeaderProps {
   title: string;

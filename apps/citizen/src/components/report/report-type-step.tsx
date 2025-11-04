@@ -1,8 +1,8 @@
-import React from "react";
-import { Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { ReportType } from "@/types";
-import { Card } from "@/components/ui/card";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import type React from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Card } from '@/components/ui/card';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import type { ReportType } from '@/types';
 
 interface ReportTypeStepProps {
   reportTypes: ReportType[];

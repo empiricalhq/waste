@@ -1,14 +1,13 @@
-import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { useCollections } from "@/features/collections/hooks/use-collections";
-import { Header } from "@/components/shared/header";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Card } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
-import { WASTE_TYPES } from "@/constants/waste-types";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
-import { formatFullDate } from "@/lib/utils/date-helpers";
-import { Collection } from "@/types";
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Header } from '@/components/shared/header';
+import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { WASTE_TYPES } from '@/constants/waste-types';
+import { useCollections } from '@/features/collections/hooks/use-collections';
+import { formatFullDate } from '@/lib/utils/date-helpers';
+import type { Collection } from '@/types';
 
 export default function ScheduleScreen() {
   const { data: collections, isLoading } = useCollections();
@@ -34,7 +33,7 @@ export default function ScheduleScreen() {
     <View style={styles.container}>
       <Header title="Calendario de Recolección" />
       {isLoading ? (
-        <LoadingSpinner fullScreen />
+        <LoadingSpinner fullScreen={true} />
       ) : (
         <FlatList
           data={collections}
@@ -63,8 +62,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   cardContent: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.md,
   },
   dot: {

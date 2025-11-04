@@ -1,10 +1,10 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Card } from "@/components/ui/card";
-import { Collection } from "@/types";
-import { WASTE_TYPES } from "@/constants/waste-types";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
-import { formatDate } from "@/lib/utils/date-helpers";
+import type React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Card } from '@/components/ui/card';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { WASTE_TYPES } from '@/constants/waste-types';
+import { formatDate } from '@/lib/utils/date-helpers';
+import type { Collection } from '@/types';
 
 interface NextCollectionCardProps {
   collection: Collection;
@@ -30,9 +30,9 @@ export const NextCollectionCard: React.FC<NextCollectionCardProps> = ({ collecti
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.sm,
   },
   label: {
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.sm,
   },
   badge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
   },
   dot: {

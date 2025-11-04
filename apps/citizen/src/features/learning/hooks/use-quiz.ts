@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { learningService } from "../services/learning-service";
+import { useQuery } from '@tanstack/react-query';
+import { learningService } from '../services/learning-service';
 
 export const useQuiz = () => {
   return useQuery({
-    queryKey: ["quizQuestions"],
+    queryKey: ['quizQuestions'],
     queryFn: learningService.getQuizQuestions,
   });
 };

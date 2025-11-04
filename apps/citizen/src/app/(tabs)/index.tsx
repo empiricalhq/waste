@@ -1,16 +1,15 @@
-import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
-import { Header } from "@/components/shared/header";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { EmptyState } from "@/components/ui/empty-state";
-import { useNextCollection } from "@/features/collections/hooks/use-next-collection";
-import { useNearestTruck } from "@/features/trucks/hooks/use-nearest-truck";
-import { NextCollectionCard } from "@/components/home/next-collection-card";
-import { NearestTruckCard } from "@/components/home/nearest-truck-card";
-import { QuickActions } from "@/components/home/quick-actions";
-import { Spacing } from "@/constants/design-tokens";
-import { ROUTES } from "@/constants/app-config";
+import { useRouter } from 'expo-router';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { NearestTruckCard } from '@/components/home/nearest-truck-card';
+import { NextCollectionCard } from '@/components/home/next-collection-card';
+import { QuickActions } from '@/components/home/quick-actions';
+import { Header } from '@/components/shared/header';
+import { EmptyState } from '@/components/ui/empty-state';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ROUTES } from '@/constants/app-config';
+import { Spacing } from '@/constants/design-tokens';
+import { useNextCollection } from '@/features/collections/hooks/use-next-collection';
+import { useNearestTruck } from '@/features/trucks/hooks/use-nearest-truck';
 
 export default function HomeScreen() {
   const router = useRouter();

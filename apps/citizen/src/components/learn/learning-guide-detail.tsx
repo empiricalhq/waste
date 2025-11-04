@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
-import { LearningGuide } from "@/types";
-import { Header } from "@/components/shared/header";
-import { WASTE_TYPES } from "@/constants/waste-types";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import type React from 'react';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Header } from '@/components/shared/header';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { WASTE_TYPES } from '@/constants/waste-types';
+import type { LearningGuide } from '@/types';
 
 interface LearningGuideDetailProps {
   guide: LearningGuide;
@@ -40,17 +40,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   image: {
-    width: "100%",
+    width: '100%',
     height: 200,
   },
   content: {
     padding: Spacing.lg,
   },
   badge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.sm,
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     marginBottom: Spacing.md,
   },
   dot: {

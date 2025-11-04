@@ -1,74 +1,74 @@
-import { WasteType as WasteTypeCode } from "../constants/waste-types";
+import type { WasteType as WasteTypeCode } from '../constants/waste-types';
 
 export type WasteType = WasteTypeCode;
 
-export type User = {
+export interface User {
   id: string;
   name: string;
   email: string;
   progress: UserProgress;
   settings: UserSettings;
-};
+}
 
-export type UserProgress = {
+export interface UserProgress {
   streak: number;
   lastQuizDate: string | null;
   correctAnswers: number;
   totalQuestions: number;
-};
+}
 
-export type UserSettings = {
+export interface UserSettings {
   notificationsEnabled: boolean;
-};
+}
 
-export type Truck = {
+export interface Truck {
   id: string;
   type: WasteType;
   eta: number;
   route: string;
-};
+}
 
-export type Collection = {
+export interface Collection {
   id: string;
   type: WasteType;
   date: string;
   time: string;
   completed: boolean;
-};
+}
 
-export type ReportStatus = "pending" | "in-progress" | "resolved";
+export type ReportStatus = 'pending' | 'in-progress' | 'resolved';
 
-export type Report = {
+export interface Report {
   id: string;
   type: string;
   description: string;
   status: ReportStatus;
-};
+}
 
-export type ReportType = {
+export interface ReportType {
   id: string;
   label: string;
-};
+}
 
-export type LearningGuide = {
+export interface LearningGuide {
   id: string;
   name: string;
   category: WasteType;
   imageUrl: string;
   description: string;
   examples: string[];
-};
+}
 
-export type QuizQuestion = {
+export interface QuizQuestion {
   id: string;
   item: string;
   question: string;
   imageUrl: string;
   options: WasteType[];
   correctAnswer: WasteType;
-};
+}
 
-export type ApiErrorResponse = {
+export interface ApiErrorResponse {
   message: string;
   code?: string;
-};
+}

@@ -1,7 +1,6 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { Colors } from "@/constants/design-tokens";
-import { Home, BookOpen, Camera, User } from "lucide-react-native";
+import { Tabs } from 'expo-router';
+import { BookOpen, Camera, Home, User } from 'lucide-react-native';
+import { Colors } from '@/constants/design-tokens';
 
 export default function TabLayout() {
   return (
@@ -10,32 +9,33 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors.primary,
         headerShown: false,
         tabBarStyle: { backgroundColor: Colors.cardBackground },
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Inicio",
+          title: 'Inicio',
           tabBarIcon: ({ color }) => <Home color={color} />,
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
-          title: "Aprender",
+          title: 'Aprender',
           tabBarIcon: ({ color }) => <BookOpen color={color} />,
         }}
       />
       <Tabs.Screen
         name="report"
         options={{
-          title: "Reportar",
+          title: 'Reportar',
           tabBarIcon: ({ color }) => <Camera color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Perfil",
+          title: 'Perfil',
           tabBarIcon: ({ color }) => <User color={color} />,
         }}
       />
