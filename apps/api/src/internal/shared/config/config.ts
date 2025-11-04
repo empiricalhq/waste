@@ -8,6 +8,14 @@ function mustGetEnv(key: string): string {
   return value;
 }
 
+function parseCommaSeparatedEnv(key: string, defaultValue: string): string[] {
+  const value = process.env[key] || defaultValue;
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+}
+
 export interface DatabaseConfig {
   url: string;
   ssl: boolean;
@@ -50,11 +58,10 @@ export function loadConfig(): Config {
       idleTimeoutMs: 30_000,
       connectionTimeoutMs: 2000,
     },
-    // TODO: adjust trustedOrigins for production
     auth: {
       secret: mustGetEnv('BETTER_AUTH_SECRET'),
       baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000',
-      trustedOrigins: ['http://localhost:3000'],
+      trustedOrigins: parseCommaSeparatedEnv('TRUSTED_ORIGINS', 'http://localhost:3000,http://localhost:4000'),
     },
     email: {
       resendApiKey: mustGetEnv('RESEND_API_KEY'),
@@ -63,7 +70,7 @@ export function loadConfig(): Config {
     },
     server: {
       port: Number.parseInt(process.env.PORT || '4000', 10),
-      corsOrigins: ['http://localhost:3000'],
+      corsOrigins: parseCommaSeparatedEnv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:4000'),
     },
     nodeEnv: process.env.NODE_ENV || 'development',
   };
