@@ -1,4 +1,3 @@
-export { db } from './client.ts';
 export * from './schema/index.ts';
 
 export type User = typeof import('./schema').user.$inferSelect;

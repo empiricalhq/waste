@@ -1,12 +1,23 @@
 import process from 'node:process';
 import { defineConfig } from 'drizzle-kit';
 
+function mustEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`La variable de entorno ${name} es obligatoria`);
+  }
+  return value;
+}
+
+const databaseUrl = mustEnv('DATABASE_URL');
+
+// biome-ignore lint/style/noDefaultExport: drizzle-kit requires default export for config files
 export default defineConfig({
   schema: './src/schema/index.ts',
   out: './migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL! as string,
+    url: databaseUrl,
   },
   verbose: true,
   strict: true,

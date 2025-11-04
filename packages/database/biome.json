@@ -1,0 +1,17 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "rules": {
+      "performance": {
+        "recommended": true,
+        "noReExportAll": "off",
+        "noBarrelFile": "off"
+      },
+      "security": {
+        "recommended": true,
+        "noSecrets": "off"
+      }
+    }
+  }
+}

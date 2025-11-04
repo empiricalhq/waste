@@ -1,10 +1,13 @@
 import process from 'node:process';
-import * as p from '@clack/prompts';
+import { intro, log, outro, spinner } from '@clack/prompts';
 import { createId } from '@paralleldrive/cuid2';
 import { betterAuth } from 'better-auth';
 import { admin } from 'better-auth/plugins';
 import { Pool, type PoolClient } from 'pg';
 import color from 'picocolors';
+
+const MILLISECONDS_PER_MINUTE = 60_000;
+const DEFAULT_START_HOUR = 8;
 
 function mustEnv(name: string): string {
   const val = process.env[name];
@@ -23,6 +26,7 @@ const db = new Pool({ connectionString: DATABASE_URL });
 const auth = betterAuth({
   database: db,
   secret: AUTH_SECRET,
+  // biome-ignore lint/style/useNamingConvention: better auth requires baseURL
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
   emailAndPassword: { enabled: true },
   user: {
@@ -100,6 +104,7 @@ async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
         username: u.username,
       },
     },
+    // biome-ignore lint/style/useNamingConvention: HTTP header name must be capitalized
     headers: { Cookie: sessionToken },
   });
 
@@ -137,12 +142,16 @@ async function ensureRoute(dbClient: PoolClient, supervisorId: string) {
       supervisorId,
     ],
   );
-  for (const wp of waypoints) {
-    await dbClient.query(
-      'INSERT INTO route_waypoint (id,route_id,sequence_order,lat,lng,estimated_arrival_offset_minutes,street_name) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-      [createId(), routeId, wp.order, wp.lat, wp.lng, wp.offset, wp.streetName],
-    );
-  }
+
+  await Promise.all(
+    waypoints.map((wp) =>
+      dbClient.query(
+        'INSERT INTO route_waypoint (id,route_id,sequence_order,lat,lng,estimated_arrival_offset_minutes,street_name) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+        [createId(), routeId, wp.order, wp.lat, wp.lng, wp.offset, wp.streetName],
+      ),
+    ),
+  );
+
   return routeId;
 }
 
@@ -166,7 +175,7 @@ async function ensureAssignment(
 
   const start = new Date();
   start.setHours(startHour, 0, 0, 0);
-  const end = new Date(start.getTime() + durationMinutes * 60_000);
+  const end = new Date(start.getTime() + durationMinutes * MILLISECONDS_PER_MINUTE);
 
   await dbClient.query(
     'INSERT INTO route_assignment (id,route_id,truck_id,driver_id,assigned_date,scheduled_start_time,scheduled_end_time,assigned_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
@@ -174,28 +183,62 @@ async function ensureAssignment(
   );
 }
 
+async function authenticateAdmin() {
+  const s = spinner();
+  s.start('Iniciando sesión como administrador...');
+  const { headers } = await auth.api.signInEmail({
+    returnHeaders: true,
+    body: { email: ADMIN_EMAIL, password: ADMIN_PASS },
+  });
+  const sessionToken = headers.get('set-cookie');
+  if (!sessionToken) {
+    throw new Error('No session token');
+  }
+  s.stop('Sesión iniciada.');
+  return sessionToken;
+}
+
+async function createSeedUsers(sessionToken: string) {
+  const s = spinner();
+  s.start('Creando usuarios...');
+  const userList = await Promise.all(seedUsers.map((u) => ensureUser(sessionToken, u)));
+  const users = new Map(userList.map((u) => [u.email, u]));
+  s.stop('Usuarios listos.');
+  return users;
+}
+
+async function seedDatabase(client: PoolClient, supervisor: { id: string }, driver: { id: string }) {
+  const s = spinner();
+
+  s.start('Creando camiones...');
+  const truckIds = await Promise.all(seedData.trucks.map((t) => ensureTruck(client, t)));
+  s.stop('Camiones listos.');
+
+  s.start('Creando ruta y waypoints...');
+  const routeId = await ensureRoute(client, supervisor.id);
+  s.stop('Ruta lista.');
+
+  s.start('Creando asignaciones...');
+  await ensureAssignment(
+    client,
+    truckIds[0],
+    routeId,
+    driver.id,
+    supervisor.id,
+    DEFAULT_START_HOUR,
+    seedData.route.estimatedDurationMinutes,
+  );
+  s.stop('Asignaciones listas.');
+}
+
 async function main() {
-  p.intro(color.inverse('Seeding sample data...'));
-  const s = p.spinner();
+  intro(color.inverse('Seeding sample data...'));
 
   const client = await db.connect();
 
   try {
-    s.start('Iniciando sesión como administrador...');
-    const { headers } = await auth.api.signInEmail({
-      returnHeaders: true,
-      body: { email: ADMIN_EMAIL, password: ADMIN_PASS },
-    });
-    const sessionToken = headers.get('set-cookie');
-    if (!sessionToken) {
-      throw new Error('No session token');
-    }
-    s.stop('Sesión iniciada.');
-
-    s.start('Creando usuarios...');
-    const userList = await Promise.all(seedUsers.map((u) => ensureUser(sessionToken, u)));
-    const users = new Map(userList.map((u) => [u.email, u]));
-    s.stop('Usuarios listos.');
+    const sessionToken = await authenticateAdmin();
+    const users = await createSeedUsers(sessionToken);
 
     const supervisor = users.get('supervisor@example.com');
     const driver = users.get('driver@example.com');
@@ -205,34 +248,19 @@ async function main() {
     }
 
     await client.query('BEGIN');
-
-    s.start('Creando camiones...');
-    const truckIds = await Promise.all(seedData.trucks.map((t) => ensureTruck(client, t)));
-    s.stop('Camiones listos.');
-
-    s.start('Creando ruta y waypoints...');
-    const routeId = await ensureRoute(client, supervisor.id);
-    s.stop('Ruta lista.');
-
-    s.start('Creando asignaciones...');
-    await ensureAssignment(
-      client,
-      truckIds[0],
-      routeId,
-      driver.id,
-      supervisor.id,
-      8,
-      seedData.route.estimatedDurationMinutes,
-    );
-    s.stop('Asignaciones listas.');
-
+    await seedDatabase(client, supervisor, driver);
     await client.query('COMMIT');
 
-    p.outro(color.green('Datos de ejemplo añadidos correctamente.'));
-  } catch (err: any) {
+    outro(color.green('Datos de ejemplo añadidos correctamente.'));
+  } catch (err: unknown) {
     await client.query('ROLLBACK');
-    s.stop('Error al crear datos');
-    p.log.error(err.message);
+
+    if (err instanceof Error) {
+      log.error(err.message);
+    } else {
+      log.error(String(err));
+    }
+
     process.exit(1);
   } finally {
     client.release();
