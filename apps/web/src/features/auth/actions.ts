@@ -68,6 +68,57 @@ async function setSessionCookie(sessionCookie: string): Promise<void> {
   });
 }
 
+async function setupOrganization(sessionCookie: string): Promise<string> {
+  const orgListResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/list`, {
+    headers: {
+      Cookie: sessionCookie,
+      Origin: ENV.API_BASE_URL,
+    },
+  });
+
+  if (!orgListResponse.ok) {
+    return sessionCookie;
+  }
+
+  const organizations = await orgListResponse.json();
+
+  if (!organizations || organizations.length === 0) {
+    return sessionCookie;
+  }
+
+  // set the first organization as active
+  // TODO: the site should may be federated and allow logging from departments up in the chain:
+  // - global org could be "Ministerio del Ambiente"
+  // - first-level could be "Municipalidad de X"
+  // - etc.
+  const firstOrg = organizations[0];
+
+  const setActiveResponse = await fetch(`${ENV.API_BASE_URL}/api/auth/organization/set-active`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: sessionCookie,
+      Origin: ENV.API_BASE_URL,
+    },
+    body: JSON.stringify({ organizationId: firstOrg.id }),
+  });
+
+  if (!setActiveResponse.ok) {
+    throw new Error('No se pudo establecer la organización activa');
+  }
+
+  // get the updated session cookie
+  const newSessionCookie = setActiveResponse.headers.get('Set-Cookie');
+  if (newSessionCookie) {
+    const newCookie = newSessionCookie.split(';')[0];
+    if (newCookie) {
+      return newCookie;
+    }
+  }
+
+  return sessionCookie;
+}
+
 export async function signIn(data: SignInSchema): Promise<ActionResult> {
   const validatedFields = signInSchema.safeParse(data);
   if (!validatedFields.success) {
@@ -75,8 +126,12 @@ export async function signIn(data: SignInSchema): Promise<ActionResult> {
   }
 
   try {
-    const { sessionCookie } = await performSignInRequest(validatedFields.data);
+    let { sessionCookie } = await performSignInRequest(validatedFields.data);
     await validateUserRole(sessionCookie);
+
+    // Set active organization for organization members
+    sessionCookie = await setupOrganization(sessionCookie);
+
     await setSessionCookie(sessionCookie);
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Oops. Ha habido un problema. Inténtalo de nuevo.' };
