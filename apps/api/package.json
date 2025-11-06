@@ -5,12 +5,13 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "bun build src/cmd/server.ts --target=node --outdir=dist --minify --external hono --external better-auth --external resend --external zod --external pg",
+    "build:worker": "bun build src/cmd/server.ts --target=bun --outdir=dist --minify --external hono --external better-auth --external resend --external zod --external pg",
     "deploy": "wrangler deploy",
     "dev": "bun --hot --env-file=../../.env src/cmd/server.ts",
-    "format": "biome check --write --unsafe .",
     "start": "bun src/cmd/server.ts",
     "test": "bun test-runner.ts",
-    "test:dev": "bun --hot --env-file=../../.env.test src/cmd/server.ts"
+    "test:dev": "bun --hot --env-file=../../.env.test src/cmd/server.ts",
+    "format": "biome check --write --unsafe ."
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.4",
@@ -24,6 +25,6 @@
   "devDependencies": {
     "@types/bun": "1.3.1",
     "@types/pg": "^8.15.6",
-    "wrangler": "^4.45.4"
+    "wrangler": "^4.46.0"
   }
 }
