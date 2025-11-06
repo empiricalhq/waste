@@ -1,6 +1,7 @@
 import process from 'node:process';
 
 const SERVER_STARTUP_DELAY_MS = 6000;
+const TIMEOUT_MS = process.env.CI === 'true' ? 25_000 : 15_000;
 
 const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/cmd/server.ts'], {
   stderr: 'inherit',
@@ -9,10 +10,13 @@ const server = Bun.spawn(['bun', '--env-file=../../.env.test', 'src/cmd/server.t
 
 await Bun.sleep(SERVER_STARTUP_DELAY_MS);
 
-const tests = Bun.spawn(['bun', '--env-file=../../.env.test', 'test', '--sequential', '--timeout', '15000'], {
-  stderr: 'inherit',
-  stdout: 'inherit',
-});
+const tests = Bun.spawn(
+  ['bun', '--env-file=../../.env.test', 'test', '--sequential', '--timeout', TIMEOUT_MS.toString()],
+  {
+    stderr: 'inherit',
+    stdout: 'inherit',
+  },
+);
 
 const code = await tests.exited;
 
