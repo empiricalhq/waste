@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "limalimpia",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "owner": "empiricalhq",
     "splash": {
       "image": "./assets/images/splash-icon.png",
@@ -41,16 +41,17 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Permitir que $(PRODUCT_NAME) acceda a tu cámara para reportar incidentes."
+          "cameraPermission": "Permitir que $(PRODUCT_NAME) acceda a tu cámara para reportar incidentes.",
+          "recordAudioAndroid": true
         }
       ],
       [
         "expo-location",
         {
-          "isAndroidForegroundServiceEnabled": true,
           "locationAlwaysAndWhenInUsePermission": "Permitir que $(PRODUCT_NAME) use tu ubicación para reportes precisos."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
