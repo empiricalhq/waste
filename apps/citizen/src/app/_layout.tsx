@@ -13,7 +13,7 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function RootLayoutNav() {
-  const { isLoading, user } = useAuth(); // Get user from the context
+  const { isLoading, user } = useAuth();
   const { isOffline } = useNetworkStatus();
   const router = useRouter();
   const segments = useSegments();
@@ -31,9 +31,9 @@ function RootLayoutNav() {
 
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (!(user || inAuthGroup)) {
-      router.replace('/(auth)/login');
-    } else if (user && inAuthGroup) {
+    // If the user is signed in and the initial segment is the auth group,
+    // redirect them to the main app.
+    if (user && inAuthGroup) {
       router.replace('/(tabs)');
     }
   }, [user, segments, isLoading, router]);
