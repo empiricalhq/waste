@@ -5,5 +5,6 @@ export const useLearningGuides = () => {
   return useQuery({
     queryKey: ['learningGuides'],
     queryFn: learningService.getLearningGuides,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 };

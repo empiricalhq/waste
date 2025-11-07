@@ -5,5 +5,6 @@ export const useQuiz = () => {
   return useQuery({
     queryKey: ['quizQuestions'],
     queryFn: learningService.getQuizQuestions,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 };
