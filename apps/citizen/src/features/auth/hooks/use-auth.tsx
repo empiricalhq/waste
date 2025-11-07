@@ -1,9 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type React from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { getToken } from '@/lib/storage/secure-storage';
-import type { User } from '@/types';
-import { authService } from '../services/auth-service';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { authService } from "../services/auth-service";
+import { getToken } from "@/lib/storage/secure-storage";
+import { User } from "@/types";
 
 interface AuthContextType {
   user: User | null;
@@ -22,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: isUserLoading,
     isSuccess,
   } = useQuery({
-    queryKey: ['currentUser'],
+    queryKey: ["currentUser"],
     queryFn: authService.getCurrentUser,
     enabled: false,
     retry: 1,
@@ -35,22 +34,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (token) {
           queryClient
             .getQueryCache()
-            .find({ queryKey: ['currentUser'] })
+            .find({ queryKey: ["currentUser"] })
             ?.fetch();
         }
-      } catch (_e) {
+      } catch (e) {
+        console.error("Failed to check token", e);
       } finally {
         setIsCheckingToken(false);
       }
     };
 
-    queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     checkTokenAndFetchUser();
   }, [queryClient]);
 
   const logout = async () => {
     await authService.logout();
-    queryClient.setQueryData(['currentUser'], null);
+    queryClient.setQueryData(["currentUser"], null);
   };
 
   const isLoading = isCheckingToken || (isUserLoading && !isSuccess);
@@ -61,8 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user: user ?? null,
         isLoading,
         logout,
-      }}
-    >
+      }}>
       {children}
     </AuthContext.Provider>
   );
@@ -71,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
