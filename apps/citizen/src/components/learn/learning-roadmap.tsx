@@ -1,5 +1,5 @@
 import type React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Card } from '@/components/ui/card';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
@@ -7,24 +7,21 @@ import type { LearningGuide } from '@/types';
 
 interface LearningRoadmapProps {
   guides: LearningGuide[];
-  onSelectGuide: (guide: LearningGuide) => void;
 }
 
-export const LearningRoadmap: React.FC<LearningRoadmapProps> = ({ guides, onSelectGuide }) => {
+export const LearningRoadmap: React.FC<LearningRoadmapProps> = ({ guides }) => {
   return (
     <FlatList
       data={guides}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => onSelectGuide(item)}>
-          <Card style={styles.card}>
-            <Text style={styles.title}>{item.name}</Text>
-            <View style={styles.badge}>
-              <View style={[styles.dot, { backgroundColor: WASTE_TYPES[item.category].color }]} />
-              <Text style={styles.categoryText}>{WASTE_TYPES[item.category].label}</Text>
-            </View>
-          </Card>
-        </TouchableOpacity>
+        <Card style={styles.card}>
+          <Text style={styles.title}>{item.name}</Text>
+          <View style={styles.badge}>
+            <View style={[styles.dot, { backgroundColor: WASTE_TYPES[item.category].color }]} />
+            <Text style={styles.categoryText}>{WASTE_TYPES[item.category].label}</Text>
+          </View>
+        </Card>
       )}
       contentContainerStyle={styles.list}
     />
