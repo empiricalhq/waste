@@ -1,30 +1,34 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ErrorState } from '@/components/shared/error-state';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ROUTES } from '@/constants/app-config';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useLogin } from '@/features/auth/hooks/use-login';
 import { loginSchema } from '@/features/auth/schemas';
+import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login, isPending, error } = useLogin();
+  const { isOffline } = useNetworkStatus();
+  const { login, isPending, error, reset } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleLogin = () => {
-    // Clear previous validation errors
+    // Clear previous validation errors and API errors
     setValidationErrors({});
+    reset();
 
     // Validate form data
     const result = loginSchema.safeParse({ email, password });
 
     if (!result.success) {
       const errors: { email?: string; password?: string } = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         const field = err.path[0] as 'email' | 'password';
         errors[field] = err.message;
       });
@@ -38,14 +42,31 @@ export default function LoginScreen() {
         router.replace(ROUTES.HOME);
       },
       onError: (err) => {
-        Alert.alert('Error de Inicio de Sesión', (err as Error).message || 'No se pudo iniciar sesión.');
+        // Error is now handled by ErrorState component
+        console.error('Login error:', err);
       },
     });
   };
 
+  const handleRetry = () => {
+    reset();
+    handleLogin();
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Iniciar Sesión</Text>
+      
+      {error && (
+        <ErrorState
+          error={error}
+          onRetry={handleRetry}
+          isOffline={isOffline}
+          isRetrying={isPending}
+          variant="compact"
+        />
+      )}
+
       <Input
         label="Email"
         placeholder="tu@email.com"
@@ -65,7 +86,6 @@ export default function LoginScreen() {
         autoCapitalize="none"
       />
       {validationErrors.password && <Text style={styles.fieldError}>{validationErrors.password}</Text>}
-      {error && <Text style={styles.error}>{error.message}</Text>}
       <Button title="Entrar" onPress={handleLogin} loading={isPending} disabled={isPending} />
       <Button
         title="Crear cuenta"
@@ -74,13 +94,13 @@ export default function LoginScreen() {
         style={{ marginTop: Spacing.md }}
         disabled={isPending}
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: Spacing.xl,
     backgroundColor: Colors.background,
@@ -91,11 +111,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: Spacing.xxxl,
     color: Colors.text,
-  },
-  error: {
-    color: Colors.error,
-    textAlign: 'center',
-    marginBottom: Spacing.md,
   },
   fieldError: {
     color: Colors.error,

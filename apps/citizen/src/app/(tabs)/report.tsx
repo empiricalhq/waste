@@ -21,7 +21,7 @@ function ReportScreenContent() {
   const { user } = useAuth();
   const { isOffline } = useNetworkStatus();
   const [step, setStep] = useState<ReportStep>('type');
-  const [reportData, setReportData] = useState({ type: '', imageUri: '' });
+  const [reportData, setReportData] = useState({ type: '', imageUri: '', description: '', location: '' });
   const [submitError, setSubmitError] = useState<Error | null>(null);
 
   const { data: reportTypes, isLoading, error, refetch } = useReportTypes();
@@ -34,6 +34,19 @@ function ReportScreenContent() {
       setSubmitError(error);
     },
   });
+
+  const handleRetrySubmit = () => {
+    if (reportData.type && reportData.description && reportData.location) {
+      setSubmitError(null);
+      // Re-submit with current data
+      submitReport({
+        type: reportData.type,
+        description: reportData.description,
+        location: reportData.location,
+        imageUri: reportData.imageUri,
+      });
+    }
+  };
 
   const handleSelectType = (type: string) => {
     setReportData({ ...reportData, type });
@@ -50,11 +63,19 @@ function ReportScreenContent() {
   };
 
   const handleSubmit = (details: { description: string; location: string }) => {
-    submitReport({ ...reportData, ...details });
+    const fullReportData = { ...reportData, ...details };
+    setReportData(fullReportData);
+    submitReport({
+      type: fullReportData.type,
+      description: fullReportData.description,
+      location: fullReportData.location,
+      imageUri: fullReportData.imageUri,
+    });
   };
 
   const resetFlow = () => {
-    setReportData({ type: '', imageUri: '' });
+    setReportData({ type: '', imageUri: '', description: '', location: '' });
+    setSubmitError(null);
     setStep('type');
   };
 
@@ -84,6 +105,16 @@ function ReportScreenContent() {
       case 'camera':
         return <ReportCameraStep onPhotoTaken={handlePhotoTaken} onSkip={handleSkipPhoto} />;
       case 'details':
+        if (submitError) {
+          return (
+            <ErrorState
+              error={submitError}
+              onRetry={handleRetrySubmit}
+              isOffline={isOffline}
+              isRetrying={isPending}
+            />
+          );
+        }
         return (
           <>
             {isOffline && (
@@ -91,11 +122,6 @@ function ReportScreenContent() {
                 <Text style={styles.offlineText}>
                   📱 Sin conexión - Tu reporte se enviará cuando vuelvas a estar en línea
                 </Text>
-              </View>
-            )}
-            {submitError && (
-              <View style={styles.errorNotice}>
-                <Text style={styles.errorText}>⚠️ Error al enviar: {submitError.message}</Text>
               </View>
             )}
             <ReportDetailsStep
@@ -148,16 +174,5 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.sm,
     textAlign: 'center',
   },
-  errorNotice: {
-    backgroundColor: Colors.error,
-    padding: Spacing.md,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.md,
-    borderRadius: 8,
-  },
-  errorText: {
-    color: Colors.textInverse,
-    fontSize: Typography.fontSize.sm,
-    textAlign: 'center',
-  },
+
 });

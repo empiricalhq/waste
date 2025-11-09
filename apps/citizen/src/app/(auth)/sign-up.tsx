@@ -1,24 +1,28 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ErrorState } from '@/components/shared/error-state';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ROUTES } from '@/constants/app-config';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useSignUp } from '@/features/auth/hooks/use-sign-up';
 import { signUpSchema } from '@/features/auth/schemas';
+import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 
 export default function SignUpScreen() {
   const router = useRouter();
-  const { signUp, isPending, error } = useSignUp();
+  const { isOffline } = useNetworkStatus();
+  const { signUp, isPending, error, reset } = useSignUp();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationErrors, setValidationErrors] = useState<{ name?: string; email?: string; password?: string }>({});
 
   const handleSignUp = () => {
-    // Clear previous validation errors
+    // Clear previous validation errors and API errors
     setValidationErrors({});
+    reset();
 
     // Validate form data
     const result = signUpSchema.safeParse({ name, email, password });
@@ -39,14 +43,31 @@ export default function SignUpScreen() {
         router.replace(ROUTES.HOME);
       },
       onError: (err) => {
-        Alert.alert('Error de Registro', (err as Error).message || 'No se pudo crear la cuenta.');
+        // Error is now handled by ErrorState component
+        console.error('Sign up error:', err);
       },
     });
   };
 
+  const handleRetry = () => {
+    reset();
+    handleSignUp();
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Crear Cuenta</Text>
+      
+      {error && (
+        <ErrorState
+          error={error}
+          onRetry={handleRetry}
+          isOffline={isOffline}
+          isRetrying={isPending}
+          variant="compact"
+        />
+      )}
+
       <Input
         label="Nombre"
         placeholder="Tu nombre"
@@ -75,7 +96,6 @@ export default function SignUpScreen() {
         autoCapitalize="none"
       />
       {validationErrors.password && <Text style={styles.fieldError}>{validationErrors.password}</Text>}
-      {error && <Text style={styles.error}>{(error as Error).message}</Text>}
       <Button title="Registrarse" onPress={handleSignUp} loading={isPending} disabled={isPending} />
       <Button
         title="Ya tengo cuenta"
@@ -84,13 +104,13 @@ export default function SignUpScreen() {
         style={{ marginTop: Spacing.md }}
         disabled={isPending}
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: Spacing.xl,
     backgroundColor: Colors.background,
@@ -101,11 +121,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: Spacing.xxxl,
     color: Colors.text,
-  },
-  error: {
-    color: Colors.error,
-    textAlign: 'center',
-    marginBottom: Spacing.md,
   },
   fieldError: {
     color: Colors.error,

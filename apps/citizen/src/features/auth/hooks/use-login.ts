@@ -9,6 +9,7 @@ export const useLogin = () => {
     mutate: login,
     isPending,
     error,
+    reset,
   } = useMutation({
     mutationFn: authService.login,
     onSuccess: (user) => {
@@ -17,5 +18,5 @@ export const useLogin = () => {
     onError: (err) => handleApiError(err),
   });
 
-  return { login, isPending, error };
+  return { login, isPending, error, reset };
 };

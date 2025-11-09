@@ -27,6 +27,7 @@ interface ErrorStateProps {
   errorType?: ErrorType;
   showRetry?: boolean;
   retryLimit?: number;
+  variant?: 'full' | 'compact';
 }
 
 interface ErrorInfo {
@@ -234,6 +235,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   errorType,
   showRetry = true,
   retryLimit = 3,
+  variant = 'full',
 }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [isLocalRetrying, setIsLocalRetrying] = useState(false);
@@ -265,6 +267,35 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 
   const canRetry = errorInfo.actionable && onRetry && showRetry && retryCount < retryLimit;
   const retrying = isRetrying || isLocalRetrying;
+
+  if (variant === 'compact') {
+    return (
+      <View style={styles.compactContainer}>
+        <View style={styles.compactContent}>
+          <View style={styles.compactIconContainer}>{errorInfo.icon}</View>
+          <View style={styles.compactTextContainer}>
+            <Text style={styles.compactTitle}>{customTitle || errorInfo.title}</Text>
+            <Text style={styles.compactMessage}>{customMessage || errorInfo.message}</Text>
+          </View>
+        </View>
+        {canRetry && (
+          <Button
+            title={retrying ? 'Reintentando...' : 'Reintentar'}
+            onPress={handleRetry}
+            loading={retrying}
+            variant="outline"
+            style={styles.compactRetryButton}
+            icon={<RefreshCw size={16} color={Colors.primary} />}
+          />
+        )}
+        {retryCount >= retryLimit && (
+          <Text style={styles.compactRetryLimitText}>
+            Límite de reintentos alcanzado. Por favor, intenta más tarde.
+          </Text>
+        )}
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -362,5 +393,44 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xs,
     color: Colors.textSecondary,
     fontFamily: 'monospace',
+  },
+  compactContainer: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 8,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.lg,
+    marginVertical: Spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.error,
+  },
+  compactContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.md,
+  },
+  compactIconContainer: {
+    marginRight: Spacing.md,
+  },
+  compactTextContainer: {
+    flex: 1,
+  },
+  compactTitle: {
+    fontSize: Typography.fontSize.base,
+    fontWeight: Typography.fontWeight.semibold,
+    color: Colors.text,
+    marginBottom: Spacing.xs,
+  },
+  compactMessage: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  compactRetryButton: {
+    alignSelf: 'flex-start',
+  },
+  compactRetryLimitText: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.error,
+    marginTop: Spacing.sm,
   },
 });
