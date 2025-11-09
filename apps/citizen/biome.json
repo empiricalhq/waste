@@ -1,0 +1,19 @@
+{
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "domains": {
+      "react": "all",
+      "solid": "none"
+    },
+    "rules": {
+      "style": {
+        "noDefaultExport": "off",
+        "useComponentExportOnlyModules": "off"
+      },
+      "suspicious": {
+        "noConsole": "off"
+      }
+    }
+  }
+}
