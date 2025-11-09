@@ -1,5 +1,5 @@
-import type React from 'react';
 import { Image as ExpoImage, type ImageProps as ExpoImageProps } from 'expo-image';
+import type React from 'react';
 import { useConnectionType } from '@/lib/hooks/use-connection-type';
 
 interface OptimizedImageProps extends ExpoImageProps {
@@ -37,10 +37,10 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     // This assumes the API supports size parameters
     // Adjust the parameter format based on your API
     const sizeParam = maxSizeOnCellular === 'thumbnail' ? 'w=200' : 'w=500';
-    
+
     // Check if URI already has query parameters
     const separator = uri.includes('?') ? '&' : '?';
-    
+
     return {
       ...source,
       uri: `${uri}${separator}${sizeParam}`,

@@ -1,9 +1,9 @@
+import { AlertCircle, Clock, SearchX, ServerCrash, WifiOff } from 'lucide-react-native';
 import type React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { AlertCircle, Clock, SearchX, ServerCrash, WifiOff } from 'lucide-react-native';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { AppError } from '@/lib/utils/error-handler';
 import { Button } from '@/components/ui/button';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { AppError } from '@/lib/utils/error-handler';
 
 interface ErrorStateProps {
   error: Error | null;
@@ -107,14 +107,10 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>{errorInfo.icon}</View>
-      
-      <Text style={styles.title}>
-        {customTitle || errorInfo.title}
-      </Text>
-      
-      <Text style={styles.message}>
-        {customMessage || errorInfo.message}
-      </Text>
+
+      <Text style={styles.title}>{customTitle || errorInfo.title}</Text>
+
+      <Text style={styles.message}>{customMessage || errorInfo.message}</Text>
 
       {errorInfo.actionable && onRetry && (
         <Button

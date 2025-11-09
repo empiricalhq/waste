@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useNetworkStatus } from './use-network-status';
+import { useEffect, useState } from 'react';
 import { mutationQueue } from '@/lib/offline/mutation-queue';
+import { useNetworkStatus } from './use-network-status';
 
 interface ConnectionRecoveryState {
   isRecovering: boolean;
@@ -24,25 +24,17 @@ export const useConnectionRecovery = () => {
 
     // Update wasOffline state
     setState((prev) => ({ ...prev, wasOffline: isOffline }));
-  }, [isOffline]);
+  }, [isOffline, handleConnectionRecovery, state.wasOffline]);
 
   const handleConnectionRecovery = async () => {
     try {
       setState((prev) => ({ ...prev, isRecovering: true }));
-
-      console.log('Connection restored, refetching queries');
-
-      // Show brief notification
-      // Note: In a real app, you'd use a toast library here
-      // For now, we'll just log it
-      console.log('Conexión restaurada');
 
       // Retry queued mutations
       // Note: The actual mutation execution will be handled by individual mutation hooks
       // This is just a placeholder for now
       const queueCount = mutationQueue.getCount();
       if (queueCount > 0) {
-        console.log(`${queueCount} mutations queued for retry`);
       }
 
       // Refetch all stale queries
@@ -52,8 +44,7 @@ export const useConnectionRecovery = () => {
       });
 
       setState((prev) => ({ ...prev, isRecovering: false }));
-    } catch (error) {
-      console.error('Error during connection recovery:', error);
+    } catch (_error) {
       setState((prev) => ({ ...prev, isRecovering: false }));
     }
   };

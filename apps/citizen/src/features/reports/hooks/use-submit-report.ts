@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { reportService } from '../services/report-service';
-import type { Report } from '@/types';
 import { mutationQueue } from '@/lib/offline/mutation-queue';
 import { AppError } from '@/lib/utils/error-handler';
+import type { Report } from '@/types';
+import { reportService } from '../services/report-service';
 
 interface UseSubmitReportOptions {
   onSuccess?: () => void;
@@ -39,12 +39,7 @@ export const useSubmitReport = (options?: UseSubmitReportOptions) => {
       };
 
       // Optimistically update the cache
-      queryClient.setQueryData<Report[]>(['reports'], (old = []) => [
-        optimisticReport,
-        ...old,
-      ]);
-
-      console.log('Optimistic report added:', optimisticReport.id);
+      queryClient.setQueryData<Report[]>(['reports'], (old = []) => [optimisticReport, ...old]);
 
       // Return context for rollback
       return { previousReports, optimisticReport };
@@ -52,12 +47,9 @@ export const useSubmitReport = (options?: UseSubmitReportOptions) => {
 
     // On error - rollback optimistic update
     onError: (error, variables, context) => {
-      console.error('Report submission failed:', error);
-
       // Rollback to previous state
       if (context?.previousReports) {
         queryClient.setQueryData(['reports'], context.previousReports);
-        console.log('Rolled back optimistic update');
       }
 
       // Queue mutation for retry if it's a network error
@@ -67,7 +59,6 @@ export const useSubmitReport = (options?: UseSubmitReportOptions) => {
           variables,
           maxRetries: 3,
         });
-        console.log('Report queued for retry when online');
       }
 
       // Call custom error handler
@@ -75,14 +66,10 @@ export const useSubmitReport = (options?: UseSubmitReportOptions) => {
     },
 
     // On success - replace optimistic update with real data
-    onSuccess: (data, variables, context) => {
-      console.log('Report submitted successfully:', data.id);
-
+    onSuccess: (data, _variables, context) => {
       // Replace optimistic report with real data
       queryClient.setQueryData<Report[]>(['reports'], (old = []) =>
-        old.map((report) =>
-          report.id === context?.optimisticReport.id ? data : report
-        )
+        old.map((report) => (report.id === context?.optimisticReport.id ? data : report)),
       );
 
       // Call custom success handler

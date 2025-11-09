@@ -6,7 +6,7 @@ import type { UseQueryOptions } from '@tanstack/react-query';
  */
 export const getAdaptiveQueryOptions = (
   isWifi: boolean,
-  baseOptions?: Partial<UseQueryOptions>
+  baseOptions?: Partial<UseQueryOptions>,
 ): Partial<UseQueryOptions> => {
   if (isWifi) {
     // On WiFi, use default aggressive refetching

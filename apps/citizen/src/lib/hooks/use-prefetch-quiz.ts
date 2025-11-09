@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useConnectionType } from './use-connection-type';
+import { useEffect } from 'react';
 import { learningService } from '@/features/learning/services/learning-service';
+import { useConnectionType } from './use-connection-type';
 
 /**
  * Hook to prefetch quiz questions on WiFi only
@@ -14,8 +14,6 @@ export const usePrefetchQuiz = () => {
   useEffect(() => {
     // Only prefetch on WiFi
     if (isWifi) {
-      console.log('Prefetching quiz questions on WiFi');
-      
       queryClient.prefetchQuery({
         queryKey: ['quizQuestions'],
         queryFn: learningService.getQuizQuestions,

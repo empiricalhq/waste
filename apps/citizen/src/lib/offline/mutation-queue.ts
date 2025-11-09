@@ -26,8 +26,6 @@ class MutationQueue {
 
     this.queue.push(queuedMutation);
     await this.persist();
-    
-    console.log(`Mutation queued: ${queuedMutation.id}`, queuedMutation.mutationKey);
   }
 
   /**
@@ -36,8 +34,6 @@ class MutationQueue {
   async remove(id: string): Promise<void> {
     this.queue = this.queue.filter((m) => m.id !== id);
     await this.persist();
-    
-    console.log(`Mutation removed from queue: ${id}`);
   }
 
   /**
@@ -45,22 +41,17 @@ class MutationQueue {
    */
   async retryAll(mutationFn: (mutation: QueuedMutation) => Promise<void>): Promise<void> {
     const mutations = [...this.queue];
-    
-    console.log(`Retrying ${mutations.length} queued mutations`);
 
     for (const mutation of mutations) {
       try {
         await mutationFn(mutation);
         await this.remove(mutation.id);
-        console.log(`Mutation succeeded: ${mutation.id}`);
-      } catch (error) {
+      } catch (_error) {
         mutation.retryCount++;
-        console.error(`Mutation failed (attempt ${mutation.retryCount}/${mutation.maxRetries}):`, error);
 
         // Remove after max retries
         if (mutation.retryCount >= mutation.maxRetries) {
           await this.remove(mutation.id);
-          console.error(`Mutation permanently failed after ${mutation.maxRetries} retries:`, mutation.id);
         } else {
           // Update retry count
           await this.persist();
@@ -89,7 +80,6 @@ class MutationQueue {
   async clear(): Promise<void> {
     this.queue = [];
     await this.persist();
-    console.log('Mutation queue cleared');
   }
 
   /**
@@ -98,9 +88,7 @@ class MutationQueue {
   private async persist(): Promise<void> {
     try {
       await AsyncStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.queue));
-    } catch (error) {
-      console.error('Failed to persist mutation queue:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -111,10 +99,8 @@ class MutationQueue {
       const stored = await AsyncStorage.getItem(this.STORAGE_KEY);
       if (stored) {
         this.queue = JSON.parse(stored);
-        console.log(`Mutation queue hydrated: ${this.queue.length} mutations`);
       }
-    } catch (error) {
-      console.error('Failed to hydrate mutation queue:', error);
+    } catch (_error) {
       this.queue = [];
     }
   }

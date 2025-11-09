@@ -18,9 +18,9 @@ export const useMutationQueue = () => {
       await mutationQueue.hydrate();
       updateState();
     };
-    
+
     loadQueue();
-  }, []);
+  }, [updateState]);
 
   const updateState = () => {
     setState({

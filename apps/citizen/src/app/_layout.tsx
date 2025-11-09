@@ -1,7 +1,7 @@
-import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -10,8 +10,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ErrorBoundary } from '@/components/shared/error-boundary';
 import { OfflineBanner } from '@/components/shared/offline-banner';
 import { AuthProvider, useAuth } from '@/features/auth/hooks/use-auth';
-import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 import { useConnectionRecovery } from '@/lib/hooks/use-connection-recovery';
+import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 import { AppError } from '@/lib/utils/error-handler';
 
 const APP_VERSION = '1.0.0';
@@ -31,12 +31,12 @@ const queryClient = new QueryClient({
         // Retry up to 3 times for network errors and server errors
         return failureCount < 3;
       },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 1s, 2s, 4s, max 30s
-      
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000), // 1s, 2s, 4s, max 30s
+
       // Cache configuration
       staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
       gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
-      
+
       // Offline behavior
       networkMode: 'offlineFirst', // Use cache when offline
       refetchOnReconnect: true, // Auto-refetch when connection restored
@@ -62,7 +62,7 @@ function RootLayoutNav() {
   const router = useRouter();
   const segments = useSegments();
   const queryClient = useQueryClient();
-  
+
   // Enable connection recovery
   useConnectionRecovery();
 
@@ -112,12 +112,7 @@ function RootLayoutNav() {
         <Stack.Screen name="privacy" />
         <Stack.Screen name="terms" />
       </Stack>
-      {isOffline && (
-        <OfflineBanner 
-          isVisible={isOffline}
-          onRetry={handleRetry}
-        />
-      )}
+      {isOffline && <OfflineBanner isVisible={isOffline} onRetry={handleRetry} />}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { Header } from '@/components/shared/header';
 import { ErrorState } from '@/components/shared/error-state';
+import { Header } from '@/components/shared/header';
 import { ListSkeleton } from '@/components/shared/loading-skeleton';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -43,18 +43,12 @@ export default function ScheduleScreen() {
           <ListSkeleton count={5} />
         </View>
       ) : error ? (
-        <ErrorState
-          error={error}
-          onRetry={refetch}
-          isOffline={isOffline}
-        />
+        <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
       ) : (
         <>
           {isDataOld && (
             <View style={styles.warningBanner}>
-              <Text style={styles.warningText}>
-                ⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.
-              </Text>
+              <Text style={styles.warningText}>⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.</Text>
             </View>
           )}
           {dataUpdatedAt && (

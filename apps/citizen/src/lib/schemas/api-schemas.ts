@@ -86,7 +86,6 @@ export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T
     return schema.parse(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('API Response Validation Error:', error.errors);
       throw new Error(`Invalid API response: ${error.errors.map((e) => e.message).join(', ')}`);
     }
     throw error;
@@ -102,6 +101,5 @@ export function safeValidateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown
   if (result.success) {
     return result.data;
   }
-  console.error('API Response Validation Error:', result.error.errors);
   return null;
 }

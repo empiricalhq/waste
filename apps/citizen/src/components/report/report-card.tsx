@@ -1,6 +1,6 @@
+import { Clock } from 'lucide-react-native';
 import type React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Clock } from 'lucide-react-native';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import type { Report } from '@/types';
 
@@ -9,7 +9,7 @@ interface ReportCardProps {
 }
 
 export const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
-  const isPending = report.status === 'pending';
+  const _isPending = report.status === 'pending';
   const isOptimistic = report.id.startsWith('temp-');
 
   const getStatusColor = () => {

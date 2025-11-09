@@ -1,4 +1,5 @@
 import type React from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -7,7 +8,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { useEffect } from 'react';
 import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
 
 interface CardSkeletonProps {
@@ -25,12 +25,9 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({ animated = true }) =
   useEffect(() => {
     if (animated) {
       opacity.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 800 }),
-          withTiming(0.5, { duration: 800 })
-        ),
+        withSequence(withTiming(1, { duration: 800 }), withTiming(0.5, { duration: 800 })),
         -1, // Infinite repeat
-        false
+        false,
       );
     }
   }, [animated, opacity]);

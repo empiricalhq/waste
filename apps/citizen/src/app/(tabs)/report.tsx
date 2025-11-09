@@ -77,13 +77,7 @@ export default function ReportScreen() {
           );
         }
         if (error) {
-          return (
-            <ErrorState
-              error={error}
-              onRetry={refetch}
-              isOffline={isOffline}
-            />
-          );
+          return <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />;
         }
         return <ReportTypeStep reportTypes={reportTypes || []} onSelectType={handleSelectType} />;
       case 'camera':
@@ -100,9 +94,7 @@ export default function ReportScreen() {
             )}
             {submitError && (
               <View style={styles.errorNotice}>
-                <Text style={styles.errorText}>
-                  ⚠️ Error al enviar: {submitError.message}
-                </Text>
+                <Text style={styles.errorText}>⚠️ Error al enviar: {submitError.message}</Text>
               </View>
             )}
             <ReportDetailsStep

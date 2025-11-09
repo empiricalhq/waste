@@ -1,14 +1,14 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Spacing } from '@/constants/design-tokens';
 import { LearningRoadmap } from '@/components/learn/learning-roadmap';
 import { QuizView } from '@/components/learn/quiz-view';
-import { Header } from '@/components/shared/header';
 import { ErrorState } from '@/components/shared/error-state';
+import { Header } from '@/components/shared/header';
 import { ListSkeleton } from '@/components/shared/loading-skeleton';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/app-config';
+import { Spacing } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useLearningGuides } from '@/features/learning/hooks/use-learning-guides';
 import { useQuiz } from '@/features/learning/hooks/use-quiz';
@@ -22,18 +22,8 @@ export default function LearnScreen() {
   const [mode, setMode] = useState<'roadmap' | 'quiz' | 'guide'>('roadmap');
   // const [selectedGuide, setSelectedGuide] = useState<LearningGuide | null>(null);
 
-  const {
-    data: guides,
-    isLoading: isLoadingGuides,
-    error: guidesError,
-    refetch: refetchGuides,
-  } = useLearningGuides();
-  const {
-    data: questions,
-    isLoading: isLoadingQuiz,
-    error: quizError,
-    refetch: refetchQuiz,
-  } = useQuiz();
+  const { data: guides, isLoading: isLoadingGuides, error: guidesError, refetch: refetchGuides } = useLearningGuides();
+  const { data: questions, isLoading: isLoadingQuiz, error: quizError, refetch: refetchQuiz } = useQuiz();
   const { mutate: updateUserProgress } = useUpdateUserProgress();
 
   const isLoading = isLoadingGuides || isLoadingQuiz;
@@ -69,13 +59,7 @@ export default function LearnScreen() {
     }
 
     if (hasError) {
-      return (
-        <ErrorState
-          error={guidesError || quizError}
-          onRetry={handleRetry}
-          isOffline={isOffline}
-        />
-      );
+      return <ErrorState error={guidesError || quizError} onRetry={handleRetry} isOffline={isOffline} />;
     }
 
     switch (mode) {

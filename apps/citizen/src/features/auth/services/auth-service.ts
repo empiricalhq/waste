@@ -116,7 +116,7 @@ export const authService = {
     }
 
     const rawResponse = await makeAuthRequest<unknown>('/api/auth/get-session', {}, token);
-    
+
     // Validate response - just need the user object
     const validated = validateApiResponse(UserSchema, (rawResponse as any).user);
     return validated;
