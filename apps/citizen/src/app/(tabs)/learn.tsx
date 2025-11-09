@@ -10,12 +10,13 @@ import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/app-config';
 import { Spacing } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
+import { LearningFeatureWrapper } from '@/features/learning/components/learning-feature-wrapper';
 import { useLearningGuides } from '@/features/learning/hooks/use-learning-guides';
 import { useQuiz } from '@/features/learning/hooks/use-quiz';
 import { useUpdateUserProgress } from '@/features/learning/hooks/use-user-progress';
 import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 
-export default function LearnScreen() {
+function LearnScreenContent() {
   const { user } = useAuth();
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
@@ -83,6 +84,14 @@ export default function LearnScreen() {
       <Header title="Aprender a reciclar" />
       {renderContent()}
     </View>
+  );
+}
+
+export default function LearnScreen() {
+  return (
+    <LearningFeatureWrapper>
+      <LearnScreenContent />
+    </LearningFeatureWrapper>
   );
 }
 

@@ -10,13 +10,14 @@ import { Header } from '@/components/shared/header';
 import { ListSkeleton } from '@/components/shared/loading-skeleton';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
+import { ReportFeatureWrapper } from '@/features/reports/components/report-feature-wrapper';
 import { useReportTypes } from '@/features/reports/hooks/use-reports';
 import { useSubmitReport } from '@/features/reports/hooks/use-submit-report';
 import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 
 type ReportStep = 'type' | 'camera' | 'details' | 'success';
 
-export default function ReportScreen() {
+function ReportScreenContent() {
   const { user } = useAuth();
   const { isOffline } = useNetworkStatus();
   const [step, setStep] = useState<ReportStep>('type');
@@ -117,6 +118,14 @@ export default function ReportScreen() {
       <Header title="Reportar un problema" />
       {renderContent()}
     </View>
+  );
+}
+
+export default function ReportScreen() {
+  return (
+    <ReportFeatureWrapper>
+      <ReportScreenContent />
+    </ReportFeatureWrapper>
   );
 }
 

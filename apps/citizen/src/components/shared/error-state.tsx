@@ -1,9 +1,21 @@
-import { AlertCircle, Clock, SearchX, ServerCrash, WifiOff } from 'lucide-react-native';
+import { AlertCircle, Clock, RefreshCw, SearchX, ServerCrash, ShieldAlert, WifiOff } from 'lucide-react-native';
 import type React from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/button';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { AppError } from '@/lib/utils/error-handler';
+import { logError } from '@/lib/utils/error-logger';
+
+export type ErrorType = 
+  | 'network'
+  | 'timeout'
+  | 'server'
+  | 'not-found'
+  | 'unauthorized'
+  | 'forbidden'
+  | 'validation'
+  | 'unknown';
 
 interface ErrorStateProps {
   error: Error | null;
@@ -12,6 +24,9 @@ interface ErrorStateProps {
   isRetrying?: boolean;
   title?: string;
   message?: string;
+  errorType?: ErrorType;
+  showRetry?: boolean;
+  retryLimit?: number;
 }
 
 interface ErrorInfo {
@@ -19,9 +34,10 @@ interface ErrorInfo {
   title: string;
   message: string;
   actionable: boolean;
+  type: ErrorType;
 }
 
-const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
+const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: ErrorType): ErrorInfo => {
   // Offline state
   if (isOffline) {
     return {
@@ -29,6 +45,7 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
       title: 'Sin conexión',
       message: 'Verifica tu conexión a internet e intenta de nuevo.',
       actionable: true,
+      type: 'network',
     };
   }
 
@@ -39,7 +56,13 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
       title: 'Algo salió mal',
       message: 'Ocurrió un error inesperado.',
       actionable: true,
+      type: 'unknown',
     };
+  }
+
+  // Use explicit error type if provided
+  if (errorType) {
+    return getErrorInfoByType(errorType, error.message);
   }
 
   // AppError with specific status codes
@@ -51,6 +74,7 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
         title: 'Tiempo agotado',
         message: 'La solicitud tardó demasiado. Intenta de nuevo.',
         actionable: true,
+        type: 'timeout',
       };
     }
 
@@ -61,6 +85,29 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
         title: 'Error del servidor',
         message: 'Estamos teniendo problemas. Intenta en unos minutos.',
         actionable: true,
+        type: 'server',
+      };
+    }
+
+    // Unauthorized (401)
+    if (error.statusCode === 401) {
+      return {
+        icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
+        title: 'No autorizado',
+        message: 'Tu sesión expiró. Por favor, inicia sesión de nuevo.',
+        actionable: false,
+        type: 'unauthorized',
+      };
+    }
+
+    // Forbidden (403)
+    if (error.statusCode === 403) {
+      return {
+        icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
+        title: 'Acceso denegado',
+        message: 'No tienes permiso para acceder a este recurso.',
+        actionable: false,
+        type: 'forbidden',
       };
     }
 
@@ -71,6 +118,18 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
         title: 'No encontrado',
         message: 'No pudimos encontrar lo que buscas.',
         actionable: false,
+        type: 'not-found',
+      };
+    }
+
+    // Validation errors (400)
+    if (error.statusCode === 400) {
+      return {
+        icon: <AlertCircle size={48} color={Colors.textSecondary} />,
+        title: 'Datos inválidos',
+        message: error.message || 'Por favor, verifica los datos e intenta de nuevo.',
+        actionable: false,
+        type: 'validation',
       };
     }
 
@@ -81,6 +140,7 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
         title: 'Sin conexión',
         message: 'Verifica tu conexión a internet e intenta de nuevo.',
         actionable: true,
+        type: 'network',
       };
     }
   }
@@ -91,7 +151,77 @@ const getErrorInfo = (error: Error | null, isOffline: boolean): ErrorInfo => {
     title: 'Algo salió mal',
     message: error.message || 'Ocurrió un error inesperado.',
     actionable: true,
+    type: 'unknown',
   };
+};
+
+const getErrorInfoByType = (type: ErrorType, message?: string): ErrorInfo => {
+  switch (type) {
+    case 'network':
+      return {
+        icon: <WifiOff size={48} color={Colors.textSecondary} />,
+        title: 'Sin conexión',
+        message: message || 'Verifica tu conexión a internet e intenta de nuevo.',
+        actionable: true,
+        type: 'network',
+      };
+    case 'timeout':
+      return {
+        icon: <Clock size={48} color={Colors.textSecondary} />,
+        title: 'Tiempo agotado',
+        message: message || 'La solicitud tardó demasiado. Intenta de nuevo.',
+        actionable: true,
+        type: 'timeout',
+      };
+    case 'server':
+      return {
+        icon: <ServerCrash size={48} color={Colors.textSecondary} />,
+        title: 'Error del servidor',
+        message: message || 'Estamos teniendo problemas. Intenta en unos minutos.',
+        actionable: true,
+        type: 'server',
+      };
+    case 'not-found':
+      return {
+        icon: <SearchX size={48} color={Colors.textSecondary} />,
+        title: 'No encontrado',
+        message: message || 'No pudimos encontrar lo que buscas.',
+        actionable: false,
+        type: 'not-found',
+      };
+    case 'unauthorized':
+      return {
+        icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
+        title: 'No autorizado',
+        message: message || 'Tu sesión expiró. Por favor, inicia sesión de nuevo.',
+        actionable: false,
+        type: 'unauthorized',
+      };
+    case 'forbidden':
+      return {
+        icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
+        title: 'Acceso denegado',
+        message: message || 'No tienes permiso para acceder a este recurso.',
+        actionable: false,
+        type: 'forbidden',
+      };
+    case 'validation':
+      return {
+        icon: <AlertCircle size={48} color={Colors.textSecondary} />,
+        title: 'Datos inválidos',
+        message: message || 'Por favor, verifica los datos e intenta de nuevo.',
+        actionable: false,
+        type: 'validation',
+      };
+    default:
+      return {
+        icon: <AlertCircle size={48} color={Colors.textSecondary} />,
+        title: 'Algo salió mal',
+        message: message || 'Ocurrió un error inesperado.',
+        actionable: true,
+        type: 'unknown',
+      };
+  }
 };
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
@@ -101,8 +231,40 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   isRetrying = false,
   title: customTitle,
   message: customMessage,
+  errorType,
+  showRetry = true,
+  retryLimit = 3,
 }) => {
-  const errorInfo = getErrorInfo(error, isOffline);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isLocalRetrying, setIsLocalRetrying] = useState(false);
+
+  const errorInfo = getErrorInfo(error, isOffline, errorType);
+
+  // Log error for tracking
+  if (error && !isOffline) {
+    logError(error, {
+      errorType: errorInfo.type,
+      retryCount,
+    });
+  }
+
+  const handleRetry = useCallback(async () => {
+    if (!onRetry || retryCount >= retryLimit) {
+      return;
+    }
+
+    setIsLocalRetrying(true);
+    setRetryCount((prev) => prev + 1);
+
+    try {
+      await onRetry();
+    } finally {
+      setIsLocalRetrying(false);
+    }
+  }, [onRetry, retryCount, retryLimit]);
+
+  const canRetry = errorInfo.actionable && onRetry && showRetry && retryCount < retryLimit;
+  const retrying = isRetrying || isLocalRetrying;
 
   return (
     <View style={styles.container}>
@@ -112,14 +274,35 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 
       <Text style={styles.message}>{customMessage || errorInfo.message}</Text>
 
-      {errorInfo.actionable && onRetry && (
-        <Button
-          title={isRetrying ? 'Reintentando...' : 'Reintentar'}
-          onPress={onRetry}
-          loading={isRetrying}
-          variant="outline"
-          style={styles.retryButton}
-        />
+      {canRetry && (
+        <View style={styles.retryContainer}>
+          <Button
+            title={retrying ? 'Reintentando...' : 'Reintentar'}
+            onPress={handleRetry}
+            loading={retrying}
+            variant="outline"
+            style={styles.retryButton}
+            icon={<RefreshCw size={18} color={Colors.primary} />}
+          />
+          {retryCount > 0 && retryCount < retryLimit && (
+            <Text style={styles.retryCount}>
+              Intento {retryCount} de {retryLimit}
+            </Text>
+          )}
+          {retryCount >= retryLimit && (
+            <Text style={styles.retryLimitText}>
+              Límite de reintentos alcanzado. Por favor, intenta más tarde.
+            </Text>
+          )}
+        </View>
+      )}
+
+      {__DEV__ && error && (
+        <View style={styles.debugInfo}>
+          <Text style={styles.debugText}>
+            Debug: {error.name} - {error.message}
+          </Text>
+        </View>
       )}
     </View>
   );
@@ -149,7 +332,35 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     lineHeight: 22,
   },
+  retryContainer: {
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
   retryButton: {
     minWidth: 140,
+  },
+  retryCount: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
+  },
+  retryLimitText: {
+    fontSize: Typography.fontSize.sm,
+    color: Colors.error,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  debugInfo: {
+    marginTop: Spacing.xl,
+    padding: Spacing.md,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 8,
+    maxWidth: '100%',
+  },
+  debugText: {
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+    fontFamily: 'monospace',
   },
 });
