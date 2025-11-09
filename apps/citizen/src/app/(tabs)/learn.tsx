@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import { Spacing } from '@/constants/design-tokens';
 import { LearningRoadmap } from '@/components/learn/learning-roadmap';
 import { QuizView } from '@/components/learn/quiz-view';
 import { Header } from '@/components/shared/header';
@@ -67,6 +68,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quizButton: {
-    margin: 16,
+    margin: Spacing.lg,
   },
 });

@@ -1,9 +1,16 @@
 import type React from 'react';
 import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
 import { ANIMATION_DURATIONS } from '@/constants/animations';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { Colors, Shadows, Spacing, Typography } from '@/constants/design-tokens';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 
 interface SuccessCelebrationProps {
@@ -48,6 +55,13 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
         duration: 500,
       }),
     );
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(translateY);
+      cancelAnimation(rotate);
+      cancelAnimation(opacity);
+    };
   }, [delay, reducedMotion, opacity, rotate, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -81,6 +95,12 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible,
       opacity.value = 0;
       translateY.value = 20;
     }
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(opacity);
+      cancelAnimation(translateY);
+    };
   }, [visible, reducedMotion, opacity, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -134,11 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    ...Shadows.md,
   },
   message: {
     fontSize: Typography.fontSize.xxl,

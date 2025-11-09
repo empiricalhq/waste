@@ -2,6 +2,7 @@ import type React from 'react';
 import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
+  cancelAnimation,
   Easing,
   useAnimatedProps,
   useAnimatedStyle,
@@ -73,6 +74,15 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
         );
       }
     }
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(displayScore);
+      cancelAnimation(opacity);
+      cancelAnimation(translateY);
+      cancelAnimation(scale);
+      cancelAnimation(confettiOpacity);
+    };
   }, [
     score,
     percentage,
@@ -191,6 +201,13 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
         duration: 500,
       }),
     );
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(translateY);
+      cancelAnimation(rotate);
+      cancelAnimation(opacity);
+    };
   }, [delay, opacity, rotate, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({

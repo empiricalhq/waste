@@ -3,6 +3,7 @@ import type React from 'react';
 import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Animated, {
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -66,6 +67,12 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
         );
       }
     }
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(translateY);
+      cancelAnimation(opacity);
+    };
   }, [isVisible, index, reducedMotion, opacity, translateY]);
 
   // Answer feedback animations

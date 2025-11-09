@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { AnimatedOption } from '@/components/learn/animated-option';
 import { AnimatedProgressBar } from '@/components/learn/animated-progress-bar';
 import { AnimatedResultsScreen } from '@/components/learn/animated-results-screen';
@@ -64,6 +64,13 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
         easing: EASING.OUT_CUBIC,
       });
     }
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(translateX);
+      cancelAnimation(opacity);
+      cancelAnimation(imageScale);
+    };
   }, [reducedMotion, imageScale, opacity, translateX]);
 
   const handleAnswer = (answer: string) => {
@@ -149,6 +156,12 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
       nextButtonTranslateY.value = 50;
       nextButtonOpacity.value = 0;
     }
+
+    // Cleanup animations on unmount
+    return () => {
+      cancelAnimation(nextButtonTranslateY);
+      cancelAnimation(nextButtonOpacity);
+    };
   }, [isAnswered, reducedMotion, nextButtonOpacity, nextButtonTranslateY]);
 
   const nextButtonStyle = useAnimatedStyle(() => ({
