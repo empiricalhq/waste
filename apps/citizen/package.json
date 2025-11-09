@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
-    "@nkzw/create-context-hook": "^1.1.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@tanstack/query-async-storage-persister": "^5.90.9",
@@ -41,7 +40,6 @@
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-svg": "15.12.1",
-    "react-native-worklets": "0.5.1",
     "zod": "^4.1.12",
     "zustand": "^5.0.8"
   },
