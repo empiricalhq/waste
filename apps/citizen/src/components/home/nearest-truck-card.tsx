@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AnimatedCard } from '@/components/ui/animated-card';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
@@ -10,7 +10,7 @@ interface NearestTruckCardProps {
   index?: number;
 }
 
-export const NearestTruckCard: React.FC<NearestTruckCardProps> = ({ truck, index = 1 }) => {
+export const NearestTruckCard = React.memo<NearestTruckCardProps>(({ truck, index = 1 }) => {
   const wasteInfo = WASTE_TYPES[truck.type];
   return (
     <AnimatedCard index={index}>
@@ -73,3 +73,5 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 });
+
+

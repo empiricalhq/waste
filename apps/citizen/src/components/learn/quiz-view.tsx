@@ -7,7 +7,7 @@ import { AnimatedProgressBar } from '@/components/learn/animated-progress-bar';
 import { AnimatedResultsScreen } from '@/components/learn/animated-results-screen';
 import { SuccessCelebration } from '@/components/learn/success-celebration';
 import { Button } from '@/components/ui/button';
-import { OptimizedImage } from '@/components/ui/optimized-image';
+import { OptimizedImage } from '@/components/shared/optimized-image';
 import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';

@@ -1,12 +1,15 @@
 import type React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, type TouchableOpacityProps } from 'react-native';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { hapticSelection } from '@/lib/utils/haptics';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link' | 'text';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }
@@ -17,9 +20,12 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   loading = false,
   disabled,
+  icon,
+  iconPosition = 'left',
   style,
   accessibilityLabel,
   accessibilityHint,
+  onPress,
   ...props
 }) => {
   const containerStyle = [
@@ -38,10 +44,37 @@ export const Button: React.FC<ButtonProps> = ({
       case 'danger':
         return Colors.textInverse;
       case 'ghost':
+      case 'link':
+      case 'text':
         return Colors.primary;
       default:
         return Colors.text;
     }
+  };
+
+  const handlePress = (event: any) => {
+    if (!disabled && !loading) {
+      hapticSelection();
+      onPress?.(event);
+    }
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return <ActivityIndicator color={getLoaderColor()} />;
+    }
+
+    if (icon) {
+      return (
+        <View style={styles.contentWithIcon}>
+          {iconPosition === 'left' && icon}
+          <Text style={textStyle}>{title}</Text>
+          {iconPosition === 'right' && icon}
+        </View>
+      );
+    }
+
+    return <Text style={textStyle}>{title}</Text>;
   };
 
   return (
@@ -54,9 +87,10 @@ export const Button: React.FC<ButtonProps> = ({
       accessibilityLabel={accessibilityLabel || title}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
+      onPress={handlePress}
       {...props}
     >
-      {loading ? <ActivityIndicator color={getLoaderColor()} /> : <Text style={textStyle}>{title}</Text>}
+      {renderContent()}
     </TouchableOpacity>
   );
 };
@@ -128,6 +162,24 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     color: Colors.textInverse,
+  },
+  linkContainer: {
+    backgroundColor: 'transparent',
+  },
+  linkText: {
+    color: Colors.primary,
+    textDecorationLine: 'underline',
+  },
+  textContainer: {
+    backgroundColor: 'transparent',
+  },
+  textText: {
+    color: Colors.primary,
+  },
+  contentWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
   },
   disabled: {
     opacity: 0.6,

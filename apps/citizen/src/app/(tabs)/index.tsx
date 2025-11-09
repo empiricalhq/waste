@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { NearestTruckCard } from '@/components/home/nearest-truck-card';
 import { NextCollectionCard } from '@/components/home/next-collection-card';
@@ -27,10 +28,22 @@ export default function HomeScreen() {
   const isLoading = isLoadingCollections || isLoadingTrucks;
   const hasError = collectionsError || trucksError;
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     refetchCollections();
     refetchTrucks();
-  };
+  }, [refetchCollections, refetchTrucks]);
+
+  const handleSchedulePress = useCallback(() => {
+    router.push(ROUTES.SCHEDULE);
+  }, [router]);
+
+  const handleMapPress = useCallback(() => {
+    router.push(ROUTES.TRUCK_MAP);
+  }, [router]);
+
+  const handleHelpPress = useCallback(() => {
+    router.push(ROUTES.HELP);
+  }, [router]);
 
   return (
     <View style={styles.container}>
@@ -52,9 +65,9 @@ export default function HomeScreen() {
           {nearestTruck && <NearestTruckCard truck={nearestTruck} />}
 
           <QuickActions
-            onSchedulePress={() => router.push(ROUTES.SCHEDULE)}
-            onMapPress={() => router.push(ROUTES.TRUCK_MAP)}
-            onHelpPress={() => router.push(ROUTES.HELP)}
+            onSchedulePress={handleSchedulePress}
+            onMapPress={handleMapPress}
+            onHelpPress={handleHelpPress}
           />
         </ScrollView>
       )}

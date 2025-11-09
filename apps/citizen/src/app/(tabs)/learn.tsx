@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { LearningRoadmap } from '@/components/learn/learning-roadmap';
 import { QuizView } from '@/components/learn/quiz-view';
@@ -19,8 +19,7 @@ export default function LearnScreen() {
   const { user } = useAuth();
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
-  const [mode, setMode] = useState<'roadmap' | 'quiz' | 'guide'>('roadmap');
-  // const [selectedGuide, setSelectedGuide] = useState<LearningGuide | null>(null);
+  const [mode, setMode] = useState<'roadmap' | 'quiz'>('roadmap');
 
   const { data: guides, isLoading: isLoadingGuides, error: guidesError, refetch: refetchGuides } = useLearningGuides();
   const { data: questions, isLoading: isLoadingQuiz, error: quizError, refetch: refetchQuiz } = useQuiz();
@@ -29,12 +28,12 @@ export default function LearnScreen() {
   const isLoading = isLoadingGuides || isLoadingQuiz;
   const hasError = guidesError || quizError;
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     refetchGuides();
     refetchQuiz();
-  };
+  }, [refetchGuides, refetchQuiz]);
 
-  const handleQuizComplete = (score: number) => {
+  const handleQuizComplete = useCallback((score: number) => {
     const message = `¡Obtuviste ${score} respuestas correctas!`;
 
     if (user) {
@@ -47,7 +46,11 @@ export default function LearnScreen() {
       ]);
     }
     setMode('roadmap');
-  };
+  }, [user, updateUserProgress, router]);
+
+  const handleStartQuiz = useCallback(() => {
+    setMode('quiz');
+  }, []);
 
   const renderContent = () => {
     if (isLoading) {
@@ -68,7 +71,7 @@ export default function LearnScreen() {
       default:
         return (
           <>
-            <Button title="Empezar quiz" onPress={() => setMode('quiz')} style={styles.quizButton} />
+            <Button title="Empezar quiz" onPress={handleStartQuiz} style={styles.quizButton} />
             {guides && <LearningRoadmap guides={guides} onSelectGuide={() => {}} />}
           </>
         );

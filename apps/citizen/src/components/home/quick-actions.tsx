@@ -1,5 +1,5 @@
 import { Calendar, Map, MessageSquare } from 'lucide-react-native';
-import type React from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 
@@ -9,7 +9,7 @@ interface QuickActionsProps {
   onHelpPress: () => void;
 }
 
-export const QuickActions: React.FC<QuickActionsProps> = ({ onSchedulePress, onMapPress, onHelpPress }) => {
+export const QuickActions = React.memo<QuickActionsProps>(({ onSchedulePress, onMapPress, onHelpPress }) => {
   return (
     <View>
       <Text style={styles.title}>Acciones Rápidas</Text>
@@ -61,3 +61,5 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
 });
+
+

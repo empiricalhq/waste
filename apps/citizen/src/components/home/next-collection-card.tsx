@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AnimatedCard } from '@/components/ui/animated-card';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
@@ -11,7 +11,7 @@ interface NextCollectionCardProps {
   index?: number;
 }
 
-export const NextCollectionCard: React.FC<NextCollectionCardProps> = ({ collection, index = 0 }) => {
+export const NextCollectionCard = React.memo<NextCollectionCardProps>(({ collection, index = 0 }) => {
   const wasteInfo = WASTE_TYPES[collection.type];
   return (
     <AnimatedCard index={index}>
@@ -27,7 +27,7 @@ export const NextCollectionCard: React.FC<NextCollectionCardProps> = ({ collecti
       </Text>
     </AnimatedCard>
   );
-};
+});
 
 const styles = StyleSheet.create({
   header: {
@@ -59,3 +59,5 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.semibold,
   },
 });
+
+NextCollectionCard.displayName = 'NextCollectionCard';
