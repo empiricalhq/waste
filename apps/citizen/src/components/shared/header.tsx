@@ -1,7 +1,8 @@
 import type React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { Text } from '@/components/ui/text';
+import { Colors, Spacing } from '@/constants/design-tokens';
 
 interface HeaderProps {
   title: string;
@@ -11,7 +12,7 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.container, { paddingTop: insets.top }]} accessible={true} accessibilityRole="header">
-      <Text style={styles.title} accessibilityRole="text">
+      <Text variant="heading1" accessibilityRole="text">
         {title}
       </Text>
     </View>
@@ -23,10 +24,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.lg,
     backgroundColor: Colors.background,
-  },
-  title: {
-    fontSize: Typography.fontSize.xxxl,
-    fontWeight: Typography.fontWeight.semibold,
-    color: Colors.text,
   },
 });

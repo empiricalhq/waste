@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { AnimatedOption } from '@/components/learn/animated-option';
 import { AnimatedProgressBar } from '@/components/learn/animated-progress-bar';
@@ -8,8 +8,9 @@ import { AnimatedResultsScreen } from '@/components/learn/animated-results-scree
 import { SuccessCelebration } from '@/components/learn/success-celebration';
 import { OptimizedImage } from '@/components/shared/optimized-image';
 import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
 import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Spacing } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 import type { QuizQuestion } from '@/types';
@@ -171,7 +172,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
   }));
 
   if (showResults) {
-    return <AnimatedResultsScreen score={score} total={questions.length} onContinue={onQuizComplete} />;
+    return <AnimatedResultsScreen score={score} total={questions.length} onContinue={() => onQuizComplete(score)} />;
   }
 
   return (
@@ -186,8 +187,12 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
         <Animated.View style={imageStyle}>
           <OptimizedImage source={{ uri: currentQuestion.imageUrl }} style={styles.image} />
         </Animated.View>
-        <Text style={styles.question}>{currentQuestion.question}</Text>
-        <Text style={styles.item}>{currentQuestion.item}</Text>
+        <Text variant="bodyLarge" color="secondary" align="center">
+          {currentQuestion.question}
+        </Text>
+        <Text variant="heading2" weight="bold" align="center" style={styles.item}>
+          {currentQuestion.item}
+        </Text>
 
         <View style={styles.optionsContainer}>
           {currentQuestion.options.map((option, index) => (
@@ -230,19 +235,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.lg,
   },
-  question: {
-    fontSize: Typography.fontSize.lg,
-    fontWeight: Typography.fontWeight.medium,
-    textAlign: 'center',
-    color: Colors.textSecondary,
-    marginBottom: Spacing.sm,
-  },
   item: {
-    fontSize: Typography.fontSize.xxl,
-    fontWeight: Typography.fontWeight.bold,
-    textAlign: 'center',
     marginBottom: Spacing.xl,
-    color: Colors.text,
   },
   optionsContainer: {
     gap: Spacing.md,

@@ -1,9 +1,10 @@
 import { AlertCircle, Clock, RefreshCw, SearchX, ServerCrash, ShieldAlert, WifiOff } from 'lucide-react-native';
 import type React from 'react';
 import { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button } from '@/components/ui/button';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { Text } from '@/components/ui/text';
+import { Colors, Spacing } from '@/constants/design-tokens';
 import { AppError } from '@/lib/utils/error-handler';
 import { logError } from '@/lib/utils/error-logger';
 
@@ -274,8 +275,12 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         <View style={styles.compactContent}>
           <View style={styles.compactIconContainer}>{errorInfo.icon}</View>
           <View style={styles.compactTextContainer}>
-            <Text style={styles.compactTitle}>{customTitle || errorInfo.title}</Text>
-            <Text style={styles.compactMessage}>{customMessage || errorInfo.message}</Text>
+            <Text variant="body" weight="semibold">
+              {customTitle || errorInfo.title}
+            </Text>
+            <Text variant="bodySmall" color="secondary" style={styles.compactMessage}>
+              {customMessage || errorInfo.message}
+            </Text>
           </View>
         </View>
         {canRetry && (
@@ -289,7 +294,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           />
         )}
         {retryCount >= retryLimit && (
-          <Text style={styles.compactRetryLimitText}>
+          <Text variant="caption" color="error" style={styles.compactRetryLimitText}>
             Límite de reintentos alcanzado. Por favor, intenta más tarde.
           </Text>
         )}
@@ -301,9 +306,13 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     <View style={styles.container}>
       <View style={styles.iconContainer}>{errorInfo.icon}</View>
 
-      <Text style={styles.title}>{customTitle || errorInfo.title}</Text>
+      <Text variant="heading3" weight="bold" align="center" style={styles.title}>
+        {customTitle || errorInfo.title}
+      </Text>
 
-      <Text style={styles.message}>{customMessage || errorInfo.message}</Text>
+      <Text variant="body" color="secondary" align="center" style={styles.message}>
+        {customMessage || errorInfo.message}
+      </Text>
 
       {canRetry && (
         <View style={styles.retryContainer}>
@@ -316,19 +325,21 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             icon={<RefreshCw size={18} color={Colors.primary} />}
           />
           {retryCount > 0 && retryCount < retryLimit && (
-            <Text style={styles.retryCount}>
+            <Text variant="bodySmall" color="secondary" style={styles.retryCount}>
               Intento {retryCount} de {retryLimit}
             </Text>
           )}
           {retryCount >= retryLimit && (
-            <Text style={styles.retryLimitText}>Límite de reintentos alcanzado. Por favor, intenta más tarde.</Text>
+            <Text variant="bodySmall" color="error" align="center" style={styles.retryLimitText}>
+              Límite de reintentos alcanzado. Por favor, intenta más tarde.
+            </Text>
           )}
         </View>
       )}
 
       {__DEV__ && error && (
         <View style={styles.debugInfo}>
-          <Text style={styles.debugText}>
+          <Text variant="caption" color="secondary" style={styles.debugText}>
             Debug: {error.name} - {error.message}
           </Text>
         </View>
@@ -348,18 +359,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   title: {
-    fontSize: Typography.fontSize.xl,
-    fontWeight: Typography.fontWeight.bold,
-    color: Colors.text,
-    textAlign: 'center',
     marginBottom: Spacing.md,
   },
   message: {
-    fontSize: Typography.fontSize.base,
-    color: Colors.textSecondary,
-    textAlign: 'center',
     marginBottom: Spacing.xl,
-    lineHeight: 22,
   },
   retryContainer: {
     alignItems: 'center',
@@ -369,14 +372,9 @@ const styles = StyleSheet.create({
     minWidth: 140,
   },
   retryCount: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.textSecondary,
     marginTop: Spacing.xs,
   },
   retryLimitText: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.error,
-    textAlign: 'center',
     marginTop: Spacing.sm,
     paddingHorizontal: Spacing.md,
   },
@@ -388,8 +386,6 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   debugText: {
-    fontSize: Typography.fontSize.xs,
-    color: Colors.textSecondary,
     fontFamily: 'monospace',
   },
   compactContainer: {
@@ -412,23 +408,13 @@ const styles = StyleSheet.create({
   compactTextContainer: {
     flex: 1,
   },
-  compactTitle: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.semibold,
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
   compactMessage: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.textSecondary,
     lineHeight: 20,
   },
   compactRetryButton: {
     alignSelf: 'flex-start',
   },
   compactRetryLimitText: {
-    fontSize: Typography.fontSize.xs,
-    color: Colors.error,
     marginTop: Spacing.sm,
   },
 });

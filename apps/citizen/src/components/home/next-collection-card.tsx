@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { AnimatedCard } from '@/components/ui/animated-card';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { Text } from '@/components/ui/text';
+import { Spacing } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import { formatDate } from '@/lib/utils/date-helpers';
 import type { Collection } from '@/types';
@@ -16,13 +17,15 @@ export const NextCollectionCard = React.memo<NextCollectionCardProps>(({ collect
   return (
     <AnimatedCard index={index}>
       <View style={styles.header}>
-        <Text style={styles.label}>Próxima Recolección</Text>
+        <Text variant="bodySmall" color="secondary">
+          Próxima Recolección
+        </Text>
         <View style={styles.badge}>
           <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
-          <Text style={styles.badgeText}>{wasteInfo.label}</Text>
+          <Text variant="label">{wasteInfo.label}</Text>
         </View>
       </View>
-      <Text style={styles.date}>
+      <Text variant="heading3">
         {formatDate(collection.date)} a las {collection.time}
       </Text>
     </AnimatedCard>
@@ -36,10 +39,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.sm,
   },
-  label: {
-    color: Colors.textSecondary,
-    fontSize: Typography.fontSize.sm,
-  },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -49,14 +48,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-  },
-  badgeText: {
-    fontSize: Typography.fontSize.sm,
-    fontWeight: Typography.fontWeight.medium,
-  },
-  date: {
-    fontSize: Typography.fontSize.xl,
-    fontWeight: Typography.fontWeight.semibold,
   },
 });
 
