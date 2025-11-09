@@ -4,38 +4,15 @@ import { deleteToken, saveToken } from '@/lib/storage/secure-storage';
 import { AppError, handleApiError } from '@/lib/utils/error-handler';
 import type { User } from '@/types';
 
-interface BetterAuthResponse {
-  user: User;
-  session: {
-    id: string;
-    token: string;
-    expiresAt: string;
-  };
-}
-
-interface BetterAuthSessionResponse {
-  user: User;
-  session: {
-    id: string;
-    expiresAt: string;
-    token: string;
-    createdAt: string;
-    updatedAt: string;
-    ipAddress?: string;
-    userAgent?: string;
-    userId: string;
-  };
-}
-
 async function makeAuthRequest<T>(endpoint: string, options: RequestInit = {}, sessionToken?: string): Promise<T> {
   const url = `${APP_CONFIG.API_URL}${endpoint}`;
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
 
   if (sessionToken) {
-    headers.Cookie = `better-auth.session_token=${sessionToken}`;
+    headers['Cookie'] = `better-auth.session_token=${sessionToken}`;
   }
 
   try {
@@ -78,15 +55,18 @@ export const authService = {
   },
 
   signUp: async (data: { name: string; email: string; password: string }): Promise<User> => {
+    if (data.password.length < 8) {
+      throw new AppError('La contraseña debe tener al menos 8 caracteres.', 400, 'WEAK_PASSWORD');
+    }
+
     const rawResponse = await makeAuthRequest<unknown>('/api/auth/sign-up/email', {
       method: 'POST',
       body: JSON.stringify(data),
     });
 
-    // Validate response with Zod
     const response = validateApiResponse(BetterAuthResponseSchema, rawResponse);
 
-    // Store the session token
+    // store the session token
     await saveToken(response.session.token);
     return response.user;
   },
@@ -104,7 +84,7 @@ export const authService = {
       try {
         await makeAuthRequest('/api/auth/sign-out', { method: 'POST' }, token);
       } catch {
-        // Ignore errors during logout - token is already cleared locally
+        // Ignore errors during logout, token is already cleared locally
       }
     }
   },
@@ -117,7 +97,7 @@ export const authService = {
 
     const rawResponse = await makeAuthRequest<unknown>('/api/auth/get-session', {}, token);
 
-    // Validate response - just need the user object
+    // Validate response, we just need the user object
     const validated = validateApiResponse(UserSchema, (rawResponse as any).user);
     return validated;
   },
