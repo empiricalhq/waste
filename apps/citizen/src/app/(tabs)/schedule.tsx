@@ -20,9 +20,7 @@ export default function ScheduleScreen() {
 
   const renderItem = ({ item }: { item: Collection }) => {
     const wasteInfo = WASTE_TYPES[item.type];
-    const cardStyle: ViewStyle = item.completed
-      ? { ...styles.card, ...styles.completedCard }
-      : styles.card;
+    const cardStyle: ViewStyle = item.completed ? { ...styles.card, ...styles.completedCard } : styles.card;
     return (
       <Card style={cardStyle}>
         <View style={styles.cardContent}>

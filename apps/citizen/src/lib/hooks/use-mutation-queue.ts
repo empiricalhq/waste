@@ -27,7 +27,7 @@ export const useMutationQueue = () => {
     };
 
     loadQueue();
-  }, []);
+  }, [updateState]);
 
   const retryAll = async (mutationFn: (mutation: QueuedMutation) => Promise<void>) => {
     await mutationQueue.retryAll(mutationFn);

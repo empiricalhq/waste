@@ -47,7 +47,7 @@ export const useConnectionRecovery = () => {
 
     // Update wasOffline state
     setState((prev) => ({ ...prev, wasOffline: isOffline }));
-  }, [isOffline, state.wasOffline]);
+  }, [isOffline, state.wasOffline, handleConnectionRecovery]);
 
   return {
     isRecovering: state.isRecovering,
