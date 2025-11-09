@@ -1,6 +1,7 @@
 import type React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, type TouchableOpacityProps } from 'react-native';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 import { hapticSelection } from '@/lib/utils/haptics';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -28,6 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
   onPress,
   ...props
 }) => {
+  const reducedMotion = useReducedMotion();
   const containerStyle = [
     styles.container,
     styles[`${size}Container`],
@@ -81,7 +83,7 @@ export const Button: React.FC<ButtonProps> = ({
     <TouchableOpacity
       style={containerStyle}
       disabled={disabled || loading}
-      activeOpacity={0.8}
+      activeOpacity={reducedMotion ? 1 : 0.8}
       accessible={true}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel || title}
