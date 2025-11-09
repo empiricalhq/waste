@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Header } from '@/components/shared/header';
+import { CardSkeleton } from '@/components/shared/loading-skeleton';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ROUTES } from '@/constants/app-config';
@@ -9,7 +10,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth';
 // import { LogOut } from "lucide-react-native";
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -28,6 +29,17 @@ export default function ProfileScreen() {
       },
     ]);
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Header title="Perfil" />
+        <View style={styles.content}>
+          <CardSkeleton />
+        </View>
+      </View>
+    );
+  }
 
   if (!user) {
     return null;

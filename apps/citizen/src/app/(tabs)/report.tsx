@@ -1,26 +1,37 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { ReportCameraStep } from '@/components/report/report-camera-step';
 import { ReportDetailsStep } from '@/components/report/report-details-step';
 import { ReportSuccessStep } from '@/components/report/report-success-step';
 import { ReportTypeStep } from '@/components/report/report-type-step';
 import { AuthPrompt } from '@/components/shared/auth-prompt';
+import { ErrorState } from '@/components/shared/error-state';
 import { Header } from '@/components/shared/header';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { ListSkeleton } from '@/components/shared/loading-skeleton';
+import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useReportTypes } from '@/features/reports/hooks/use-reports';
 import { useSubmitReport } from '@/features/reports/hooks/use-submit-report';
+import { useNetworkStatus } from '@/lib/hooks/use-network-status';
 
 type ReportStep = 'type' | 'camera' | 'details' | 'success';
 
 export default function ReportScreen() {
   const { user } = useAuth();
+  const { isOffline } = useNetworkStatus();
   const [step, setStep] = useState<ReportStep>('type');
   const [reportData, setReportData] = useState({ type: '', imageUri: '' });
+  const [submitError, setSubmitError] = useState<Error | null>(null);
 
-  const { data: reportTypes, isLoading } = useReportTypes();
+  const { data: reportTypes, isLoading, error, refetch } = useReportTypes();
   const { mutate: submitReport, isPending } = useSubmitReport({
-    onSuccess: () => setStep('success'),
+    onSuccess: () => {
+      setSubmitError(null);
+      setStep('success');
+    },
+    onError: (error) => {
+      setSubmitError(error);
+    },
   });
 
   const handleSelectType = (type: string) => {
@@ -58,21 +69,49 @@ export default function ReportScreen() {
 
     switch (step) {
       case 'type':
-        return isLoading ? (
-          <LoadingSpinner fullScreen={true} />
-        ) : (
-          <ReportTypeStep reportTypes={reportTypes || []} onSelectType={handleSelectType} />
-        );
+        if (isLoading) {
+          return (
+            <View style={styles.content}>
+              <ListSkeleton count={3} />
+            </View>
+          );
+        }
+        if (error) {
+          return (
+            <ErrorState
+              error={error}
+              onRetry={refetch}
+              isOffline={isOffline}
+            />
+          );
+        }
+        return <ReportTypeStep reportTypes={reportTypes || []} onSelectType={handleSelectType} />;
       case 'camera':
         return <ReportCameraStep onPhotoTaken={handlePhotoTaken} onSkip={handleSkipPhoto} />;
       case 'details':
         return (
-          <ReportDetailsStep
-            reportType={reportData.type}
-            imageUri={reportData.imageUri}
-            isSubmitting={isPending}
-            onSubmit={handleSubmit}
-          />
+          <>
+            {isOffline && (
+              <View style={styles.offlineNotice}>
+                <Text style={styles.offlineText}>
+                  📱 Sin conexión - Tu reporte se enviará cuando vuelvas a estar en línea
+                </Text>
+              </View>
+            )}
+            {submitError && (
+              <View style={styles.errorNotice}>
+                <Text style={styles.errorText}>
+                  ⚠️ Error al enviar: {submitError.message}
+                </Text>
+              </View>
+            )}
+            <ReportDetailsStep
+              reportType={reportData.type}
+              imageUri={reportData.imageUri}
+              isSubmitting={isPending}
+              onSubmit={handleSubmit}
+            />
+          </>
         );
       case 'success':
         return <ReportSuccessStep onDone={resetFlow} />;
@@ -92,5 +131,32 @@ export default function ReportScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    padding: Spacing.lg,
+  },
+  offlineNotice: {
+    backgroundColor: Colors.info,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.md,
+    borderRadius: 8,
+  },
+  offlineText: {
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize.sm,
+    textAlign: 'center',
+  },
+  errorNotice: {
+    backgroundColor: Colors.error,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.md,
+    borderRadius: 8,
+  },
+  errorText: {
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize.sm,
+    textAlign: 'center',
   },
 });

@@ -1,17 +1,97 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reportService } from '../services/report-service';
+import type { Report } from '@/types';
+import { mutationQueue } from '@/lib/offline/mutation-queue';
+import { AppError } from '@/lib/utils/error-handler';
 
 interface UseSubmitReportOptions {
   onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
+interface CreateReportPayload {
+  type: string;
+  description: string;
+  location: string;
+  imageUri?: string;
 }
 
 export const useSubmitReport = (options?: UseSubmitReportOptions) => {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: reportService.submitReport,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+
+    // Before mutation - add optimistic update
+    onMutate: async (newReport: CreateReportPayload) => {
+      // Cancel outgoing refetches to avoid overwriting optimistic update
+      await queryClient.cancelQueries({ queryKey: ['reports'] });
+
+      // Snapshot previous value for rollback
+      const previousReports = queryClient.getQueryData<Report[]>(['reports']);
+
+      // Create optimistic report
+      const optimisticReport: Report = {
+        id: `temp-${Date.now()}`,
+        type: newReport.type,
+        description: newReport.description,
+        status: 'pending',
+      };
+
+      // Optimistically update the cache
+      queryClient.setQueryData<Report[]>(['reports'], (old = []) => [
+        optimisticReport,
+        ...old,
+      ]);
+
+      console.log('Optimistic report added:', optimisticReport.id);
+
+      // Return context for rollback
+      return { previousReports, optimisticReport };
+    },
+
+    // On error - rollback optimistic update
+    onError: (error, variables, context) => {
+      console.error('Report submission failed:', error);
+
+      // Rollback to previous state
+      if (context?.previousReports) {
+        queryClient.setQueryData(['reports'], context.previousReports);
+        console.log('Rolled back optimistic update');
+      }
+
+      // Queue mutation for retry if it's a network error
+      if (error instanceof AppError && error.code === 'NETWORK_ERROR') {
+        mutationQueue.add({
+          mutationKey: ['submitReport'],
+          variables,
+          maxRetries: 3,
+        });
+        console.log('Report queued for retry when online');
+      }
+
+      // Call custom error handler
+      options?.onError?.(error as Error);
+    },
+
+    // On success - replace optimistic update with real data
+    onSuccess: (data, variables, context) => {
+      console.log('Report submitted successfully:', data.id);
+
+      // Replace optimistic report with real data
+      queryClient.setQueryData<Report[]>(['reports'], (old = []) =>
+        old.map((report) =>
+          report.id === context?.optimisticReport.id ? data : report
+        )
+      );
+
+      // Call custom success handler
       options?.onSuccess?.();
+    },
+
+    // Always refetch to ensure consistency
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 };

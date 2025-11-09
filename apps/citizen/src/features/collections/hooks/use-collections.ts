@@ -5,5 +5,12 @@ export const useCollections = () => {
   return useQuery({
     queryKey: ['collections'],
     queryFn: collectionService.getCollections,
+    // Collection schedules are relatively stable, cache for 24 hours
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 days
+    // Mark as available offline
+    meta: {
+      offlineAvailable: true,
+    },
   });
 };
