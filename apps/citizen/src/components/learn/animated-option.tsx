@@ -62,11 +62,11 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
           delay,
           withTiming(1, {
             duration: ANIMATION_DURATIONS.NORMAL,
-          })
+          }),
         );
       }
     }
-  }, [isVisible, index, reducedMotion]);
+  }, [isVisible, index, reducedMotion, opacity, translateY]);
 
   // Answer feedback animations
   useEffect(() => {
@@ -93,12 +93,21 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
             withTiming(-8, { duration: 50 }),
             withTiming(8, { duration: 50 }),
             withTiming(-8, { duration: 50 }),
-            withTiming(0, { duration: 50 })
+            withTiming(0, { duration: 50 }),
           );
         }
       }
     }
-  }, [isAnswered, isCorrect, isSelected, reducedMotion]);
+  }, [
+    isAnswered,
+    isCorrect,
+    isSelected,
+    reducedMotion,
+    backgroundColor,
+    borderColor, // Success pulse
+    scale, // Shake animation
+    translateX,
+  ]);
 
   const handlePressIn = () => {
     if (!isAnswered) {
@@ -113,7 +122,7 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   };
 
   const handlePressOut = () => {
-    if (!isAnswered && !reducedMotion) {
+    if (!(isAnswered || reducedMotion)) {
       scale.value = withTiming(1, {
         duration: ANIMATION_DURATIONS.QUICK,
         easing: EASING.OUT_QUAD,

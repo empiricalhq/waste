@@ -32,23 +32,23 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
       withTiming(800, {
         duration: 2000,
         easing: Easing.out(Easing.quad),
-      })
+      }),
     );
 
     rotate.value = withDelay(
       delay,
       withTiming(360 * 3, {
         duration: 2000,
-      })
+      }),
     );
 
     opacity.value = withDelay(
       delay + 1500,
       withTiming(0, {
         duration: 500,
-      })
+      }),
     );
-  }, [delay, reducedMotion]);
+  }, [delay, reducedMotion, opacity, rotate, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }, { translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
@@ -81,7 +81,7 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible,
       opacity.value = 0;
       translateY.value = 20;
     }
-  }, [visible, reducedMotion]);
+  }, [visible, reducedMotion, opacity, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -92,15 +92,7 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible,
     return null;
   }
 
-  const messages = [
-    '¡Excelente!',
-    '¡Muy bien!',
-    '¡Correcto!',
-    '¡Perfecto!',
-    '¡Genial!',
-    '¡Increíble!',
-    '¡Fantástico!',
-  ];
+  const messages = ['¡Excelente!', '¡Muy bien!', '¡Correcto!', '¡Perfecto!', '¡Genial!', '¡Increíble!', '¡Fantástico!'];
 
   const message = streak >= 3 ? `¡Racha de ${streak}! 🔥` : messages[Math.floor(Math.random() * messages.length)];
 

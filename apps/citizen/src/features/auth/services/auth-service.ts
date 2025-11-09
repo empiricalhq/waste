@@ -26,11 +26,7 @@ interface BetterAuthSessionResponse {
   };
 }
 
-async function makeAuthRequest<T>(
-  endpoint: string,
-  options: RequestInit = {},
-  sessionToken?: string,
-): Promise<T> {
+async function makeAuthRequest<T>(endpoint: string, options: RequestInit = {}, sessionToken?: string): Promise<T> {
   const url = `${APP_CONFIG.API_URL}${endpoint}`;
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -92,10 +88,10 @@ export const authService = {
     // Get token before deleting it
     const { getToken } = await import('@/lib/storage/secure-storage');
     const token = await getToken();
-    
+
     // Delete the token from storage
     await deleteToken();
-    
+
     // Call the logout endpoint to invalidate the session on the server
     if (token) {
       try {

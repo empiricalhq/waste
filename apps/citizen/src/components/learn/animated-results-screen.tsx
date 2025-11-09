@@ -62,18 +62,27 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
         withTiming(score, {
           duration: ANIMATION_DURATIONS.CELEBRATION,
           easing: EASING.OUT_CUBIC,
-        })
+        }),
       );
 
       // Confetti for high scores (80%+)
       if (percentage >= 80) {
         confettiOpacity.value = withDelay(
           800,
-          withSequence(withTiming(1, { duration: 300 }), withDelay(2000, withTiming(0, { duration: 500 })))
+          withSequence(withTiming(1, { duration: 300 }), withDelay(2000, withTiming(0, { duration: 500 }))),
         );
       }
     }
-  }, [score, percentage, reducedMotion]);
+  }, [
+    score,
+    percentage,
+    reducedMotion,
+    confettiOpacity, // Score count-up animation
+    displayScore, // Entrance animation
+    opacity,
+    scale,
+    translateY,
+  ]);
 
   const containerStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -85,17 +94,31 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
   }));
 
   const getPerformanceMessage = () => {
-    if (percentage === 100) return '¡Perfecto! 🎉';
-    if (percentage >= 80) return '¡Excelente trabajo! 🌟';
-    if (percentage >= 60) return '¡Buen trabajo! 👍';
-    if (percentage >= 40) return '¡Sigue practicando! 💪';
+    if (percentage === 100) {
+      return '¡Perfecto! 🎉';
+    }
+    if (percentage >= 80) {
+      return '¡Excelente trabajo! 🌟';
+    }
+    if (percentage >= 60) {
+      return '¡Buen trabajo! 👍';
+    }
+    if (percentage >= 40) {
+      return '¡Sigue practicando! 💪';
+    }
     return '¡Inténtalo de nuevo! 📚';
   };
 
   const getStars = () => {
-    if (percentage === 100) return '⭐⭐⭐';
-    if (percentage >= 80) return '⭐⭐';
-    if (percentage >= 60) return '⭐';
+    if (percentage === 100) {
+      return '⭐⭐⭐';
+    }
+    if (percentage >= 80) {
+      return '⭐⭐';
+    }
+    if (percentage >= 60) {
+      return '⭐';
+    }
     return '';
   };
 
@@ -152,23 +175,23 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
       withTiming(1000, {
         duration: 2500,
         easing: Easing.out(Easing.quad),
-      })
+      }),
     );
 
     rotate.value = withDelay(
       delay,
       withTiming(360 * 4, {
         duration: 2500,
-      })
+      }),
     );
 
     opacity.value = withDelay(
       delay + 2000,
       withTiming(0, {
         duration: 500,
-      })
+      }),
     );
-  }, [delay]);
+  }, [delay, opacity, rotate, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }, { translateX: translateX.value }, { rotate: `${rotate.value}deg` }],

@@ -1,7 +1,13 @@
 import type React from 'react';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { ANIMATION_DURATIONS, FEEDBACK_COLORS, SPRING_CONFIGS } from '@/constants/animations';
 import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
@@ -27,17 +33,22 @@ export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ curren
       // Smooth spring animation
       progress.value = withSpring(targetProgress, SPRING_CONFIGS.DEFAULT);
     }
-  }, [current, total, reducedMotion]);
+  }, [
+    current,
+    total,
+    reducedMotion, // Smooth spring animation
+    progress,
+  ]);
 
   // Flash success color when answer is correct
   useEffect(() => {
     if (isCorrect && !reducedMotion) {
       backgroundColor.value = withSequence(
         withTiming(FEEDBACK_COLORS.success.border, { duration: 100 }),
-        withTiming(Colors.primary, { duration: ANIMATION_DURATIONS.NORMAL })
+        withTiming(Colors.primary, { duration: ANIMATION_DURATIONS.NORMAL }),
       );
     }
-  }, [isCorrect, reducedMotion]);
+  }, [isCorrect, reducedMotion, backgroundColor]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scaleX: progress.value / 100 }],
