@@ -1,4 +1,5 @@
 import { APP_CONFIG } from '@/constants/app-config';
+import { BetterAuthResponseSchema, UserSchema, validateApiResponse } from '@/lib/schemas/api-schemas';
 import { deleteToken, saveToken } from '@/lib/storage/secure-storage';
 import { AppError, handleApiError } from '@/lib/utils/error-handler';
 import type { User } from '@/types';
@@ -63,10 +64,13 @@ async function makeAuthRequest<T>(endpoint: string, options: RequestInit = {}, s
 
 export const authService = {
   login: async (credentials: { email: string; password: string }): Promise<User> => {
-    const response = await makeAuthRequest<BetterAuthResponse>('/api/auth/sign-in/email', {
+    const rawResponse = await makeAuthRequest<unknown>('/api/auth/sign-in/email', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
+
+    // Validate response with Zod
+    const response = validateApiResponse(BetterAuthResponseSchema, rawResponse);
 
     // Store the session token
     await saveToken(response.session.token);
@@ -74,10 +78,13 @@ export const authService = {
   },
 
   signUp: async (data: { name: string; email: string; password: string }): Promise<User> => {
-    const response = await makeAuthRequest<BetterAuthResponse>('/api/auth/sign-up/email', {
+    const rawResponse = await makeAuthRequest<unknown>('/api/auth/sign-up/email', {
       method: 'POST',
       body: JSON.stringify(data),
     });
+
+    // Validate response with Zod
+    const response = validateApiResponse(BetterAuthResponseSchema, rawResponse);
 
     // Store the session token
     await saveToken(response.session.token);
@@ -108,7 +115,10 @@ export const authService = {
       throw new AppError('No authentication token found', 401);
     }
 
-    const response = await makeAuthRequest<BetterAuthSessionResponse>('/api/auth/get-session', {}, token);
-    return response.user;
+    const rawResponse = await makeAuthRequest<unknown>('/api/auth/get-session', {}, token);
+    
+    // Validate response - just need the user object
+    const validated = validateApiResponse(UserSchema, (rawResponse as any).user);
+    return validated;
   },
 };

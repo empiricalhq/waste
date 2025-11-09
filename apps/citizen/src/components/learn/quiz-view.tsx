@@ -7,6 +7,7 @@ import { AnimatedProgressBar } from '@/components/learn/animated-progress-bar';
 import { AnimatedResultsScreen } from '@/components/learn/animated-results-screen';
 import { SuccessCelebration } from '@/components/learn/success-celebration';
 import { Button } from '@/components/ui/button';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
@@ -182,7 +183,9 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
       />
 
       <Animated.View style={[styles.questionCard, questionCardStyle]}>
-        <Animated.Image source={{ uri: currentQuestion.imageUrl }} style={[styles.image, imageStyle]} />
+        <Animated.View style={imageStyle}>
+          <OptimizedImage source={{ uri: currentQuestion.imageUrl }} style={styles.image} />
+        </Animated.View>
         <Text style={styles.question}>{currentQuestion.question}</Text>
         <Text style={styles.item}>{currentQuestion.item}</Text>
 
