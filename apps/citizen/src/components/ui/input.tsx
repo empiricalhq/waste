@@ -14,9 +14,17 @@ export const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
       <TextInput
         style={[styles.input, Boolean(error) && styles.inputError]}
         placeholderTextColor={Colors.textTertiary}
+        accessible={true}
+        accessibilityLabel={label}
+        accessibilityHint={props.placeholder}
+        accessibilityState={{ disabled: props.editable === false }}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <Text style={styles.errorText} accessibilityRole="alert" accessibilityLiveRegion="polite">
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
@@ -39,6 +47,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     fontSize: Typography.fontSize.base,
     color: Colors.text,
+    minHeight: 44, // Ensure adequate touch target
   },
   inputError: {
     borderColor: Colors.error,

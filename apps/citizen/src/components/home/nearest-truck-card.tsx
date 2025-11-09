@@ -1,18 +1,19 @@
 import type React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Card } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import type { Truck } from '@/types';
 
 interface NearestTruckCardProps {
   truck: Truck;
+  index?: number;
 }
 
-export const NearestTruckCard: React.FC<NearestTruckCardProps> = ({ truck }) => {
+export const NearestTruckCard: React.FC<NearestTruckCardProps> = ({ truck, index = 1 }) => {
   const wasteInfo = WASTE_TYPES[truck.type];
   return (
-    <Card>
+    <AnimatedCard index={index}>
       <Text style={styles.label}>Camión Cercano</Text>
       <View style={styles.content}>
         <View style={styles.info}>
@@ -27,7 +28,7 @@ export const NearestTruckCard: React.FC<NearestTruckCardProps> = ({ truck }) => 
           <Text style={styles.etaLabel}>min</Text>
         </View>
       </View>
-    </Card>
+    </AnimatedCard>
   );
 };
 

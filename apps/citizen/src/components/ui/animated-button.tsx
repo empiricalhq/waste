@@ -1,8 +1,15 @@
 import type React from 'react';
+import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
+import { hapticSelection } from '@/lib/utils/haptics';
 
-interface ButtonProps extends TouchableOpacityProps {
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
+interface AnimatedButtonProps extends TouchableOpacityProps {
   title: string;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
@@ -11,7 +18,7 @@ interface ButtonProps extends TouchableOpacityProps {
   accessibilityHint?: string;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   title,
   variant = 'primary',
   size = 'md',
@@ -20,8 +27,13 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   accessibilityLabel,
   accessibilityHint,
+  onPress,
   ...props
 }) => {
+  const reducedMotion = useReducedMotion();
+  const [isPressed, setIsPressed] = useState(false);
+  const scale = useSharedValue(1);
+
   const containerStyle = [
     styles.container,
     styles[`${size}Container`],
@@ -44,10 +56,44 @@ export const Button: React.FC<ButtonProps> = ({
     }
   };
 
+  const handlePressIn = () => {
+    if (!disabled && !loading) {
+      setIsPressed(true);
+      if (!reducedMotion) {
+        scale.value = withTiming(0.95, {
+          duration: ANIMATION_DURATIONS.QUICK,
+          easing: EASING.OUT_QUAD,
+        });
+      }
+    }
+  };
+
+  const handlePressOut = () => {
+    setIsPressed(false);
+    if (!reducedMotion) {
+      scale.value = withTiming(1, {
+        duration: ANIMATION_DURATIONS.QUICK,
+        easing: EASING.OUT_QUAD,
+      });
+    }
+  };
+
+  const handlePress = (event: any) => {
+    hapticSelection();
+    onPress?.(event);
+  };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
   return (
-    <TouchableOpacity
-      style={containerStyle}
+    <AnimatedTouchable
+      style={[containerStyle, animatedStyle]}
       disabled={disabled || loading}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
       activeOpacity={0.8}
       accessible={true}
       accessibilityRole="button"
@@ -57,7 +103,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {loading ? <ActivityIndicator color={getLoaderColor()} /> : <Text style={textStyle}>{title}</Text>}
-    </TouchableOpacity>
+    </AnimatedTouchable>
   );
 };
 
@@ -66,9 +112,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44, // Minimum touch target
+    minHeight: 44,
   },
-  // Size variants
   smContainer: {
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
@@ -81,7 +126,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     paddingHorizontal: Spacing.xl,
   },
-  // Style variants
   primaryContainer: {
     backgroundColor: Colors.primary,
   },
@@ -101,7 +145,6 @@ const styles = StyleSheet.create({
   dangerContainer: {
     backgroundColor: Colors.error,
   },
-  // Text styles
   text: {
     fontWeight: Typography.fontWeight.medium,
   },

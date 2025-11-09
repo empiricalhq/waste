@@ -9,6 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
+import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 
 interface CardSkeletonProps {
   animated?: boolean;
@@ -21,19 +22,20 @@ interface ListSkeletonProps {
 
 export const CardSkeleton: React.FC<CardSkeletonProps> = ({ animated = true }) => {
   const opacity = useSharedValue(0.5);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (animated) {
+    if (animated && !reducedMotion) {
       opacity.value = withRepeat(
-        withSequence(withTiming(1, { duration: 800 }), withTiming(0.5, { duration: 800 })),
+        withSequence(withTiming(1, { duration: 600 }), withTiming(0.5, { duration: 600 })),
         -1, // Infinite repeat
         false,
       );
     }
-  }, [animated, opacity]);
+  }, [animated, reducedMotion, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: animated ? opacity.value : 0.5,
+    opacity: animated && !reducedMotion ? opacity.value : 0.5,
   }));
 
   return (

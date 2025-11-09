@@ -1,6 +1,6 @@
 import type React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Card } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import { formatDate } from '@/lib/utils/date-helpers';
@@ -8,12 +8,13 @@ import type { Collection } from '@/types';
 
 interface NextCollectionCardProps {
   collection: Collection;
+  index?: number;
 }
 
-export const NextCollectionCard: React.FC<NextCollectionCardProps> = ({ collection }) => {
+export const NextCollectionCard: React.FC<NextCollectionCardProps> = ({ collection, index = 0 }) => {
   const wasteInfo = WASTE_TYPES[collection.type];
   return (
-    <Card>
+    <AnimatedCard index={index}>
       <View style={styles.header}>
         <Text style={styles.label}>Próxima Recolección</Text>
         <View style={styles.badge}>
@@ -24,7 +25,7 @@ export const NextCollectionCard: React.FC<NextCollectionCardProps> = ({ collecti
       <Text style={styles.date}>
         {formatDate(collection.date)} a las {collection.time}
       </Text>
-    </Card>
+    </AnimatedCard>
   );
 };
 

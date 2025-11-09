@@ -23,7 +23,13 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ onSchedulePress, onM
 };
 
 const ActionButton = ({ icon, text, onPress }: { icon: React.ReactNode; text: string; onPress: () => void }) => (
-  <TouchableOpacity style={styles.actionButton} onPress={onPress}>
+  <TouchableOpacity
+    style={styles.actionButton}
+    onPress={onPress}
+    accessible={true}
+    accessibilityRole="button"
+    accessibilityLabel={text}
+  >
     {icon}
     <Text style={styles.actionText}>{text}</Text>
   </TouchableOpacity>
@@ -47,6 +53,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     gap: Spacing.md,
+    minHeight: 56, // Ensure adequate touch target
   },
   actionText: {
     fontSize: Typography.fontSize.base,

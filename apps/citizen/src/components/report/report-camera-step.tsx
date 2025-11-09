@@ -41,10 +41,24 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
     return (
       <CameraView style={StyleSheet.absoluteFill} facing="back" ref={cameraRef}>
         <View style={styles.cameraOverlay}>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setShowCamera(false)}>
-            <X color={Colors.textInverse} />
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setShowCamera(false)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Cerrar cámara"
+            accessibilityHint="Cierra la cámara y regresa a la pantalla anterior"
+          >
+            <X color={Colors.textInverse} size={32} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.captureButton} onPress={takePicture} />
+          <TouchableOpacity
+            style={styles.captureButton}
+            onPress={takePicture}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Tomar foto"
+            accessibilityHint="Captura una foto del problema que deseas reportar"
+          />
         </View>
       </CameraView>
     );
@@ -55,8 +69,18 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
       <Camera size={64} color={Colors.textTertiary} />
       <Text style={styles.title}>Añadir una foto</Text>
       <Text style={styles.subtitle}>Una imagen ayuda a resolver el problema más rápido.</Text>
-      <Button title="Abrir Cámara" onPress={handleOpenCamera} />
-      <Button title="Omitir" variant="secondary" onPress={onSkip} style={{ marginTop: Spacing.md }} />
+      <Button
+        title="Abrir Cámara"
+        onPress={handleOpenCamera}
+        accessibilityHint="Abre la cámara para tomar una foto del problema"
+      />
+      <Button
+        title="Omitir"
+        variant="secondary"
+        onPress={onSkip}
+        style={{ marginTop: Spacing.md }}
+        accessibilityHint="Continúa sin agregar una foto"
+      />
     </View>
   );
 };
@@ -87,6 +111,9 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     alignSelf: 'flex-start',
+    padding: Spacing.sm,
+    minWidth: 44,
+    minHeight: 44,
   },
   captureButton: {
     width: 70,
@@ -94,5 +121,6 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     backgroundColor: Colors.textInverse,
     alignSelf: 'center',
+    marginBottom: Spacing.xxxl,
   },
 });
