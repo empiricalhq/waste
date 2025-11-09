@@ -1,4 +1,6 @@
-import { APP_CONFIG } from '@/constants/app-config';
+import { router } from 'expo-router';
+import { APP_CONFIG, ROUTES } from '@/constants/app-config';
+import { deleteToken } from '@/lib/storage/secure-storage';
 import { AppError, handleApiError } from '@/lib/utils/error-handler';
 import { getApiConfig } from './api-config';
 
@@ -26,6 +28,16 @@ async function request<T>(
       const errorData = await response.json().catch(() => ({
         message: 'Ocurrió un error inesperado.',
       }));
+      
+      // Handle 401 Unauthorized - clear token and redirect to login
+      if (response.status === 401) {
+        await deleteToken();
+        // Use setTimeout to avoid navigation during render
+        setTimeout(() => {
+          router.replace(ROUTES.LOGIN);
+        }, 0);
+      }
+      
       throw new AppError(errorData.message, response.status, errorData.code);
     }
 
@@ -38,8 +50,11 @@ async function request<T>(
   } catch (error) {
     clearTimeout(timeoutId);
 
-    if (retries > 0 && !(error instanceof AppError)) {
-      // Retry for network errors, not for server errors (4xx, 5xx)
+    // Don't retry on 401 errors or other client errors
+    const isClientError = error instanceof AppError && error.statusCode >= 400 && error.statusCode < 500;
+    
+    if (retries > 0 && !isClientError) {
+      // Retry for network errors, not for client errors (4xx)
       return request(endpoint, options, retries - 1);
     }
 

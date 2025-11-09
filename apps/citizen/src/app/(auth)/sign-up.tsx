@@ -1,45 +1,88 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ROUTES } from '@/constants/app-config';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { authService } from '@/features/auth/services/auth-service';
+import { useSignUp } from '@/features/auth/hooks/use-sign-up';
+import { signUpSchema } from '@/features/auth/schemas';
 
 export default function SignUpScreen() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: authService.signUp,
-    onSuccess: (user) => {
-      queryClient.setQueryData(['currentUser'], user);
-      router.replace(ROUTES.HOME);
-    },
-    onError: (err: any) => {
-      Alert.alert('Error de Registro', err.message || 'No se pudo crear la cuenta.');
-    },
-  });
+  const { signUp, isPending, error } = useSignUp();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{ name?: string; email?: string; password?: string }>({});
 
   const handleSignUp = () => {
-    // In a real app, get data from state
-    mutate({ name: 'Nuevo Usuario', email: 'new@example.com', password: 'password' });
+    // Clear previous validation errors
+    setValidationErrors({});
+
+    // Validate form data
+    const result = signUpSchema.safeParse({ name, email, password });
+
+    if (!result.success) {
+      const errors: { name?: string; email?: string; password?: string } = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as 'name' | 'email' | 'password';
+        errors[field] = err.message;
+      });
+      setValidationErrors(errors);
+      return;
+    }
+
+    // Submit sign-up
+    signUp(result.data, {
+      onSuccess: () => {
+        router.replace(ROUTES.HOME);
+      },
+      onError: (err) => {
+        Alert.alert('Error de Registro', (err as Error).message || 'No se pudo crear la cuenta.');
+      },
+    });
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Crear Cuenta</Text>
-      <Input label="Nombre" placeholder="Tu nombre" />
-      <Input label="Email" placeholder="tu@email.com" keyboardType="email-address" />
-      <Input label="Contraseña" placeholder="••••••••" secureTextEntry={true} />
+      <Input
+        label="Nombre"
+        placeholder="Tu nombre"
+        value={name}
+        onChangeText={setName}
+        autoCapitalize="words"
+        autoCorrect={false}
+      />
+      {validationErrors.name && <Text style={styles.fieldError}>{validationErrors.name}</Text>}
+      <Input
+        label="Email"
+        placeholder="tu@email.com"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+      {validationErrors.email && <Text style={styles.fieldError}>{validationErrors.email}</Text>}
+      <Input
+        label="Contraseña"
+        placeholder="••••••••"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
+        autoCapitalize="none"
+      />
+      {validationErrors.password && <Text style={styles.fieldError}>{validationErrors.password}</Text>}
       {error && <Text style={styles.error}>{(error as Error).message}</Text>}
-      <Button title="Registrarse" onPress={handleSignUp} loading={isPending} />
+      <Button title="Registrarse" onPress={handleSignUp} loading={isPending} disabled={isPending} />
       <Button
         title="Ya tengo cuenta"
         variant="secondary"
         onPress={() => router.back()}
         style={{ marginTop: Spacing.md }}
+        disabled={isPending}
       />
     </View>
   );
@@ -63,5 +106,11 @@ const styles = StyleSheet.create({
     color: Colors.error,
     textAlign: 'center',
     marginBottom: Spacing.md,
+  },
+  fieldError: {
+    color: Colors.error,
+    fontSize: Typography.fontSize.sm,
+    marginTop: -Spacing.sm,
+    marginBottom: Spacing.sm,
   },
 });

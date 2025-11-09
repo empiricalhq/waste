@@ -36,6 +36,11 @@ function RootLayoutNav() {
     if (user && inAuthGroup) {
       router.replace('/(tabs)');
     }
+    // If the user is not signed in and not in the auth group,
+    // redirect them to login.
+    else if (!user && !inAuthGroup) {
+      router.replace('/(auth)/login');
+    }
   }, [user, segments, isLoading, router]);
 
   if (isLoading) {

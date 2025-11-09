@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type React from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getToken } from '@/lib/storage/secure-storage';
+import { deleteToken, getToken } from '@/lib/storage/secure-storage';
 import type { User } from '@/types';
 import { authService } from '../services/auth-service';
 
@@ -21,11 +21,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     data: user,
     isLoading: isUserLoading,
     isSuccess,
+    error,
   } = useQuery({
     queryKey: ['currentUser'],
     queryFn: authService.getCurrentUser,
     enabled: false,
-    retry: 1,
+    retry: false,
   });
 
   useEffect(() => {
@@ -33,20 +34,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const token = await getToken();
         if (token) {
-          queryClient
-            .getQueryCache()
-            .find({ queryKey: ['currentUser'] })
-            ?.fetch();
+          // Fetch user data with the stored token
+          await queryClient.fetchQuery({
+            queryKey: ['currentUser'],
+            queryFn: authService.getCurrentUser,
+          });
         }
-      } catch (_e) {
+      } catch (err) {
+        // If token is invalid (401), clear it
+        const error = err as { status?: number };
+        if (error.status === 401) {
+          await deleteToken();
+          queryClient.setQueryData(['currentUser'], null);
+        }
       } finally {
         setIsCheckingToken(false);
       }
     };
 
-    queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     checkTokenAndFetchUser();
   }, [queryClient]);
+
+  // Handle 401 errors during query execution
+  useEffect(() => {
+    if (error) {
+      const err = error as { status?: number };
+      if (err.status === 401) {
+        deleteToken();
+        queryClient.setQueryData(['currentUser'], null);
+      }
+    }
+  }, [error, queryClient]);
 
   const logout = async () => {
     await authService.logout();

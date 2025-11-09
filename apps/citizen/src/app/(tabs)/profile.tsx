@@ -1,13 +1,33 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Header } from '@/components/shared/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ROUTES } from '@/constants/app-config';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 // import { LogOut } from "lucide-react-native";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    Alert.alert('Cerrar Sesión', '¿Estás seguro de que quieres cerrar sesión?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Cerrar Sesión',
+        style: 'destructive',
+        onPress: async () => {
+          await logout();
+          router.replace(ROUTES.LOGIN);
+        },
+      },
+    ]);
+  };
 
   if (!user) {
     return null;
@@ -30,7 +50,7 @@ export default function ProfileScreen() {
             <StatItem value={user.progress.totalQuestions} label="Tests" />
           </View>
         </Card>
-        <Button title="Cerrar Sesión" onPress={logout} variant="secondary" />
+        <Button title="Cerrar Sesión" onPress={handleLogout} variant="secondary" />
       </ScrollView>
     </View>
   );
