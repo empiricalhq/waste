@@ -29,7 +29,7 @@ export default function SignUpScreen() {
 
     if (!result.success) {
       const errors: { name?: string; email?: string; password?: string } = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         const field = err.path[0] as 'name' | 'email' | 'password';
         errors[field] = err.message;
       });

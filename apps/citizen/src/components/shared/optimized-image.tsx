@@ -22,7 +22,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   const getOptimizedSource = () => {
     // If source is not a URI, return as-is
-    if (typeof source !== 'object' || !('uri' in source) || !source.uri) {
+    if (typeof source !== 'object' || source === null || !('uri' in source) || !source.uri) {
       return source;
     }
 

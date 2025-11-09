@@ -46,8 +46,8 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   // Interaction animation values
   const scale = useSharedValue(1);
   const translateX = useSharedValue(0);
-  const backgroundColor = useSharedValue(Colors.cardBackground);
-  const borderColor = useSharedValue(Colors.border);
+  const backgroundColor = useSharedValue<string>(Colors.cardBackground);
+  const borderColor = useSharedValue<string>(Colors.border);
 
   // Entrance animation
   useEffect(() => {

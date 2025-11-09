@@ -12,6 +12,13 @@ export const useMutationQueue = () => {
     mutations: [],
   });
 
+  const updateState = () => {
+    setState({
+      count: mutationQueue.getCount(),
+      mutations: mutationQueue.getQueue(),
+    });
+  };
+
   // Hydrate queue on mount
   useEffect(() => {
     const loadQueue = async () => {
@@ -20,14 +27,7 @@ export const useMutationQueue = () => {
     };
 
     loadQueue();
-  }, [updateState]);
-
-  const updateState = () => {
-    setState({
-      count: mutationQueue.getCount(),
-      mutations: mutationQueue.getQueue(),
-    });
-  };
+  }, []);
 
   const retryAll = async (mutationFn: (mutation: QueuedMutation) => Promise<void>) => {
     await mutationQueue.retryAll(mutationFn);

@@ -16,16 +16,6 @@ export const useConnectionRecovery = () => {
   const { isOffline } = useNetworkStatus();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Detect connection recovery
-    if (state.wasOffline && !isOffline) {
-      handleConnectionRecovery();
-    }
-
-    // Update wasOffline state
-    setState((prev) => ({ ...prev, wasOffline: isOffline }));
-  }, [isOffline, handleConnectionRecovery, state.wasOffline]);
-
   const handleConnectionRecovery = async () => {
     try {
       setState((prev) => ({ ...prev, isRecovering: true }));
@@ -48,6 +38,16 @@ export const useConnectionRecovery = () => {
       setState((prev) => ({ ...prev, isRecovering: false }));
     }
   };
+
+  useEffect(() => {
+    // Detect connection recovery
+    if (state.wasOffline && !isOffline) {
+      handleConnectionRecovery();
+    }
+
+    // Update wasOffline state
+    setState((prev) => ({ ...prev, wasOffline: isOffline }));
+  }, [isOffline, state.wasOffline]);
 
   return {
     isRecovering: state.isRecovering,
