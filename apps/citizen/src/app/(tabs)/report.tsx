@@ -8,7 +8,7 @@ import { AuthPrompt } from '@/components/shared/auth-prompt';
 import { ErrorState } from '@/components/shared/error-state';
 import { Header } from '@/components/shared/header';
 import { ListSkeleton } from '@/components/shared/loading-skeleton';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { ReportFeatureWrapper } from '@/features/reports/components/report-feature-wrapper';
 import { useReportTypes } from '@/features/reports/hooks/use-reports';
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.md,
-    borderRadius: 8,
+    borderRadius: BorderRadius.md,
   },
   offlineText: {
     color: Colors.textInverse,
