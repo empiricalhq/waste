@@ -107,12 +107,7 @@ function ReportScreenContent() {
       case 'details':
         if (submitError) {
           return (
-            <ErrorState
-              error={submitError}
-              onRetry={handleRetrySubmit}
-              isOffline={isOffline}
-              isRetrying={isPending}
-            />
+            <ErrorState error={submitError} onRetry={handleRetrySubmit} isOffline={isOffline} isRetrying={isPending} />
           );
         }
         return (
@@ -174,5 +169,4 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.sm,
     textAlign: 'center',
   },
-
 });

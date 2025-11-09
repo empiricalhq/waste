@@ -34,20 +34,23 @@ function LearnScreenContent() {
     refetchQuiz();
   }, [refetchGuides, refetchQuiz]);
 
-  const handleQuizComplete = useCallback((score: number) => {
-    const message = `¡Obtuviste ${score} respuestas correctas!`;
+  const handleQuizComplete = useCallback(
+    (score: number) => {
+      const message = `¡Obtuviste ${score} respuestas correctas!`;
 
-    if (user) {
-      updateUserProgress(score);
-      Alert.alert('Quiz terminado', message);
-    } else {
-      Alert.alert('Quiz terminado', `${message}\n\n¿Quieres guardar tu progreso?`, [
-        { text: 'Más tarde', style: 'cancel' },
-        { text: 'Crear cuenta', onPress: () => router.push(ROUTES.SIGN_UP) },
-      ]);
-    }
-    setMode('roadmap');
-  }, [user, updateUserProgress, router]);
+      if (user) {
+        updateUserProgress(score);
+        Alert.alert('Quiz terminado', message);
+      } else {
+        Alert.alert('Quiz terminado', `${message}\n\n¿Quieres guardar tu progreso?`, [
+          { text: 'Más tarde', style: 'cancel' },
+          { text: 'Crear cuenta', onPress: () => router.push(ROUTES.SIGN_UP) },
+        ]);
+      }
+      setMode('roadmap');
+    },
+    [user, updateUserProgress, router],
+  );
 
   const handleStartQuiz = useCallback(() => {
     setMode('quiz');

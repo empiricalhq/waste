@@ -12,7 +12,7 @@ async function makeAuthRequest<T>(endpoint: string, options: RequestInit = {}, s
   };
 
   if (sessionToken) {
-    headers['Cookie'] = `better-auth.session_token=${sessionToken}`;
+    headers.Cookie = `better-auth.session_token=${sessionToken}`;
   }
 
   try {

@@ -7,7 +7,7 @@ import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { AppError } from '@/lib/utils/error-handler';
 import { logError } from '@/lib/utils/error-logger';
 
-export type ErrorType = 
+export type ErrorType =
   | 'network'
   | 'timeout'
   | 'server'
@@ -321,9 +321,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             </Text>
           )}
           {retryCount >= retryLimit && (
-            <Text style={styles.retryLimitText}>
-              Límite de reintentos alcanzado. Por favor, intenta más tarde.
-            </Text>
+            <Text style={styles.retryLimitText}>Límite de reintentos alcanzado. Por favor, intenta más tarde.</Text>
           )}
         </View>
       )}

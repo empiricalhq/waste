@@ -57,10 +57,7 @@ export const createPressAnimation = (reducedMotion: boolean, pressed: boolean) =
  * @param direction - Direction of exit ('left' | 'right' | 'up' | 'down')
  * @returns Animation values for opacity and translate
  */
-export const createExitAnimation = (
-  reducedMotion: boolean,
-  direction: 'left' | 'right' | 'up' | 'down' = 'left',
-) => {
+export const createExitAnimation = (reducedMotion: boolean, direction: 'left' | 'right' | 'up' | 'down' = 'left') => {
   if (reducedMotion) {
     return {
       opacity: 0,
@@ -120,7 +117,7 @@ export const createFadeAnimation = (
  * @param useSpring - Whether to use spring animation
  * @returns Animation value for scale
  */
-export const createScaleAnimation = (reducedMotion: boolean, scale: number, useSpring: boolean = true) => {
+export const createScaleAnimation = (reducedMotion: boolean, scale: number, useSpring = true) => {
   if (reducedMotion) {
     return scale;
   }
@@ -145,12 +142,7 @@ export const createScaleAnimation = (reducedMotion: boolean, scale: number, useS
  * @param delay - Optional delay
  * @returns Animation value for translate
  */
-export const createSlideAnimation = (
-  reducedMotion: boolean,
-  from: number,
-  to: number,
-  delay: number = 0,
-) => {
+export const createSlideAnimation = (reducedMotion: boolean, _from: number, to: number, delay = 0) => {
   if (reducedMotion) {
     return to;
   }

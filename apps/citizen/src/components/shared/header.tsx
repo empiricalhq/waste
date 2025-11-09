@@ -10,11 +10,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ title }) => {
   const insets = useSafeAreaInsets();
   return (
-    <View
-      style={[styles.container, { paddingTop: insets.top }]}
-      accessible={true}
-      accessibilityRole="header"
-    >
+    <View style={[styles.container, { paddingTop: insets.top }]} accessible={true} accessibilityRole="header">
       <Text style={styles.title} accessibilityRole="text">
         {title}
       </Text>

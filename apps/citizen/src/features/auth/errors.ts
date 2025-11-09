@@ -30,7 +30,7 @@ export class AuthError extends Error {
 
     // Handle HTTP status codes
     const status = error.response?.status || error.status;
-    
+
     switch (status) {
       case 401:
         return new AuthError(

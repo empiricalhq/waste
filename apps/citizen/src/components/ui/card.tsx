@@ -87,7 +87,7 @@ export const Card: React.FC<CardProps> = ({
   return (
     <View
       style={variantStyles}
-      accessible={!!accessibilityLabel}
+      accessible={Boolean(accessibilityLabel)}
       accessibilityLabel={accessibilityLabel}
       {...props}
     >

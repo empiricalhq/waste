@@ -1,5 +1,5 @@
 import type React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, type TouchableOpacityProps } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps, View } from 'react-native';
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 import { hapticSelection } from '@/lib/utils/haptics';
@@ -55,7 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const handlePress = (event: any) => {
-    if (!disabled && !loading) {
+    if (!(disabled || loading)) {
       hapticSelection();
       onPress?.(event);
     }

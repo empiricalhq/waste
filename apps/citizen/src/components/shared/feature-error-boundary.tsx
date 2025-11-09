@@ -37,7 +37,7 @@ export class FeatureErrorBoundary extends Component<Props, State> {
     });
   }
 
-  private handleReset = () => {
+  private readonly handleReset = () => {
     this.setState({ hasError: false, error: null });
     this.props.onReset?.();
   };
@@ -45,27 +45,19 @@ export class FeatureErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       const { featureName, fallbackTitle, fallbackMessage } = this.props;
-      
+
       return (
         <View style={styles.container}>
-          <Text style={styles.title}>
-            {fallbackTitle || 'Error en la función'}
-          </Text>
+          <Text style={styles.title}>{fallbackTitle || 'Error en la función'}</Text>
           <Text style={styles.message}>
-            {fallbackMessage || 
-              `Ocurrió un error en ${featureName}. Por favor, intenta de nuevo.`}
+            {fallbackMessage || `Ocurrió un error en ${featureName}. Por favor, intenta de nuevo.`}
           </Text>
           {this.state.error && __DEV__ && (
             <View style={styles.errorDetails}>
               <Text style={styles.errorText}>{this.state.error.message}</Text>
             </View>
           )}
-          <Button
-            title="Reintentar"
-            onPress={this.handleReset}
-            variant="outline"
-            style={styles.retryButton}
-          />
+          <Button title="Reintentar" onPress={this.handleReset} variant="outline" style={styles.retryButton} />
         </View>
       );
     }

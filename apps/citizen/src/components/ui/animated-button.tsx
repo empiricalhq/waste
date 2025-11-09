@@ -31,7 +31,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   ...props
 }) => {
   const reducedMotion = useReducedMotion();
-  const [isPressed, setIsPressed] = useState(false);
+  const [_isPressed, setIsPressed] = useState(false);
   const scale = useSharedValue(1);
 
   const containerStyle = [
@@ -57,7 +57,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   };
 
   const handlePressIn = () => {
-    if (!disabled && !loading) {
+    if (!(disabled || loading)) {
       setIsPressed(true);
       if (!reducedMotion) {
         scale.value = withTiming(0.95, {

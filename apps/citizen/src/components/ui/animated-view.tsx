@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useEffect } from 'react';
-import { type ViewProps } from 'react-native';
+import type { ViewProps } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 import { createEntranceAnimation, createFadeAnimation } from '@/lib/utils/animations';

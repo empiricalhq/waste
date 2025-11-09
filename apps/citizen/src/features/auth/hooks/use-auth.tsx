@@ -29,8 +29,10 @@ function useTokenValidation() {
     const validateToken = async () => {
       try {
         const token = await getToken();
-        
-        if (!isMounted) return;
+
+        if (!isMounted) {
+          return;
+        }
 
         if (!token) {
           setHasValidToken(false);
@@ -48,7 +50,9 @@ function useTokenValidation() {
           setHasValidToken(true);
         }
       } catch (err) {
-        if (!isMounted) return;
+        if (!isMounted) {
+          return;
+        }
 
         // If token is invalid, clear it
         const error = err as { status?: number };

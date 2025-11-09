@@ -31,7 +31,7 @@ export const logError = (error: Error, context?: ErrorContext): void => {
 
   // In production, send to error tracking service
   // Example: Sentry.captureException(error, { contexts: { custom: context } });
-  
+
   // For now, we'll just log to console in production too
   // Replace this with actual error tracking service integration
   console.error('Production error:', {
