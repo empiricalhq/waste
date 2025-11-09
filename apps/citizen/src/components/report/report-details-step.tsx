@@ -5,7 +5,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Spacing } from '@/constants/design-tokens';
+import { BorderRadius, Spacing } from '@/constants/design-tokens';
 
 interface ReportDetailsStepProps {
   imageUri?: string;
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 200,
-    borderRadius: 12,
+    borderRadius: BorderRadius.lg,
     marginBottom: Spacing.lg,
   },
   card: {

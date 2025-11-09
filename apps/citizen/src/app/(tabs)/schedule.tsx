@@ -4,7 +4,7 @@ import { Header } from '@/components/shared/header';
 import { ListSkeleton } from '@/components/shared/loading-skeleton';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import { useCollections } from '@/features/collections/hooks/use-collections';
 import { useNetworkStatus } from '@/lib/hooks/use-network-status';
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: BorderRadius.sm,
   },
   typeText: {
     fontSize: Typography.fontSize.base,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.md,
-    borderRadius: 8,
+    borderRadius: BorderRadius.md,
   },
   warningText: {
     color: Colors.textInverse,

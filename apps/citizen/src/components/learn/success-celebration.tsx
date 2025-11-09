@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { ANIMATION_DURATIONS } from '@/constants/animations';
-import { Colors, Shadows, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Shadows, Spacing, Typography } from '@/constants/design-tokens';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 
 interface SuccessCelebrationProps {
@@ -19,7 +19,14 @@ interface SuccessCelebrationProps {
 }
 
 const CONFETTI_COUNT = 20;
-const CONFETTI_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+const CONFETTI_COLORS = [
+  Colors.error, // Red
+  '#4ECDC4', // Teal (decorative)
+  Colors.info, // Blue
+  '#FFA07A', // Light coral (decorative)
+  '#98D8C8', // Mint (decorative)
+  Colors.warning, // Yellow
+];
 
 const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, color }) => {
   const translateY = useSharedValue(-100);
@@ -147,13 +154,13 @@ const styles = StyleSheet.create({
     top: 0,
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: BorderRadius.sm,
   },
   messageContainer: {
     backgroundColor: Colors.cardBackground,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.lg,
-    borderRadius: 20,
+    borderRadius: BorderRadius.xl,
     ...Shadows.md,
   },
   message: {

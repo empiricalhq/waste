@@ -4,7 +4,7 @@ import type React from 'react';
 import { useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button } from '@/components/ui/button';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 
 interface ReportCameraStepProps {
   onPhotoTaken: (uri: string) => void;
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   captureButton: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: BorderRadius.round,
     backgroundColor: Colors.textInverse,
     alignSelf: 'center',
     marginBottom: Spacing.xxxl,

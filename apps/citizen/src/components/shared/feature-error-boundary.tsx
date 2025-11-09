@@ -1,7 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/button';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { logError } from '@/lib/utils/error-logger';
 
 interface Props {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   errorDetails: {
     backgroundColor: Colors.cardBackground,
     padding: Spacing.md,
-    borderRadius: 8,
+    borderRadius: BorderRadius.md,
     marginBottom: Spacing.lg,
     maxWidth: '100%',
   },

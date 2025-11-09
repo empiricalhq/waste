@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AnimatedCard } from '@/components/ui/animated-card';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import type { Truck } from '@/types';
 
@@ -30,7 +30,7 @@ export const NearestTruckCard = React.memo<NearestTruckCardProps>(({ truck, inde
       </View>
     </AnimatedCard>
   );
-};
+});
 
 const styles = StyleSheet.create({
   label: {
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BorderRadius.sm,
   },
   typeText: {
     fontSize: Typography.fontSize.base,
@@ -74,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
+NearestTruckCard.displayName = 'NearestTruckCard';

@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import { Colors, Spacing } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
 import { AppError } from '@/lib/utils/error-handler';
 import { logError } from '@/lib/utils/error-logger';
 
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     padding: Spacing.md,
     backgroundColor: Colors.cardBackground,
-    borderRadius: 8,
+    borderRadius: BorderRadius.md,
     maxWidth: '100%',
   },
   debugText: {
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   },
   compactContainer: {
     backgroundColor: Colors.cardBackground,
-    borderRadius: 8,
+    borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginHorizontal: Spacing.lg,
     marginVertical: Spacing.md,

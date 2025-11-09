@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AnimatedCard } from '@/components/ui/animated-card';
 import { Text } from '@/components/ui/text';
-import { Spacing } from '@/constants/design-tokens';
+import { BorderRadius, Spacing } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import { formatDate } from '@/lib/utils/date-helpers';
 import type { Collection } from '@/types';
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BorderRadius.sm,
   },
 });
 

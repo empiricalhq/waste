@@ -1,7 +1,7 @@
 import type React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Card } from '@/components/ui/card';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { WASTE_TYPES } from '@/constants/waste-types';
 import type { LearningGuide } from '@/types';
 
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BorderRadius.sm,
   },
   categoryText: {
     fontSize: Typography.fontSize.sm,

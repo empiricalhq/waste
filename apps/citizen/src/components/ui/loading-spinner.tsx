@@ -1,6 +1,6 @@
 import type React from 'react';
 import { ActivityIndicator, StyleSheet, View, type ViewProps } from 'react-native';
-import { Colors } from '@/constants/design-tokens';
+import { Colors, Spacing } from '@/constants/design-tokens';
 
 interface LoadingSpinnerProps extends ViewProps {
   fullScreen?: boolean;
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inlineContainer: {
-    padding: 20,
+    padding: Spacing.xl,
     alignItems: 'center',
   },
 });

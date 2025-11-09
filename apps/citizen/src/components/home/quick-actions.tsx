@@ -20,7 +20,7 @@ export const QuickActions = React.memo<QuickActionsProps>(({ onSchedulePress, on
       </View>
     </View>
   );
-};
+});
 
 const ActionButton = ({ icon, text, onPress }: { icon: React.ReactNode; text: string; onPress: () => void }) => (
   <TouchableOpacity
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
+QuickActions.displayName = 'QuickActions';

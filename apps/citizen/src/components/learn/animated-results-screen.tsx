@@ -14,7 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Button } from '@/components/ui/button';
 import { ANIMATION_DURATIONS, EASING, SPRING_CONFIGS } from '@/constants/animations';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
@@ -215,7 +215,14 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
     opacity: opacity.value,
   }));
 
-  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+  const colors = [
+    Colors.error, // Red
+    '#4ECDC4', // Teal (decorative)
+    Colors.info, // Blue
+    '#FFA07A', // Light coral (decorative)
+    '#98D8C8', // Mint (decorative)
+    Colors.warning, // Yellow
+  ];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
   return <Animated.View style={[styles.confettiParticle, animatedStyle, { backgroundColor: color }]} />;
@@ -245,7 +252,7 @@ const styles = StyleSheet.create({
   scoreCircle: {
     width: 180,
     height: 180,
-    borderRadius: 90,
+    borderRadius: BorderRadius.round,
     backgroundColor: Colors.cardBackground,
     justifyContent: 'center',
     alignItems: 'center',
@@ -254,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   scoreText: {
-    fontSize: 64,
+    fontSize: Typography.fontSize.xxxl * 2.3, // ~64px
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary,
   },
@@ -268,7 +275,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   stars: {
-    fontSize: 48,
+    fontSize: Typography.fontSize.xxxl * 1.7, // ~48px
     marginBottom: Spacing.lg,
   },
   message: {
@@ -291,6 +298,6 @@ const styles = StyleSheet.create({
     top: 0,
     width: 12,
     height: 12,
-    borderRadius: 6,
+    borderRadius: BorderRadius.sm,
   },
 });
