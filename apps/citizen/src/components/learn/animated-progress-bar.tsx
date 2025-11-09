@@ -21,7 +21,7 @@ interface AnimatedProgressBarProps {
 export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ current, total, isCorrect }) => {
   const reducedMotion = useReducedMotion();
   const progress = useSharedValue(0);
-  const backgroundColor = useSharedValue(Colors.primary);
+  const backgroundColor = useSharedValue<string>(Colors.primary);
 
   useEffect(() => {
     const targetProgress = (current / total) * 100;
@@ -72,13 +72,13 @@ const styles = StyleSheet.create({
   track: {
     height: 6,
     backgroundColor: Colors.border,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.round,
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
     backgroundColor: Colors.primary,
-    borderRadius: BorderRadius.full,
+    borderRadius: BorderRadius.round,
     transformOrigin: 'left',
   },
 });

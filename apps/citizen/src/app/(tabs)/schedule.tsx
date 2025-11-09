@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import { ErrorState } from '@/components/shared/error-state';
 import { Header } from '@/components/shared/header';
 import { ListSkeleton } from '@/components/shared/loading-skeleton';
@@ -20,8 +20,11 @@ export default function ScheduleScreen() {
 
   const renderItem = ({ item }: { item: Collection }) => {
     const wasteInfo = WASTE_TYPES[item.type];
+    const cardStyle: ViewStyle = item.completed
+      ? { ...styles.card, ...styles.completedCard }
+      : styles.card;
     return (
-      <Card style={[styles.card, item.completed && styles.completedCard]}>
+      <Card style={cardStyle}>
         <View style={styles.cardContent}>
           <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
           <View>

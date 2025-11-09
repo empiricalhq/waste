@@ -99,9 +99,11 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
     transform: [{ translateY: translateY.value }, { scale: scale.value }],
   }));
 
-  const animatedScoreProps = useAnimatedProps(() => ({
-    text: Math.round(displayScore.value).toString(),
-  }));
+  const animatedScoreProps = useAnimatedProps(() => {
+    return {
+      text: Math.round(displayScore.value).toString(),
+    } as any;
+  });
 
   const getPerformanceMessage = () => {
     if (percentage === 100) {
