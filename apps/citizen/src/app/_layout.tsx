@@ -12,7 +12,9 @@ import { OfflineBanner } from '@/components/shared/offline-banner';
 import { AuthProvider, useAuth } from '@/features/auth/hooks/use-auth';
 import { useConnectionRecovery } from '@/lib/hooks/use-connection-recovery';
 import { useNetworkStatus } from '@/lib/hooks/use-network-status';
+import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
 import { AppError } from '@/lib/utils/error-handler';
+import { ANIMATION_DURATIONS } from '@/constants/animations';
 
 const APP_VERSION = '1.0.0';
 
@@ -62,6 +64,7 @@ function RootLayoutNav() {
   const router = useRouter();
   const segments = useSegments();
   const queryClient = useQueryClient();
+  const reducedMotion = useReducedMotion();
 
   // Enable connection recovery
   useConnectionRecovery();
@@ -107,7 +110,14 @@ function RootLayoutNav() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />
-        <Stack.Screen name="truck-map" />
+        <Stack.Screen
+          name="truck-map"
+          options={{
+            presentation: 'modal',
+            animation: reducedMotion ? 'fade' : 'slide_from_bottom',
+            animationDuration: reducedMotion ? ANIMATION_DURATIONS.QUICK : ANIMATION_DURATIONS.NORMAL,
+          }}
+        />
         <Stack.Screen name="help" />
         <Stack.Screen name="privacy" />
         <Stack.Screen name="terms" />
