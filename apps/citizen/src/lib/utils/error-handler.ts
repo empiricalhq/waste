@@ -5,7 +5,7 @@ export class AppError extends Error {
     public code?: string,
   ) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
   }
 }
 
@@ -14,58 +14,68 @@ export const handleApiError = (error: unknown): AppError => {
     return error;
   }
 
-  if (error instanceof Error && error.name === 'AbortError') {
-    return new AppError('La solicitud tardó demasiado.', 408, 'TIMEOUT');
+  if (error instanceof Error && error.name === "AbortError") {
+    return new AppError("La solicitud tardó demasiado.", 408, "TIMEOUT");
   }
 
-  return new AppError('Sin conexión o error de red.', 503, 'NETWORK_ERROR');
+  return new AppError("Sin conexión o error de red.", 503, "NETWORK_ERROR");
 };
 
-/**
- * Create a network error
- */
+// Create a network error
 export const createNetworkError = (message?: string): AppError => {
-  return new AppError(message || 'Sin conexión o error de red.', 503, 'NETWORK_ERROR');
+  return new AppError(
+    message || "Sin conexión o error de red.",
+    503,
+    "NETWORK_ERROR",
+  );
 };
 
-/**
- * Create a timeout error
- */
+// Create a timeout error
 export const createTimeoutError = (message?: string): AppError => {
-  return new AppError(message || 'La solicitud tardó demasiado.', 408, 'TIMEOUT');
+  return new AppError(
+    message || "La solicitud tardó demasiado.",
+    408,
+    "TIMEOUT",
+  );
 };
 
-/**
- * Create a validation error
- */
+// Create a validation error
 export const createValidationError = (message: string): AppError => {
-  return new AppError(message, 400, 'VALIDATION_ERROR');
+  return new AppError(message, 400, "VALIDATION_ERROR");
 };
 
-/**
- * Create an unauthorized error
- */
+// Create an unauthorized error
 export const createUnauthorizedError = (message?: string): AppError => {
-  return new AppError(message || 'Tu sesión expiró. Por favor, inicia sesión de nuevo.', 401, 'UNAUTHORIZED');
+  return new AppError(
+    message || "Tu sesión expiró. Por favor, inicia sesión de nuevo.",
+    401,
+    "UNAUTHORIZED",
+  );
 };
 
-/**
- * Create a forbidden error
- */
+// Create a forbidden error
 export const createForbiddenError = (message?: string): AppError => {
-  return new AppError(message || 'No tienes permiso para acceder a este recurso.', 403, 'FORBIDDEN');
+  return new AppError(
+    message || "No tienes permiso para acceder a este recurso.",
+    403,
+    "FORBIDDEN",
+  );
 };
 
-/**
- * Create a not found error
- */
+// Create a not found error
 export const createNotFoundError = (message?: string): AppError => {
-  return new AppError(message || 'No pudimos encontrar lo que buscas.', 404, 'NOT_FOUND');
+  return new AppError(
+    message || "No pudimos encontrar lo que buscas.",
+    404,
+    "NOT_FOUND",
+  );
 };
 
-/**
- * Create a server error
- */
+// Create a server error
 export const createServerError = (message?: string): AppError => {
-  return new AppError(message || 'Estamos teniendo problemas. Intenta en unos minutos.', 500, 'SERVER_ERROR');
+  return new AppError(
+    message || "Estamos teniendo problemas. Intenta en unos minutos.",
+    500,
+    "SERVER_ERROR",
+  );
 };

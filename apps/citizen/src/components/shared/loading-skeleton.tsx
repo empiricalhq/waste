@@ -1,15 +1,15 @@
-import type React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import type React from "react";
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
-} from 'react-native-reanimated';
-import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
+} from "react-native-reanimated";
+import { BorderRadius, Colors, Spacing } from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 interface CardSkeletonProps {
   animated?: boolean;
@@ -20,14 +20,19 @@ interface ListSkeletonProps {
   animated?: boolean;
 }
 
-export const CardSkeleton: React.FC<CardSkeletonProps> = ({ animated = true }) => {
+export const CardSkeleton: React.FC<CardSkeletonProps> = ({
+  animated = true,
+}) => {
   const opacity = useSharedValue(0.5);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (animated && !reducedMotion) {
       opacity.value = withRepeat(
-        withSequence(withTiming(1, { duration: 600 }), withTiming(0.5, { duration: 600 })),
+        withSequence(
+          withTiming(1, { duration: 600 }),
+          withTiming(0.5, { duration: 600 }),
+        ),
         -1, // Infinite repeat
         false,
       );
@@ -40,14 +45,23 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({ animated = true }) =
 
   return (
     <View style={styles.skeleton}>
-      <Animated.View style={[styles.skeletonLine, styles.skeletonTitle, animatedStyle]} />
-      <Animated.View style={[styles.skeletonLine, styles.skeletonText, animatedStyle]} />
-      <Animated.View style={[styles.skeletonLine, styles.skeletonText, animatedStyle]} />
+      <Animated.View
+        style={[styles.skeletonLine, styles.skeletonTitle, animatedStyle]}
+      />
+      <Animated.View
+        style={[styles.skeletonLine, styles.skeletonText, animatedStyle]}
+      />
+      <Animated.View
+        style={[styles.skeletonLine, styles.skeletonText, animatedStyle]}
+      />
     </View>
   );
 };
 
-export const ListSkeleton: React.FC<ListSkeletonProps> = ({ count = 3, animated = true }) => {
+export const ListSkeleton: React.FC<ListSkeletonProps> = ({
+  count = 3,
+  animated = true,
+}) => {
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
@@ -71,10 +85,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   skeletonTitle: {
-    width: '60%',
+    width: "60%",
     height: 20,
   },
   skeletonText: {
-    width: '100%',
+    width: "100%",
   },
 });

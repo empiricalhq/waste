@@ -1,20 +1,23 @@
-import { CheckCircle2 } from 'lucide-react-native';
-import type React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from '@/components/ui/button';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { CheckCircle2 } from "lucide-react-native";
+import type React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Button } from "@/components/ui/button";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
 
 interface ReportSuccessStepProps {
   onDone: () => void;
 }
 
-export const ReportSuccessStep: React.FC<ReportSuccessStepProps> = ({ onDone }) => {
+export const ReportSuccessStep: React.FC<ReportSuccessStepProps> = ({
+  onDone,
+}) => {
   return (
     <View style={styles.container}>
       <CheckCircle2 size={80} color={Colors.success} />
       <Text style={styles.title}>Reporte Enviado</Text>
       <Text style={styles.message}>
-        Gracias por tu colaboración. Hemos recibido tu reporte y lo revisaremos pronto.
+        Gracias por tu colaboración. Hemos recibido tu reporte y lo revisaremos
+        pronto.
       </Text>
       <Button title="Hecho" onPress={onDone} style={styles.button} />
     </View>
@@ -24,8 +27,8 @@ export const ReportSuccessStep: React.FC<ReportSuccessStepProps> = ({ onDone }) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.xxxl,
     gap: Spacing.lg,
   },
@@ -36,10 +39,10 @@ const styles = StyleSheet.create({
   message: {
     fontSize: Typography.fontSize.base,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.xl,
   },
   button: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
 });

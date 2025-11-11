@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { Header } from '@/components/shared/header';
+import { StyleSheet, Text, View } from "react-native";
+import { Header } from "@/components/shared/header";
 
 export default function HelpScreen() {
   return (
@@ -14,5 +14,5 @@ export default function HelpScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  content: { flex: 1, justifyContent: "center", alignItems: "center" },
 });

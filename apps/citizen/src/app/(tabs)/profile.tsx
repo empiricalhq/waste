@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/card';
 import { ROUTES } from '@/constants/app-config';
 import { Colors, Spacing, Typography } from '@/constants/design-tokens';
 import { useAuth } from '@/features/auth/hooks/use-auth';
-// import { LogOut } from "lucide-react-native";
 
 export default function ProfileScreen() {
   const { user, logout, isLoading } = useAuth();

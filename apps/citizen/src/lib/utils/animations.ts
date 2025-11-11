@@ -1,5 +1,10 @@
-import { withDelay, withSpring, withTiming } from 'react-native-reanimated';
-import { ANIMATION_DURATIONS, EASING, SPRING_CONFIGS, STAGGER_DELAY } from '@/constants/animations';
+import { withDelay, withSpring, withTiming } from "react-native-reanimated";
+import {
+  ANIMATION_DURATIONS,
+  EASING,
+  SPRING_CONFIGS,
+  STAGGER_DELAY,
+} from "@/constants/animations";
 
 /**
  * Creates entrance animation values for a component
@@ -9,7 +14,10 @@ import { ANIMATION_DURATIONS, EASING, SPRING_CONFIGS, STAGGER_DELAY } from '@/co
  * @param reducedMotion - Whether reduced motion is enabled
  * @returns Animation values for opacity and translateY
  */
-export const createEntranceAnimation = (index: number, reducedMotion: boolean) => {
+export const createEntranceAnimation = (
+  index: number,
+  reducedMotion: boolean,
+) => {
   if (reducedMotion) {
     return {
       opacity: 1,
@@ -38,7 +46,10 @@ export const createEntranceAnimation = (index: number, reducedMotion: boolean) =
  * @param pressed - Whether element is pressed
  * @returns Animation value for scale
  */
-export const createPressAnimation = (reducedMotion: boolean, pressed: boolean) => {
+export const createPressAnimation = (
+  reducedMotion: boolean,
+  pressed: boolean,
+) => {
   if (reducedMotion) {
     return 1;
   }
@@ -57,7 +68,10 @@ export const createPressAnimation = (reducedMotion: boolean, pressed: boolean) =
  * @param direction - Direction of exit ('left' | 'right' | 'up' | 'down')
  * @returns Animation values for opacity and translate
  */
-export const createExitAnimation = (reducedMotion: boolean, direction: 'left' | 'right' | 'up' | 'down' = 'left') => {
+export const createExitAnimation = (
+  reducedMotion: boolean,
+  direction: "left" | "right" | "up" | "down" = "left",
+) => {
   if (reducedMotion) {
     return {
       opacity: 0,
@@ -67,8 +81,10 @@ export const createExitAnimation = (reducedMotion: boolean, direction: 'left' | 
   }
 
   const distance = 300;
-  const translateX = direction === 'left' ? -distance : direction === 'right' ? distance : 0;
-  const translateY = direction === 'up' ? -distance : direction === 'down' ? distance : 0;
+  const translateX =
+    direction === "left" ? -distance : direction === "right" ? distance : 0;
+  const translateY =
+    direction === "up" ? -distance : direction === "down" ? distance : 0;
 
   return {
     opacity: withTiming(0, {
@@ -117,7 +133,11 @@ export const createFadeAnimation = (
  * @param useSpring - Whether to use spring animation
  * @returns Animation value for scale
  */
-export const createScaleAnimation = (reducedMotion: boolean, scale: number, useSpring = true) => {
+export const createScaleAnimation = (
+  reducedMotion: boolean,
+  scale: number,
+  useSpring = true,
+) => {
   if (reducedMotion) {
     return scale;
   }
@@ -142,7 +162,12 @@ export const createScaleAnimation = (reducedMotion: boolean, scale: number, useS
  * @param delay - Optional delay
  * @returns Animation value for translate
  */
-export const createSlideAnimation = (reducedMotion: boolean, _from: number, to: number, delay = 0) => {
+export const createSlideAnimation = (
+  reducedMotion: boolean,
+  _from: number,
+  to: number,
+  delay = 0,
+) => {
   if (reducedMotion) {
     return to;
   }

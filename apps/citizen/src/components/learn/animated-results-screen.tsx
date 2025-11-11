@@ -57,7 +57,7 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
         easing: EASING.OUT_CUBIC,
       });
 
-      // Score count-up animation
+      // score count-up animation
       displayScore.value = withDelay(
         300,
         withTiming(score, {
@@ -66,7 +66,7 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
         }),
       );
 
-      // Confetti for high scores (80%+)
+      // confetti for high scores (80%+)
       if (percentage >= 80) {
         confettiOpacity.value = withDelay(
           800,
@@ -75,7 +75,6 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
       }
     }
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(displayScore);
       cancelAnimation(opacity);
@@ -87,8 +86,8 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
     score,
     percentage,
     reducedMotion,
-    confettiOpacity, // Score count-up animation
-    displayScore, // Entrance animation
+    confettiOpacity,
+    displayScore,
     opacity,
     scale,
     translateY,
@@ -155,7 +154,7 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
         </View>
       </View>
 
-      {/* Confetti overlay for high scores */}
+      {/* confetti overlay for high scores */}
       {percentage >= 80 && (
         <Animated.View
           style={[
@@ -204,7 +203,6 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
       }),
     );
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(translateY);
       cancelAnimation(rotate);

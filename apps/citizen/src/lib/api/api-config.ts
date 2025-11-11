@@ -1,10 +1,10 @@
-import { APP_CONFIG } from '@/constants/app-config';
-import { getToken } from '@/lib/storage/secure-storage';
+import { APP_CONFIG } from "@/constants/app-config";
+import { getToken } from "@/lib/storage/secure-storage";
 
 export const getApiConfig = async () => {
   const token = await getToken();
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   if (token) {

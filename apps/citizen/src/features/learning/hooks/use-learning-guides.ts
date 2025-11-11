@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { learningService } from '../services/learning-service';
+import { useQuery } from "@tanstack/react-query";
+import { learningService } from "../services/learning-service";
 
 export const useLearningGuides = () => {
   return useQuery({
-    queryKey: ['learningGuides'],
+    queryKey: ["learningGuides"],
     queryFn: learningService.getLearningGuides,
     staleTime: Number.POSITIVE_INFINITY,
   });

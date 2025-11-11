@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api/api-client';
-import type { Collection } from '@/types';
+import { apiClient } from "@/lib/api/api-client";
+import type { Collection } from "@/types";
 
 export const collectionService = {
   /**
@@ -7,6 +7,6 @@ export const collectionService = {
    * This is a public endpoint accessible to guest users.
    */
   getCollections: async (): Promise<Collection[]> => {
-    return apiClient.get<Collection[]>('/collections');
+    return apiClient.get<Collection[]>("/collections");
   },
 };

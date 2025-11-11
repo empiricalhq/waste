@@ -1,18 +1,33 @@
-import type React from 'react';
-import { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { hapticSelection } from '@/lib/utils/haptics';
+import type React from "react";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  type TouchableOpacityProps,
+} from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { ANIMATION_DURATIONS, EASING } from "@/constants/animations";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { hapticSelection } from "@/lib/utils/haptics";
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 interface AnimatedButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
   loading?: boolean;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -20,8 +35,8 @@ interface AnimatedButtonProps extends TouchableOpacityProps {
 
 export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   title,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   loading = false,
   disabled,
   style,
@@ -42,14 +57,18 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     style,
   ];
 
-  const textStyle = [styles.text, styles[`${size}Text`], styles[`${variant}Text`]];
+  const textStyle = [
+    styles.text,
+    styles[`${size}Text`],
+    styles[`${variant}Text`],
+  ];
 
   const getLoaderColor = () => {
     switch (variant) {
-      case 'primary':
-      case 'danger':
+      case "primary":
+      case "danger":
         return Colors.textInverse;
-      case 'ghost':
+      case "ghost":
         return Colors.primary;
       default:
         return Colors.text;
@@ -102,7 +121,11 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
       {...props}
     >
-      {loading ? <ActivityIndicator color={getLoaderColor()} /> : <Text style={textStyle}>{title}</Text>}
+      {loading ? (
+        <ActivityIndicator color={getLoaderColor()} />
+      ) : (
+        <Text style={textStyle}>{title}</Text>
+      )}
     </AnimatedTouchable>
   );
 };
@@ -110,8 +133,8 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: 44,
   },
   smContainer: {
@@ -135,12 +158,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   outlineContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 2,
     borderColor: Colors.primary,
   },
   ghostContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   dangerContainer: {
     backgroundColor: Colors.error,

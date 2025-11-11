@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface QueuedMutation {
   id: string;
@@ -11,12 +11,14 @@ export interface QueuedMutation {
 
 class MutationQueue {
   private queue: QueuedMutation[] = [];
-  private readonly STORAGE_KEY = 'MUTATION_QUEUE';
+  private readonly STORAGE_KEY = "MUTATION_QUEUE";
 
   /**
    * Add a mutation to the queue
    */
-  async add(mutation: Omit<QueuedMutation, 'id' | 'timestamp' | 'retryCount'>): Promise<void> {
+  async add(
+    mutation: Omit<QueuedMutation, "id" | "timestamp" | "retryCount">,
+  ): Promise<void> {
     const queuedMutation: QueuedMutation = {
       ...mutation,
       id: `mutation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -39,7 +41,9 @@ class MutationQueue {
   /**
    * Retry all queued mutations
    */
-  async retryAll(mutationFn: (mutation: QueuedMutation) => Promise<void>): Promise<void> {
+  async retryAll(
+    mutationFn: (mutation: QueuedMutation) => Promise<void>,
+  ): Promise<void> {
     const mutations = [...this.queue];
 
     for (const mutation of mutations) {
@@ -49,11 +53,11 @@ class MutationQueue {
       } catch (_error) {
         mutation.retryCount++;
 
-        // Remove after max retries
+        // remove after max retries
         if (mutation.retryCount >= mutation.maxRetries) {
           await this.remove(mutation.id);
         } else {
-          // Update retry count
+          // update retry count
           await this.persist();
         }
       }
@@ -106,5 +110,4 @@ class MutationQueue {
   }
 }
 
-// Export singleton instance
 export const mutationQueue = new MutationQueue();

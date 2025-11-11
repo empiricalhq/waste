@@ -1,4 +1,4 @@
-import type { WasteType as WasteTypeCode } from '../constants/waste-types';
+import type { WasteType as WasteTypeCode } from "../constants/waste-types";
 
 export type WasteType = WasteTypeCode;
 
@@ -36,7 +36,7 @@ export interface Collection {
   completed: boolean;
 }
 
-export type ReportStatus = 'pending' | 'in-progress' | 'resolved';
+export type ReportStatus = "pending" | "in-progress" | "resolved";
 
 export interface Report {
   id: string;

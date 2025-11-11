@@ -19,7 +19,6 @@ export default function LoginScreen() {
   const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({});
 
   const handleLogin = () => {
-    // Clear previous validation errors and API errors
     setValidationErrors({});
     reset();
 
@@ -36,13 +35,11 @@ export default function LoginScreen() {
       return;
     }
 
-    // Submit login
     login(result.data, {
       onSuccess: () => {
         router.replace(ROUTES.HOME);
       },
       onError: (err) => {
-        // Error is now handled by ErrorState component
         console.error('Login error:', err);
       },
     });

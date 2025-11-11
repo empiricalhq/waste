@@ -1,4 +1,4 @@
-import type { UseQueryOptions } from '@tanstack/react-query';
+import type { UseQueryOptions } from "@tanstack/react-query";
 
 /**
  * Get adaptive query options based on connection type
@@ -9,7 +9,7 @@ export const getAdaptiveQueryOptions = (
   baseOptions?: Partial<UseQueryOptions>,
 ): Partial<UseQueryOptions> => {
   if (isWifi) {
-    // On WiFi, use default aggressive refetching
+    // on WiFi, use default aggressive refetching
     return {
       ...baseOptions,
       refetchOnWindowFocus: true,
@@ -17,7 +17,7 @@ export const getAdaptiveQueryOptions = (
     };
   }
 
-  // On cellular, be more conservative
+  // on cellular, we are more conservative
   return {
     ...baseOptions,
     staleTime: 15 * 60 * 1000, // 15 minutes (vs 5 minutes default)
@@ -27,9 +27,7 @@ export const getAdaptiveQueryOptions = (
   };
 };
 
-/**
- * Check if a query should refetch based on connection type
- */
+// Check if a query should refetch based on connection type
 export const shouldRefetch = (isWifi: boolean, isStale: boolean): boolean => {
   // Always refetch stale data on WiFi
   if (isWifi && isStale) {

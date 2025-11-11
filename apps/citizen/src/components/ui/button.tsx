@@ -1,28 +1,47 @@
-import type React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps, View } from 'react-native';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { hapticSelection } from '@/lib/utils/haptics';
+import type React from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  type TouchableOpacityProps,
+  View,
+} from "react-native";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { hapticSelection } from "@/lib/utils/haptics";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'link' | 'text';
-  size?: 'sm' | 'md' | 'lg';
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "danger"
+    | "link"
+    | "text";
+  size?: "sm" | "md" | "lg";
   loading?: boolean;
   icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   loading = false,
   disabled,
   icon,
-  iconPosition = 'left',
+  iconPosition = "left",
   style,
   accessibilityLabel,
   accessibilityHint,
@@ -38,16 +57,20 @@ export const Button: React.FC<ButtonProps> = ({
     style,
   ];
 
-  const textStyle = [styles.text, styles[`${size}Text`], styles[`${variant}Text`]];
+  const textStyle = [
+    styles.text,
+    styles[`${size}Text`],
+    styles[`${variant}Text`],
+  ];
 
   const getLoaderColor = () => {
     switch (variant) {
-      case 'primary':
-      case 'danger':
+      case "primary":
+      case "danger":
         return Colors.textInverse;
-      case 'ghost':
-      case 'link':
-      case 'text':
+      case "ghost":
+      case "link":
+      case "text":
         return Colors.primary;
       default:
         return Colors.text;
@@ -69,9 +92,9 @@ export const Button: React.FC<ButtonProps> = ({
     if (icon) {
       return (
         <View style={styles.contentWithIcon}>
-          {iconPosition === 'left' && icon}
+          {iconPosition === "left" && icon}
           <Text style={textStyle}>{title}</Text>
-          {iconPosition === 'right' && icon}
+          {iconPosition === "right" && icon}
         </View>
       );
     }
@@ -100,11 +123,11 @@ export const Button: React.FC<ButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44, // Minimum touch target
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44, // minimum touch target
   },
-  // Size variants
+  // size variants
   smContainer: {
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
@@ -127,17 +150,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   outlineContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 2,
     borderColor: Colors.primary,
   },
   ghostContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   dangerContainer: {
     backgroundColor: Colors.error,
   },
-  // Text styles
+  // text styles
   text: {
     fontWeight: Typography.fontWeight.medium,
   },
@@ -166,21 +189,21 @@ const styles = StyleSheet.create({
     color: Colors.textInverse,
   },
   linkContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   linkText: {
     color: Colors.primary,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   textContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   textText: {
     color: Colors.primary,
   },
   contentWithIcon: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.sm,
   },
   disabled: {

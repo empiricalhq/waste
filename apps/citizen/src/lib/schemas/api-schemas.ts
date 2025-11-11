@@ -1,11 +1,6 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-/**
- * API Response Validation Schemas
- * Using Zod for runtime type safety
- */
-
-// User schema
+// user schema
 export const UserProgressSchema = z.object({
   streak: z.number(),
   lastQuizDate: z.string().nullable(),
@@ -20,17 +15,17 @@ export const UserSettingsSchema = z.object({
 export const UserSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   progress: UserProgressSchema,
   settings: UserSettingsSchema,
 });
 
 export type User = z.infer<typeof UserSchema>;
 
-// Collection schema
+// collection schema
 export const CollectionSchema = z.object({
   id: z.string(),
-  type: z.enum(['general', 'recycling', 'organic', 'hazardous']),
+  type: z.enum(["general", "recycling", "organic", "hazardous"]),
   date: z.string(),
   time: z.string(),
   completed: z.boolean(),
@@ -38,27 +33,27 @@ export const CollectionSchema = z.object({
 
 export type Collection = z.infer<typeof CollectionSchema>;
 
-// Truck schema
+// truck schema
 export const TruckSchema = z.object({
   id: z.string(),
-  type: z.enum(['general', 'recycling', 'organic', 'hazardous']),
+  type: z.enum(["general", "recycling", "organic", "hazardous"]),
   eta: z.number(),
   route: z.string(),
 });
 
 export type Truck = z.infer<typeof TruckSchema>;
 
-// Report schema
+// report schema
 export const ReportSchema = z.object({
   id: z.string(),
   type: z.string(),
   description: z.string(),
-  status: z.enum(['pending', 'in-progress', 'resolved']),
+  status: z.enum(["pending", "in-progress", "resolved"]),
 });
 
 export type Report = z.infer<typeof ReportSchema>;
 
-// Auth response schema
+// auth response schema
 export const BetterAuthSessionSchema = z.object({
   id: z.string(),
   token: z.string(),
@@ -81,12 +76,17 @@ export type BetterAuthResponse = z.infer<typeof BetterAuthResponseSchema>;
  * Validate API response with Zod schema
  * Throws error if validation fails
  */
-export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T {
+export function validateApiResponse<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown,
+): T {
   try {
     return schema.parse(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      throw new Error(`Invalid API response: ${error.issues.map((e) => e.message).join(', ')}`);
+      throw new Error(
+        `Invalid API response: ${error.issues.map((e) => e.message).join(", ")}`,
+      );
     }
     throw error;
   }
@@ -96,7 +96,10 @@ export function validateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T
  * Safely validate API response
  * Returns null if validation fails instead of throwing
  */
-export function safeValidateApiResponse<T>(schema: z.ZodSchema<T>, data: unknown): T | null {
+export function safeValidateApiResponse<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown,
+): T | null {
   const result = schema.safeParse(data);
   if (result.success) {
     return result.data;

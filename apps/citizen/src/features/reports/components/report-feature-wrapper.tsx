@@ -1,13 +1,10 @@
-import type { ReactNode } from 'react';
-import { FeatureErrorBoundary } from '@/components/shared/feature-error-boundary';
+import type { ReactNode } from "react";
+import { FeatureErrorBoundary } from "@/components/shared/feature-error-boundary";
 
 interface ReportFeatureWrapperProps {
   children: ReactNode;
 }
 
-/**
- * Wrapper component for the reports feature that provides error boundary protection
- */
 export function ReportFeatureWrapper({ children }: ReportFeatureWrapperProps) {
   return (
     <FeatureErrorBoundary

@@ -1,8 +1,3 @@
-/**
- * Error logging utility for tracking and reporting errors
- * In production, this would integrate with services like Sentry, Bugsnag, etc.
- */
-
 interface ErrorContext {
   feature?: string;
   componentStack?: string;
@@ -19,7 +14,7 @@ interface ErrorContext {
 export const logError = (error: Error, context?: ErrorContext): void => {
   // In development, log to console
   if (__DEV__) {
-    console.error('Error logged:', {
+    console.error("Error logged:", {
       message: error.message,
       name: error.name,
       stack: error.stack,
@@ -29,12 +24,8 @@ export const logError = (error: Error, context?: ErrorContext): void => {
     return;
   }
 
-  // In production, send to error tracking service
-  // Example: Sentry.captureException(error, { contexts: { custom: context } });
-
   // For now, we'll just log to console in production too
-  // Replace this with actual error tracking service integration
-  console.error('Production error:', {
+  console.error("Production error:", {
     message: error.message,
     name: error.name,
     context,
@@ -49,12 +40,11 @@ export const logError = (error: Error, context?: ErrorContext): void => {
  */
 export const logWarning = (message: string, context?: ErrorContext): void => {
   if (__DEV__) {
-    console.warn('Warning:', message, context);
+    console.warn("Warning:", message, context);
     return;
   }
 
-  // In production, send to tracking service
-  console.warn('Production warning:', message, context);
+  console.warn("Production warning:", message, context);
 };
 
 /**
@@ -62,8 +52,11 @@ export const logWarning = (message: string, context?: ErrorContext): void => {
  * @param message - Info message
  * @param context - Additional context
  */
-export const logInfo = (message: string, context?: Record<string, unknown>): void => {
+export const logInfo = (
+  message: string,
+  context?: Record<string, unknown>,
+): void => {
   if (__DEV__) {
-    console.log('Info:', message, context);
+    console.log("Info:", message, context);
   }
 };

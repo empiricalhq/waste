@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useCollections } from './use-collections';
+import { useMemo } from "react";
+import { useCollections } from "./use-collections";
 
 export const useNextCollection = () => {
   const { data: collections = [], ...queryInfo } = useCollections();
@@ -7,7 +7,9 @@ export const useNextCollection = () => {
   const nextCollection = useMemo(() => {
     return collections
       .filter((c) => !c.completed)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+      .sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      )[0];
   }, [collections]);
 
   return { nextCollection, ...queryInfo };

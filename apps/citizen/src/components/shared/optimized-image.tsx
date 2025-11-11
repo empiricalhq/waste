@@ -1,10 +1,13 @@
-import { Image as ExpoImage, type ImageProps as ExpoImageProps } from 'expo-image';
-import type React from 'react';
-import { useConnectionType } from '@/lib/hooks/use-connection-type';
+import {
+  Image as ExpoImage,
+  type ImageProps as ExpoImageProps,
+} from "expo-image";
+import type React from "react";
+import { useConnectionType } from "@/lib/hooks/use-connection-type";
 
 interface OptimizedImageProps extends ExpoImageProps {
-  priority?: 'high' | 'normal' | 'low';
-  maxSizeOnCellular?: 'thumbnail' | 'medium' | 'full';
+  priority?: "high" | "normal" | "low";
+  maxSizeOnCellular?: "thumbnail" | "medium" | "full";
 }
 
 /**
@@ -14,32 +17,36 @@ interface OptimizedImageProps extends ExpoImageProps {
  */
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   source,
-  priority = 'normal',
-  maxSizeOnCellular = 'medium',
+  priority = "normal",
+  maxSizeOnCellular = "medium",
   ...props
 }) => {
   const { isWifi } = useConnectionType();
 
   const getOptimizedSource = () => {
-    // If source is not a URI, return as-is
-    if (typeof source !== 'object' || source === null || !('uri' in source) || !source.uri) {
+    if (
+      typeof source !== "object" ||
+      source === null ||
+      !("uri" in source) ||
+      !source.uri
+    ) {
       return source;
     }
 
     const uri = source.uri;
 
     // On WiFi, use full quality
-    if (isWifi || maxSizeOnCellular === 'full') {
+    if (isWifi || maxSizeOnCellular === "full") {
       return source;
     }
 
     // On cellular, request smaller images
     // This assumes the API supports size parameters
     // Adjust the parameter format based on your API
-    const sizeParam = maxSizeOnCellular === 'thumbnail' ? 'w=200' : 'w=500';
+    const sizeParam = maxSizeOnCellular === "thumbnail" ? "w=200" : "w=500";
 
     // Check if URI already has query parameters
-    const separator = uri.includes('?') ? '&' : '?';
+    const separator = uri.includes("?") ? "&" : "?";
 
     return {
       ...source,
@@ -52,7 +59,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {...props}
       source={getOptimizedSource()}
       cachePolicy="memory-disk"
-      priority={priority === 'high' ? 'high' : 'normal'}
+      priority={priority === "high" ? "high" : "normal"}
     />
   );
 };

@@ -1,5 +1,5 @@
-import * as SecureStore from 'expo-secure-store';
-import { APP_CONFIG } from '@/constants/app-config';
+import * as SecureStore from "expo-secure-store";
+import { APP_CONFIG } from "@/constants/app-config";
 
 export async function saveToken(token: string): Promise<void> {
   await SecureStore.setItemAsync(APP_CONFIG.STORAGE_TOKEN_KEY, token);

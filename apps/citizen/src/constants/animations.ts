@@ -1,8 +1,8 @@
-import { Easing } from 'react-native-reanimated';
+import { Easing } from "react-native-reanimated";
 
 /**
  * Animation duration constants
- * Following best practices: most animations 200-300ms, max 1s
+ * Most animations 200-300ms, max 1s
  */
 export const ANIMATION_DURATIONS = {
   QUICK: 200, // For simple transitions (hover, press)
@@ -12,7 +12,6 @@ export const ANIMATION_DURATIONS = {
 } as const;
 
 /**
- * Easing functions - React Native Reanimated equivalents to CSS cubic-bezier
  * Use ease-out for most animations (elements entering, user interactions)
  */
 export const EASING = {
@@ -28,14 +27,14 @@ export const EASING = {
 
 /**
  * Spring animation configurations
- * Default to spring animations, avoid bouncy unless for drag gestures
+ * Default: spring animations, avoid bouncy unless for drag gestures
  */
 export const SPRING_CONFIGS = {
-  // Default spring - not too bouncy, feels natural
+  // default spring: not too bouncy, feels natural
   DEFAULT: { damping: 15, stiffness: 100, mass: 1 },
-  // Gentle spring - smooth, minimal bounce
+  // gentle spring: smooth, minimal bounce
   GENTLE: { damping: 20, stiffness: 90, mass: 1 },
-  // Only use bouncy for drag gestures
+  // only use bouncy for drag gestures
   BOUNCY: { damping: 8, stiffness: 100, mass: 0.8 },
 } as const;
 
@@ -49,18 +48,18 @@ export const STAGGER_DELAY = 100; // ms between each item
  */
 export const FEEDBACK_COLORS = {
   success: {
-    background: '#E6F9F1',
-    border: '#00C853',
-    text: '#00C853',
+    background: "#E6F9F1",
+    border: "#00C853",
+    text: "#00C853",
   },
   error: {
-    background: '#FEEBEE',
-    border: '#FF5252',
-    text: '#FF5252',
+    background: "#FEEBEE",
+    border: "#FF5252",
+    text: "#FF5252",
   },
   streak: {
-    background: '#FFF3E0',
-    border: '#FF9800',
-    text: '#FF9800',
+    background: "#FFF3E0",
+    border: "#FF9800",
+    text: "#FF9800",
   },
 } as const;

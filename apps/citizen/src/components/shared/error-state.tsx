@@ -1,22 +1,30 @@
-import { AlertCircle, Clock, RefreshCw, SearchX, ServerCrash, ShieldAlert, WifiOff } from 'lucide-react-native';
-import type React from 'react';
-import { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
-import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
-import { AppError } from '@/lib/utils/error-handler';
-import { logError } from '@/lib/utils/error-logger';
+import {
+  AlertCircle,
+  Clock,
+  RefreshCw,
+  SearchX,
+  ServerCrash,
+  ShieldAlert,
+  WifiOff,
+} from "lucide-react-native";
+import type React from "react";
+import { useCallback, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { BorderRadius, Colors, Spacing } from "@/constants/design-tokens";
+import { AppError } from "@/lib/utils/error-handler";
+import { logError } from "@/lib/utils/error-logger";
 
 export type ErrorType =
-  | 'network'
-  | 'timeout'
-  | 'server'
-  | 'not-found'
-  | 'unauthorized'
-  | 'forbidden'
-  | 'validation'
-  | 'unknown';
+  | "network"
+  | "timeout"
+  | "server"
+  | "not-found"
+  | "unauthorized"
+  | "forbidden"
+  | "validation"
+  | "unknown";
 
 interface ErrorStateProps {
   error: Error | null;
@@ -28,7 +36,7 @@ interface ErrorStateProps {
   errorType?: ErrorType;
   showRetry?: boolean;
   retryLimit?: number;
-  variant?: 'full' | 'compact';
+  variant?: "full" | "compact";
 }
 
 interface ErrorInfo {
@@ -39,30 +47,33 @@ interface ErrorInfo {
   type: ErrorType;
 }
 
-const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: ErrorType): ErrorInfo => {
-  // Offline state
+const getErrorInfo = (
+  error: Error | null,
+  isOffline: boolean,
+  errorType?: ErrorType,
+): ErrorInfo => {
   if (isOffline) {
     return {
       icon: <WifiOff size={48} color={Colors.textSecondary} />,
-      title: 'Sin conexión',
-      message: 'Verifica tu conexión a internet e intenta de nuevo.',
+      title: "Sin conexión",
+      message: "Verifica tu conexión a internet e intenta de nuevo.",
       actionable: true,
-      type: 'network',
+      type: "network",
     };
   }
 
-  // No error provided
+  // no error provided
   if (!error) {
     return {
       icon: <AlertCircle size={48} color={Colors.textSecondary} />,
-      title: 'Algo salió mal',
-      message: 'Ocurrió un error inesperado.',
+      title: "Algo salió mal",
+      message: "Ocurrió un error inesperado.",
       actionable: true,
-      type: 'unknown',
+      type: "unknown",
     };
   }
 
-  // Use explicit error type if provided
+  // use explicit error type if provided
   if (errorType) {
     return getErrorInfoByType(errorType, error.message);
   }
@@ -70,13 +81,13 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
   // AppError with specific status codes
   if (error instanceof AppError) {
     // Timeout errors
-    if (error.statusCode === 408 || error.code === 'TIMEOUT') {
+    if (error.statusCode === 408 || error.code === "TIMEOUT") {
       return {
         icon: <Clock size={48} color={Colors.textSecondary} />,
-        title: 'Tiempo agotado',
-        message: 'La solicitud tardó demasiado. Intenta de nuevo.',
+        title: "Tiempo agotado",
+        message: "La solicitud tardó demasiado. Intenta de nuevo.",
         actionable: true,
-        type: 'timeout',
+        type: "timeout",
       };
     }
 
@@ -84,10 +95,10 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
     if (error.statusCode >= 500) {
       return {
         icon: <ServerCrash size={48} color={Colors.textSecondary} />,
-        title: 'Error del servidor',
-        message: 'Estamos teniendo problemas. Intenta en unos minutos.',
+        title: "Error del servidor",
+        message: "Estamos teniendo problemas. Intenta en unos minutos.",
         actionable: true,
-        type: 'server',
+        type: "server",
       };
     }
 
@@ -95,10 +106,10 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
     if (error.statusCode === 401) {
       return {
         icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
-        title: 'No autorizado',
-        message: 'Tu sesión expiró. Por favor, inicia sesión de nuevo.',
+        title: "No autorizado",
+        message: "Tu sesión expiró. Por favor, inicia sesión de nuevo.",
         actionable: false,
-        type: 'unauthorized',
+        type: "unauthorized",
       };
     }
 
@@ -106,10 +117,10 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
     if (error.statusCode === 403) {
       return {
         icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
-        title: 'Acceso denegado',
-        message: 'No tienes permiso para acceder a este recurso.',
+        title: "Acceso denegado",
+        message: "No tienes permiso para acceder a este recurso.",
         actionable: false,
-        type: 'forbidden',
+        type: "forbidden",
       };
     }
 
@@ -117,10 +128,10 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
     if (error.statusCode === 404) {
       return {
         icon: <SearchX size={48} color={Colors.textSecondary} />,
-        title: 'No encontrado',
-        message: 'No pudimos encontrar lo que buscas.',
+        title: "No encontrado",
+        message: "No pudimos encontrar lo que buscas.",
         actionable: false,
-        type: 'not-found',
+        type: "not-found",
       };
     }
 
@@ -128,21 +139,22 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
     if (error.statusCode === 400) {
       return {
         icon: <AlertCircle size={48} color={Colors.textSecondary} />,
-        title: 'Datos inválidos',
-        message: error.message || 'Por favor, verifica los datos e intenta de nuevo.',
+        title: "Datos inválidos",
+        message:
+          error.message || "Por favor, verifica los datos e intenta de nuevo.",
         actionable: false,
-        type: 'validation',
+        type: "validation",
       };
     }
 
     // Network errors
-    if (error.code === 'NETWORK_ERROR') {
+    if (error.code === "NETWORK_ERROR") {
       return {
         icon: <WifiOff size={48} color={Colors.textSecondary} />,
-        title: 'Sin conexión',
-        message: 'Verifica tu conexión a internet e intenta de nuevo.',
+        title: "Sin conexión",
+        message: "Verifica tu conexión a internet e intenta de nuevo.",
         actionable: true,
-        type: 'network',
+        type: "network",
       };
     }
   }
@@ -150,78 +162,81 @@ const getErrorInfo = (error: Error | null, isOffline: boolean, errorType?: Error
   // Generic error
   return {
     icon: <AlertCircle size={48} color={Colors.textSecondary} />,
-    title: 'Algo salió mal',
-    message: error.message || 'Ocurrió un error inesperado.',
+    title: "Algo salió mal",
+    message: error.message || "Ocurrió un error inesperado.",
     actionable: true,
-    type: 'unknown',
+    type: "unknown",
   };
 };
 
 const getErrorInfoByType = (type: ErrorType, message?: string): ErrorInfo => {
   switch (type) {
-    case 'network':
+    case "network":
       return {
         icon: <WifiOff size={48} color={Colors.textSecondary} />,
-        title: 'Sin conexión',
-        message: message || 'Verifica tu conexión a internet e intenta de nuevo.',
+        title: "Sin conexión",
+        message:
+          message || "Verifica tu conexión a internet e intenta de nuevo.",
         actionable: true,
-        type: 'network',
+        type: "network",
       };
-    case 'timeout':
+    case "timeout":
       return {
         icon: <Clock size={48} color={Colors.textSecondary} />,
-        title: 'Tiempo agotado',
-        message: message || 'La solicitud tardó demasiado. Intenta de nuevo.',
+        title: "Tiempo agotado",
+        message: message || "La solicitud tardó demasiado. Intenta de nuevo.",
         actionable: true,
-        type: 'timeout',
+        type: "timeout",
       };
-    case 'server':
+    case "server":
       return {
         icon: <ServerCrash size={48} color={Colors.textSecondary} />,
-        title: 'Error del servidor',
-        message: message || 'Estamos teniendo problemas. Intenta en unos minutos.',
+        title: "Error del servidor",
+        message:
+          message || "Estamos teniendo problemas. Intenta en unos minutos.",
         actionable: true,
-        type: 'server',
+        type: "server",
       };
-    case 'not-found':
+    case "not-found":
       return {
         icon: <SearchX size={48} color={Colors.textSecondary} />,
-        title: 'No encontrado',
-        message: message || 'No pudimos encontrar lo que buscas.',
+        title: "No encontrado",
+        message: message || "No pudimos encontrar lo que buscas.",
         actionable: false,
-        type: 'not-found',
+        type: "not-found",
       };
-    case 'unauthorized':
+    case "unauthorized":
       return {
         icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
-        title: 'No autorizado',
-        message: message || 'Tu sesión expiró. Por favor, inicia sesión de nuevo.',
+        title: "No autorizado",
+        message:
+          message || "Tu sesión expiró. Por favor, inicia sesión de nuevo.",
         actionable: false,
-        type: 'unauthorized',
+        type: "unauthorized",
       };
-    case 'forbidden':
+    case "forbidden":
       return {
         icon: <ShieldAlert size={48} color={Colors.textSecondary} />,
-        title: 'Acceso denegado',
-        message: message || 'No tienes permiso para acceder a este recurso.',
+        title: "Acceso denegado",
+        message: message || "No tienes permiso para acceder a este recurso.",
         actionable: false,
-        type: 'forbidden',
+        type: "forbidden",
       };
-    case 'validation':
+    case "validation":
       return {
         icon: <AlertCircle size={48} color={Colors.textSecondary} />,
-        title: 'Datos inválidos',
-        message: message || 'Por favor, verifica los datos e intenta de nuevo.',
+        title: "Datos inválidos",
+        message: message || "Por favor, verifica los datos e intenta de nuevo.",
         actionable: false,
-        type: 'validation',
+        type: "validation",
       };
     default:
       return {
         icon: <AlertCircle size={48} color={Colors.textSecondary} />,
-        title: 'Algo salió mal',
-        message: message || 'Ocurrió un error inesperado.',
+        title: "Algo salió mal",
+        message: message || "Ocurrió un error inesperado.",
         actionable: true,
-        type: 'unknown',
+        type: "unknown",
       };
   }
 };
@@ -236,7 +251,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   errorType,
   showRetry = true,
   retryLimit = 3,
-  variant = 'full',
+  variant = "full",
 }) => {
   const [retryCount, setRetryCount] = useState(0);
   const [isLocalRetrying, setIsLocalRetrying] = useState(false);
@@ -266,10 +281,11 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     }
   }, [onRetry, retryCount, retryLimit]);
 
-  const canRetry = errorInfo.actionable && onRetry && showRetry && retryCount < retryLimit;
+  const canRetry =
+    errorInfo.actionable && onRetry && showRetry && retryCount < retryLimit;
   const retrying = isRetrying || isLocalRetrying;
 
-  if (variant === 'compact') {
+  if (variant === "compact") {
     return (
       <View style={styles.compactContainer}>
         <View style={styles.compactContent}>
@@ -278,14 +294,18 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             <Text variant="body" weight="semibold">
               {customTitle || errorInfo.title}
             </Text>
-            <Text variant="bodySmall" color="secondary" style={styles.compactMessage}>
+            <Text
+              variant="bodySmall"
+              color="secondary"
+              style={styles.compactMessage}
+            >
               {customMessage || errorInfo.message}
             </Text>
           </View>
         </View>
         {canRetry && (
           <Button
-            title={retrying ? 'Reintentando...' : 'Reintentar'}
+            title={retrying ? "Reintentando..." : "Reintentar"}
             onPress={handleRetry}
             loading={retrying}
             variant="outline"
@@ -294,7 +314,11 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           />
         )}
         {retryCount >= retryLimit && (
-          <Text variant="caption" color="error" style={styles.compactRetryLimitText}>
+          <Text
+            variant="caption"
+            color="error"
+            style={styles.compactRetryLimitText}
+          >
             Límite de reintentos alcanzado. Por favor, intenta más tarde.
           </Text>
         )}
@@ -306,18 +330,28 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     <View style={styles.container}>
       <View style={styles.iconContainer}>{errorInfo.icon}</View>
 
-      <Text variant="heading3" weight="bold" align="center" style={styles.title}>
+      <Text
+        variant="heading3"
+        weight="bold"
+        align="center"
+        style={styles.title}
+      >
         {customTitle || errorInfo.title}
       </Text>
 
-      <Text variant="body" color="secondary" align="center" style={styles.message}>
+      <Text
+        variant="body"
+        color="secondary"
+        align="center"
+        style={styles.message}
+      >
         {customMessage || errorInfo.message}
       </Text>
 
       {canRetry && (
         <View style={styles.retryContainer}>
           <Button
-            title={retrying ? 'Reintentando...' : 'Reintentar'}
+            title={retrying ? "Reintentando..." : "Reintentar"}
             onPress={handleRetry}
             loading={retrying}
             variant="outline"
@@ -325,12 +359,21 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             icon={<RefreshCw size={18} color={Colors.primary} />}
           />
           {retryCount > 0 && retryCount < retryLimit && (
-            <Text variant="bodySmall" color="secondary" style={styles.retryCount}>
+            <Text
+              variant="bodySmall"
+              color="secondary"
+              style={styles.retryCount}
+            >
               Intento {retryCount} de {retryLimit}
             </Text>
           )}
           {retryCount >= retryLimit && (
-            <Text variant="bodySmall" color="error" align="center" style={styles.retryLimitText}>
+            <Text
+              variant="bodySmall"
+              color="error"
+              align="center"
+              style={styles.retryLimitText}
+            >
               Límite de reintentos alcanzado. Por favor, intenta más tarde.
             </Text>
           )}
@@ -351,8 +394,8 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: Spacing.xl,
   },
   iconContainer: {
@@ -365,7 +408,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   retryContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing.sm,
   },
   retryButton: {
@@ -383,10 +426,10 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     backgroundColor: Colors.cardBackground,
     borderRadius: BorderRadius.md,
-    maxWidth: '100%',
+    maxWidth: "100%",
   },
   debugText: {
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   compactContainer: {
     backgroundColor: Colors.cardBackground,
@@ -398,8 +441,8 @@ const styles = StyleSheet.create({
     borderLeftColor: Colors.error,
   },
   compactContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: Spacing.md,
   },
   compactIconContainer: {
@@ -412,7 +455,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   compactRetryButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   compactRetryLimitText: {
     marginTop: Spacing.sm,

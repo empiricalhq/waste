@@ -1,14 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import { learningService } from '../services/learning-service';
+import { useQuery } from "@tanstack/react-query";
+import { learningService } from "../services/learning-service";
 
 export const useQuiz = () => {
   return useQuery({
-    queryKey: ['quizQuestions'],
+    queryKey: ["quizQuestions"],
     queryFn: learningService.getQuizQuestions,
-    // Quiz questions never go stale - they're educational content
+    // quiz questions never go stale
     staleTime: Number.POSITIVE_INFINITY,
-    gcTime: Number.POSITIVE_INFINITY, // Keep in cache indefinitely
-    // Mark as available offline
+    gcTime: Number.POSITIVE_INFINITY, // keep in cache indefinitely
+    // mark as available offline
     meta: {
       offlineAvailable: true,
     },

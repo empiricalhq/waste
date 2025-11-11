@@ -20,29 +20,27 @@ const APP_VERSION = '1.0.0';
 
 SplashScreen.preventAutoHideAsync();
 
-// Configure React Query for offline-first behavior
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Retry with exponential backoff
       retry: (failureCount, error) => {
-        // Don't retry client errors (4xx)
+        // don't retry client errors (4xx)
         if (error instanceof AppError && error.statusCode >= 400 && error.statusCode < 500) {
           return false;
         }
-        // Retry up to 3 times for network errors and server errors
+        // retry up to 3 times for network errors and server errors
         return failureCount < 3;
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000), // 1s, 2s, 4s, max 30s
 
-      // Cache configuration
+      // cache configuration
       staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
       gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
 
-      // Offline behavior
-      networkMode: 'offlineFirst', // Use cache when offline
-      refetchOnReconnect: true, // Auto-refetch when connection restored
-      refetchOnWindowFocus: true, // Refetch when app comes to foreground
+      // offline behavior
+      networkMode: 'offlineFirst',
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
     },
     mutations: {
       retry: 1, // Retry mutations once
@@ -51,7 +49,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Create AsyncStorage persister for cache persistence
 const persister = createAsyncStoragePersister({
   storage: AsyncStorage,
   key: 'REACT_QUERY_OFFLINE_CACHE',
@@ -66,7 +63,6 @@ function RootLayoutNav() {
   const queryClient = useQueryClient();
   const reducedMotion = useReducedMotion();
 
-  // Enable connection recovery
   useConnectionRecovery();
 
   useEffect(() => {

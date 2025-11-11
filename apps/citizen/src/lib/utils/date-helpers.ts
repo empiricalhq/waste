@@ -5,20 +5,20 @@ export const formatDate = (dateString: string): string => {
   tomorrow.setDate(today.getDate() + 1);
 
   if (date.toDateString() === today.toDateString()) {
-    return 'Hoy';
+    return "Hoy";
   }
   if (date.toDateString() === tomorrow.toDateString()) {
-    return 'Mañana';
+    return "Mañana";
   }
 
-  return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString("es-ES", { month: "short", day: "numeric" });
 };
 
 export const formatFullDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
+  return date.toLocaleDateString("es-ES", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
   });
 };

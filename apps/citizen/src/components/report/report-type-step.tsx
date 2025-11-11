@@ -1,16 +1,25 @@
-import type React from 'react';
-import { useCallback } from 'react';
-import { FlatList, type ListRenderItem, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Card } from '@/components/ui/card';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
-import type { ReportType } from '@/types';
+import type React from "react";
+import { useCallback } from "react";
+import {
+  FlatList,
+  type ListRenderItem,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { Card } from "@/components/ui/card";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import type { ReportType } from "@/types";
 
 interface ReportTypeStepProps {
   reportTypes: ReportType[];
   onSelectType: (type: string) => void;
 }
 
-export const ReportTypeStep: React.FC<ReportTypeStepProps> = ({ reportTypes, onSelectType }) => {
+export const ReportTypeStep: React.FC<ReportTypeStepProps> = ({
+  reportTypes,
+  onSelectType,
+}) => {
   const renderItem: ListRenderItem<ReportType> = useCallback(
     ({ item }) => (
       <TouchableOpacity onPress={() => onSelectType(item.label)}>
@@ -28,7 +37,9 @@ export const ReportTypeStep: React.FC<ReportTypeStepProps> = ({ reportTypes, onS
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       contentContainerStyle={styles.list}
-      ListHeaderComponent={<Text style={styles.title}>Selecciona un tipo de problema</Text>}
+      ListHeaderComponent={
+        <Text style={styles.title}>Selecciona un tipo de problema</Text>
+      }
     />
   );
 };

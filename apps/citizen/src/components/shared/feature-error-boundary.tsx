@@ -1,8 +1,13 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from '@/components/ui/button';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { logError } from '@/lib/utils/error-logger';
+import { Component, type ErrorInfo, type ReactNode } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Button } from "@/components/ui/button";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { logError } from "@/lib/utils/error-logger";
 
 interface Props {
   children: ReactNode;
@@ -29,11 +34,10 @@ export class FeatureErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to tracking service
     logError(error, {
       feature: this.props.featureName,
       componentStack: errorInfo.componentStack ?? undefined,
-      errorBoundary: 'FeatureErrorBoundary',
+      errorBoundary: "FeatureErrorBoundary",
     });
   }
 
@@ -48,16 +52,24 @@ export class FeatureErrorBoundary extends Component<Props, State> {
 
       return (
         <View style={styles.container}>
-          <Text style={styles.title}>{fallbackTitle || 'Error en la función'}</Text>
+          <Text style={styles.title}>
+            {fallbackTitle || "Error en la función"}
+          </Text>
           <Text style={styles.message}>
-            {fallbackMessage || `Ocurrió un error en ${featureName}. Por favor, intenta de nuevo.`}
+            {fallbackMessage ||
+              `Ocurrió un error en ${featureName}. Por favor, intenta de nuevo.`}
           </Text>
           {this.state.error && __DEV__ && (
             <View style={styles.errorDetails}>
               <Text style={styles.errorText}>{this.state.error.message}</Text>
             </View>
           )}
-          <Button title="Reintentar" onPress={this.handleReset} variant="outline" style={styles.retryButton} />
+          <Button
+            title="Reintentar"
+            onPress={this.handleReset}
+            variant="outline"
+            style={styles.retryButton}
+          />
         </View>
       );
     }
@@ -69,8 +81,8 @@ export class FeatureErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.xl,
     backgroundColor: Colors.background,
   },
@@ -79,12 +91,12 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
     color: Colors.text,
     marginBottom: Spacing.md,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: Typography.fontSize.base,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.xl,
     lineHeight: 22,
   },
@@ -93,12 +105,12 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.lg,
-    maxWidth: '100%',
+    maxWidth: "100%",
   },
   errorText: {
     fontSize: Typography.fontSize.sm,
     color: Colors.error,
-    fontFamily: 'monospace',
+    fontFamily: "monospace",
   },
   retryButton: {
     minWidth: 140,

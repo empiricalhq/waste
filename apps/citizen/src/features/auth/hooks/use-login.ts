@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleApiError } from '@/lib/utils/error-handler';
-import { authService } from '../services/auth-service';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { handleApiError } from "@/lib/utils/error-handler";
+import { authService } from "../services/auth-service";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -13,7 +13,7 @@ export const useLogin = () => {
   } = useMutation({
     mutationFn: authService.login,
     onSuccess: (user) => {
-      queryClient.setQueryData(['currentUser'], user);
+      queryClient.setQueryData(["currentUser"], user);
     },
     onError: (err) => handleApiError(err),
   });

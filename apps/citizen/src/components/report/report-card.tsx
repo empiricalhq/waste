@@ -1,24 +1,29 @@
-import { Clock } from 'lucide-react-native';
-import type React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import type { Report } from '@/types';
+import { Clock } from "lucide-react-native";
+import type React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import type { Report } from "@/types";
 
 interface ReportCardProps {
   report: Report;
 }
 
 export const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
-  const _isPending = report.status === 'pending';
-  const isOptimistic = report.id.startsWith('temp-');
+  // const _isPending = report.status === "pending";
+  const isOptimistic = report.id.startsWith("temp-");
 
   const getStatusColor = () => {
     switch (report.status) {
-      case 'pending':
+      case "pending":
         return Colors.warning;
-      case 'in-progress':
+      case "in-progress":
         return Colors.info;
-      case 'resolved':
+      case "resolved":
         return Colors.success;
       default:
         return Colors.textSecondary;
@@ -27,12 +32,12 @@ export const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
 
   const getStatusLabel = () => {
     switch (report.status) {
-      case 'pending':
-        return 'Pendiente';
-      case 'in-progress':
-        return 'En progreso';
-      case 'resolved':
-        return 'Resuelto';
+      case "pending":
+        return "Pendiente";
+      case "in-progress":
+        return "En progreso";
+      case "resolved":
+        return "Resuelto";
       default:
         return report.status;
     }
@@ -42,7 +47,9 @@ export const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
     <View style={[styles.container, isOptimistic && styles.optimistic]}>
       <View style={styles.header}>
         <Text style={styles.type}>{report.type}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor() }]}>
+        <View
+          style={[styles.statusBadge, { backgroundColor: getStatusColor() }]}
+        >
           <Text style={styles.statusText}>{getStatusLabel()}</Text>
         </View>
       </View>
@@ -72,9 +79,9 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: Spacing.sm,
   },
   type: {
@@ -100,14 +107,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   pendingIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
     marginTop: Spacing.xs,
   },
   pendingText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.textSecondary,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 });

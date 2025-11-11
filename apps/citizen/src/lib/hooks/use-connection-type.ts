@@ -1,7 +1,7 @@
-import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
-import { useEffect, useState } from 'react';
+import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
+import { useEffect, useState } from "react";
 
-type ConnectionType = 'wifi' | 'cellular' | 'none';
+type ConnectionType = "wifi" | "cellular" | "none";
 
 interface ConnectionTypeState {
   connectionType: ConnectionType;
@@ -11,7 +11,7 @@ interface ConnectionTypeState {
 }
 
 export const useConnectionType = (): ConnectionTypeState => {
-  const [connectionType, setConnectionType] = useState<ConnectionType>('none');
+  const [connectionType, setConnectionType] = useState<ConnectionType>("none");
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -19,14 +19,14 @@ export const useConnectionType = (): ConnectionTypeState => {
       setIsConnected(state.isConnected ?? false);
 
       if (!state.isConnected) {
-        setConnectionType('none');
-      } else if (state.type === 'wifi') {
-        setConnectionType('wifi');
-      } else if (state.type === 'cellular') {
-        setConnectionType('cellular');
+        setConnectionType("none");
+      } else if (state.type === "wifi") {
+        setConnectionType("wifi");
+      } else if (state.type === "cellular") {
+        setConnectionType("cellular");
       } else {
         // Other connection types (ethernet, bluetooth, etc.) treated as wifi
-        setConnectionType('wifi');
+        setConnectionType("wifi");
       }
     });
 
@@ -35,8 +35,8 @@ export const useConnectionType = (): ConnectionTypeState => {
 
   return {
     connectionType,
-    isWifi: connectionType === 'wifi',
-    isCellular: connectionType === 'cellular',
+    isWifi: connectionType === "wifi",
+    isCellular: connectionType === "cellular",
     isConnected,
   };
 };

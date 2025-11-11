@@ -1,5 +1,8 @@
-import { useEffect, useState } from 'react';
-import { mutationQueue, type QueuedMutation } from '@/lib/offline/mutation-queue';
+import { useEffect, useState } from "react";
+import {
+  mutationQueue,
+  type QueuedMutation,
+} from "@/lib/offline/mutation-queue";
 
 interface MutationQueueState {
   count: number;
@@ -29,7 +32,9 @@ export const useMutationQueue = () => {
     loadQueue();
   }, [updateState]);
 
-  const retryAll = async (mutationFn: (mutation: QueuedMutation) => Promise<void>) => {
+  const retryAll = async (
+    mutationFn: (mutation: QueuedMutation) => Promise<void>,
+  ) => {
     await mutationQueue.retryAll(mutationFn);
     updateState();
   };

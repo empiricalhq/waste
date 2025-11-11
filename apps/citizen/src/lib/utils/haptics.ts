@@ -1,13 +1,6 @@
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 
-/**
- * Haptic feedback utilities for quiz interactions
- * Provides tactile feedback as alternative to visual animations
- */
-
-/**
- * Light haptic feedback for selections and taps
- */
+// light haptic feedback for selections and taps
 export const hapticSelection = async (): Promise<void> => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -16,20 +9,16 @@ export const hapticSelection = async (): Promise<void> => {
   }
 };
 
-/**
- * Success haptic feedback for correct answers
- */
+// Success haptic feedback for correct answers
 export const hapticSuccess = async (): Promise<void> => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   } catch {
-    // Haptics may not be available on all devices
+    // haptics may not be available on all devices
   }
 };
 
-/**
- * Error haptic feedback for incorrect answers
- */
+// Error haptic feedback for incorrect answers
 export const hapticError = async (): Promise<void> => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -38,9 +27,7 @@ export const hapticError = async (): Promise<void> => {
   }
 };
 
-/**
- * Warning haptic feedback for important notifications
- */
+// Warning haptic feedback for important notifications
 export const hapticWarning = async (): Promise<void> => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);

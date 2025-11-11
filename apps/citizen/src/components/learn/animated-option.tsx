@@ -68,7 +68,6 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
       }
     }
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(translateY);
       cancelAnimation(opacity);
@@ -79,13 +78,11 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   useEffect(() => {
     if (isAnswered) {
       if (isCorrect) {
-        // Success animation
         hapticSuccess();
         backgroundColor.value = FEEDBACK_COLORS.success.background;
         borderColor.value = FEEDBACK_COLORS.success.border;
 
         if (!reducedMotion) {
-          // Success pulse
           scale.value = withSequence(withSpring(1.05, SPRING_CONFIGS.DEFAULT), withSpring(1, SPRING_CONFIGS.DEFAULT));
         }
       } else if (isSelected) {

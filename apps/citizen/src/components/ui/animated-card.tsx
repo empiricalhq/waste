@@ -1,17 +1,25 @@
-import type React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, type ViewProps } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { createEntranceAnimation } from '@/lib/utils/animations';
+import type React from "react";
+import { useEffect } from "react";
+import { StyleSheet, type ViewProps } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+import { BorderRadius, Colors, Spacing } from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { createEntranceAnimation } from "@/lib/utils/animations";
 
 interface AnimatedCardProps extends ViewProps {
   children: React.ReactNode;
   index?: number;
 }
 
-export const AnimatedCard: React.FC<AnimatedCardProps> = ({ children, style, index = 0, ...props }) => {
+export const AnimatedCard: React.FC<AnimatedCardProps> = ({
+  children,
+  style,
+  index = 0,
+  ...props
+}) => {
   const reducedMotion = useReducedMotion();
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(50);

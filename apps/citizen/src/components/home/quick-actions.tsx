@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     gap: Spacing.md,
-    minHeight: 56, // Ensure adequate touch target
+    minHeight: 56, // we have to make sure we have an adequate touch target
   },
   actionText: {
     fontSize: Typography.fontSize.base,

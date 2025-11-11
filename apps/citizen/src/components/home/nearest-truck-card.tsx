@@ -1,36 +1,43 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { AnimatedCard } from '@/components/ui/animated-card';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { WASTE_TYPES } from '@/constants/waste-types';
-import type { Truck } from '@/types';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { AnimatedCard } from "@/components/ui/animated-card";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { WASTE_TYPES } from "@/constants/waste-types";
+import type { Truck } from "@/types";
 
 interface NearestTruckCardProps {
   truck: Truck;
   index?: number;
 }
 
-export const NearestTruckCard = React.memo<NearestTruckCardProps>(({ truck, index = 1 }) => {
-  const wasteInfo = WASTE_TYPES[truck.type];
-  return (
-    <AnimatedCard index={index}>
-      <Text style={styles.label}>Camión Cercano</Text>
-      <View style={styles.content}>
-        <View style={styles.info}>
-          <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
-          <View>
-            <Text style={styles.typeText}>{wasteInfo.label}</Text>
-            <Text style={styles.routeText}>{truck.route}</Text>
+export const NearestTruckCard = React.memo<NearestTruckCardProps>(
+  ({ truck, index = 1 }) => {
+    const wasteInfo = WASTE_TYPES[truck.type];
+    return (
+      <AnimatedCard index={index}>
+        <Text style={styles.label}>Camión Cercano</Text>
+        <View style={styles.content}>
+          <View style={styles.info}>
+            <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
+            <View>
+              <Text style={styles.typeText}>{wasteInfo.label}</Text>
+              <Text style={styles.routeText}>{truck.route}</Text>
+            </View>
+          </View>
+          <View style={styles.eta}>
+            <Text style={styles.etaNumber}>{truck.eta}</Text>
+            <Text style={styles.etaLabel}>min</Text>
           </View>
         </View>
-        <View style={styles.eta}>
-          <Text style={styles.etaNumber}>{truck.eta}</Text>
-          <Text style={styles.etaLabel}>min</Text>
-        </View>
-      </View>
-    </AnimatedCard>
-  );
-});
+      </AnimatedCard>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   label: {
@@ -39,13 +46,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   content: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   info: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   dot: {
@@ -62,7 +69,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   eta: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   etaNumber: {
     fontSize: Typography.fontSize.xxl,
@@ -74,4 +81,4 @@ const styles = StyleSheet.create({
   },
 });
 
-NearestTruckCard.displayName = 'NearestTruckCard';
+NearestTruckCard.displayName = "NearestTruckCard";

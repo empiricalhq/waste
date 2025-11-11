@@ -27,16 +27,14 @@ export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ curren
     const targetProgress = (current / total) * 100;
 
     if (reducedMotion) {
-      // Instant transition for reduced motion
       progress.value = targetProgress;
     } else {
-      // Smooth spring animation
       progress.value = withSpring(targetProgress, SPRING_CONFIGS.DEFAULT);
     }
   }, [
     current,
     total,
-    reducedMotion, // Smooth spring animation
+    reducedMotion,
     progress,
   ]);
 

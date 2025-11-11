@@ -1,15 +1,30 @@
-import type React from 'react';
-import { useCallback } from 'react';
-import { Pressable, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
-import { BorderRadius, Colors, Shadows, Spacing } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { hapticSelection } from '@/lib/utils/haptics';
+import type React from "react";
+import { useCallback } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  type ViewProps,
+  type ViewStyle,
+} from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { ANIMATION_DURATIONS, EASING } from "@/constants/animations";
+import {
+  BorderRadius,
+  Colors,
+  Shadows,
+  Spacing,
+} from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { hapticSelection } from "@/lib/utils/haptics";
 
-type CardVariant = 'elevated' | 'outlined' | 'flat';
+type CardVariant = "elevated" | "outlined" | "flat";
 
-interface CardProps extends Omit<ViewProps, 'style'> {
+interface CardProps extends Omit<ViewProps, "style"> {
   children: React.ReactNode;
   variant?: CardVariant;
   onPress?: () => void;
@@ -20,7 +35,7 @@ interface CardProps extends Omit<ViewProps, 'style'> {
 
 export const Card: React.FC<CardProps> = ({
   children,
-  variant = 'outlined',
+  variant = "outlined",
   onPress,
   style,
   accessibilityLabel,
@@ -61,9 +76,9 @@ export const Card: React.FC<CardProps> = ({
 
   const variantStyles = [
     styles.card,
-    variant === 'elevated' && styles.elevated,
-    variant === 'outlined' && styles.outlined,
-    variant === 'flat' && styles.flat,
+    variant === "elevated" && styles.elevated,
+    variant === "outlined" && styles.outlined,
+    variant === "flat" && styles.flat,
     style,
   ];
 
@@ -79,7 +94,9 @@ export const Card: React.FC<CardProps> = ({
         accessibilityHint={accessibilityHint}
         {...props}
       >
-        <Animated.View style={[variantStyles, animatedStyle]}>{children}</Animated.View>
+        <Animated.View style={[variantStyles, animatedStyle]}>
+          {children}
+        </Animated.View>
       </Pressable>
     );
   }

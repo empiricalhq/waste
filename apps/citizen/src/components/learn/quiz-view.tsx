@@ -1,26 +1,34 @@
-import type React from 'react';
-import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, { cancelAnimation, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { AnimatedOption } from '@/components/learn/animated-option';
-import { AnimatedProgressBar } from '@/components/learn/animated-progress-bar';
-import { AnimatedResultsScreen } from '@/components/learn/animated-results-screen';
-import { SuccessCelebration } from '@/components/learn/success-celebration';
-import { OptimizedImage } from '@/components/shared/optimized-image';
-import { Button } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
-import { ANIMATION_DURATIONS, EASING } from '@/constants/animations';
-import { BorderRadius, Spacing } from '@/constants/design-tokens';
-import { WASTE_TYPES } from '@/constants/waste-types';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import type { QuizQuestion } from '@/types';
+import type React from "react";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { AnimatedOption } from "@/components/learn/animated-option";
+import { AnimatedProgressBar } from "@/components/learn/animated-progress-bar";
+import { AnimatedResultsScreen } from "@/components/learn/animated-results-screen";
+import { SuccessCelebration } from "@/components/learn/success-celebration";
+import { OptimizedImage } from "@/components/shared/optimized-image";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { ANIMATION_DURATIONS, EASING } from "@/constants/animations";
+import { BorderRadius, Spacing } from "@/constants/design-tokens";
+import { WASTE_TYPES } from "@/constants/waste-types";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import type { QuizQuestion } from "@/types";
 
 interface QuizViewProps {
   questions: QuizQuestion[];
   onQuizComplete: (score: number) => void;
 }
 
-export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete }) => {
+export const QuizView: React.FC<QuizViewProps> = ({
+  questions,
+  onQuizComplete,
+}) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [score, setScore] = useState(0);
@@ -34,12 +42,12 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  // Question card animation
+  // question card animation
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
   const imageScale = useSharedValue(0.9);
 
-  // Entrance animation for new question
+  // entrance animation for new question
   useEffect(() => {
     setIsQuestionVisible(true);
 
@@ -67,7 +75,6 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
       });
     }
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(translateX);
       cancelAnimation(opacity);
@@ -90,7 +97,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
       setStreak(streak + 1);
       setShowCelebration(true);
 
-      // Hide celebration after delay
+      // hide celebration after delay
       setTimeout(() => {
         setShowCelebration(false);
       }, 2000);
@@ -103,7 +110,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
     if (isLastQuestion) {
       setShowResults(true);
     } else {
-      // Exit animation
+      // exit animation
       if (!reducedMotion) {
         translateX.value = withTiming(-300, {
           duration: ANIMATION_DURATIONS.QUICK,
@@ -114,7 +121,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
         });
       }
 
-      // Wait for exit animation, then move to next question
+      // wait for exit animation, then move to next question
       setTimeout(
         () => {
           setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -136,7 +143,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
     transform: [{ scale: imageScale.value }],
   }));
 
-  // Next button animation
+  // next button animation
   const nextButtonTranslateY = useSharedValue(50);
   const nextButtonOpacity = useSharedValue(0);
 
@@ -159,7 +166,6 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
       nextButtonOpacity.value = 0;
     }
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(nextButtonTranslateY);
       cancelAnimation(nextButtonOpacity);
@@ -172,7 +178,13 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
   }));
 
   if (showResults) {
-    return <AnimatedResultsScreen score={score} total={questions.length} onContinue={() => onQuizComplete(score)} />;
+    return (
+      <AnimatedResultsScreen
+        score={score}
+        total={questions.length}
+        onContinue={() => onQuizComplete(score)}
+      />
+    );
   }
 
   return (
@@ -180,17 +192,27 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
       <AnimatedProgressBar
         current={currentQuestionIndex + (isAnswered ? 1 : 0)}
         total={questions.length}
-        isCorrect={isAnswered && selectedAnswer === currentQuestion.correctAnswer}
+        isCorrect={
+          isAnswered && selectedAnswer === currentQuestion.correctAnswer
+        }
       />
 
       <Animated.View style={[styles.questionCard, questionCardStyle]}>
         <Animated.View style={imageStyle}>
-          <OptimizedImage source={{ uri: currentQuestion.imageUrl }} style={styles.image} />
+          <OptimizedImage
+            source={{ uri: currentQuestion.imageUrl }}
+            style={styles.image}
+          />
         </Animated.View>
         <Text variant="bodyLarge" color="secondary" align="center">
           {currentQuestion.question}
         </Text>
-        <Text variant="heading2" weight="bold" align="center" style={styles.item}>
+        <Text
+          variant="heading2"
+          weight="bold"
+          align="center"
+          style={styles.item}
+        >
           {currentQuestion.item}
         </Text>
 
@@ -211,7 +233,10 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete })
 
         {isAnswered && (
           <Animated.View style={[styles.nextButtonContainer, nextButtonStyle]}>
-            <Button title={isLastQuestion ? 'Ver Resultados' : 'Siguiente'} onPress={handleNext} />
+            <Button
+              title={isLastQuestion ? "Ver Resultados" : "Siguiente"}
+              onPress={handleNext}
+            />
           </Animated.View>
         )}
       </Animated.View>
@@ -230,7 +255,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.lg,

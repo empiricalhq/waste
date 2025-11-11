@@ -1,14 +1,17 @@
-import { Info } from 'lucide-react-native';
-import type React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { Info } from "lucide-react-native";
+import type React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
 
 interface EmptyStateProps {
   title: string;
   description?: string;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({ title, description }) => {
+export const EmptyState: React.FC<EmptyStateProps> = ({
+  title,
+  description,
+}) => {
   return (
     <View style={styles.container}>
       <Info size={32} color={Colors.textTertiary} />
@@ -20,8 +23,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ title, description }) =>
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: Spacing.xxxl,
     gap: Spacing.md,
   },
@@ -29,11 +32,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.lg,
     fontWeight: Typography.fontWeight.semibold,
     color: Colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
   description: {
     fontSize: Typography.fontSize.base,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

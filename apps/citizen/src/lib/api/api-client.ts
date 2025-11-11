@@ -1,8 +1,8 @@
-import { router } from 'expo-router';
-import { APP_CONFIG, ROUTES } from '@/constants/app-config';
-import { deleteToken } from '@/lib/storage/secure-storage';
-import { AppError, handleApiError } from '@/lib/utils/error-handler';
-import { getApiConfig } from './api-config';
+import { router } from "expo-router";
+import { APP_CONFIG, ROUTES } from "@/constants/app-config";
+import { deleteToken } from "@/lib/storage/secure-storage";
+import { AppError, handleApiError } from "@/lib/utils/error-handler";
+import { getApiConfig } from "./api-config";
 
 async function request<T>(
   endpoint: string,
@@ -26,13 +26,13 @@ async function request<T>(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({
-        message: 'Ocurrió un error inesperado.',
+        message: "Ocurrió un error inesperado.",
       }));
 
-      // Handle 401 Unauthorized - clear token and redirect to login
+      // handle 401 (unauthorized): clear token and redirect to login
       if (response.status === 401) {
         await deleteToken();
-        // Use setTimeout to avoid navigation during render
+        // use setTimeout to avoid navigation during render
         setTimeout(() => {
           router.replace(ROUTES.LOGIN);
         }, 0);
@@ -41,7 +41,7 @@ async function request<T>(
       throw new AppError(errorData.message, response.status, errorData.code);
     }
 
-    // Handle responses with no content
+    // handle responses with no content
     if (response.status === 204) {
       return null as T;
     }
@@ -50,11 +50,14 @@ async function request<T>(
   } catch (error) {
     clearTimeout(timeoutId);
 
-    // Don't retry on 401 errors or other client errors
-    const isClientError = error instanceof AppError && error.statusCode >= 400 && error.statusCode < 500;
+    // don't retry on 401 errors or other client errors
+    const isClientError =
+      error instanceof AppError &&
+      error.statusCode >= 400 &&
+      error.statusCode < 500;
 
     if (retries > 0 && !isClientError) {
-      // Retry for network errors, not for client errors (4xx)
+      // retry for network errors, not for client errors (4xx)
       return request(endpoint, options, retries - 1);
     }
 
@@ -63,10 +66,10 @@ async function request<T>(
 }
 
 export const apiClient = {
-  get: <T>(endpoint: string) => request<T>(endpoint, { method: 'GET' }),
+  get: <T>(endpoint: string) => request<T>(endpoint, { method: "GET" }),
   post: <T, D = unknown>(endpoint: string, data: D) =>
-    request<T>(endpoint, { method: 'POST', body: JSON.stringify(data) }),
+    request<T>(endpoint, { method: "POST", body: JSON.stringify(data) }),
   patch: <T, D = unknown>(endpoint: string, data: D) =>
-    request<T>(endpoint, { method: 'PATCH', body: JSON.stringify(data) }),
-  delete: <T>(endpoint: string) => request<T>(endpoint, { method: 'DELETE' }),
+    request<T>(endpoint, { method: "PATCH", body: JSON.stringify(data) }),
+  delete: <T>(endpoint: string) => request<T>(endpoint, { method: "DELETE" }),
 };

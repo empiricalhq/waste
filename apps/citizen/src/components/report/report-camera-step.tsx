@@ -1,23 +1,32 @@
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Camera, X } from 'lucide-react-native';
-import type React from 'react';
-import { useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Modal } from '@/components/ui/modal';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { Camera, X } from "lucide-react-native";
+import type React from "react";
+import { useRef, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Modal } from "@/components/ui/modal";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
 
 interface ReportCameraStepProps {
   onPhotoTaken: (uri: string) => void;
   onSkip: () => void;
 }
 
-export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken, onSkip }) => {
+export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({
+  onPhotoTaken,
+  onSkip,
+}) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [showCamera, setShowCamera] = useState(false);
   const [isRequestingPermission, setIsRequestingPermission] = useState(false);
-  const [showPermissionDeniedModal, setShowPermissionDeniedModal] = useState(false);
+  const [showPermissionDeniedModal, setShowPermissionDeniedModal] =
+    useState(false);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const cameraRef = useRef<CameraView>(null);
@@ -27,7 +36,7 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
       setIsRequestingPermission(true);
       const { granted } = await requestPermission();
       setIsRequestingPermission(false);
-      
+
       if (!granted) {
         setShowPermissionDeniedModal(true);
         return;
@@ -54,7 +63,7 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
           setShowCamera(false);
         }
       } catch (error) {
-        console.error('Error taking picture:', error);
+        console.error("Error taking picture:", error);
       } finally {
         setIsTakingPhoto(false);
       }
@@ -63,15 +72,15 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
 
   if (showCamera) {
     return (
-      <View 
+      <View
         style={StyleSheet.absoluteFill}
         accessible={true}
         accessibilityLabel="Vista de cámara"
         accessibilityHint="La cámara está activa. Usa el botón de captura para tomar una foto o el botón de cerrar para salir"
       >
-        <CameraView 
-          style={StyleSheet.absoluteFill} 
-          facing="back" 
+        <CameraView
+          style={StyleSheet.absoluteFill}
+          facing="back"
           ref={cameraRef}
           ratio="16:9"
           onCameraReady={handleCameraReady}
@@ -84,7 +93,7 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
               <Text style={styles.cameraLoadingText}>Iniciando cámara...</Text>
             </View>
           )}
-          
+
           <View style={styles.cameraOverlay}>
             <TouchableOpacity
               style={styles.closeButton}
@@ -97,10 +106,10 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
             >
               <X color={Colors.textInverse} size={32} />
             </TouchableOpacity>
-            
+
             <View style={styles.captureContainer}>
               {isTakingPhoto ? (
-                <View 
+                <View
                   style={styles.captureLoadingContainer}
                   accessible={true}
                   accessibilityLabel="Procesando foto"
@@ -130,20 +139,18 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
 
   return (
     <View style={styles.container}>
-      <Camera 
-        size={64} 
+      <Camera
+        size={64}
         color={Colors.textTertiary}
         accessibilityLabel="Icono de cámara"
       />
-      <Text 
-        style={styles.title}
-        accessible={true}
-        accessibilityRole="header"
-      >
+      <Text style={styles.title} accessible={true} accessibilityRole="header">
         Añadir una foto
       </Text>
-      <Text style={styles.subtitle}>Una imagen ayuda a resolver el problema más rápido.</Text>
-      
+      <Text style={styles.subtitle}>
+        Una imagen ayuda a resolver el problema más rápido.
+      </Text>
+
       {isRequestingPermission ? (
         <View
           accessible={true}
@@ -175,7 +182,7 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
         title="Permiso de cámara necesario"
         message="Para tomar fotos del problema, necesitamos acceso a tu cámara. Por favor, habilita el permiso en la configuración de tu dispositivo."
         primaryAction={{
-          label: 'Entendido',
+          label: "Entendido",
           onPress: () => setShowPermissionDeniedModal(false),
         }}
       />
@@ -186,8 +193,8 @@ export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({ onPhotoTaken
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.xl,
     gap: Spacing.lg,
   },
@@ -198,20 +205,20 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: Typography.fontSize.base,
     color: Colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.lg,
   },
   cameraOverlay: {
     flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'space-between',
+    backgroundColor: "transparent",
+    justifyContent: "space-between",
     padding: Spacing.xxxl,
   },
   cameraLoadingOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: Spacing.lg,
   },
   cameraLoadingText: {
@@ -220,15 +227,15 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.medium,
   },
   closeButton: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     padding: Spacing.sm,
     minWidth: 44,
     minHeight: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   captureContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: Spacing.xxxl,
   },
   captureButton: {
@@ -236,8 +243,8 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: BorderRadius.round,
     backgroundColor: Colors.textInverse,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 4,
   },
   captureButtonInner: {
@@ -251,7 +258,7 @@ const styles = StyleSheet.create({
   captureLoadingContainer: {
     width: 70,
     height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { mutationQueue } from '@/lib/offline/mutation-queue';
-import { useNetworkStatus } from './use-network-status';
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { mutationQueue } from "@/lib/offline/mutation-queue";
+import { useNetworkStatus } from "./use-network-status";
 
 interface ConnectionRecoveryState {
   isRecovering: boolean;
@@ -29,7 +29,7 @@ export const useConnectionRecovery = () => {
 
       // Refetch all stale queries
       await queryClient.refetchQueries({
-        type: 'active',
+        type: "active",
         stale: true,
       });
 
@@ -40,12 +40,10 @@ export const useConnectionRecovery = () => {
   };
 
   useEffect(() => {
-    // Detect connection recovery
     if (state.wasOffline && !isOffline) {
       handleConnectionRecovery();
     }
 
-    // Update wasOffline state
     setState((prev) => ({ ...prev, wasOffline: isOffline }));
   }, [isOffline, state.wasOffline, handleConnectionRecovery]);
 

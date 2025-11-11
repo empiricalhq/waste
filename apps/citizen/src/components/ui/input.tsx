@@ -1,6 +1,17 @@
-import type React from 'react';
-import { StyleSheet, Text, TextInput, type TextInputProps, View } from 'react-native';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import type React from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  type TextInputProps,
+  View,
+} from "react-native";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -21,7 +32,11 @@ export const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
         {...props}
       />
       {error && (
-        <Text style={styles.errorText} accessibilityRole="alert" accessibilityLiveRegion="polite">
+        <Text
+          style={styles.errorText}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+        >
           {error}
         </Text>
       )}
@@ -31,7 +46,7 @@ export const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
   },
   label: {
     fontSize: Typography.fontSize.sm,
@@ -47,7 +62,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     fontSize: Typography.fontSize.base,
     color: Colors.text,
-    minHeight: 44, // Ensure adequate touch target
+    minHeight: 44, // make sure the touch target is adequate
   },
   inputError: {
     borderColor: Colors.error,

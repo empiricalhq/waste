@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api/api-client';
-import type { Truck } from '@/types';
+import { apiClient } from "@/lib/api/api-client";
+import type { Truck } from "@/types";
 
 export const truckService = {
   /**
@@ -7,6 +7,6 @@ export const truckService = {
    * This is a public endpoint accessible to guest users.
    */
   getTrucks: async (): Promise<Truck[]> => {
-    return apiClient.get<Truck[]>('/trucks');
+    return apiClient.get<Truck[]>("/trucks");
   },
 };

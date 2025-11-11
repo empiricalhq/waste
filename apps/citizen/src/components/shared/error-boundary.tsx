@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <View style={styles.container}>
-          <Text style={styles.title}>Algo Salió Mal</Text>
+          <Text style={styles.title}>Algo salió mal</Text>
           <Text style={styles.message}>Ocurrió un error inesperado. Por favor, intenta reiniciar la aplicación.</Text>
         </View>
       );

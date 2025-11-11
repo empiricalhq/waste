@@ -1,8 +1,26 @@
-import type React from 'react';
-import { Modal as RNModal, StyleSheet, Text, View, type ViewProps } from 'react-native';
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown, useReducedMotion } from 'react-native-reanimated';
-import { Button } from '@/components/ui/button';
-import { BorderRadius, Colors, Shadows, Spacing, Typography } from '@/constants/design-tokens';
+import type React from "react";
+import {
+  Modal as RNModal,
+  StyleSheet,
+  Text,
+  View,
+  type ViewProps,
+} from "react-native";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInDown,
+  SlideOutDown,
+  useReducedMotion,
+} from "react-native-reanimated";
+import { Button } from "@/components/ui/button";
+import {
+  BorderRadius,
+  Colors,
+  Shadows,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
 
 interface ModalProps extends ViewProps {
   visible: boolean;
@@ -44,7 +62,9 @@ export const Modal: React.FC<ModalProps> = ({
       >
         <Animated.View
           style={styles.content}
-          entering={reducedMotion ? undefined : SlideInDown.duration(300).springify()}
+          entering={
+            reducedMotion ? undefined : SlideInDown.duration(300).springify()
+          }
           exiting={reducedMotion ? undefined : SlideOutDown.duration(200)}
         >
           <Text style={styles.title}>{title}</Text>
@@ -76,16 +96,16 @@ export const Modal: React.FC<ModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.xl,
   },
   content: {
     backgroundColor: Colors.cardBackground,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
     ...Shadows.lg,
   },
@@ -102,7 +122,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing.md,
   },
   button: {

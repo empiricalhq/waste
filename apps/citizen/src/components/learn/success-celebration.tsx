@@ -1,6 +1,6 @@
-import type React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import type React from "react";
+import { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
@@ -8,10 +8,16 @@ import Animated, {
   useSharedValue,
   withDelay,
   withTiming,
-} from 'react-native-reanimated';
-import { ANIMATION_DURATIONS } from '@/constants/animations';
-import { BorderRadius, Colors, Shadows, Spacing, Typography } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
+} from "react-native-reanimated";
+import { ANIMATION_DURATIONS } from "@/constants/animations";
+import {
+  BorderRadius,
+  Colors,
+  Shadows,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 interface SuccessCelebrationProps {
   visible: boolean;
@@ -21,14 +27,17 @@ interface SuccessCelebrationProps {
 const CONFETTI_COUNT = 20;
 const CONFETTI_COLORS = [
   Colors.error, // Red
-  '#4ECDC4', // Teal (decorative)
+  "#4ECDC4", // Teal (decorative)
   Colors.info, // Blue
-  '#FFA07A', // Light coral (decorative)
-  '#98D8C8', // Mint (decorative)
+  "#FFA07A", // Light coral (decorative)
+  "#98D8C8", // Mint (decorative)
   Colors.warning, // Yellow
 ];
 
-const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, color }) => {
+const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({
+  delay,
+  color,
+}) => {
   const translateY = useSharedValue(-100);
   const translateX = useSharedValue(Math.random() * 300 - 150);
   const rotate = useSharedValue(0);
@@ -63,7 +72,6 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
       }),
     );
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(translateY);
       cancelAnimation(rotate);
@@ -72,7 +80,11 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
   }, [delay, reducedMotion, opacity, rotate, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
+    transform: [
+      { translateY: translateY.value },
+      { translateX: translateX.value },
+      { rotate: `${rotate.value}deg` },
+    ],
     opacity: opacity.value,
     backgroundColor: color,
   }));
@@ -80,7 +92,10 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
   return <Animated.View style={[styles.confetti, animatedStyle]} />;
 };
 
-export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible, streak = 0 }) => {
+export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({
+  visible,
+  streak = 0,
+}) => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
   const reducedMotion = useReducedMotion();
@@ -103,7 +118,6 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible,
       translateY.value = 20;
     }
 
-    // Cleanup animations on unmount
     return () => {
       cancelAnimation(opacity);
       cancelAnimation(translateY);
@@ -119,22 +133,35 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible,
     return null;
   }
 
-  const messages = ['¡Excelente!', '¡Muy bien!', '¡Correcto!', '¡Perfecto!', '¡Genial!', '¡Increíble!', '¡Fantástico!'];
+  const messages = [
+    "¡Excelente!",
+    "¡Muy bien!",
+    "¡Correcto!",
+    "¡Perfecto!",
+    "¡Genial!",
+    "¡Increíble!",
+    "¡Fantástico!",
+  ];
 
-  const message = streak >= 3 ? `¡Racha de ${streak}! 🔥` : messages[Math.floor(Math.random() * messages.length)];
+  const message =
+    streak >= 3
+      ? `¡Racha de ${streak}! 🔥`
+      : messages[Math.floor(Math.random() * messages.length)];
 
   return (
     <View style={styles.container} pointerEvents="none">
-      {/* Confetti particles */}
+      {/* confetti particles */}
       {Array.from({ length: CONFETTI_COUNT }).map((_, i) => (
         <ConfettiParticle
           key={i}
           delay={i * 50}
-          color={CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]}
+          color={
+            CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]
+          }
         />
       ))}
 
-      {/* Success message */}
+      {/* success message */}
       <Animated.View style={[styles.messageContainer, animatedStyle]}>
         <Text style={styles.message}>{message}</Text>
       </Animated.View>
@@ -145,12 +172,12 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({ visible,
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 10,
   },
   confetti: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     width: 10,
     height: 10,
@@ -167,6 +194,6 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xxl,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

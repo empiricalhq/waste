@@ -20,11 +20,9 @@ export default function SignUpScreen() {
   const [validationErrors, setValidationErrors] = useState<{ name?: string; email?: string; password?: string }>({});
 
   const handleSignUp = () => {
-    // Clear previous validation errors and API errors
     setValidationErrors({});
     reset();
 
-    // Validate form data
     const result = signUpSchema.safeParse({ name, email, password });
 
     if (!result.success) {
@@ -37,13 +35,11 @@ export default function SignUpScreen() {
       return;
     }
 
-    // Submit sign-up
     signUp(result.data, {
       onSuccess: () => {
         router.replace(ROUTES.HOME);
       },
       onError: (err) => {
-        // Error is now handled by ErrorState component
         console.error('Sign up error:', err);
       },
     });
