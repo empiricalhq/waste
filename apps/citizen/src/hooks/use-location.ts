@@ -1,4 +1,7 @@
-import * as Location from "expo-location";
+import {
+  getCurrentPositionAsync,
+  hasServicesEnabledAsync,
+} from "expo-location";
 import { useState } from "react";
 
 export interface LocationCoords {
@@ -24,7 +27,7 @@ export function useLocation() {
 
     try {
       // Check if location services are enabled
-      const servicesEnabled = await Location.hasServicesEnabledAsync();
+      const servicesEnabled = await hasServicesEnabledAsync();
       if (!servicesEnabled) {
         throw new Error(
           "Los servicios de ubicación están desactivados. Por favor, actívalos en la configuración de tu dispositivo.",
@@ -32,7 +35,7 @@ export function useLocation() {
       }
 
       // Request permissions
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await requestForegroundPermissionsAsync();
       if (status !== "granted") {
         throw new Error(
           "Se necesita permiso para acceder a la ubicación. Por favor, permite el acceso en la configuración de la aplicación.",
@@ -40,9 +43,9 @@ export function useLocation() {
       }
 
       // Get current position
-      const location = await Location.getCurrentPositionAsync({
+      const location = await getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
-        timeout: 10000,
+        timeout: 10_000,
       });
 
       const coords: LocationCoords = {
@@ -72,4 +75,3 @@ export function useLocation() {
     clearLocation,
   };
 }
-

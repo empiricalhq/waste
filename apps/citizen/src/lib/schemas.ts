@@ -5,12 +5,14 @@ export const UserSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   // better-auth user might not have progress, so make it optional
-  progress: z.object({
-    streak: z.number(),
-    lastQuizDate: z.string().nullable(),
-    correctAnswers: z.number(),
-    totalQuestions: z.number(),
-  }).optional(),
+  progress: z
+    .object({
+      streak: z.number(),
+      lastQuizDate: z.string().nullable(),
+      correctAnswers: z.number(),
+      totalQuestions: z.number(),
+    })
+    .optional(),
 });
 
 export const CollectionSchema = z.object({
