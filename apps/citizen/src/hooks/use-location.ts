@@ -3,86 +3,74 @@ import {
   hasServicesEnabledAsync,
   LocationAccuracy,
   requestForegroundPermissionsAsync,
-} from "expo-location";
-import { useState } from "react";
+} from 'expo-location';
+import { useCallback, useState } from 'react';
+import { CONFIG, ERROR_MESSAGES } from '@/constants';
+import type { LocationCoords } from '@/types';
 
-export interface LocationCoords {
-  latitude: number;
-  longitude: number;
-}
-
-export interface LocationState {
+interface UseLocationReturn {
   coords: LocationCoords | null;
   isLoading: boolean;
   error: string | null;
+  requestLocation: () => Promise<LocationCoords>;
+  clearLocation: () => void;
 }
 
-export function useLocation() {
-  const [state, setState] = useState<LocationState>({
-    coords: null,
-    isLoading: false,
-    error: null,
-  });
+export function useLocation(): UseLocationReturn {
+  const [coords, setCoords] = useState<LocationCoords | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const requestLocation = async (): Promise<LocationCoords> => {
-    setState({ coords: null, isLoading: true, error: null });
+  const requestLocation = useCallback(async (): Promise<LocationCoords> => {
+    setIsLoading(true);
+    setError(null);
 
     try {
-      // Check if location services are enabled
       const servicesEnabled = await hasServicesEnabledAsync();
       if (!servicesEnabled) {
-        throw new Error(
-          "Los servicios de ubicación están desactivados. Por favor, actívalos en la configuración de tu dispositivo.",
-        );
+        throw new Error(ERROR_MESSAGES.LOCATION_UNAVAILABLE);
       }
 
-      // Request permissions
       const { status } = await requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        throw new Error(
-          "Se necesita permiso para acceder a la ubicación. Por favor, permite el acceso en la configuración de la aplicación.",
-        );
+      if (status !== 'granted') {
+        throw new Error(ERROR_MESSAGES.LOCATION_DENIED);
       }
 
-      // Get current position. Expo Location doesn't support a 'timeout' option
-      // on the LocationOptions type, so we implement a Promise.race to enforce a timeout.
       const locationPromise = getCurrentPositionAsync({
         accuracy: LocationAccuracy.Balanced,
       });
 
-      const timeoutMs = 10_000;
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Tiempo agotado al obtener la ubicación")),
-          timeoutMs,
-        ),
+        setTimeout(() => reject(new Error(ERROR_MESSAGES.TIMEOUT)), CONFIG.location.timeout)
       );
 
       const location = await Promise.race([locationPromise, timeoutPromise]);
 
-      const coords: LocationCoords = {
+      const newCoords: LocationCoords = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
 
-      setState({ coords, isLoading: false, error: null });
-      return coords;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Error al obtener la ubicación. Por favor, intenta nuevamente.";
-      setState({ coords: null, isLoading: false, error: errorMessage });
-      throw error;
+      setCoords(newCoords);
+      setIsLoading(false);
+      return newCoords;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.LOCATION_UNAVAILABLE;
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
     }
-  };
+  }, []);
 
-  const clearLocation = () => {
-    setState({ coords: null, isLoading: false, error: null });
-  };
+  const clearLocation = useCallback(() => {
+    setCoords(null);
+    setError(null);
+  }, []);
 
   return {
-    ...state,
+    coords,
+    isLoading,
+    error,
     requestLocation,
     clearLocation,
   };

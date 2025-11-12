@@ -1,53 +1,35 @@
 import {
   getCurrentPositionAsync,
   requestForegroundPermissionsAsync,
-} from "expo-location";
-import { AppleMaps, GoogleMaps } from "expo-maps";
-import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { ErrorMessage } from "@/components/ui/ErrorMessage";
-import { useNetwork } from "@/hooks/use-network";
-import { useTrucksWithLocations } from "@/hooks/use-trucks-locations";
-import { theme } from "@/theme";
+} from 'expo-location';
+import { AppleMaps, GoogleMaps } from 'expo-maps';
+import { memo, useEffect, useState, useMemo } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
+import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import { Loading } from '@/components/ui/Loading';
+import { useNetwork } from '@/hooks/use-network';
+import { useTrucksWithLocations } from '@/hooks/queries';
+import { theme } from '@/theme';
 
-const DEFAULT_CAMERA_POSITION = {
-  coordinates: {
-    latitude: -12.0464,
-    longitude: -77.0428,
-  },
+const DEFAULT_CAMERA = {
+  coordinates: { latitude: -12.0464, longitude: -77.0428 },
   zoom: 12,
 };
 
-const isSupportedPlatform = Platform.OS === "ios" || Platform.OS === "android";
+const isSupportedPlatform = Platform.OS === 'ios' || Platform.OS === 'android';
 
-export default function MapScreen() {
-  const {
-    data: trucks = [],
-    isLoading,
-    error,
-    refetch,
-  } = useTrucksWithLocations();
+export default memo(function MapScreen() {
+  const { data: trucks = [], isLoading, error, refetch } = useTrucksWithLocations();
   const { isOffline } = useNetwork();
-  const [userLocation, setUserLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   useEffect(() => {
-    if (!isSupportedPlatform) {
-      return;
-    }
+    if (!isSupportedPlatform) return;
 
     (async () => {
       try {
         const { status } = await requestForegroundPermissionsAsync();
-        if (status === "granted") {
+        if (status === 'granted') {
           const location = await getCurrentPositionAsync({});
           setUserLocation({
             latitude: location.coords.latitude,
@@ -55,78 +37,51 @@ export default function MapScreen() {
           });
         }
       } catch (err) {
-        console.error("Error getting location:", err);
+        console.error('Error getting location:', err);
       }
     })();
   }, []);
 
+  const cameraPosition = useMemo(() => 
+    userLocation
+      ? { coordinates: userLocation, zoom: 12 }
+      : DEFAULT_CAMERA
+  , [userLocation]);
+
+  const markers = useMemo(() => 
+    trucks.map(truck => ({
+      id: truck.id,
+      coordinates: { latitude: truck.lat, longitude: truck.lng },
+      title: truck.name,
+      ...(Platform.OS === 'android' && { snippet: `Placa: ${truck.license_plate}` }),
+    }))
+  , [trucks]);
+
   if (!isSupportedPlatform) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loadingText}>
+        <Text style={styles.messageText}>
           Los mapas solo están disponibles en Android e iOS
         </Text>
       </View>
     );
   }
 
-  const cameraPosition = userLocation
-    ? {
-        coordinates: {
-          latitude: userLocation.latitude,
-          longitude: userLocation.longitude,
-        },
-        zoom: 12,
-      }
-    : DEFAULT_CAMERA_POSITION;
-
-  const markers = trucks.map((truck) => {
-    const marker: {
-      id: string;
-      coordinates: { latitude: number; longitude: number };
-      title: string;
-      snippet?: string;
-    } = {
-      id: truck.id,
-      coordinates: {
-        latitude: truck.lat,
-        longitude: truck.lng,
-      },
-      title: truck.name,
-    };
-
-    // Android supports snippet, iOS doesn't
-    if (Platform.OS === "android") {
-      marker.snippet = `Placa: ${truck.license_plate}`;
-    }
-
-    return marker;
-  });
-
   if (isLoading && trucks.length === 0) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={styles.loadingText}>Cargando camiones...</Text>
-        </View>
-      </View>
-    );
+    return <Loading message="Cargando camiones..." />;
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
-        <ErrorMessage
-          message={isOffline ? "Sin conexión" : "Error al cargar camiones"}
-          isOffline={isOffline}
-          onRetry={() => refetch()}
-        />
-      </View>
+      <ErrorMessage
+        message={isOffline ? 'Sin conexión a internet' : 'Error al cargar camiones'}
+        isOffline={isOffline}
+        onRetry={refetch}
+      />
     );
   }
 
-  const MapComponent = Platform.OS === "ios" ? AppleMaps.View : GoogleMaps.View;
+  const MapComponent = Platform.OS === 'ios' ? AppleMaps.View : GoogleMaps.View;
 
   return (
     <View style={styles.container}>
@@ -134,25 +89,19 @@ export default function MapScreen() {
         style={styles.map}
         cameraPosition={cameraPosition}
         markers={markers}
-        properties={{
-          isMyLocationEnabled: userLocation !== null,
-        }}
-        uiSettings={{
-          myLocationButtonEnabled: true,
-        }}
+        properties={{ isMyLocationEnabled: userLocation !== null }}
+        uiSettings={{ myLocationButtonEnabled: true }}
       />
-      {!isLoading && (
-        <View style={styles.infoContainer}>
+      {trucks.length > 0 && (
+        <View style={[styles.infoContainer, theme.shadow.md]}>
           <Text style={styles.infoText}>
-            {trucks.length > 0
-              ? `${trucks.length} camión${trucks.length !== 1 ? "es" : ""} activo${trucks.length !== 1 ? "s" : ""}`
-              : "No hay camiones activos en este momento"}
+            {trucks.length} camión{trucks.length !== 1 ? 'es' : ''} activo{trucks.length !== 1 ? 's' : ''}
           </Text>
         </View>
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -161,36 +110,24 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: theme.spacing.md,
-  },
-  loadingText: {
+  messageText: {
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
+    textAlign: 'center',
+    padding: theme.spacing.xxl,
   },
   infoContainer: {
-    position: "absolute",
+    position: 'absolute',
     top: theme.spacing.lg,
     left: theme.spacing.lg,
     right: theme.spacing.lg,
-    backgroundColor: "white",
+    backgroundColor: theme.colors.card,
     padding: theme.spacing.md,
     borderRadius: theme.radius.md,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   infoText: {
     fontSize: theme.text.sm,
     color: theme.colors.text,
-    fontWeight: "600",
+    fontWeight: theme.fontWeight.semibold,
   },
 });

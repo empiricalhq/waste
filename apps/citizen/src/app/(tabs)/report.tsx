@@ -1,158 +1,90 @@
-import { useState } from "react";
-import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ErrorMessage } from "@/components/ui/ErrorMessage";
-import { Input } from "@/components/ui/input";
-import { Loading } from "@/components/ui/Loading";
-import { useLocation } from "@/hooks/use-location";
-import { useNetwork } from "@/hooks/use-network";
-import { useReportTypes, useSubmitReport } from "@/hooks/use-reports";
-import { useAuth } from "@/lib/auth";
-import { theme } from "@/theme";
+import { memo, useCallback, useState } from 'react';
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Card } from '@/components/ui/Card';
+import { ErrorMessage } from '@/components/ui/ErrorMessage';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Loading } from '@/components/ui/Loading';
+import { useLocation } from '@/hooks/use-location';
+import { useNetwork } from '@/hooks/use-network';
+import { useReportTypes, useSubmitReport } from '@/hooks/queries';
+import { useAuth } from '@/lib/auth';
+import { theme } from '@/theme';
 
-function LoggedOutView() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Reportar</Text>
-      <Card>
-        <Text style={styles.authMessage}>
-          Inicia sesión para enviar reportes
-        </Text>
-      </Card>
-    </View>
-  );
-}
+type Step = 'type' | 'details' | 'success';
 
-function SuccessView({
-  onCreateAnother,
-  isOffline,
-}: {
-  onCreateAnother: () => void;
-  isOffline: boolean;
-}) {
-  return (
-    <View style={styles.centerContainer}>
-      <Text style={styles.successTitle}>✓ Reporte enviado</Text>
-      <Text style={styles.successMessage}>
-        {isOffline
-          ? "Se enviará cuando recuperes la conexión"
-          : "Gracias por tu colaboración"}
-      </Text>
-      <Button title="Crear otro reporte" onPress={onCreateAnother} />
-    </View>
-  );
-}
-
-function TypeListView({
-  types,
-  onSelect,
-}: {
+const TypeSelector = memo<{
   types: Array<{ id: string; label: string }>;
   onSelect: (label: string) => void;
-}) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Selecciona un problema</Text>
-      <FlatList
-        data={types}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => {
-              onSelect(item.label);
-            }}
-          >
-            <Card style={styles.typeCard}>
-              <Text style={styles.typeText}>{item.label}</Text>
-            </Card>
-          </Pressable>
-        )}
-      />
-    </View>
-  );
-}
+}>(({ types, onSelect }) => (
+  <View style={styles.container}>
+    <Text style={styles.header}>Tipo de reporte</Text>
+    <FlatList
+      data={types}
+      keyExtractor={item => item.id}
+      renderItem={({ item }) => (
+        <Pressable onPress={() => onSelect(item.label)}>
+          <Card style={styles.typeCard}>
+            <Text style={styles.typeText}>{item.label}</Text>
+          </Card>
+        </Pressable>
+      )}
+    />
+  </View>
+));
 
-function DetailsView({
-  selectedType,
-  description,
-  address,
-  setDescription,
-  setAddress,
-  coords,
-  isLoadingLocation,
-  locationError,
-  requestLocation,
-  submit,
-  setStep,
-  isPending,
-  isOffline,
-}: {
+TypeSelector.displayName = 'TypeSelector';
+
+const ReportForm = memo<{
   selectedType: string;
   description: string;
-  address: string;
   setDescription: (s: string) => void;
-  setAddress: (s: string) => void;
-  coords: { latitude: number; longitude: number } | null;
-  isLoadingLocation: boolean;
-  locationError: string | null;
-  requestLocation: () => Promise<{ latitude: number; longitude: number }>;
-
-  submit: any;
-  setStep: (s: "type" | "details" | "success") => void;
-  isPending: boolean;
+  onSubmit: () => void;
+  onBack: () => void;
+  isSubmitting: boolean;
   isOffline: boolean;
-}) {
+}>(({ selectedType, description, setDescription, onSubmit, onBack, isSubmitting, isOffline }) => {
+  const { coords, isLoading: isLoadingLocation, error, requestLocation } = useLocation();
+
+  const handleLocationRequest = useCallback(async () => {
+    try {
+      await requestLocation();
+    } catch (err) {
+      Alert.alert('Error', err instanceof Error ? err.message : 'No se pudo obtener la ubicación');
+    }
+  }, [requestLocation]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Detalles del reporte</Text>
 
       {isOffline && (
-        <Card style={styles.offlineNotice}>
+        <Card style={styles.offlineCard}>
           <Text style={styles.offlineText}>
-            📱 Sin conexión. Se enviará automáticamente cuando vuelvas a estar
-            en línea
+            Sin conexión. El reporte se enviará automáticamente al recuperar la conexión.
           </Text>
         </Card>
       )}
 
-      <Input label="Tipo" value={selectedType} editable={false} />
+      <Input
+        label="Tipo"
+        value={selectedType}
+        editable={false}
+        containerStyle={styles.input}
+      />
 
       <View style={styles.locationSection}>
-        <Input
-          label="Dirección (opcional)"
-          value={address}
-          onChangeText={setAddress}
-          placeholder="Calle y número"
-          editable={!isLoadingLocation}
-        />
         <Button
-          title={coords ? "📍 Ubicación obtenida" : "📍 Obtener ubicación"}
-          variant={coords ? "secondary" : "primary"}
-          onPress={async () => {
-            try {
-              await requestLocation();
-            } catch (error) {
-              Alert.alert(
-                "Error de ubicación",
-                error instanceof Error
-                  ? error.message
-                  : "No se pudo obtener la ubicación",
-              );
-            }
-          }}
+          title={coords ? 'Ubicación obtenida' : 'Obtener ubicación'}
+          variant={coords ? 'secondary' : 'primary'}
+          onPress={handleLocationRequest}
           loading={isLoadingLocation}
           disabled={isLoadingLocation}
-          style={styles.locationButton}
         />
-        {locationError && (
-          <Text style={styles.locationError}>{locationError}</Text>
-        )}
+        {error && <Text style={styles.errorText}>{error}</Text>}
         {coords && (
-          <Text style={styles.locationSuccess}>
-            ✓ Coordenadas: {coords.latitude.toFixed(6)},{" "}
-            {coords.longitude.toFixed(6)}
+          <Text style={styles.successText}>
+            Coordenadas: {coords.latitude.toFixed(6)}, {coords.longitude.toFixed(6)}
           </Text>
         )}
       </View>
@@ -162,87 +94,124 @@ function DetailsView({
         value={description}
         onChangeText={setDescription}
         placeholder="Describe el problema..."
-        multiline={true}
-        style={{ height: 100, textAlignVertical: "top" }}
+        multiline
+        style={styles.textArea}
+        containerStyle={styles.input}
       />
 
       <Button
         title="Enviar reporte"
-        onPress={async () => {
-          const submitReport = (locationCoords: {
-            latitude: number;
-            longitude: number;
-          }) => {
-            submit(
-              {
-                type: selectedType,
-                description,
-                latitude: locationCoords.latitude,
-                longitude: locationCoords.longitude,
-              },
-              {
-                onSuccess: () => setStep("success"),
-                onError: (error: any) => {
-                  if (error.code === "NETWORK_ERROR") {
-                    setStep("success");
-                  } else {
-                    Alert.alert("Error", error.message);
-                  }
-                },
-              },
-            );
-          };
-
-          if (coords) {
-            submitReport(coords);
-          } else {
-            try {
-              const locationCoords = await requestLocation();
-              submitReport(locationCoords);
-            } catch (error) {
-              Alert.alert(
-                "Ubicación requerida",
-                error instanceof Error
-                  ? error.message
-                  : "Se necesita la ubicación para enviar el reporte.",
-              );
-            }
-          }
-        }}
-        loading={isPending || isLoadingLocation}
-        disabled={!description.trim() || (!coords && isLoadingLocation)}
+        onPress={onSubmit}
+        loading={isSubmitting || isLoadingLocation}
+        disabled={!description.trim() || (!coords && !isLoadingLocation)}
+        fullWidth
       />
 
       <Button
         title="Volver"
-        variant="secondary"
-        onPress={() => setStep("type")}
-        style={{ marginTop: theme.spacing.md }}
+        variant="ghost"
+        onPress={onBack}
+        style={styles.backButton}
       />
     </View>
   );
-}
+});
 
-export default function ReportScreen() {
+ReportForm.displayName = 'ReportForm';
+
+const SuccessView = memo<{
+  onCreateAnother: () => void;
+  isOffline: boolean;
+}>(({ onCreateAnother, isOffline }) => (
+  <View style={styles.centerContainer}>
+    <View style={styles.successIcon}>
+      <Text style={styles.checkmark}>✓</Text>
+    </View>
+    <Text style={styles.successTitle}>Reporte enviado</Text>
+    <Text style={styles.successMessage}>
+      {isOffline 
+        ? 'Se enviará cuando recuperes la conexión'
+        : 'Gracias por tu colaboración'}
+    </Text>
+    <Button title="Crear otro reporte" onPress={onCreateAnother} />
+  </View>
+));
+
+SuccessView.displayName = 'SuccessView';
+
+export default memo(function ReportScreen() {
   const { user } = useAuth();
-  const [step, setStep] = useState<"type" | "details" | "success">("type");
-  const [selectedType, setSelectedType] = useState("");
-  const [description, setDescription] = useState("");
-  const [address, setAddress] = useState("");
+  const [step, setStep] = useState<Step>('type');
+  const [selectedType, setSelectedType] = useState('');
+  const [description, setDescription] = useState('');
 
   const { data: types = [], isLoading, error, refetch } = useReportTypes();
   const { mutate: submit, isPending } = useSubmitReport();
   const { isOffline } = useNetwork();
-  const {
-    coords,
-    isLoading: isLoadingLocation,
-    error: locationError,
-    requestLocation,
-    clearLocation,
-  } = useLocation();
+  const { coords, requestLocation, clearLocation } = useLocation();
+
+  const handleTypeSelect = useCallback((label: string) => {
+    setSelectedType(label);
+    setStep('details');
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    const submitReport = (locationCoords: { latitude: number; longitude: number }) => {
+      submit(
+        {
+          type: selectedType,
+          description,
+          latitude: locationCoords.latitude,
+          longitude: locationCoords.longitude,
+        },
+        {
+          onSuccess: () => setStep('success'),
+          onError: (error: any) => {
+            if (error.code === 'NETWORK_ERROR') {
+              setStep('success');
+            } else {
+              Alert.alert('Error', error.message);
+            }
+          },
+        }
+      );
+    };
+
+    if (coords) {
+      submitReport(coords);
+    } else {
+      try {
+        const locationCoords = await requestLocation();
+        submitReport(locationCoords);
+      } catch (err) {
+        Alert.alert(
+          'Ubicación requerida',
+          err instanceof Error ? err.message : 'Se necesita la ubicación para enviar el reporte'
+        );
+      }
+    }
+  }, [coords, description, requestLocation, selectedType, submit]);
+
+  const handleCreateAnother = useCallback(() => {
+    setStep('type');
+    setSelectedType('');
+    setDescription('');
+    clearLocation();
+  }, [clearLocation]);
+
+  const handleBack = useCallback(() => {
+    setStep('type');
+  }, []);
 
   if (!user) {
-    return <LoggedOutView />;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Reportar</Text>
+        <Card>
+          <Text style={styles.authMessage}>Inicia sesión para enviar reportes</Text>
+        </Card>
+      </View>
+    );
   }
 
   if (isLoading) {
@@ -259,111 +228,109 @@ export default function ReportScreen() {
     );
   }
 
-  if (step === "success") {
-    return (
-      <SuccessView
-        isOffline={isOffline}
-        onCreateAnother={() => {
-          setStep("type");
-          setSelectedType("");
-          setDescription("");
-          setAddress("");
-          clearLocation();
-        }}
-      />
-    );
+  if (step === 'success') {
+    return <SuccessView onCreateAnother={handleCreateAnother} isOffline={isOffline} />;
   }
 
-  if (step === "details") {
+  if (step === 'details') {
     return (
-      <DetailsView
+      <ReportForm
         selectedType={selectedType}
         description={description}
-        address={address}
         setDescription={setDescription}
-        setAddress={setAddress}
-        coords={coords}
-        isLoadingLocation={isLoadingLocation}
-        locationError={locationError}
-        requestLocation={requestLocation}
-        submit={submit}
-        setStep={setStep}
-        isPending={isPending}
+        onSubmit={handleSubmit}
+        onBack={handleBack}
+        isSubmitting={isPending}
         isOffline={isOffline}
       />
     );
   }
 
-  return (
-    <TypeListView
-      types={types}
-      onSelect={(label) => {
-        setSelectedType(label);
-        setStep("details");
-      }}
-    />
-  );
-}
+  return <TypeSelector types={types} onSelect={handleTypeSelect} />;
+});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.colors.background,
     padding: theme.spacing.lg,
   },
   centerContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: theme.spacing.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing.xxl,
     gap: theme.spacing.lg,
   },
   header: {
     fontSize: theme.text.xxxl,
-    fontWeight: "700",
+    fontWeight: theme.fontWeight.bold,
     marginBottom: theme.spacing.lg,
-  },
-  authMessage: {
-    textAlign: "center",
-    color: theme.colors.textSecondary,
+    color: theme.colors.text,
   },
   typeCard: {
     marginBottom: theme.spacing.md,
   },
   typeText: {
     fontSize: theme.text.base,
-    fontWeight: "600",
+    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.text,
   },
-  offlineNotice: {
-    backgroundColor: theme.colors.info,
+  input: {
+    marginBottom: theme.spacing.lg,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
+  },
+  locationSection: {
+    marginBottom: theme.spacing.lg,
+    gap: theme.spacing.sm,
+  },
+  errorText: {
+    color: theme.colors.error,
+    fontSize: theme.text.sm,
+  },
+  successText: {
+    color: theme.colors.success,
+    fontSize: theme.text.sm,
+  },
+  offlineCard: {
+    backgroundColor: theme.colors.infoLight,
     marginBottom: theme.spacing.lg,
   },
   offlineText: {
-    color: theme.colors.textInverse,
+    color: theme.colors.info,
     fontSize: theme.text.sm,
   },
+  backButton: {
+    marginTop: theme.spacing.md,
+  },
+  authMessage: {
+    textAlign: 'center',
+    color: theme.colors.textSecondary,
+    fontSize: theme.text.base,
+  },
+  successIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: theme.radius.full,
+    backgroundColor: theme.colors.successLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmark: {
+    fontSize: 48,
+    color: theme.colors.success,
+  },
   successTitle: {
-    fontSize: theme.text.xxxl,
-    fontWeight: "700",
+    fontSize: theme.text.xxl,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
   },
   successMessage: {
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
-    textAlign: "center",
-  },
-  locationSection: {
-    marginBottom: theme.spacing.md,
-  },
-  locationButton: {
-    marginTop: theme.spacing.sm,
-  },
-  locationError: {
-    color: theme.colors.error,
-    fontSize: theme.text.sm,
-    marginTop: theme.spacing.xs,
-  },
-  locationSuccess: {
-    color: theme.colors.success,
-    fontSize: theme.text.sm,
-    marginTop: theme.spacing.xs,
+    textAlign: 'center',
   },
 });
