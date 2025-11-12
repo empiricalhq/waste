@@ -1,6 +1,7 @@
 import {
   getCurrentPositionAsync,
   hasServicesEnabledAsync,
+  LocationAccuracy,
   requestForegroundPermissionsAsync,
 } from "expo-location";
 import { useState } from "react";
@@ -43,11 +44,21 @@ export function useLocation() {
         );
       }
 
-      // Get current position
-      const location = await getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-        timeout: 10_000,
+      // Get current position. Expo Location doesn't support a 'timeout' option
+      // on the LocationOptions type, so we implement a Promise.race to enforce a timeout.
+      const locationPromise = getCurrentPositionAsync({
+        accuracy: LocationAccuracy.Balanced,
       });
+
+      const timeoutMs = 10_000;
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Tiempo agotado al obtener la ubicación")),
+          timeoutMs,
+        ),
+      );
+
+      const location = await Promise.race([locationPromise, timeoutPromise]);
 
       const coords: LocationCoords = {
         latitude: location.coords.latitude,

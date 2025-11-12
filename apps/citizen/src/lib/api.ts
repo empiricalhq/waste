@@ -22,14 +22,17 @@ class ApiError extends Error {
   }
 }
 
+const COOKIE_SPLIT_REGEX = /[,;]/;
+const SESSION_TOKEN_REGEX = /better-auth\.session_token=([^;]+)/;
+
 function extractSessionToken(cookieHeader: string | null): string | null {
   if (!cookieHeader) {
     return null;
   }
   // Handle both single cookie and multiple cookies (comma-separated or semicolon-separated)
-  const cookies = cookieHeader.split(/[,;]/).map((c) => c.trim());
+  const cookies = cookieHeader.split(COOKIE_SPLIT_REGEX).map((c) => c.trim());
   for (const cookie of cookies) {
-    const match = cookie.match(/better-auth\.session_token=([^;]+)/);
+    const match = cookie.match(SESSION_TOKEN_REGEX);
     if (match) {
       return match[1];
     }

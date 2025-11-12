@@ -11,11 +11,11 @@ export default function ProfileScreen() {
     return null;
   }
 
+  const totalQuestions = user.progress?.totalQuestions ?? 0;
+  const correctAnswers = user.progress?.correctAnswers ?? 0;
   const accuracy =
-    user.progress.totalQuestions > 0
-      ? Math.round(
-          (user.progress.correctAnswers / user.progress.totalQuestions) * 100,
-        )
+    totalQuestions > 0
+      ? Math.round((correctAnswers / totalQuestions) * 100)
       : 0;
 
   const handleLogout = () => {
@@ -33,7 +33,7 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Estadísticas</Text>
         <View style={styles.stats}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{user.progress.streak}</Text>
+            <Text style={styles.statValue}>{user.progress?.streak ?? 0}</Text>
             <Text style={styles.statLabel}>Racha</Text>
           </View>
           <View style={styles.stat}>
@@ -41,7 +41,9 @@ export default function ProfileScreen() {
             <Text style={styles.statLabel}>Precisión</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{user.progress.totalQuestions}</Text>
+            <Text style={styles.statValue}>
+              {user.progress?.totalQuestions ?? 0}
+            </Text>
             <Text style={styles.statLabel}>Tests</Text>
           </View>
         </View>
