@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Pressable } from "react-native-gesture-handler";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
@@ -141,7 +141,7 @@ export default function ReportScreen() {
         data={types}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <Pressable
             onPress={() => {
               setSelectedType(item.label);
               setStep("details");
@@ -150,7 +150,7 @@ export default function ReportScreen() {
             <Card style={styles.typeCard}>
               <Text style={styles.typeText}>{item.label}</Text>
             </Card>
-          </TouchableOpacity>
+          </Pressable>
         )}
       />
     </View>
