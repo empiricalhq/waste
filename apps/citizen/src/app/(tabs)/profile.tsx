@@ -1,127 +1,85 @@
-import { useRouter } from "expo-router";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Header } from "@/components/shared/header";
-import { CardSkeleton } from "@/components/shared/loading-skeleton";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ROUTES } from "@/constants/app-config";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
-import { useAuth } from "@/features/auth/hooks/use-auth";
+import React from "react";
+import { View, Text, StyleSheet, Alert } from "react-native";
+import { useAuth } from "@/lib/auth";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { theme } from "@/theme";
 
-function ProfileScreen() {
-  const { user, logout, isLoading } = useAuth();
-  const router = useRouter();
+export default function ProfileScreen() {
+  const { user, logout } = useAuth();
+
+  if (!user) return null;
+
+  const accuracy = user.progress.totalQuestions > 0
+    ? Math.round((user.progress.correctAnswers / user.progress.totalQuestions) * 100)
+    : 0;
 
   const handleLogout = () => {
     Alert.alert(
       "Cerrar sesión",
-      "¿Estás seguro de que quieres cerrar sesión?",
+      "¿Estás seguro?",
       [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Cerrar sesión",
-          style: "destructive",
-          onPress: async () => {
-            await logout();
-            router.replace(ROUTES.LOGIN);
-          },
-        },
-      ],
+        { text: "Cancelar", style: "cancel" },
+        { text: "Cerrar sesión", style: "destructive", onPress: logout },
+      ]
     );
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <Header title="Perfil" />
-        <View style={styles.content}>
-          <CardSkeleton />
-        </View>
-      </View>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
-
-  const PercentMultiplier = 100;
-  const accuracy =
-    user.progress.totalQuestions > 0
-      ? Math.round(
-          (user.progress.correctAnswers / user.progress.totalQuestions) *
-            PercentMultiplier,
-        )
-      : 0;
-
   return (
     <View style={styles.container}>
-      <Header title={user.name} />
-      <ScrollView contentContainerStyle={styles.content}>
-        <Card>
-          <Text style={styles.sectionTitle}>Tus Estadísticas</Text>
-          <View style={styles.statsContainer}>
-            <StatItem value={user.progress.streak} label="Días de racha" />
-            <StatItem value={`${accuracy}%`} label="Precisión" />
-            <StatItem value={user.progress.totalQuestions} label="Tests" />
+      <Text style={styles.header}>{user.name}</Text>
+      
+      <Card>
+        <Text style={styles.sectionTitle}>Estadísticas</Text>
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{user.progress.streak}</Text>
+            <Text style={styles.statLabel}>Racha</Text>
           </View>
-        </Card>
-        <Button
-          title="Cerrar sesión"
-          onPress={handleLogout}
-          variant="secondary"
-        />
-      </ScrollView>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{accuracy}%</Text>
+            <Text style={styles.statLabel}>Precisión</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{user.progress.totalQuestions}</Text>
+            <Text style={styles.statLabel}>Tests</Text>
+          </View>
+        </View>
+      </Card>
+
+      <Button title="Cerrar sesión" variant="secondary" onPress={handleLogout} />
     </View>
   );
 }
 
-const StatItem = ({
-  value,
-  label,
-}: {
-  value: string | number;
-  label: string;
-}) => (
-  <View style={styles.statItem}>
-    <Text style={styles.statValue}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </View>
-);
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: theme.spacing.lg,
+    gap: theme.spacing.xl,
   },
-  content: {
-    padding: Spacing.lg,
-    gap: Spacing.xl,
+  header: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
   },
   sectionTitle: {
-    fontSize: Typography.fontSize.lg,
-    fontWeight: Typography.fontWeight.semibold,
-    marginBottom: Spacing.md,
+    fontSize: theme.text.lg,
+    fontWeight: "600",
+    marginBottom: theme.spacing.md,
   },
-  statsContainer: {
+  stats: {
     flexDirection: "row",
     justifyContent: "space-around",
   },
-  statItem: {
+  stat: {
     alignItems: "center",
   },
   statValue: {
-    fontSize: Typography.fontSize.xxl,
-    fontWeight: Typography.fontWeight.bold,
+    fontSize: theme.text.xxl,
+    fontWeight: "700",
   },
   statLabel: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.textSecondary,
+    fontSize: theme.text.sm,
+    color: theme.colors.textSecondary,
   },
 });
-
-export default ProfileScreen;
-
-// export after non-export statements

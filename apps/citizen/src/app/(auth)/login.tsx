@@ -1,101 +1,71 @@
+import React, { useState } from "react";
+import { Text, StyleSheet, ScrollView } from "react-native";
+import { useAuth } from "@/lib/auth";
+import { LoginSchema } from "@/lib/schemas";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { theme } from "@/theme";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
-import { ErrorState } from "@/components/shared/error-state";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ROUTES } from "@/constants/app-config";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
-import { useLogin } from "@/features/auth/hooks/use-login";
-import { loginSchema } from "@/features/auth/schemas";
-import { useNetworkStatus } from "@/lib/hooks/use-network-status";
+import { ROUTES } from "@/constants";
 
-function useLoginForm() {
-  const router = useRouter();
-  const { isOffline } = useNetworkStatus();
-  const { login, isPending, error, reset } = useLogin();
+export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [validationErrors, setValidationErrors] = useState<{
-    email?: string;
-    password?: string;
-  }>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { login, isLoading } = useAuth();
+  const router = useRouter();
 
-  const handleLogin = () => {
-    setValidationErrors({});
-    reset();
-
-    // Validate form data
-    const result = loginSchema.safeParse({ email, password });
-
+  const handleLogin = async () => {
+    const result = LoginSchema.safeParse({ email, password });
+    
     if (!result.success) {
-      const errors: { email?: string; password?: string } = {};
-      for (const err of result.error.issues) {
-        const field = err.path[0] as "email" | "password";
-        errors[field] = err.message;
-      }
-      setValidationErrors(errors);
+      const fieldErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        fieldErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
-    login(result.data, {
-      onSuccess: () => {
-        router.replace(ROUTES.HOME);
-      },
-      onError: (err) => {
-        console.error("Login error:", err);
-      },
-    });
+    try {
+      await login(result.data);
+    } catch (error: any) {
+      setErrors({ general: error.message || "Error al iniciar sesión" });
+    }
   };
-
-  const handleRetry = () => {
-    reset();
-    handleLogin();
-  };
-
-  return {
-    email,
-    password,
-    setEmail,
-    setPassword,
-    validationErrors,
-    isPending,
-    isOffline,
-    error,
-    handleLogin,
-    handleRetry,
-  };
-}
-
-function LoginScreen() {
-  const router = useRouter();
-  const {
-    email,
-    password,
-    setEmail,
-    setPassword,
-    validationErrors,
-    isPending,
-    isOffline,
-    error,
-    handleLogin,
-    handleRetry,
-  } = useLoginForm();
 
   return (
-    <LoginView
-      email={email}
-      password={password}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      validationErrors={validationErrors}
-      onLogin={handleLogin}
-      onCreateAccount={() => router.push(ROUTES.SIGN_UP)}
-      isPending={isPending}
-      isOffline={isOffline}
-      error={error}
-      onRetry={handleRetry}
-    />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Iniciar sesión</Text>
+      
+      {errors.general && <Text style={styles.error}>{errors.general}</Text>}
+      
+      <Input
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        error={errors.email}
+      />
+      
+      <Input
+        label="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        error={errors.password}
+      />
+      
+      <Button title="Entrar" onPress={handleLogin} loading={isLoading} />
+      
+      <Button
+        title="Crear cuenta"
+        variant="secondary"
+        onPress={() => router.push(ROUTES.SIGN_UP)}
+        style={{ marginTop: theme.spacing.md }}
+      />
+    </ScrollView>
   );
 }
 
@@ -103,101 +73,17 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: Spacing.xl,
-    backgroundColor: Colors.background,
+    padding: theme.spacing.xl,
   },
   title: {
-    fontSize: Typography.fontSize.xxxl,
-    fontWeight: Typography.fontWeight.bold,
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
     textAlign: "center",
-    marginBottom: Spacing.xxxl,
-    color: Colors.text,
+    marginBottom: theme.spacing.xxxl,
   },
-  fieldError: {
-    color: Colors.error,
-    fontSize: Typography.fontSize.sm,
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.sm,
+  error: {
+    color: theme.colors.error,
+    textAlign: "center",
+    marginBottom: theme.spacing.md,
   },
 });
-
-function LoginView({
-  email,
-  password,
-  setEmail,
-  setPassword,
-  validationErrors,
-  onLogin,
-  onCreateAccount,
-  isPending,
-  isOffline,
-  error,
-  onRetry,
-}: {
-  email: string;
-  password: string;
-  setEmail: (v: string) => void;
-  setPassword: (v: string) => void;
-  validationErrors: { email?: string; password?: string };
-  onLogin: () => void;
-  onCreateAccount: () => void;
-  isPending: boolean;
-  isOffline: boolean;
-  error: Error | null;
-  onRetry: () => void;
-}) {
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Iniciar Sesión</Text>
-
-      {error && (
-        <ErrorState
-          error={error}
-          onRetry={onRetry}
-          isOffline={isOffline}
-          isRetrying={isPending}
-          variant="compact"
-        />
-      )}
-
-      <Input
-        label="Email"
-        placeholder="tu@email.com"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      {validationErrors.email && (
-        <Text style={styles.fieldError}>{validationErrors.email}</Text>
-      )}
-      <Input
-        label="Contraseña"
-        placeholder="••••••••"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="none"
-      />
-      {validationErrors.password && (
-        <Text style={styles.fieldError}>{validationErrors.password}</Text>
-      )}
-      <Button
-        title="Entrar"
-        onPress={onLogin}
-        loading={isPending}
-        disabled={isPending}
-      />
-      <Button
-        title="Crear cuenta"
-        variant="secondary"
-        onPress={onCreateAccount}
-        style={{ marginTop: Spacing.md }}
-        disabled={isPending}
-      />
-    </ScrollView>
-  );
-}
-
-export default LoginScreen;

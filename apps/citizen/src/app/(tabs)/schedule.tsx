@@ -1,110 +1,50 @@
-import { FlatList, StyleSheet, Text, View, type ViewStyle } from "react-native";
-import { ErrorState } from "@/components/shared/error-state";
-import { Header } from "@/components/shared/header";
-import { ListSkeleton } from "@/components/shared/loading-skeleton";
-import { Card } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
-import {
-  BorderRadius,
-  Colors,
-  Spacing,
-  Typography,
-} from "@/constants/design-tokens";
-import { WASTE_TYPES } from "@/constants/waste-types";
-import { useCollections } from "@/features/collections/hooks/use-collections";
-import { useNetworkStatus } from "@/lib/hooks/use-network-status";
-import { formatFullDate } from "@/lib/utils/date-helpers";
-import type { Collection } from "@/types";
+import React from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import { useCollections } from "@/hooks/use-collections";
+import { Card } from "@/components/ui/Card";
+import { Loading } from "@/components/ui/Loading";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { useNetwork } from "@/hooks/use-network";
+import { theme } from "@/theme";
+import { WASTE_TYPES } from "@/constants";
 
-// Constants for time calculations
-const SECOND_MS = 1000;
-const MINUTE_MS = 60 * SECOND_MS;
-const HOUR_MS = 60 * MINUTE_MS;
-const DAY_MS = 24 * HOUR_MS;
-const DAYS_TO_CONSIDER_OLD = 7;
-const SEVEN_DAYS_MS = DAYS_TO_CONSIDER_OLD * DAY_MS;
+export default function ScheduleScreen() {
+  const { data: collections = [], isLoading, error, refetch } = useCollections();
+  const { isOffline } = useNetwork();
 
-function ScheduleScreen() {
-  const { isOffline } = useNetworkStatus();
-  const {
-    data: collections,
-    isLoading,
-    error,
-    refetch,
-    dataUpdatedAt,
-  } = useCollections();
-
-  // check if data is older than 7 days
-  // check if data is older than 7 days
-  const isDataOld = dataUpdatedAt && Date.now() - dataUpdatedAt > SEVEN_DAYS_MS;
-
-  const renderItem = ({ item }: { item: Collection }) => {
-    const wasteInfo = WASTE_TYPES[item.type];
-    const cardStyle: ViewStyle = item.completed
-      ? { ...styles.card, ...styles.completedCard }
-      : styles.card;
+  if (isLoading) return <Loading />;
+  
+  if (error) {
     return (
-      <Card style={cardStyle}>
-        <View style={styles.cardContent}>
-          <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
-          <View>
-            <Text style={styles.typeText}>{wasteInfo.label}</Text>
-            <Text style={styles.dateText}>
-              {formatFullDate(item.date)} - {item.time}
-            </Text>
-          </View>
-        </View>
-      </Card>
-    );
-  };
-
-  let content: React.ReactNode;
-
-  if (isLoading) {
-    content = (
-      <View style={styles.list}>
-        <ListSkeleton count={5} />
-      </View>
-    );
-  } else if (error) {
-    content = (
-      <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
-    );
-  } else {
-    content = (
-      <>
-        {isDataOld && (
-          <View style={styles.warningBanner}>
-            <Text style={styles.warningText}>
-              ⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.
-            </Text>
-          </View>
-        )}
-        {dataUpdatedAt && (
-          <View style={styles.timestampBanner}>
-            <Text style={styles.timestampText}>
-              Última actualización:{" "}
-              {new Date(dataUpdatedAt).toLocaleString("es-PE")}
-            </Text>
-          </View>
-        )}
-        <FlatList
-          data={collections}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          ListEmptyComponent={
-            <EmptyState title="No hay fechas de recolección disponibles." />
-          }
-        />
-      </>
+      <ErrorMessage
+        message={isOffline ? "Sin conexión" : "Error al cargar el calendario"}
+        isOffline={isOffline}
+        onRetry={refetch}
+      />
     );
   }
 
   return (
     <View style={styles.container}>
-      <Header title="Calendario de Recolección" />
-      {content}
+      <Text style={styles.header}>Calendario</Text>
+      <FlatList
+        data={collections}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Card style={[styles.card, item.completed && styles.completed]}>
+            <View style={styles.row}>
+              <View style={[styles.dot, { backgroundColor: WASTE_TYPES[item.type].color }]} />
+              <View>
+                <Text style={styles.type}>{WASTE_TYPES[item.type].label}</Text>
+                <Text style={styles.time}>{item.date} - {item.time}</Text>
+              </View>
+            </View>
+          </Card>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.empty}>No hay recolecciones programadas</Text>
+        }
+      />
     </View>
   );
 }
@@ -112,59 +52,40 @@ function ScheduleScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: theme.spacing.lg,
   },
-  list: {
-    padding: Spacing.lg,
-    gap: Spacing.md,
+  header: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+    marginBottom: theme.spacing.lg,
   },
   card: {
-    padding: Spacing.lg,
+    marginBottom: theme.spacing.md,
   },
-  completedCard: {
-    opacity: 0.6,
+  completed: {
+    opacity: 0.5,
   },
-  cardContent: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.md,
+    gap: theme.spacing.md,
   },
   dot: {
     width: 10,
     height: 10,
-    borderRadius: BorderRadius.sm,
+    borderRadius: theme.radius.full,
   },
-  typeText: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.semibold,
+  type: {
+    fontSize: theme.text.base,
+    fontWeight: "600",
   },
-  dateText: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.textSecondary,
+  time: {
+    fontSize: theme.text.sm,
+    color: theme.colors.textSecondary,
   },
-  warningBanner: {
-    backgroundColor: Colors.warning,
-    padding: Spacing.md,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.md,
-    borderRadius: BorderRadius.md,
-  },
-  warningText: {
-    color: Colors.textInverse,
-    fontSize: Typography.fontSize.sm,
+  empty: {
     textAlign: "center",
-  },
-  timestampBanner: {
-    padding: Spacing.sm,
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.sm,
-  },
-  timestampText: {
-    color: Colors.textSecondary,
-    fontSize: Typography.fontSize.xs,
-    textAlign: "center",
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.xl,
   },
 });
-
-export default ScheduleScreen;
-
-// export after non-export statements

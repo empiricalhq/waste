@@ -1,108 +1,78 @@
+import React, { useState } from "react";
+import { Text, StyleSheet, ScrollView } from "react-native";
+import { useAuth } from "@/lib/auth";
+import { SignUpSchema } from "@/lib/schemas";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { theme } from "@/theme";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
-import { ErrorState } from "@/components/shared/error-state";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ROUTES } from "@/constants/app-config";
-import { Colors, Spacing, Typography } from "@/constants/design-tokens";
-import { useSignUp } from "@/features/auth/hooks/use-sign-up";
-import { signUpSchema } from "@/features/auth/schemas";
-import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 
-function useSignUpForm() {
-  const router = useRouter();
-  const { isOffline } = useNetworkStatus();
-  const { signUp, isPending, error, reset } = useSignUp();
+export default function SignUpScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [validationErrors, setValidationErrors] = useState<{
-    name?: string;
-    email?: string;
-    password?: string;
-  }>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { signUp, isLoading } = useAuth();
+  const router = useRouter();
 
-  const handleSignUp = () => {
-    setValidationErrors({});
-    reset();
-
-    const result = signUpSchema.safeParse({ name, email, password });
-
+  const handleSignUp = async () => {
+    const result = SignUpSchema.safeParse({ name, email, password });
+    
     if (!result.success) {
-      const errors: { name?: string; email?: string; password?: string } = {};
-      for (const err of result.error.issues) {
-        const field = err.path[0] as "name" | "email" | "password";
-        errors[field] = err.message;
-      }
-      setValidationErrors(errors);
+      const fieldErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        fieldErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(fieldErrors);
       return;
     }
 
-    signUp(result.data, {
-      onSuccess: () => {
-        router.replace(ROUTES.HOME);
-      },
-      onError: (err) => {
-        console.error("Sign up error:", err);
-      },
-    });
+    try {
+      await signUp(result.data);
+    } catch (error: any) {
+      setErrors({ general: error.message || "Error al crear cuenta" });
+    }
   };
-
-  const handleRetry = () => {
-    reset();
-    handleSignUp();
-  };
-
-  return {
-    name,
-    setName,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    validationErrors,
-    isPending,
-    isOffline,
-    error,
-    handleSignUp,
-    handleRetry,
-  };
-}
-
-function SignUpScreen() {
-  const router = useRouter();
-  const {
-    name,
-    setName,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    validationErrors,
-    isPending,
-    isOffline,
-    error,
-    handleSignUp,
-    handleRetry,
-  } = useSignUpForm();
 
   return (
-    <SignUpView
-      name={name}
-      email={email}
-      password={password}
-      setName={setName}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      validationErrors={validationErrors}
-      onSignUp={handleSignUp}
-      onBack={() => router.back()}
-      isPending={isPending}
-      isOffline={isOffline}
-      error={error}
-      onRetry={handleRetry}
-    />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Crear Cuenta</Text>
+      
+      {errors.general && <Text style={styles.error}>{errors.general}</Text>}
+      
+      <Input
+        label="Nombre"
+        value={name}
+        onChangeText={setName}
+        error={errors.name}
+      />
+      
+      <Input
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        error={errors.email}
+      />
+      
+      <Input
+        label="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        error={errors.password}
+      />
+      
+      <Button title="Registrarse" onPress={handleSignUp} loading={isLoading} />
+      
+      <Button
+        title="Ya tengo cuenta"
+        variant="secondary"
+        onPress={() => router.back()}
+        style={{ marginTop: theme.spacing.md }}
+      />
+    </ScrollView>
   );
 }
 
@@ -110,116 +80,17 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: Spacing.xl,
-    backgroundColor: Colors.background,
+    padding: theme.spacing.xl,
   },
   title: {
-    fontSize: Typography.fontSize.xxxl,
-    fontWeight: Typography.fontWeight.bold,
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
     textAlign: "center",
-    marginBottom: Spacing.xxxl,
-    color: Colors.text,
+    marginBottom: theme.spacing.xxxl,
   },
-  fieldError: {
-    color: Colors.error,
-    fontSize: Typography.fontSize.sm,
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.sm,
+  error: {
+    color: theme.colors.error,
+    textAlign: "center",
+    marginBottom: theme.spacing.md,
   },
 });
-
-function SignUpView({
-  name,
-  email,
-  password,
-  setName,
-  setEmail,
-  setPassword,
-  validationErrors,
-  onSignUp,
-  onBack,
-  isPending,
-  isOffline,
-  error,
-  onRetry,
-}: {
-  name: string;
-  email: string;
-  password: string;
-  setName: (v: string) => void;
-  setEmail: (v: string) => void;
-  setPassword: (v: string) => void;
-  validationErrors: { name?: string; email?: string; password?: string };
-  onSignUp: () => void;
-  onBack: () => void;
-  isPending: boolean;
-  isOffline: boolean;
-  error: Error | null;
-  onRetry: () => void;
-}) {
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Crear Cuenta</Text>
-
-      {error && (
-        <ErrorState
-          error={error}
-          onRetry={onRetry}
-          isOffline={isOffline}
-          isRetrying={isPending}
-          variant="compact"
-        />
-      )}
-
-      <Input
-        label="Nombre"
-        placeholder="Tu nombre"
-        value={name}
-        onChangeText={setName}
-        autoCapitalize="words"
-        autoCorrect={false}
-      />
-      {validationErrors.name && (
-        <Text style={styles.fieldError}>{validationErrors.name}</Text>
-      )}
-      <Input
-        label="Email"
-        placeholder="tu@email.com"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      {validationErrors.email && (
-        <Text style={styles.fieldError}>{validationErrors.email}</Text>
-      )}
-      <Input
-        label="Contraseña"
-        placeholder="••••••••"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="none"
-      />
-      {validationErrors.password && (
-        <Text style={styles.fieldError}>{validationErrors.password}</Text>
-      )}
-      <Button
-        title="Registrarse"
-        onPress={onSignUp}
-        loading={isPending}
-        disabled={isPending}
-      />
-      <Button
-        title="Ya tengo cuenta"
-        variant="secondary"
-        onPress={onBack}
-        style={{ marginTop: Spacing.md }}
-        disabled={isPending}
-      />
-    </ScrollView>
-  );
-}
-
-export default SignUpScreen;

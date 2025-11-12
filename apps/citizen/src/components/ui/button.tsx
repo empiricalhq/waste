@@ -1,215 +1,69 @@
-import type React from "react";
-import type { GestureResponderEvent } from "react-native";
+import React from "react";
 import {
+  TouchableOpacity,
+  Text,
   ActivityIndicator,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   type TouchableOpacityProps,
-  View,
 } from "react-native";
-import {
-  BorderRadius,
-  Colors,
-  Spacing,
-  Typography,
-} from "@/constants/design-tokens";
-import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
-import { hapticSelection } from "@/lib/utils/haptics";
+import { theme } from "@/theme";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?:
-    | "primary"
-    | "secondary"
-    | "outline"
-    | "ghost"
-    | "danger"
-    | "link"
-    | "text";
-  size?: "sm" | "md" | "lg";
   loading?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: "left" | "right";
-  accessibilityLabel?: string;
-  accessibilityHint?: string;
+  variant?: "primary" | "secondary";
 }
 
-const Button: React.FC<ButtonProps> = ({
+export function Button({
   title,
+  loading,
   variant = "primary",
-  size = "md",
-  loading = false,
-  disabled,
-  icon,
-  iconPosition = "left",
   style,
-  accessibilityLabel,
-  accessibilityHint,
-  onPress,
   ...props
-}) => {
-  const reducedMotion = useReducedMotion();
-  const containerStyle = [
-    styles.container,
-    styles[`${size}Container`],
-    styles[`${variant}Container`],
-    (disabled || loading) && styles.disabled,
-    style,
-  ];
-
-  const textStyle = [
-    styles.text,
-    styles[`${size}Text`],
-    styles[`${variant}Text`],
-  ];
-
-  const getLoaderColor = () => {
-    switch (variant) {
-      case "primary":
-      case "danger":
-        return Colors.textInverse;
-      case "ghost":
-      case "link":
-      case "text":
-        return Colors.primary;
-      default:
-        return Colors.text;
-    }
-  };
-
-  const handlePress = (event: GestureResponderEvent) => {
-    if (!(disabled || loading)) {
-      hapticSelection();
-      onPress?.(event);
-    }
-  };
-
-  const renderContent = () => {
-    if (loading) {
-      return <ActivityIndicator color={getLoaderColor()} />;
-    }
-
-    if (icon) {
-      return (
-        <View style={styles.contentWithIcon}>
-          {iconPosition === "left" && icon}
-          <Text style={textStyle}>{title}</Text>
-          {iconPosition === "right" && icon}
-        </View>
-      );
-    }
-
-    return <Text style={textStyle}>{title}</Text>;
-  };
-
+}: ButtonProps) {
   return (
     <TouchableOpacity
-      style={containerStyle}
-      disabled={disabled || loading}
-      activeOpacity={reducedMotion ? 1 : 0.8}
-      accessible={true}
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel || title}
-      accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled: disabled || loading, busy: loading }}
-      onPress={handlePress}
+      style={[
+        styles.base,
+        variant === "primary" ? styles.primary : styles.secondary,
+        style,
+      ]}
+      disabled={loading || props.disabled}
       {...props}
     >
-      {renderContent()}
+      {loading ? (
+        <ActivityIndicator color={variant === "primary" ? "#fff" : theme.colors.primary} />
+      ) : (
+        <Text style={[styles.text, variant === "secondary" && styles.secondaryText]}>
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: BorderRadius.md,
+  base: {
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.md,
     alignItems: "center",
-    justifyContent: "center",
-    minHeight: 44, // minimum touch target
+    minHeight: 44,
   },
-  // size variants
-  smContainer: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
+  primary: {
+    backgroundColor: theme.colors.primary,
   },
-  mdContainer: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-  },
-  lgContainer: {
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl,
-  },
-  // Style variants
-  primaryContainer: {
-    backgroundColor: Colors.primary,
-  },
-  secondaryContainer: {
-    backgroundColor: Colors.cardBackground,
+  secondary: {
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: theme.colors.border,
   },
-  outlineContainer: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: Colors.primary,
-  },
-  ghostContainer: {
-    backgroundColor: "transparent",
-  },
-  dangerContainer: {
-    backgroundColor: Colors.error,
-  },
-  // text styles
   text: {
-    fontWeight: Typography.fontWeight.medium,
-  },
-  smText: {
-    fontSize: Typography.fontSize.sm,
-  },
-  mdText: {
-    fontSize: Typography.fontSize.base,
-  },
-  lgText: {
-    fontSize: Typography.fontSize.lg,
-  },
-  primaryText: {
-    color: Colors.textInverse,
+    fontSize: theme.text.base,
+    fontWeight: "600",
+    color: theme.colors.textInverse,
   },
   secondaryText: {
-    color: Colors.text,
-  },
-  outlineText: {
-    color: Colors.primary,
-  },
-  ghostText: {
-    color: Colors.primary,
-  },
-  dangerText: {
-    color: Colors.textInverse,
-  },
-  linkContainer: {
-    backgroundColor: "transparent",
-  },
-  linkText: {
-    color: Colors.primary,
-    textDecorationLine: "underline",
-  },
-  textContainer: {
-    backgroundColor: "transparent",
-  },
-  textText: {
-    color: Colors.primary,
-  },
-  contentWithIcon: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  disabled: {
-    opacity: 0.6,
+    color: theme.colors.text,
   },
 });
-
-export { Button };

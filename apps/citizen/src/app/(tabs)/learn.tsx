@@ -1,236 +1,225 @@
-import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { QuizCompletionModal } from "@/components/learn/quiz-completion-modal";
-import { QuizMode } from "@/components/learn/quiz-mode";
-import { RoadmapMode } from "@/components/learn/roadmap-mode";
-import { ErrorState } from "@/components/shared/error-state";
-import { Header } from "@/components/shared/header";
-import { ListSkeleton } from "@/components/shared/loading-skeleton";
-import { ANIMATION_DURATIONS } from "@/constants/animations";
-import { ROUTES } from "@/constants/app-config";
-import { Spacing } from "@/constants/design-tokens";
-import { useAuth } from "@/features/auth/hooks/use-auth";
-import { LearningFeatureWrapper } from "@/features/learning/components/learning-feature-wrapper";
-import { useLearningGuides } from "@/features/learning/hooks/use-learning-guides";
-import { useQuiz } from "@/features/learning/hooks/use-quiz";
-import { useUpdateUserProgress } from "@/features/learning/hooks/use-user-progress";
-import { useNetworkStatus } from "@/lib/hooks/use-network-status";
-import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
-import type { LearningGuide, QuizQuestion } from "@/types";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useQuiz, useUpdateProgress } from "@/hooks/use-quiz";
+import { useAuth } from "@/lib/auth";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Loading } from "@/components/ui/Loading";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { theme } from "@/theme";
+import { WASTE_TYPES } from "@/constants";
 
-function useLearnScreenState() {
+export default function LearnScreen() {
   const { user } = useAuth();
-  const router = useRouter();
-  const { isOffline } = useNetworkStatus();
-  const reducedMotion = useReducedMotion();
+  const { data: questions = [], isLoading, error, refetch } = useQuiz();
+  const { mutate: updateProgress } = useUpdateProgress();
+  
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [showResults, setShowResults] = useState(false);
 
-  const [mode, setMode] = useState<"roadmap" | "quiz">("roadmap");
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [quizScore, setQuizScore] = useState({ score: 0, total: 0 });
+  if (isLoading) return <Loading />;
+  
+  if (error) {
+    return <ErrorMessage message="Error al cargar el quiz" onRetry={refetch} />;
+  }
 
-  const {
-    data: guides,
-    isLoading: isLoadingGuides,
-    error: guidesError,
-    refetch: refetchGuides,
-  } = useLearningGuides();
-  const {
-    data: questions,
-    isLoading: isLoadingQuiz,
-    error: quizError,
-    refetch: refetchQuiz,
-  } = useQuiz();
-  const { mutate: updateUserProgress } = useUpdateUserProgress();
-
-  const isLoading = isLoadingGuides || isLoadingQuiz;
-  const hasError = Boolean(guidesError || quizError);
-
-  const handleRetry = useCallback(() => {
-    refetchGuides();
-    refetchQuiz();
-  }, [refetchGuides, refetchQuiz]);
-
-  const handleQuizComplete = useCallback(
-    (score: number) => {
-      if (user) {
-        updateUserProgress(score);
-      }
-      setQuizScore({ score, total: questions?.length ?? 0 });
-      setShowCompletionModal(true);
-    },
-    [user, updateUserProgress, questions],
-  );
-
-  const handleModalContinue = useCallback(() => {
-    setShowCompletionModal(false);
-    setMode("roadmap");
-  }, []);
-
-  const handleModalSignUp = useCallback(() => {
-    setShowCompletionModal(false);
-    router.push(ROUTES.SIGN_UP);
-  }, [router]);
-
-  const handleStartQuiz = useCallback(() => setMode("quiz"), []);
-
-  return {
-    user,
-    router,
-    isOffline,
-    reducedMotion,
-    mode,
-    setMode,
-    isLoading,
-    hasError,
-    guides,
-    questions,
-    guidesError,
-    quizError,
-    quizScore,
-    showCompletionModal,
-    handleRetry,
-    handleQuizComplete,
-    handleModalContinue,
-    handleModalSignUp,
-    handleStartQuiz,
-  };
-}
-
-function RenderContent({
-  isLoading,
-  hasError,
-  isOffline,
-  reducedMotion,
-  mode,
-  questions,
-  guides,
-  guidesError,
-  quizError,
-  onRetry,
-  onQuizComplete,
-  onStartQuiz,
-}: {
-  isLoading: boolean;
-  hasError: boolean;
-  isOffline: boolean;
-  reducedMotion: boolean;
-  mode: "roadmap" | "quiz";
-  questions?: QuizQuestion[];
-  guides?: LearningGuide[];
-  guidesError?: Error | null;
-  quizError?: Error | null;
-  onRetry: () => void;
-  onQuizComplete: (score: number) => void;
-  onStartQuiz: () => void;
-}) {
-  if (isLoading) {
+  if (questions.length === 0) {
     return (
-      <View style={styles.content}>
-        <ListSkeleton count={3} />
+      <View style={styles.centerContainer}>
+        <Text>No hay preguntas disponibles</Text>
       </View>
     );
   }
 
-  if (hasError) {
+  if (showResults) {
+    const percentage = Math.round((score / questions.length) * 100);
+    
     return (
-      <ErrorState
-        error={(guidesError || quizError) ?? null}
-        onRetry={onRetry}
-        isOffline={isOffline}
-      />
+      <View style={styles.centerContainer}>
+        <Text style={styles.resultsTitle}>Quiz completado</Text>
+        <View style={styles.scoreCircle}>
+          <Text style={styles.scoreText}>{score}</Text>
+          <Text style={styles.totalText}>/ {questions.length}</Text>
+        </View>
+        <Text style={styles.percentage}>{percentage}%</Text>
+        <Text style={styles.message}>
+          {percentage >= 80 ? "¡Excelente trabajo! 🌟" : "¡Sigue practicando! 💪"}
+        </Text>
+        <Button
+          title="Reiniciar"
+          onPress={() => {
+            setCurrentIndex(0);
+            setScore(0);
+            setSelectedAnswer(null);
+            setShowResults(false);
+          }}
+        />
+      </View>
     );
   }
 
-  if (mode === "quiz" && questions) {
-    return (
-      <Animated.View
-        key="quiz-mode"
-        entering={
-          reducedMotion
-            ? undefined
-            : FadeIn.duration(ANIMATION_DURATIONS.NORMAL)
-        }
-        exiting={
-          reducedMotion
-            ? undefined
-            : FadeOut.duration(ANIMATION_DURATIONS.QUICK)
-        }
-        style={styles.modeContainer}
-      >
-        <QuizMode questions={questions} onQuizComplete={onQuizComplete} />
-      </Animated.View>
-    );
-  }
+  const question = questions[currentIndex];
+  const isAnswered = selectedAnswer !== null;
+  const isCorrect = selectedAnswer === question.correctAnswer;
 
-  if (guides) {
-    return (
-      <Animated.View
-        key="roadmap-mode"
-        entering={
-          reducedMotion
-            ? undefined
-            : FadeIn.duration(ANIMATION_DURATIONS.NORMAL)
-        }
-        exiting={
-          reducedMotion
-            ? undefined
-            : FadeOut.duration(ANIMATION_DURATIONS.QUICK)
-        }
-        style={styles.modeContainer}
-      >
-        <RoadmapMode guides={guides} onStartQuiz={onStartQuiz} />
-      </Animated.View>
-    );
-  }
+  const handleAnswer = (answer: string) => {
+    setSelectedAnswer(answer);
+    if (answer === question.correctAnswer) {
+      setScore(score + 1);
+    }
+  };
 
-  return null;
-}
+  const handleNext = () => {
+    if (currentIndex === questions.length - 1) {
+      if (user) {
+        updateProgress(score + (isCorrect ? 1 : 0));
+      }
+      setShowResults(true);
+    } else {
+      setCurrentIndex(currentIndex + 1);
+      setSelectedAnswer(null);
+    }
+  };
 
-function LearnScreenContent() {
-  const s = useLearnScreenState();
   return (
     <View style={styles.container}>
-      <Header title="Aprender a reciclar" />
-      <RenderContent
-        isLoading={s.isLoading}
-        hasError={s.hasError}
-        isOffline={s.isOffline}
-        reducedMotion={s.reducedMotion}
-        mode={s.mode}
-        questions={s.questions}
-        guides={s.guides}
-        guidesError={s.guidesError ?? null}
-        quizError={s.quizError ?? null}
-        onRetry={s.handleRetry}
-        onQuizComplete={s.handleQuizComplete}
-        onStartQuiz={s.handleStartQuiz}
-      />
-      <QuizCompletionModal
-        visible={s.showCompletionModal}
-        score={s.quizScore.score}
-        total={s.quizScore.total}
-        isAuthenticated={Boolean(s.user)}
-        onContinue={s.handleModalContinue}
-        onSignUp={s.handleModalSignUp}
-      />
+      <Text style={styles.progress}>
+        Pregunta {currentIndex + 1} de {questions.length}
+      </Text>
+
+      <Image source={{ uri: question.imageUrl }} style={styles.image} />
+      
+      <Text style={styles.question}>{question.question}</Text>
+      <Text style={styles.item}>{question.item}</Text>
+
+      <View style={styles.options}>
+        {question.options.map((option) => {
+          const selected = selectedAnswer === option;
+          const correct = isAnswered && option === question.correctAnswer;
+          const wrong = isAnswered && selected && !correct;
+
+          return (
+            <TouchableOpacity
+              key={option}
+              onPress={() => !isAnswered && handleAnswer(option)}
+              disabled={isAnswered}
+            >
+              <Card
+                style={[
+                  styles.option,
+                  correct && styles.correctOption,
+                  wrong && styles.wrongOption,
+                ]}
+              >
+                <Text style={styles.optionText}>
+                  {WASTE_TYPES[option].label}
+                </Text>
+                {correct && <Text>✓</Text>}
+                {wrong && <Text>✗</Text>}
+              </Card>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {isAnswered && (
+        <Button
+          title={currentIndex === questions.length - 1 ? "Ver resultados" : "Siguiente"}
+          onPress={handleNext}
+        />
+      )}
     </View>
   );
 }
 
-function LearnScreen() {
-  return (
-    <LearningFeatureWrapper>
-      <LearnScreenContent />
-    </LearningFeatureWrapper>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { padding: Spacing.lg },
-  modeContainer: { flex: 1 },
+  container: {
+    flex: 1,
+    padding: theme.spacing.lg,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: theme.spacing.xl,
+    gap: theme.spacing.lg,
+  },
+  progress: {
+    fontSize: theme.text.sm,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.md,
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: theme.radius.lg,
+    marginBottom: theme.spacing.lg,
+  },
+  question: {
+    fontSize: theme.text.lg,
+    color: theme.colors.textSecondary,
+    textAlign: "center",
+    marginBottom: theme.spacing.sm,
+  },
+  item: {
+    fontSize: theme.text.xxl,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: theme.spacing.xl,
+  },
+  options: {
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.xl,
+  },
+  option: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  optionText: {
+    fontSize: theme.text.base,
+    fontWeight: "500",
+  },
+  correctOption: {
+    backgroundColor: "#E6F9F1",
+    borderColor: theme.colors.success,
+  },
+  wrongOption: {
+    backgroundColor: "#FEEBEE",
+    borderColor: theme.colors.error,
+  },
+  resultsTitle: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+  },
+  scoreCircle: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: theme.colors.card,
+    borderWidth: 8,
+    borderColor: theme.colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scoreText: {
+    fontSize: 64,
+    fontWeight: "700",
+    color: theme.colors.primary,
+  },
+  totalText: {
+    fontSize: theme.text.xl,
+    color: theme.colors.textSecondary,
+  },
+  percentage: {
+    fontSize: theme.text.xxl,
+    fontWeight: "600",
+  },
+  message: {
+    fontSize: theme.text.xl,
+    fontWeight: "500",
+    textAlign: "center",
+  },
 });
-
-export default LearnScreen;
