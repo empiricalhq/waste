@@ -1,10 +1,10 @@
 import { API_URL, CONFIG, ERROR_MESSAGES } from "@/constants";
 import type { ApiError } from "@/types";
 
+import { storage } from "./storage";
+
 const COOKIE_SPLIT_RE = /[,;]/;
 const SESSION_TOKEN_RE = /better-auth\.session_token=([^;]+)/;
-
-import { storage } from "./storage";
 
 class ApiClient {
   private readonly baseUrl: string;

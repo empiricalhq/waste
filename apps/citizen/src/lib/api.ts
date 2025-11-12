@@ -84,7 +84,7 @@ export const api = {
   // Reports
   async getReports(): Promise<Report[]> {
     const issues = await apiClient.get<
-      Array<{
+      {
         id: string;
         user_id: string;
         type: string;
@@ -94,7 +94,7 @@ export const api = {
         lat: number;
         lng: number;
         created_at: string | Date;
-      }>
+      }[]
     >("/api/citizen/issues");
 
     const statusMap: Record<string, "pending" | "in-progress" | "resolved"> = {

@@ -21,7 +21,7 @@ import { theme } from "@/theme";
 type Step = "type" | "details" | "success";
 
 const TypeSelector = memo<{
-  types: Array<{ id: string; label: string }>;
+  types: { id: string; label: string }[];
   onSelect: (label: string) => void;
 }>(({ types, onSelect }) => (
   <View style={styles.container}>
