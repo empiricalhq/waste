@@ -2,13 +2,13 @@ import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { TOKEN_KEY } from "@/constants";
 
 export const storage = {
-  async getToken() {
+  getToken() {
     return getItemAsync(TOKEN_KEY);
   },
-  async setToken(token: string) {
+  setToken(token: string) {
     return setItemAsync(TOKEN_KEY, token);
   },
-  async removeToken() {
+  removeToken() {
     return deleteItemAsync(TOKEN_KEY);
   },
 };

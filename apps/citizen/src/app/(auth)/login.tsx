@@ -20,12 +20,12 @@ export default function LoginScreen() {
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach((issue) => {
+      for (const issue of result.error.issues) {
         const field = issue.path[0];
         if (typeof field === "string") {
           fieldErrors[field] = issue.message;
         }
-      });
+      }
       setErrors(fieldErrors);
       return;
     }

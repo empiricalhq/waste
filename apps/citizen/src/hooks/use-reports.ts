@@ -88,16 +88,20 @@ export function useRetryPendingReports() {
     const queue: PendingReport[] = JSON.parse(pending);
     const failed: PendingReport[] = [];
 
-    for (const item of queue) {
-      try {
-        const report = await api.createReport(item.data);
+    const results = await Promise.allSettled(
+      queue.map((item) => api.createReport(item.data)),
+    );
+
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        const item = queue[index];
         queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) =>
-          old.map((r) => (r.id === item.id ? report : r)),
+          old.map((r) => (r.id === item.id ? result.value : r)),
         );
-      } catch {
-        failed.push(item);
+      } else {
+        failed.push(queue[index]);
       }
-    }
+    });
 
     await AsyncStorage.setItem(PENDING_REPORTS_KEY, JSON.stringify(failed));
   };
