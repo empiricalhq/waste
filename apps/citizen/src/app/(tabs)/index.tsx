@@ -1,60 +1,68 @@
-import { memo, useMemo } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Card } from '@/components/ui/Card';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { Loading } from '@/components/ui/Loading';
-import { WASTE_TYPES } from '@/constants';
-import { useNearestTruck, useNextCollection } from '@/hooks/queries';
-import { useNetwork } from '@/hooks/use-network';
-import { theme } from '@/theme';
+import { memo, useMemo } from "react";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Loading } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
+import { useNearestTruck, useNextCollection } from "@/hooks/queries";
+import { useNetwork } from "@/hooks/use-network";
+import { theme } from "@/theme";
 
-const CollectionCard = memo<{ collection: NonNullable<ReturnType<typeof useNextCollection>['data']> }>(
-  ({ collection }) => {
-    const wasteType = WASTE_TYPES[collection.type];
-    
-    return (
-      <Card variant="elevated" style={styles.section}>
-        <Text style={styles.label}>Próxima recolección</Text>
-        <View style={styles.row}>
-          <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
-          <View style={styles.info}>
+const CollectionCard = memo<{
+  collection: NonNullable<ReturnType<typeof useNextCollection>["data"]>;
+}>(({ collection }) => {
+  const wasteType = WASTE_TYPES[collection.type];
+
+  return (
+    <Card variant="elevated" style={styles.section}>
+      <Text style={styles.label}>Próxima recolección</Text>
+      <View style={styles.row}>
+        <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
+        <View style={styles.info}>
+          <Text style={styles.type}>{wasteType.label}</Text>
+          <Text style={styles.time}>
+            {collection.date} · {collection.time}
+          </Text>
+        </View>
+      </View>
+    </Card>
+  );
+});
+
+CollectionCard.displayName = "CollectionCard";
+
+const TruckCard = memo<{
+  truck: NonNullable<ReturnType<typeof useNearestTruck>["nearestTruck"]>;
+}>(({ truck }) => {
+  const wasteType = WASTE_TYPES[truck.type];
+
+  return (
+    <Card variant="elevated" style={styles.section}>
+      <Text style={styles.label}>Camión cercano</Text>
+      <View style={styles.row}>
+        <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
+        <View style={styles.infoFlex}>
+          <View>
             <Text style={styles.type}>{wasteType.label}</Text>
-            <Text style={styles.time}>{collection.date} · {collection.time}</Text>
+            <Text style={styles.time}>{truck.route}</Text>
+          </View>
+          <View style={styles.etaContainer}>
+            <Text style={styles.eta}>{truck.eta}</Text>
+            <Text style={styles.etaLabel}>min</Text>
           </View>
         </View>
-      </Card>
-    );
-  }
-);
+      </View>
+    </Card>
+  );
+});
 
-CollectionCard.displayName = 'CollectionCard';
-
-const TruckCard = memo<{ truck: NonNullable<ReturnType<typeof useNearestTruck>['nearestTruck']> }>(
-  ({ truck }) => {
-    const wasteType = WASTE_TYPES[truck.type];
-    
-    return (
-      <Card variant="elevated" style={styles.section}>
-        <Text style={styles.label}>Camión cercano</Text>
-        <View style={styles.row}>
-          <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
-          <View style={styles.infoFlex}>
-            <View>
-              <Text style={styles.type}>{wasteType.label}</Text>
-              <Text style={styles.time}>{truck.route}</Text>
-            </View>
-            <View style={styles.etaContainer}>
-              <Text style={styles.eta}>{truck.eta}</Text>
-              <Text style={styles.etaLabel}>min</Text>
-            </View>
-          </View>
-        </View>
-      </Card>
-    );
-  }
-);
-
-TruckCard.displayName = 'TruckCard';
+TruckCard.displayName = "TruckCard";
 
 export default memo(function HomeScreen() {
   const {
@@ -90,7 +98,9 @@ export default memo(function HomeScreen() {
   if (hasError) {
     return (
       <ErrorMessage
-        message={isOffline ? 'Sin conexión a internet' : 'Error al cargar información'}
+        message={
+          isOffline ? "Sin conexión a internet" : "Error al cargar información"
+        }
         isOffline={isOffline}
         onRetry={handleRefresh}
       />
@@ -110,7 +120,7 @@ export default memo(function HomeScreen() {
       {nextCollection && <CollectionCard collection={nextCollection} />}
       {nearestTruck && <TruckCard truck={nearestTruck} />}
 
-      {!nextCollection && !nearestTruck && (
+      {!(nextCollection || nearestTruck) && (
         <Card>
           <Text style={styles.emptyText}>
             No hay información disponible en este momento
@@ -145,8 +155,8 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.medium,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing.md,
   },
   dot: {
@@ -159,9 +169,9 @@ const styles = StyleSheet.create({
   },
   infoFlex: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   type: {
     fontSize: theme.text.base,
@@ -174,7 +184,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   etaContainer: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   eta: {
     fontSize: theme.text.xxl,
@@ -188,6 +198,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

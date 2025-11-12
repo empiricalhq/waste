@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { deleteItemAsync, getItemAsync, setItemAsync } from 'expo-secure-store';
-import { STORAGE_KEYS } from '@/constants';
-import type { PendingReport, LocationCoords } from '@/types';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
+import { STORAGE_KEYS } from "@/constants";
+import type { LocationCoords, PendingReport } from "@/types";
 
 class StorageService {
   async getToken(): Promise<string | null> {
@@ -31,7 +31,10 @@ class StorageService {
   }
 
   async setPendingReports(reports: PendingReport[]): Promise<void> {
-    await AsyncStorage.setItem(STORAGE_KEYS.PENDING_REPORTS, JSON.stringify(reports));
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.PENDING_REPORTS,
+      JSON.stringify(reports),
+    );
   }
 
   async addPendingReport(report: PendingReport): Promise<void> {
@@ -42,7 +45,7 @@ class StorageService {
 
   async removePendingReport(id: string): Promise<void> {
     const reports = await this.getPendingReports();
-    const filtered = reports.filter(r => r.id !== id);
+    const filtered = reports.filter((r) => r.id !== id);
     await this.setPendingReports(filtered);
   }
 
@@ -56,7 +59,10 @@ class StorageService {
   }
 
   async setLastLocation(coords: LocationCoords): Promise<void> {
-    await AsyncStorage.setItem(STORAGE_KEYS.USER_LOCATION, JSON.stringify(coords));
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.USER_LOCATION,
+      JSON.stringify(coords),
+    );
   }
 
   async clearAll(): Promise<void> {

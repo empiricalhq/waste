@@ -1,16 +1,23 @@
-import { useRouter } from 'expo-router';
-import { memo, useCallback, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { ROUTES } from '@/constants';
-import { useAuth } from '@/lib/auth';
-import { loginSchema, type LoginInput } from '@/lib/validation';
-import { theme } from '@/theme';
+import { useRouter } from "expo-router";
+import { memo, useCallback, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { ROUTES } from "@/constants";
+import { useAuth } from "@/lib/auth";
+import { loginSchema } from "@/lib/validation";
+import { theme } from "@/theme";
 
 export default memo(function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { login, isLoading } = useAuth();
   const router = useRouter();
@@ -20,9 +27,9 @@ export default memo(function LoginScreen() {
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach(issue => {
+      result.error.issues.forEach((issue) => {
         const field = issue.path[0];
-        if (typeof field === 'string') {
+        if (typeof field === "string") {
           fieldErrors[field] = issue.message;
         }
       });
@@ -34,7 +41,7 @@ export default memo(function LoginScreen() {
       setErrors({});
       await login(result.data);
     } catch (error: any) {
-      setErrors({ general: error.message || 'Error al iniciar sesión' });
+      setErrors({ general: error.message || "Error al iniciar sesión" });
     }
   }, [email, password, login]);
 
@@ -44,7 +51,7 @@ export default memo(function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <ScrollView
@@ -77,7 +84,7 @@ export default memo(function LoginScreen() {
             label="Contraseña"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={true}
             autoComplete="password"
             error={errors.password}
           />
@@ -86,7 +93,7 @@ export default memo(function LoginScreen() {
             title="Iniciar sesión"
             onPress={handleLogin}
             loading={isLoading}
-            fullWidth
+            fullWidth={true}
           />
 
           <Button
@@ -108,7 +115,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: theme.spacing.xxl,
   },
   header: {
@@ -133,7 +140,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: theme.colors.error,
     fontSize: theme.text.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
   form: {
     gap: theme.spacing.lg,

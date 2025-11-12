@@ -1,17 +1,24 @@
-import { memo, useCallback, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Card } from '@/components/ui/Card';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Loading } from '@/components/ui/Loading';
-import { useLocation } from '@/hooks/use-location';
-import { useNetwork } from '@/hooks/use-network';
-import { useReportTypes, useSubmitReport } from '@/hooks/queries';
-import { useAuth } from '@/lib/auth';
-import { theme } from '@/theme';
+import { memo, useCallback, useState } from "react";
+import {
+  Alert,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Input } from "@/components/ui/Input";
+import { Loading } from "@/components/ui/Loading";
+import { useReportTypes, useSubmitReport } from "@/hooks/queries";
+import { useLocation } from "@/hooks/use-location";
+import { useNetwork } from "@/hooks/use-network";
+import { useAuth } from "@/lib/auth";
+import { theme } from "@/theme";
 
-type Step = 'type' | 'details' | 'success';
+type Step = "type" | "details" | "success";
 
 const TypeSelector = memo<{
   types: Array<{ id: string; label: string }>;
@@ -21,7 +28,7 @@ const TypeSelector = memo<{
     <Text style={styles.header}>Tipo de reporte</Text>
     <FlatList
       data={types}
-      keyExtractor={item => item.id}
+      keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <Pressable onPress={() => onSelect(item.label)}>
           <Card style={styles.typeCard}>
@@ -33,7 +40,7 @@ const TypeSelector = memo<{
   </View>
 ));
 
-TypeSelector.displayName = 'TypeSelector';
+TypeSelector.displayName = "TypeSelector";
 
 const ReportForm = memo<{
   selectedType: string;
@@ -43,81 +50,103 @@ const ReportForm = memo<{
   onBack: () => void;
   isSubmitting: boolean;
   isOffline: boolean;
-}>(({ selectedType, description, setDescription, onSubmit, onBack, isSubmitting, isOffline }) => {
-  const { coords, isLoading: isLoadingLocation, error, requestLocation } = useLocation();
+}>(
+  ({
+    selectedType,
+    description,
+    setDescription,
+    onSubmit,
+    onBack,
+    isSubmitting,
+    isOffline,
+  }) => {
+    const {
+      coords,
+      isLoading: isLoadingLocation,
+      error,
+      requestLocation,
+    } = useLocation();
 
-  const handleLocationRequest = useCallback(async () => {
-    try {
-      await requestLocation();
-    } catch (err) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'No se pudo obtener la ubicación');
-    }
-  }, [requestLocation]);
+    const handleLocationRequest = useCallback(async () => {
+      try {
+        await requestLocation();
+      } catch (err) {
+        Alert.alert(
+          "Error",
+          err instanceof Error
+            ? err.message
+            : "No se pudo obtener la ubicación",
+        );
+      }
+    }, [requestLocation]);
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Detalles del reporte</Text>
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Detalles del reporte</Text>
 
-      {isOffline && (
-        <Card style={styles.offlineCard}>
-          <Text style={styles.offlineText}>
-            Sin conexión. El reporte se enviará automáticamente al recuperar la conexión.
-          </Text>
-        </Card>
-      )}
-
-      <Input
-        label="Tipo"
-        value={selectedType}
-        editable={false}
-        containerStyle={styles.input}
-      />
-
-      <View style={styles.locationSection}>
-        <Button
-          title={coords ? 'Ubicación obtenida' : 'Obtener ubicación'}
-          variant={coords ? 'secondary' : 'primary'}
-          onPress={handleLocationRequest}
-          loading={isLoadingLocation}
-          disabled={isLoadingLocation}
-        />
-        {error && <Text style={styles.errorText}>{error}</Text>}
-        {coords && (
-          <Text style={styles.successText}>
-            Coordenadas: {coords.latitude.toFixed(6)}, {coords.longitude.toFixed(6)}
-          </Text>
+        {isOffline && (
+          <Card style={styles.offlineCard}>
+            <Text style={styles.offlineText}>
+              Sin conexión. El reporte se enviará automáticamente al recuperar
+              la conexión.
+            </Text>
+          </Card>
         )}
+
+        <Input
+          label="Tipo"
+          value={selectedType}
+          editable={false}
+          containerStyle={styles.input}
+        />
+
+        <View style={styles.locationSection}>
+          <Button
+            title={coords ? "Ubicación obtenida" : "Obtener ubicación"}
+            variant={coords ? "secondary" : "primary"}
+            onPress={handleLocationRequest}
+            loading={isLoadingLocation}
+            disabled={isLoadingLocation}
+          />
+          {error && <Text style={styles.errorText}>{error}</Text>}
+          {coords && (
+            <Text style={styles.successText}>
+              Coordenadas: {coords.latitude.toFixed(6)},{" "}
+              {coords.longitude.toFixed(6)}
+            </Text>
+          )}
+        </View>
+
+        <Input
+          label="Descripción"
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Describe el problema..."
+          multiline={true}
+          style={styles.textArea}
+          containerStyle={styles.input}
+        />
+
+        <Button
+          title="Enviar reporte"
+          onPress={onSubmit}
+          loading={isSubmitting || isLoadingLocation}
+          disabled={!description.trim() || !(coords || isLoadingLocation)}
+          fullWidth={true}
+        />
+
+        <Button
+          title="Volver"
+          variant="ghost"
+          onPress={onBack}
+          style={styles.backButton}
+        />
       </View>
+    );
+  },
+);
 
-      <Input
-        label="Descripción"
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Describe el problema..."
-        multiline
-        style={styles.textArea}
-        containerStyle={styles.input}
-      />
-
-      <Button
-        title="Enviar reporte"
-        onPress={onSubmit}
-        loading={isSubmitting || isLoadingLocation}
-        disabled={!description.trim() || (!coords && !isLoadingLocation)}
-        fullWidth
-      />
-
-      <Button
-        title="Volver"
-        variant="ghost"
-        onPress={onBack}
-        style={styles.backButton}
-      />
-    </View>
-  );
-});
-
-ReportForm.displayName = 'ReportForm';
+ReportForm.displayName = "ReportForm";
 
 const SuccessView = memo<{
   onCreateAnother: () => void;
@@ -129,21 +158,21 @@ const SuccessView = memo<{
     </View>
     <Text style={styles.successTitle}>Reporte enviado</Text>
     <Text style={styles.successMessage}>
-      {isOffline 
-        ? 'Se enviará cuando recuperes la conexión'
-        : 'Gracias por tu colaboración'}
+      {isOffline
+        ? "Se enviará cuando recuperes la conexión"
+        : "Gracias por tu colaboración"}
     </Text>
     <Button title="Crear otro reporte" onPress={onCreateAnother} />
   </View>
 ));
 
-SuccessView.displayName = 'SuccessView';
+SuccessView.displayName = "SuccessView";
 
 export default memo(function ReportScreen() {
   const { user } = useAuth();
-  const [step, setStep] = useState<Step>('type');
-  const [selectedType, setSelectedType] = useState('');
-  const [description, setDescription] = useState('');
+  const [step, setStep] = useState<Step>("type");
+  const [selectedType, setSelectedType] = useState("");
+  const [description, setDescription] = useState("");
 
   const { data: types = [], isLoading, error, refetch } = useReportTypes();
   const { mutate: submit, isPending } = useSubmitReport();
@@ -152,11 +181,14 @@ export default memo(function ReportScreen() {
 
   const handleTypeSelect = useCallback((label: string) => {
     setSelectedType(label);
-    setStep('details');
+    setStep("details");
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    const submitReport = (locationCoords: { latitude: number; longitude: number }) => {
+    const submitReport = (locationCoords: {
+      latitude: number;
+      longitude: number;
+    }) => {
       submit(
         {
           type: selectedType,
@@ -165,15 +197,15 @@ export default memo(function ReportScreen() {
           longitude: locationCoords.longitude,
         },
         {
-          onSuccess: () => setStep('success'),
+          onSuccess: () => setStep("success"),
           onError: (error: any) => {
-            if (error.code === 'NETWORK_ERROR') {
-              setStep('success');
+            if (error.code === "NETWORK_ERROR") {
+              setStep("success");
             } else {
-              Alert.alert('Error', error.message);
+              Alert.alert("Error", error.message);
             }
           },
-        }
+        },
       );
     };
 
@@ -185,22 +217,24 @@ export default memo(function ReportScreen() {
         submitReport(locationCoords);
       } catch (err) {
         Alert.alert(
-          'Ubicación requerida',
-          err instanceof Error ? err.message : 'Se necesita la ubicación para enviar el reporte'
+          "Ubicación requerida",
+          err instanceof Error
+            ? err.message
+            : "Se necesita la ubicación para enviar el reporte",
         );
       }
     }
   }, [coords, description, requestLocation, selectedType, submit]);
 
   const handleCreateAnother = useCallback(() => {
-    setStep('type');
-    setSelectedType('');
-    setDescription('');
+    setStep("type");
+    setSelectedType("");
+    setDescription("");
     clearLocation();
   }, [clearLocation]);
 
   const handleBack = useCallback(() => {
-    setStep('type');
+    setStep("type");
   }, []);
 
   if (!user) {
@@ -208,7 +242,9 @@ export default memo(function ReportScreen() {
       <View style={styles.container}>
         <Text style={styles.header}>Reportar</Text>
         <Card>
-          <Text style={styles.authMessage}>Inicia sesión para enviar reportes</Text>
+          <Text style={styles.authMessage}>
+            Inicia sesión para enviar reportes
+          </Text>
         </Card>
       </View>
     );
@@ -228,11 +264,16 @@ export default memo(function ReportScreen() {
     );
   }
 
-  if (step === 'success') {
-    return <SuccessView onCreateAnother={handleCreateAnother} isOffline={isOffline} />;
+  if (step === "success") {
+    return (
+      <SuccessView
+        onCreateAnother={handleCreateAnother}
+        isOffline={isOffline}
+      />
+    );
   }
 
-  if (step === 'details') {
+  if (step === "details") {
     return (
       <ReportForm
         selectedType={selectedType}
@@ -257,8 +298,8 @@ const styles = StyleSheet.create({
   },
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: theme.spacing.xxl,
     gap: theme.spacing.lg,
   },
@@ -281,7 +322,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   locationSection: {
     marginBottom: theme.spacing.lg,
@@ -307,7 +348,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
   },
   authMessage: {
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.colors.textSecondary,
     fontSize: theme.text.base,
   },
@@ -316,8 +357,8 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: theme.radius.full,
     backgroundColor: theme.colors.successLight,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkmark: {
     fontSize: 48,
@@ -331,6 +372,6 @@ const styles = StyleSheet.create({
   successMessage: {
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

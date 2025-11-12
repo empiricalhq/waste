@@ -1,10 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter, useSegments } from 'expo-router';
-import { createContext, memo, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { QUERY_KEYS, ROUTES, CONFIG } from '@/constants';
-import type { LoginInput, SignUpInput, User } from '@/types';
-import { api } from './api';
-import { storage } from './storage';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter, useSegments } from "expo-router";
+import {
+  createContext,
+  memo,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { CONFIG, QUERY_KEYS, ROUTES } from "@/constants";
+import type { LoginInput, SignUpInput, User } from "@/types";
+import { api } from "./api";
+import { storage } from "./storage";
 
 interface AuthContextValue {
   user: User | null;
@@ -23,7 +31,7 @@ export const AuthProvider = memo<{ children: ReactNode }>(({ children }) => {
   const segments = useSegments();
 
   useEffect(() => {
-    storage.getToken().then(token => {
+    storage.getToken().then((token) => {
       setIsReady(true);
       if (!token) {
         queryClient.setQueryData([QUERY_KEYS.USER], null);
@@ -61,26 +69,34 @@ export const AuthProvider = memo<{ children: ReactNode }>(({ children }) => {
     },
   });
 
-  const handleLogin = useCallback((data: LoginInput) => {
-    return loginMutation.mutateAsync(data);
-  }, [loginMutation]);
+  const handleLogin = useCallback(
+    (data: LoginInput) => {
+      return loginMutation.mutateAsync(data);
+    },
+    [loginMutation],
+  );
 
-  const handleSignUp = useCallback((data: SignUpInput) => {
-    return signUpMutation.mutateAsync(data);
-  }, [signUpMutation]);
+  const handleSignUp = useCallback(
+    (data: SignUpInput) => {
+      return signUpMutation.mutateAsync(data);
+    },
+    [signUpMutation],
+  );
 
   const handleLogout = useCallback(() => {
     return logoutMutation.mutateAsync();
   }, [logoutMutation]);
 
   useEffect(() => {
-    if (isLoading || !isReady) return;
+    if (isLoading || !isReady) {
+      return;
+    }
 
-    const inAuthGroup = segments[0] === '(auth)';
+    const inAuthGroup = segments[0] === "(auth)";
 
     if (user && inAuthGroup) {
       router.replace(ROUTES.HOME);
-    } else if (!user && !inAuthGroup) {
+    } else if (!(user || inAuthGroup)) {
       router.replace(ROUTES.LOGIN);
     }
   }, [user, segments, isLoading, isReady, router]);
@@ -100,12 +116,12 @@ export const AuthProvider = memo<{ children: ReactNode }>(({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 });
 
-AuthProvider.displayName = 'AuthProvider';
+AuthProvider.displayName = "AuthProvider";
 
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 }

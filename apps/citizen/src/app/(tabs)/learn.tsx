@@ -1,14 +1,14 @@
-import { memo, useCallback, useState, useMemo } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { Loading } from '@/components/ui/Loading';
-import { WASTE_TYPES } from '@/constants';
-import { useQuiz, useUpdateProgress } from '@/hooks/queries';
-import { useAuth } from '@/lib/auth';
-import type { WasteType } from '@/types';
-import { theme } from '@/theme';
+import { memo, useCallback, useMemo, useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Loading } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
+import { useQuiz, useUpdateProgress } from "@/hooks/queries";
+import { useAuth } from "@/lib/auth";
+import { theme } from "@/theme";
+import type { WasteType } from "@/types";
 
 const QuestionView = memo<{
   question: {
@@ -24,66 +24,79 @@ const QuestionView = memo<{
   selectedAnswer: string | null;
   onAnswer: (answer: string) => void;
   onNext: () => void;
-}>(({ question, currentIndex, totalQuestions, selectedAnswer, onAnswer, onNext }) => {
-  const isAnswered = selectedAnswer !== null;
-  const isCorrect = selectedAnswer === question.correctAnswer;
+}>(
+  ({
+    question,
+    currentIndex,
+    totalQuestions,
+    selectedAnswer,
+    onAnswer,
+    onNext,
+  }) => {
+    const isAnswered = selectedAnswer !== null;
+    // const isCorrect = selectedAnswer === question.correctAnswer;
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.progress}>
-        Pregunta {currentIndex + 1} de {totalQuestions}
-      </Text>
+    return (
+      <View style={styles.container}>
+        <Text style={styles.progress}>
+          Pregunta {currentIndex + 1} de {totalQuestions}
+        </Text>
 
-      <Image source={{ uri: question.imageUrl }} style={styles.image} />
+        <Image source={{ uri: question.imageUrl }} style={styles.image} />
 
-      <View style={styles.questionContainer}>
-        <Text style={styles.question}>{question.question}</Text>
-        <Text style={styles.item}>{question.item}</Text>
-      </View>
+        <View style={styles.questionContainer}>
+          <Text style={styles.question}>{question.question}</Text>
+          <Text style={styles.item}>{question.item}</Text>
+        </View>
 
-      <View style={styles.options}>
-        {question.options.map(option => {
-          const selected = selectedAnswer === option;
-          const correct = isAnswered && option === question.correctAnswer;
-          const wrong = isAnswered && selected && !correct;
+        <View style={styles.options}>
+          {question.options.map((option) => {
+            const selected = selectedAnswer === option;
+            const correct = isAnswered && option === question.correctAnswer;
+            const wrong = isAnswered && selected && !correct;
 
-          return (
-            <TouchableOpacity
-              key={option}
-              onPress={() => !isAnswered && onAnswer(option)}
-              disabled={isAnswered}
-              activeOpacity={0.7}
-            >
-              <Card
-                style={[
-                  styles.option,
-                  correct && styles.correctOption,
-                  wrong && styles.wrongOption,
-                ]}
+            return (
+              <TouchableOpacity
+                key={option}
+                onPress={() => !isAnswered && onAnswer(option)}
+                disabled={isAnswered}
+                activeOpacity={0.7}
               >
-                <Text style={styles.optionText}>
-                  {WASTE_TYPES[option].label}
-                </Text>
-                {correct && <Text style={styles.indicator}>✓</Text>}
-                {wrong && <Text style={styles.indicator}>✗</Text>}
-              </Card>
-            </TouchableOpacity>
-          );
-        })}
+                <Card
+                  style={[
+                    styles.option,
+                    correct && styles.correctOption,
+                    wrong && styles.wrongOption,
+                  ]}
+                >
+                  <Text style={styles.optionText}>
+                    {WASTE_TYPES[option].label}
+                  </Text>
+                  {correct && <Text style={styles.indicator}>✓</Text>}
+                  {wrong && <Text style={styles.indicator}>✗</Text>}
+                </Card>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {isAnswered && (
+          <Button
+            title={
+              currentIndex === totalQuestions - 1
+                ? "Ver resultados"
+                : "Siguiente"
+            }
+            onPress={onNext}
+            fullWidth={true}
+          />
+        )}
       </View>
+    );
+  },
+);
 
-      {isAnswered && (
-        <Button
-          title={currentIndex === totalQuestions - 1 ? 'Ver resultados' : 'Siguiente'}
-          onPress={onNext}
-          fullWidth
-        />
-      )}
-    </View>
-  );
-});
-
-QuestionView.displayName = 'QuestionView';
+QuestionView.displayName = "QuestionView";
 
 const ResultsView = memo<{
   score: number;
@@ -91,7 +104,8 @@ const ResultsView = memo<{
   onRestart: () => void;
 }>(({ score, total, onRestart }) => {
   const percentage = Math.round((score / total) * 100);
-  const message = percentage >= 80 ? '¡Excelente trabajo!' : '¡Sigue practicando!';
+  const message =
+    percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
 
   return (
     <View style={styles.centerContainer}>
@@ -107,7 +121,7 @@ const ResultsView = memo<{
   );
 });
 
-ResultsView.displayName = 'ResultsView';
+ResultsView.displayName = "ResultsView";
 
 export default memo(function LearnScreen() {
   const { user } = useAuth();
@@ -119,27 +133,42 @@ export default memo(function LearnScreen() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
 
-  const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
+  const currentQuestion = useMemo(
+    () => questions[currentIndex],
+    [questions, currentIndex],
+  );
 
-  const handleAnswer = useCallback((answer: string) => {
-    setSelectedAnswer(answer);
-    if (answer === currentQuestion?.correctAnswer) {
-      setScore(prev => prev + 1);
-    }
-  }, [currentQuestion]);
+  const handleAnswer = useCallback(
+    (answer: string) => {
+      setSelectedAnswer(answer);
+      if (answer === currentQuestion?.correctAnswer) {
+        setScore((prev) => prev + 1);
+      }
+    },
+    [currentQuestion],
+  );
 
   const handleNext = useCallback(() => {
     if (currentIndex === questions.length - 1) {
       if (user) {
-        const finalScore = score + (selectedAnswer === currentQuestion?.correctAnswer ? 0 : 0);
+        const finalScore =
+          score + (selectedAnswer === currentQuestion?.correctAnswer ? 0 : 0);
         updateProgress(finalScore);
       }
       setShowResults(true);
     } else {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
       setSelectedAnswer(null);
     }
-  }, [currentIndex, questions.length, score, selectedAnswer, currentQuestion, user, updateProgress]);
+  }, [
+    currentIndex,
+    questions.length,
+    score,
+    selectedAnswer,
+    currentQuestion,
+    user,
+    updateProgress,
+  ]);
 
   const handleRestart = useCallback(() => {
     setCurrentIndex(0);
@@ -165,7 +194,13 @@ export default memo(function LearnScreen() {
   }
 
   if (showResults) {
-    return <ResultsView score={score} total={questions.length} onRestart={handleRestart} />;
+    return (
+      <ResultsView
+        score={score}
+        total={questions.length}
+        onRestart={handleRestart}
+      />
+    );
   }
 
   return (
@@ -188,8 +223,8 @@ const styles = StyleSheet.create({
   },
   centerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: theme.spacing.xxl,
     gap: theme.spacing.lg,
   },
@@ -200,7 +235,7 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.medium,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: theme.radius.lg,
     marginBottom: theme.spacing.lg,
@@ -212,13 +247,13 @@ const styles = StyleSheet.create({
   question: {
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: theme.spacing.sm,
   },
   item: {
     fontSize: theme.text.xxl,
     fontWeight: theme.fontWeight.bold,
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.colors.text,
   },
   options: {
@@ -226,9 +261,9 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   option: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   optionText: {
     fontSize: theme.text.base,
@@ -259,8 +294,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.card,
     borderWidth: 8,
     borderColor: theme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   scoreText: {
     fontSize: 64,
@@ -279,7 +314,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: theme.text.lg,
     fontWeight: theme.fontWeight.medium,
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.colors.text,
   },
   emptyText: {

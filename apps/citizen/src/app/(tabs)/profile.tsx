@@ -1,18 +1,20 @@
-import { memo, useCallback, useMemo } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { useAuth } from '@/lib/auth';
-import { theme } from '@/theme';
+import { memo, useCallback, useMemo } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuth } from "@/lib/auth";
+import { theme } from "@/theme";
 
-const StatItem = memo<{ value: string | number; label: string }>(({ value, label }) => (
-  <View style={styles.stat}>
-    <Text style={styles.statValue}>{value}</Text>
-    <Text style={styles.statLabel}>{label}</Text>
-  </View>
-));
+const StatItem = memo<{ value: string | number; label: string }>(
+  ({ value, label }) => (
+    <View style={styles.stat}>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statLabel}>{label}</Text>
+    </View>
+  ),
+);
 
-StatItem.displayName = 'StatItem';
+StatItem.displayName = "StatItem";
 
 export default memo(function ProfileScreen() {
   const { user, logout } = useAuth();
@@ -23,25 +25,24 @@ export default memo(function ProfileScreen() {
     }
 
     const { streak, correctAnswers, totalQuestions } = user.progress;
-    const accuracy = totalQuestions > 0
-      ? Math.round((correctAnswers / totalQuestions) * 100)
-      : 0;
+    const accuracy =
+      totalQuestions > 0
+        ? Math.round((correctAnswers / totalQuestions) * 100)
+        : 0;
 
     return { streak, accuracy, total: totalQuestions };
   }, [user]);
 
   const handleLogout = useCallback(() => {
-    Alert.alert(
-      'Cerrar sesión',
-      '¿Estás seguro que deseas cerrar sesión?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Cerrar sesión', style: 'destructive', onPress: logout },
-      ]
-    );
+    Alert.alert("Cerrar sesión", "¿Estás seguro que deseas cerrar sesión?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Cerrar sesión", style: "destructive", onPress: logout },
+    ]);
   }, [logout]);
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -102,11 +103,11 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   stat: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statValue: {
     fontSize: theme.text.xxl,

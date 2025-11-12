@@ -1,9 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
-import { memo } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { CONFIG } from '@/constants';
-import { AuthProvider } from '@/lib/auth';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
+import { memo } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { CONFIG } from "@/constants";
+import { AuthProvider } from "@/lib/auth";
 
 const queryClient = new QueryClient({
   defaultOptions: {

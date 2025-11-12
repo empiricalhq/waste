@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs } from "expo-router";
 import {
   BookOpen,
   Calendar,
@@ -6,9 +6,9 @@ import {
   Home,
   MapPin,
   User,
-} from 'lucide-react-native';
-import { memo } from 'react';
-import { theme } from '@/theme';
+} from "lucide-react-native";
+import { memo } from "react";
+import { theme } from "@/theme";
 
 export default memo(function TabLayout() {
   return (
@@ -34,43 +34,55 @@ export default memo(function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
-          tabBarIcon: ({ color, size }) => <Home color={color} size={size} strokeWidth={2} />,
+          title: "Inicio",
+          tabBarIcon: ({ color, size }) => (
+            <Home color={color} size={size} strokeWidth={2} />
+          ),
         }}
       />
       <Tabs.Screen
         name="schedule"
         options={{
-          title: 'Calendario',
-          tabBarIcon: ({ color, size }) => <Calendar color={color} size={size} strokeWidth={2} />,
+          title: "Calendario",
+          tabBarIcon: ({ color, size }) => (
+            <Calendar color={color} size={size} strokeWidth={2} />
+          ),
         }}
       />
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Mapa',
-          tabBarIcon: ({ color, size }) => <MapPin color={color} size={size} strokeWidth={2} />,
+          title: "Mapa",
+          tabBarIcon: ({ color, size }) => (
+            <MapPin color={color} size={size} strokeWidth={2} />
+          ),
         }}
       />
       <Tabs.Screen
         name="report"
         options={{
-          title: 'Reportar',
-          tabBarIcon: ({ color, size }) => <Camera color={color} size={size} strokeWidth={2} />,
+          title: "Reportar",
+          tabBarIcon: ({ color, size }) => (
+            <Camera color={color} size={size} strokeWidth={2} />
+          ),
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
-          title: 'Aprender',
-          tabBarIcon: ({ color, size }) => <BookOpen color={color} size={size} strokeWidth={2} />,
+          title: "Aprender",
+          tabBarIcon: ({ color, size }) => (
+            <BookOpen color={color} size={size} strokeWidth={2} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
-          tabBarIcon: ({ color, size }) => <User color={color} size={size} strokeWidth={2} />,
+          title: "Perfil",
+          tabBarIcon: ({ color, size }) => (
+            <User color={color} size={size} strokeWidth={2} />
+          ),
         }}
       />
     </Tabs>

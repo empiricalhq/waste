@@ -1,13 +1,13 @@
-import { memo } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { theme } from '@/theme';
+import { memo } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { theme } from "@/theme";
 
 interface LoadingProps {
   message?: string;
-  size?: 'small' | 'large';
+  size?: "small" | "large";
 }
 
-export const Loading = memo<LoadingProps>(({ message, size = 'large' }) => {
+export const Loading = memo<LoadingProps>(({ message, size = "large" }) => {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={theme.colors.primary} />
@@ -16,7 +16,7 @@ export const Loading = memo<LoadingProps>(({ message, size = 'large' }) => {
   );
 });
 
-Loading.displayName = 'Loading';
+Loading.displayName = "Loading";
 
 // Skeleton loading for lists
 export const SkeletonCard = memo(() => (
@@ -26,13 +26,13 @@ export const SkeletonCard = memo(() => (
   </View>
 ));
 
-SkeletonCard.displayName = 'SkeletonCard';
+SkeletonCard.displayName = "SkeletonCard";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: theme.spacing.md,
   },
   message: {
@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   skeletonLineShort: {
-    width: '60%',
+    width: "60%",
   },
 });

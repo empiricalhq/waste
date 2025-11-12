@@ -1,9 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
-import { CONFIG, QUERY_KEYS } from '@/constants';
-import { api } from '@/lib/api';
-import { storage } from '@/lib/storage';
-import type { Report, PendingReport } from '@/types';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { CONFIG, QUERY_KEYS } from "@/constants";
+import { api } from "@/lib/api";
+import { storage } from "@/lib/storage";
+import type { PendingReport, Report } from "@/types";
 
 // Collections
 export function useCollections() {
@@ -16,7 +16,7 @@ export function useCollections() {
 
 export function useNextCollection() {
   return useQuery({
-    queryKey: [QUERY_KEYS.COLLECTIONS, 'next'],
+    queryKey: [QUERY_KEYS.COLLECTIONS, "next"],
     queryFn: api.getNextCollection,
     staleTime: CONFIG.polling.collections,
   });
@@ -43,10 +43,13 @@ export function useTrucksWithLocations() {
 
 export function useNearestTruck() {
   const { data: trucks = [], ...rest } = useTrucks();
-  
-  const nearestTruck = trucks.length > 0
-    ? trucks.reduce((closest, truck) => truck.eta < closest.eta ? truck : closest)
-    : null;
+
+  const nearestTruck =
+    trucks.length > 0
+      ? trucks.reduce((closest, truck) =>
+          truck.eta < closest.eta ? truck : closest,
+        )
+      : null;
 
   return { nearestTruck, ...rest };
 }
@@ -63,7 +66,7 @@ export function useReportTypes() {
   return useQuery({
     queryKey: [QUERY_KEYS.REPORT_TYPES],
     queryFn: api.getReportTypes,
-    staleTime: Infinity,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 
@@ -75,7 +78,7 @@ export function useSubmitReport() {
       try {
         return await api.createReport(data);
       } catch (error: any) {
-        if (error.code === 'NETWORK_ERROR') {
+        if (error.code === "NETWORK_ERROR") {
           const pending: PendingReport = {
             id: `pending-${Date.now()}`,
             data,
@@ -88,17 +91,17 @@ export function useSubmitReport() {
             id: pending.id,
             type: data.type,
             description: data.description,
-            status: 'pending' as const,
+            status: "pending" as const,
           };
         }
         throw error;
       }
     },
     onSuccess: (report) => {
-      queryClient.setQueryData<Report[]>(
-        [QUERY_KEYS.REPORTS],
-        (old = []) => [report, ...old]
-      );
+      queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) => [
+        report,
+        ...old,
+      ]);
     },
   });
 }
@@ -108,21 +111,22 @@ export function useRetryPendingReports() {
 
   return useCallback(async () => {
     const pending = await storage.getPendingReports();
-    if (pending.length === 0) return;
+    if (pending.length === 0) {
+      return;
+    }
 
     const results = await Promise.allSettled(
-      pending.map(item => api.createReport(item.data))
+      pending.map((item) => api.createReport(item.data)),
     );
 
     for (let i = 0; i < results.length; i++) {
       const result = results[i];
       const item = pending[i];
 
-      if (result.status === 'fulfilled') {
+      if (result.status === "fulfilled") {
         await storage.removePendingReport(item.id);
-        queryClient.setQueryData<Report[]>(
-          [QUERY_KEYS.REPORTS],
-          (old = []) => old.map(r => r.id === item.id ? result.value : r)
+        queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) =>
+          old.map((r) => (r.id === item.id ? result.value : r)),
         );
       }
     }
@@ -134,7 +138,7 @@ export function useQuiz() {
   return useQuery({
     queryKey: [QUERY_KEYS.QUIZ],
     queryFn: api.getQuizQuestions,
-    staleTime: Infinity,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 

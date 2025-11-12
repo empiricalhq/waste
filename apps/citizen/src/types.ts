@@ -12,7 +12,7 @@ export interface UserProgress {
   totalQuestions: number;
 }
 
-export type WasteType = 'general' | 'recycling' | 'organic' | 'hazardous';
+export type WasteType = "general" | "recycling" | "organic" | "hazardous";
 
 export interface Collection {
   id: string;
@@ -39,7 +39,7 @@ export interface TruckWithLocation {
   assignment_status?: string;
 }
 
-export type ReportStatus = 'pending' | 'in-progress' | 'resolved';
+export type ReportStatus = "pending" | "in-progress" | "resolved";
 
 export interface Report {
   id: string;

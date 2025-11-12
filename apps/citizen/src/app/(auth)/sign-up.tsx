@@ -1,16 +1,23 @@
-import { useRouter } from 'expo-router';
-import { memo, useCallback, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { useAuth } from '@/lib/auth';
-import { signUpSchema } from '@/lib/validation';
-import { theme } from '@/theme';
+import { useRouter } from "expo-router";
+import { memo, useCallback, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { useAuth } from "@/lib/auth";
+import { signUpSchema } from "@/lib/validation";
+import { theme } from "@/theme";
 
 export default memo(function SignUpScreen() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { signUp, isLoading } = useAuth();
   const router = useRouter();
@@ -20,9 +27,9 @@ export default memo(function SignUpScreen() {
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach(issue => {
+      result.error.issues.forEach((issue) => {
         const field = issue.path[0];
-        if (typeof field === 'string') {
+        if (typeof field === "string") {
           fieldErrors[field] = issue.message;
         }
       });
@@ -34,7 +41,7 @@ export default memo(function SignUpScreen() {
       setErrors({});
       await signUp(result.data);
     } catch (error: any) {
-      setErrors({ general: error.message || 'Error al crear cuenta' });
+      setErrors({ general: error.message || "Error al crear cuenta" });
     }
   }, [name, email, password, signUp]);
 
@@ -44,7 +51,7 @@ export default memo(function SignUpScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <ScrollView
@@ -85,7 +92,7 @@ export default memo(function SignUpScreen() {
             label="Contraseña"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={true}
             autoComplete="password"
             error={errors.password}
           />
@@ -94,7 +101,7 @@ export default memo(function SignUpScreen() {
             title="Registrarse"
             onPress={handleSignUp}
             loading={isLoading}
-            fullWidth
+            fullWidth={true}
           />
 
           <Button
@@ -116,7 +123,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: theme.spacing.xxl,
   },
   header: {
@@ -141,7 +148,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: theme.colors.error,
     fontSize: theme.text.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
   form: {
     gap: theme.spacing.lg,

@@ -3,10 +3,10 @@ import {
   hasServicesEnabledAsync,
   LocationAccuracy,
   requestForegroundPermissionsAsync,
-} from 'expo-location';
-import { useCallback, useState } from 'react';
-import { CONFIG, ERROR_MESSAGES } from '@/constants';
-import type { LocationCoords } from '@/types';
+} from "expo-location";
+import { useCallback, useState } from "react";
+import { CONFIG, ERROR_MESSAGES } from "@/constants";
+import type { LocationCoords } from "@/types";
 
 interface UseLocationReturn {
   coords: LocationCoords | null;
@@ -32,7 +32,7 @@ export function useLocation(): UseLocationReturn {
       }
 
       const { status } = await requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      if (status !== "granted") {
         throw new Error(ERROR_MESSAGES.LOCATION_DENIED);
       }
 
@@ -41,7 +41,10 @@ export function useLocation(): UseLocationReturn {
       });
 
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error(ERROR_MESSAGES.TIMEOUT)), CONFIG.location.timeout)
+        setTimeout(
+          () => reject(new Error(ERROR_MESSAGES.TIMEOUT)),
+          CONFIG.location.timeout,
+        ),
       );
 
       const location = await Promise.race([locationPromise, timeoutPromise]);
@@ -55,7 +58,10 @@ export function useLocation(): UseLocationReturn {
       setIsLoading(false);
       return newCoords;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : ERROR_MESSAGES.LOCATION_UNAVAILABLE;
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : ERROR_MESSAGES.LOCATION_UNAVAILABLE;
       setError(errorMessage);
       setIsLoading(false);
       throw err;

@@ -1,31 +1,33 @@
-import { memo, useCallback } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { Card } from '@/components/ui/Card';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { Loading, SkeletonCard } from '@/components/ui/Loading';
-import { WASTE_TYPES } from '@/constants';
-import { useCollections } from '@/hooks/queries';
-import { useNetwork } from '@/hooks/use-network';
-import type { Collection } from '@/types';
-import { theme } from '@/theme';
+import { memo, useCallback } from "react";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { SkeletonCard } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
+import { useCollections } from "@/hooks/queries";
+import { useNetwork } from "@/hooks/use-network";
+import { theme } from "@/theme";
+import type { Collection } from "@/types";
 
 const CollectionItem = memo<{ item: Collection }>(({ item }) => {
   const wasteType = WASTE_TYPES[item.type];
-  
+
   return (
     <Card style={[styles.card, item.completed && styles.completed]}>
       <View style={styles.row}>
         <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
         <View>
           <Text style={styles.type}>{wasteType.label}</Text>
-          <Text style={styles.time}>{item.date} · {item.time}</Text>
+          <Text style={styles.time}>
+            {item.date} · {item.time}
+          </Text>
         </View>
       </View>
     </Card>
   );
 });
 
-CollectionItem.displayName = 'CollectionItem';
+CollectionItem.displayName = "CollectionItem";
 
 const EmptyState = memo(() => (
   <View style={styles.emptyContainer}>
@@ -33,15 +35,22 @@ const EmptyState = memo(() => (
   </View>
 ));
 
-EmptyState.displayName = 'EmptyState';
+EmptyState.displayName = "EmptyState";
 
 export default memo(function ScheduleScreen() {
-  const { data: collections = [], isLoading, error, refetch, isFetching } = useCollections();
+  const {
+    data: collections = [],
+    isLoading,
+    error,
+    refetch,
+    isFetching,
+  } = useCollections();
   const { isOffline } = useNetwork();
 
-  const renderItem = useCallback(({ item }: { item: Collection }) => (
-    <CollectionItem item={item} />
-  ), []);
+  const renderItem = useCallback(
+    ({ item }: { item: Collection }) => <CollectionItem item={item} />,
+    [],
+  );
 
   const keyExtractor = useCallback((item: Collection) => item.id, []);
 
@@ -61,7 +70,11 @@ export default memo(function ScheduleScreen() {
       <View style={styles.container}>
         <Text style={styles.header}>Calendario</Text>
         <ErrorMessage
-          message={isOffline ? 'Sin conexión a internet' : 'Error al cargar el calendario'}
+          message={
+            isOffline
+              ? "Sin conexión a internet"
+              : "Error al cargar el calendario"
+          }
           isOffline={isOffline}
           onRetry={refetch}
         />
@@ -105,8 +118,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing.md,
   },
   dot: {
@@ -129,13 +142,13 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: theme.spacing.xxxl,
   },
   emptyText: {
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

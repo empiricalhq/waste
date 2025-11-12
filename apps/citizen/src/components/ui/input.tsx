@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,8 +6,8 @@ import {
   type TextInputProps,
   View,
   type ViewStyle,
-} from 'react-native';
-import { theme } from '@/theme';
+} from "react-native";
+import { theme } from "@/theme";
 
 interface InputProps extends TextInputProps {
   label: string;
@@ -15,27 +15,23 @@ interface InputProps extends TextInputProps {
   containerStyle?: ViewStyle;
 }
 
-export const Input = memo<InputProps>(({
-  label,
-  error,
-  style,
-  containerStyle,
-  ...props
-}) => {
-  return (
-    <View style={[styles.container, containerStyle]}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.input, error && styles.inputError, style]}
-        placeholderTextColor={theme.colors.textTertiary}
-        {...props}
-      />
-      {error && <Text style={styles.error}>{error}</Text>}
-    </View>
-  );
-});
+export const Input = memo<InputProps>(
+  ({ label, error, style, containerStyle, ...props }) => {
+    return (
+      <View style={[styles.container, containerStyle]}>
+        <Text style={styles.label}>{label}</Text>
+        <TextInput
+          style={[styles.input, error && styles.inputError, style]}
+          placeholderTextColor={theme.colors.textTertiary}
+          {...props}
+        />
+        {error && <Text style={styles.error}>{error}</Text>}
+      </View>
+    );
+  },
+);
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 const styles = StyleSheet.create({
   container: {

@@ -1,10 +1,10 @@
-import { API_URL, CONFIG, ERROR_MESSAGES } from '@/constants';
-import type { ApiError } from '@/types';
-import { storage } from './storage';
+import { API_URL, CONFIG, ERROR_MESSAGES } from "@/constants";
+import type { ApiError } from "@/types";
+import { storage } from "./storage";
 
 class ApiClient {
-  private baseUrl: string;
-  private timeout: number;
+  private readonly baseUrl: string;
+  private readonly timeout: number;
 
   constructor(baseUrl: string = API_URL, timeout: number = CONFIG.api.timeout) {
     this.baseUrl = baseUrl;
@@ -13,7 +13,7 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
@@ -21,7 +21,7 @@ class ApiClient {
     try {
       const token = await storage.getToken();
       const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...(options.headers as Record<string, string>),
       };
 
@@ -75,50 +75,50 @@ class ApiClient {
       return error;
     }
 
-    if ((error as Error).name === 'AbortError') {
+    if ((error as Error).name === "AbortError") {
       return {
         message: ERROR_MESSAGES.TIMEOUT,
         status: 408,
-        code: 'TIMEOUT',
+        code: "TIMEOUT",
       };
     }
 
     return {
       message: ERROR_MESSAGES.NETWORK,
       status: 0,
-      code: 'NETWORK_ERROR',
+      code: "NETWORK_ERROR",
     };
   }
 
   private isApiError(error: unknown): error is ApiError {
     return (
-      typeof error === 'object' &&
+      typeof error === "object" &&
       error !== null &&
-      'message' in error &&
-      'status' in error
+      "message" in error &&
+      "status" in error
     );
   }
 
   async get<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET' });
+    return this.request<T>(endpoint, { method: "GET" });
   }
 
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async put<T>(endpoint: string, data?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
   async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE' });
+    return this.request<T>(endpoint, { method: "DELETE" });
   }
 
   // Auth-specific method with cookie handling
@@ -128,8 +128,8 @@ class ApiClient {
 
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
         signal: controller.signal,
       });
@@ -141,9 +141,9 @@ class ApiClient {
       }
 
       // Extract and store session token
-      const cookieHeader = response.headers.get('set-cookie');
+      const cookieHeader = response.headers.get("set-cookie");
       const sessionToken = this.extractSessionToken(cookieHeader);
-      
+
       if (sessionToken) {
         await storage.setToken(sessionToken);
       }
@@ -159,12 +159,16 @@ class ApiClient {
   }
 
   private extractSessionToken(cookieHeader: string | null): string | null {
-    if (!cookieHeader) return null;
+    if (!cookieHeader) {
+      return null;
+    }
 
-    const cookies = cookieHeader.split(/[,;]/).map(c => c.trim());
+    const cookies = cookieHeader.split(/[,;]/).map((c) => c.trim());
     for (const cookie of cookies) {
       const match = cookie.match(/better-auth\.session_token=([^;]+)/);
-      if (match) return match[1];
+      if (match) {
+        return match[1];
+      }
     }
     return null;
   }

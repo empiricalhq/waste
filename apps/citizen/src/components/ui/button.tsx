@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -6,70 +6,76 @@ import {
   TouchableOpacity,
   type TouchableOpacityProps,
   type ViewStyle,
-} from 'react-native';
-import { theme } from '@/theme';
+} from "react-native";
+import { theme } from "@/theme";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   loading?: boolean;
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "small" | "medium" | "large";
   fullWidth?: boolean;
 }
 
-export const Button = memo<ButtonProps>(({
-  title,
-  loading = false,
-  variant = 'primary',
-  size = 'medium',
-  fullWidth = false,
-  style,
-  disabled,
-  ...props
-}) => {
-  const isDisabled = disabled || loading;
+export const Button = memo<ButtonProps>(
+  ({
+    title,
+    loading = false,
+    variant = "primary",
+    size = "medium",
+    fullWidth = false,
+    style,
+    disabled,
+    ...props
+  }) => {
+    const isDisabled = disabled || loading;
 
-  const buttonStyle: ViewStyle[] = [
-    styles.base,
-    styles[variant],
-    styles[size],
-    fullWidth && styles.fullWidth,
-    isDisabled && styles.disabled,
-  ];
+    const buttonStyle: ViewStyle[] = [
+      styles.base,
+      styles[variant],
+      styles[size],
+      fullWidth && styles.fullWidth,
+      isDisabled && styles.disabled,
+    ];
 
-  const textStyle = [
-    styles.text,
-    styles[`${variant}Text` as keyof typeof styles],
-    styles[`${size}Text` as keyof typeof styles],
-    isDisabled && styles.disabledText,
-  ];
+    const textStyle = [
+      styles.text,
+      styles[`${variant}Text` as keyof typeof styles],
+      styles[`${size}Text` as keyof typeof styles],
+      isDisabled && styles.disabledText,
+    ];
 
-  return (
-    <TouchableOpacity
-      style={[buttonStyle, style]}
-      disabled={isDisabled}
-      activeOpacity={0.7}
-      {...props}
-    >
-      {loading ? (
-        <ActivityIndicator
-          size={size === 'small' ? 'small' : 'small'}
-          color={variant === 'primary' ? theme.colors.textInverse : theme.colors.primary}
-        />
-      ) : (
-        <Text style={textStyle}>{title}</Text>
-      )}
-    </TouchableOpacity>
-  );
-});
+    return (
+      <TouchableOpacity
+        style={[buttonStyle, style]}
+        disabled={isDisabled}
+        activeOpacity={0.7}
+        {...props}
+      >
+        {loading ? (
+          <ActivityIndicator
+            size={size === "small" ? "small" : "small"}
+            color={
+              variant === "primary"
+                ? theme.colors.textInverse
+                : theme.colors.primary
+            }
+          />
+        ) : (
+          <Text style={textStyle}>{title}</Text>
+        )}
+      </TouchableOpacity>
+    );
+  },
+);
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 const styles = StyleSheet.create({
   base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: theme.radius.md,
     paddingHorizontal: theme.spacing.lg,
   },
@@ -82,7 +88,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   ghost: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   small: {
     height: 36,
@@ -97,7 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xl,
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   disabled: {
     opacity: 0.5,

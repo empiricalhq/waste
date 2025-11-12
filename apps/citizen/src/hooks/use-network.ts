@@ -1,6 +1,5 @@
-// hooks/use-network.ts
-import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
-import { useEffect, useState, useCallback } from 'react';
+import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
+import { useCallback, useEffect, useState } from "react";
 
 interface NetworkStatus {
   isOffline: boolean;
@@ -18,7 +17,7 @@ export function useNetwork(): NetworkStatus {
   const handleConnectivityChange = useCallback((state: NetInfoState) => {
     setStatus({
       isOffline: !state.isConnected,
-      isWifi: state.type === 'wifi',
+      isWifi: state.type === "wifi",
       isConnected: state.isConnected ?? false,
     });
   }, []);
