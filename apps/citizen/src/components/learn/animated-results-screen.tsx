@@ -234,15 +234,15 @@ const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
 };
 
 const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
-  const ParticleInitialY = -100;
-  const ParticleXRange = 400;
-  const ParticleXOffset = 200;
-  const ParticleTargetY = 1000;
-  const ParticleRotationMultiplier = 4;
+  const particleInitialY = -100;
+  const particleXRange = 400;
+  const particleXOffset = 200;
+  const particleTargetY = 1000;
+  const particleRotationMultiplier = 4;
 
-  const translateY = useSharedValue(ParticleInitialY);
+  const translateY = useSharedValue(particleInitialY);
   const translateX = useSharedValue(
-    Math.random() * ParticleXRange - ParticleXOffset,
+    Math.random() * particleXRange - particleXOffset,
   );
   const rotate = useSharedValue(0);
   const opacity = useSharedValue(1);
@@ -250,7 +250,7 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
   useEffect(() => {
     translateY.value = withDelay(
       delay,
-      withTiming(ParticleTargetY, {
+      withTiming(particleTargetY, {
         duration: CONFETTI_PARTICLE_DURATION,
         easing: Easing.out(Easing.quad),
       }),
@@ -258,7 +258,7 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
 
     rotate.value = withDelay(
       delay,
-      withTiming(ROTATION_DEGREES * ParticleRotationMultiplier, {
+      withTiming(ROTATION_DEGREES * particleRotationMultiplier, {
         duration: CONFETTI_PARTICLE_DURATION,
       }),
     );

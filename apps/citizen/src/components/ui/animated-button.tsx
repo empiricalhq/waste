@@ -1,5 +1,6 @@
 import type React from "react";
 import { useState } from "react";
+import type { GestureResponderEvent } from "react-native";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -33,7 +34,7 @@ interface AnimatedButtonProps extends TouchableOpacityProps {
   accessibilityHint?: string;
 }
 
-export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
+const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   title,
   variant = "primary",
   size = "md",
@@ -97,7 +98,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     }
   };
 
-  const handlePress = (event: any) => {
+  const handlePress = (event: GestureResponderEvent) => {
     hapticSelection();
     onPress?.(event);
   };
@@ -129,6 +130,8 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     </AnimatedTouchable>
   );
 };
+
+export { AnimatedButton };
 
 const styles = StyleSheet.create({
   container: {

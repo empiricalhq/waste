@@ -18,7 +18,7 @@ interface AnimatedViewProps extends ViewProps {
   visible?: boolean;
 }
 
-export const AnimatedView: React.FC<AnimatedViewProps> = ({
+const AnimatedView: React.FC<AnimatedViewProps> = ({
   children,
   style,
   index = 0,
@@ -27,9 +27,11 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
   ...props
 }) => {
   const reducedMotion = useReducedMotion();
-  const opacity = useSharedValue(
-    animationType === "entrance" ? 0 : visible ? 1 : 0,
-  );
+  let initialOpacity = 0;
+  if (animationType !== "entrance") {
+    initialOpacity = visible ? 1 : 0;
+  }
+  const opacity = useSharedValue(initialOpacity);
   const translateY = useSharedValue(animationType === "entrance" ? 50 : 0);
 
   useEffect(() => {
@@ -60,3 +62,5 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
     </Animated.View>
   );
 };
+
+export { AnimatedView };

@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -20,9 +20,7 @@ interface ListSkeletonProps {
   animated?: boolean;
 }
 
-export const CardSkeleton: React.FC<CardSkeletonProps> = ({
-  animated = true,
-}) => {
+const CardSkeleton: React.FC<CardSkeletonProps> = ({ animated = true }) => {
   const opacity = useSharedValue(0.5);
   const reducedMotion = useReducedMotion();
 
@@ -58,14 +56,22 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({
   );
 };
 
-export const ListSkeleton: React.FC<ListSkeletonProps> = ({
+const ListSkeleton: React.FC<ListSkeletonProps> = ({
   count = 3,
   animated = true,
 }) => {
+  const skeletonIds = useMemo(
+    () =>
+      Array.from({ length: count }).map(() =>
+        Math.random().toString(36).slice(2, 9),
+      ),
+    [count],
+  );
+
   return (
     <>
-      {Array.from({ length: count }).map((_, index) => (
-        <CardSkeleton key={index} animated={animated} />
+      {skeletonIds.map((id) => (
+        <CardSkeleton key={id} animated={animated} />
       ))}
     </>
   );
@@ -92,3 +98,5 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
+
+export { CardSkeleton, ListSkeleton };
