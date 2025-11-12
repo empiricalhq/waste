@@ -1,8 +1,10 @@
 import { memo } from "react";
 import {
   ActivityIndicator,
+  type StyleProp,
   StyleSheet,
   Text,
+  type TextStyle,
   TouchableOpacity,
   type TouchableOpacityProps,
   type ViewStyle,
@@ -30,19 +32,19 @@ export const Button = memo<ButtonProps>(
   }) => {
     const isDisabled = disabled || loading;
 
-    const buttonStyle: ViewStyle[] = [
+    const buttonStyle: StyleProp<ViewStyle> = [
       styles.base,
-      styles[variant],
-      styles[size],
-      fullWidth && styles.fullWidth,
-      isDisabled && styles.disabled,
+      styles[variant as keyof typeof styles] as ViewStyle,
+      styles[size as keyof typeof styles] as ViewStyle,
+      fullWidth ? styles.fullWidth : undefined,
+      isDisabled ? styles.disabled : undefined,
     ];
 
-    const textStyle = [
+    const textStyle: StyleProp<TextStyle> = [
       styles.text,
-      styles[`${variant}Text` as keyof typeof styles],
-      styles[`${size}Text` as keyof typeof styles],
-      isDisabled && styles.disabledText,
+      styles[`${variant}Text` as keyof typeof styles] as TextStyle,
+      styles[`${size}Text` as keyof typeof styles] as TextStyle,
+      isDisabled ? styles.disabledText : undefined,
     ];
 
     return (

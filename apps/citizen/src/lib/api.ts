@@ -14,11 +14,11 @@ import { storage } from "./storage";
 
 export const api = {
   // Authentication
-  async login(data: LoginInput): Promise<User> {
+  login(data: LoginInput): Promise<User> {
     return apiClient.authRequest<User>("/api/auth/sign-in/email", data);
   },
 
-  async signUp(data: SignUpInput): Promise<User> {
+  signUp(data: SignUpInput): Promise<User> {
     return apiClient.authRequest<User>("/api/auth/sign-up/email", data);
   },
 
@@ -38,7 +38,7 @@ export const api = {
   },
 
   // Collections
-  async getCollections(): Promise<Collection[]> {
+  getCollections(): Promise<Collection[]> {
     return apiClient.get<Collection[]>("/api/citizen/collections");
   },
 
@@ -77,7 +77,7 @@ export const api = {
     ];
   },
 
-  async getTrucksWithLocations(): Promise<TruckWithLocation[]> {
+  getTrucksWithLocations(): Promise<TruckWithLocation[]> {
     return apiClient.get<TruckWithLocation[]>("/api/citizen/trucks");
   },
 
@@ -115,7 +115,7 @@ export const api = {
     }));
   },
 
-  async getReportTypes(): Promise<ReportType[]> {
+  getReportTypes(): Promise<ReportType[]> {
     return apiClient.get<ReportType[]>("/api/citizen/report-types");
   },
 
@@ -168,7 +168,7 @@ export const api = {
   },
 
   // Quiz
-  async getQuizQuestions(): Promise<QuizQuestion[]> {
+  getQuizQuestions(): Promise<QuizQuestion[]> {
     return apiClient.get<QuizQuestion[]>("/api/citizen/quiz/questions");
   },
 

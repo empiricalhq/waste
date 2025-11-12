@@ -131,7 +131,7 @@ const ReportForm = memo<{
           title="Enviar reporte"
           onPress={onSubmit}
           loading={isSubmitting || isLoadingLocation}
-          disabled={!description.trim() || !(coords || isLoadingLocation)}
+          disabled={!(description.trim() && (coords || isLoadingLocation))}
           fullWidth={true}
         />
 

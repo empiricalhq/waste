@@ -119,16 +119,22 @@ export function useRetryPendingReports() {
       pending.map((item) => api.createReport(item.data)),
     );
 
+    const toRemove: string[] = [];
+
     for (let i = 0; i < results.length; i++) {
       const result = results[i];
       const item = pending[i];
 
       if (result.status === "fulfilled") {
-        await storage.removePendingReport(item.id);
+        toRemove.push(item.id);
         queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) =>
           old.map((r) => (r.id === item.id ? result.value : r)),
         );
       }
+    }
+
+    if (toRemove.length > 0) {
+      await Promise.all(toRemove.map((id) => storage.removePendingReport(id)));
     }
   }, [queryClient]);
 }

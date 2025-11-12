@@ -1,5 +1,9 @@
 import { API_URL, CONFIG, ERROR_MESSAGES } from "@/constants";
 import type { ApiError } from "@/types";
+
+const COOKIE_SPLIT_RE = /[,;]/;
+const SESSION_TOKEN_RE = /better-auth\.session_token=([^;]+)/;
+
 import { storage } from "./storage";
 
 class ApiClient {
@@ -99,25 +103,25 @@ class ApiClient {
     );
   }
 
-  async get<T>(endpoint: string): Promise<T> {
+  get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: "GET" });
   }
 
-  async post<T>(endpoint: string, data?: unknown): Promise<T> {
+  post<T>(endpoint: string, data?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
-  async put<T>(endpoint: string, data?: unknown): Promise<T> {
+  put<T>(endpoint: string, data?: unknown): Promise<T> {
     return this.request<T>(endpoint, {
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
+  delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
 
@@ -163,9 +167,9 @@ class ApiClient {
       return null;
     }
 
-    const cookies = cookieHeader.split(/[,;]/).map((c) => c.trim());
+    const cookies = cookieHeader.split(COOKIE_SPLIT_RE).map((c) => c.trim());
     for (const cookie of cookies) {
-      const match = cookie.match(/better-auth\.session_token=([^;]+)/);
+      const match = cookie.match(SESSION_TOKEN_RE);
       if (match) {
         return match[1];
       }
