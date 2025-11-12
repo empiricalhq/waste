@@ -7,7 +7,8 @@
     "start": "expo start",
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
-    "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix"
+    "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
+    "biome": "biome check --reporter=github --unsafe ."
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
