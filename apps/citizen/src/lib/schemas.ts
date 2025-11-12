@@ -4,12 +4,14 @@ export const UserSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.email(),
-  progress: z.object({
-    streak: z.number(),
-    lastQuizDate: z.string().nullable(),
-    correctAnswers: z.number(),
-    totalQuestions: z.number(),
-  }),
+  progress: z
+    .object({
+      streak: z.number(),
+      lastQuizDate: z.string().nullable(),
+      correctAnswers: z.number(),
+      totalQuestions: z.number(),
+    })
+    .optional(),
 });
 
 export const CollectionSchema = z.object({
@@ -27,12 +29,31 @@ export const TruckSchema = z.object({
   route: z.string(),
 });
 
+export const TruckStatusSchema = z.object({
+  status: z.enum(["LOCATION_NOT_SET", "NEARBY", "ON_THE_WAY", "NOT_SCHEDULED"]),
+  message: z.string().optional(),
+  etaMinutes: z.number().optional(),
+  truck: z.string().optional(),
+});
+
 export const ReportSchema = z.object({
   id: z.string(),
   type: z.string(),
   description: z.string(),
   status: z.enum(["pending", "in-progress", "resolved"]),
   createdAt: z.string().optional(),
+});
+
+export const IssueSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  type: z.enum(["missed_collection", "illegal_dumping"]),
+  status: z.enum(["open", "in_progress", "resolved"]),
+  description: z.string().optional(),
+  photo_url: z.url().optional(),
+  lat: z.number(),
+  lng: z.number(),
+  created_at: z.union([z.string(), z.date()]),
 });
 
 export const ReportTypeSchema = z.object({

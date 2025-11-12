@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Input } from "@/components/ui/Input";
 import { Loading } from "@/components/ui/Loading";
+import { useLocation } from "@/hooks/use-location";
 import { useNetwork } from "@/hooks/use-network";
 import { useReportTypes, useSubmitReport } from "@/hooks/use-reports";
 import { useAuth } from "@/lib/auth";
@@ -16,11 +17,18 @@ export default function ReportScreen() {
   const [step, setStep] = useState<"type" | "details" | "success">("type");
   const [selectedType, setSelectedType] = useState("");
   const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
+  const [address, setAddress] = useState("");
 
   const { data: types = [], isLoading, error, refetch } = useReportTypes();
   const { mutate: submit, isPending } = useSubmitReport();
   const { isOffline } = useNetwork();
+  const {
+    coords,
+    isLoading: isLoadingLocation,
+    error: locationError,
+    requestLocation,
+    clearLocation,
+  } = useLocation();
 
   if (!user) {
     return (
@@ -64,7 +72,8 @@ export default function ReportScreen() {
             setStep("type");
             setSelectedType("");
             setDescription("");
-            setLocation("");
+            setAddress("");
+            clearLocation();
           }}
         />
       </View>
@@ -87,12 +96,43 @@ export default function ReportScreen() {
 
         <Input label="Tipo" value={selectedType} editable={false} />
 
-        <Input
-          label="Ubicación"
-          value={location}
-          onChangeText={setLocation}
-          placeholder="Calle y número"
-        />
+        <View style={styles.locationSection}>
+          <Input
+            label="Dirección (opcional)"
+            value={address}
+            onChangeText={setAddress}
+            placeholder="Calle y número"
+            editable={!isLoadingLocation}
+          />
+          <Button
+            title={coords ? "📍 Ubicación obtenida" : "📍 Obtener ubicación"}
+            variant={coords ? "secondary" : "primary"}
+            onPress={async () => {
+              try {
+                await requestLocation();
+              } catch (error) {
+                Alert.alert(
+                  "Error de ubicación",
+                  error instanceof Error
+                    ? error.message
+                    : "No se pudo obtener la ubicación",
+                );
+              }
+            }}
+            loading={isLoadingLocation}
+            disabled={isLoadingLocation}
+            style={styles.locationButton}
+          />
+          {locationError && (
+            <Text style={styles.locationError}>{locationError}</Text>
+          )}
+          {coords && (
+            <Text style={styles.locationSuccess}>
+              Coordenadas: {coords.latitude.toFixed(6)},{" "}
+              {coords.longitude.toFixed(6)}
+            </Text>
+          )}
+        </View>
 
         <Input
           label="Descripción"
@@ -105,23 +145,49 @@ export default function ReportScreen() {
 
         <Button
           title="Enviar reporte"
-          onPress={() => {
-            submit(
-              { type: selectedType, description, location },
-              {
-                onSuccess: () => setStep("success"),
-                onError: (error: any) => {
-                  if (error.code === "NETWORK_ERROR") {
-                    setStep("success");
-                  } else {
-                    Alert.alert("Error", error.message);
-                  }
+          onPress={async () => {
+            const submitReport = (locationCoords: {
+              latitude: number;
+              longitude: number;
+            }) => {
+              submit(
+                {
+                  type: selectedType,
+                  description,
+                  latitude: locationCoords.latitude,
+                  longitude: locationCoords.longitude,
                 },
-              },
-            );
+                {
+                  onSuccess: () => setStep("success"),
+                  onError: (error: any) => {
+                    if (error.code === "NETWORK_ERROR") {
+                      setStep("success");
+                    } else {
+                      Alert.alert("Error", error.message);
+                    }
+                  },
+                },
+              );
+            };
+
+            if (coords) {
+              submitReport(coords);
+            } else {
+              try {
+                const locationCoords = await requestLocation();
+                submitReport(locationCoords);
+              } catch (error) {
+                Alert.alert(
+                  "Ubicación requerida",
+                  error instanceof Error
+                    ? error.message
+                    : "Se necesita la ubicación para enviar el reporte.",
+                );
+              }
+            }
           }}
-          loading={isPending}
-          disabled={!(description.trim() && location.trim())}
+          loading={isPending || isLoadingLocation}
+          disabled={!description.trim() || (!coords && isLoadingLocation)}
         />
 
         <Button
@@ -201,5 +267,21 @@ const styles = StyleSheet.create({
     fontSize: theme.text.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
+  },
+  locationSection: {
+    marginBottom: theme.spacing.md,
+  },
+  locationButton: {
+    marginTop: theme.spacing.sm,
+  },
+  locationError: {
+    color: theme.colors.error,
+    fontSize: theme.text.sm,
+    marginTop: theme.spacing.xs,
+  },
+  locationSuccess: {
+    color: theme.colors.success,
+    fontSize: theme.text.sm,
+    marginTop: theme.spacing.xs,
   },
 });

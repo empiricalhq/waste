@@ -2,7 +2,7 @@ export const IssueQueries = {
   createCitizenIssue: `
     INSERT INTO citizen_issue_report (id, user_id, type, description, photo_url, lat, lng)
     VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)
-    RETURNING id
+    RETURNING *
   `,
   findCitizenIssuesByUserId: `
     SELECT * FROM citizen_issue_report

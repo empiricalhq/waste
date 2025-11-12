@@ -1,5 +1,5 @@
 export const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || "http://localhost:8000/v1";
+  process.env.EXPO_PUBLIC_API_URL || "https://lima-api.vercel.app";
 export const API_TIMEOUT = 15_000;
 export const TOKEN_KEY = "authToken";
 

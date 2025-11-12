@@ -1,4 +1,6 @@
 import { BaseRepository } from '@/internal/shared/repository/base-repository';
+import { AppError } from '@/internal/shared/utils/errors';
+import { HttpStatus } from '@/internal/shared/utils/http-status';
 import type {
   CitizenIssueReport,
   CreateCitizenIssueRequest,
@@ -8,9 +10,19 @@ import type {
 import { IssueQueries } from './queries';
 
 export class IssueRepository extends BaseRepository {
-  async createCitizenIssue(userId: string, data: CreateCitizenIssueRequest): Promise<void> {
+  async createCitizenIssue(userId: string, data: CreateCitizenIssueRequest): Promise<CitizenIssueReport> {
     const { type, description, photo_url, lat, lng } = data;
-    await this.executeQuery(IssueQueries.createCitizenIssue, [userId, type, description, photo_url, lat, lng]);
+    const result = await this.executeQuery<CitizenIssueReport>(
+      IssueQueries.createCitizenIssue,
+      [userId, type, description, photo_url, lat, lng],
+    );
+    
+    const createdIssue = result[0];
+    if (!createdIssue) {
+      throw new AppError('Failed to create issue', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    return createdIssue;
   }
 
   async findCitizenIssuesByUserId(userId: string): Promise<CitizenIssueReport[]> {

@@ -11,7 +11,8 @@ interface PendingReport {
   data: {
     type: string;
     description: string;
-    location: string;
+    latitude: number;
+    longitude: number;
     imageUri?: string;
   };
   timestamp: number;
