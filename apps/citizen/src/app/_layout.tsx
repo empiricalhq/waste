@@ -1,22 +1,22 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { Stack, useRouter, useSegments } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ErrorBoundary } from '@/components/shared/error-boundary';
-import { OfflineBanner } from '@/components/shared/offline-banner';
-import { AuthProvider, useAuth } from '@/features/auth/hooks/use-auth';
-import { useConnectionRecovery } from '@/lib/hooks/use-connection-recovery';
-import { useNetworkStatus } from '@/lib/hooks/use-network-status';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { AppError } from '@/lib/utils/error-handler';
-import { ANIMATION_DURATIONS } from '@/constants/animations';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { Stack, useRouter, useSegments } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
+import { OfflineBanner } from "@/components/shared/offline-banner";
+import { ANIMATION_DURATIONS } from "@/constants/animations";
+import { AuthProvider, useAuth } from "@/features/auth/hooks/use-auth";
+import { useConnectionRecovery } from "@/lib/hooks/use-connection-recovery";
+import { useNetworkStatus } from "@/lib/hooks/use-network-status";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import { AppError } from "@/lib/utils/error-handler";
 
-const APP_VERSION = '1.0.0';
+const APP_VERSION = "1.0.0";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,7 +25,11 @@ const queryClient = new QueryClient({
     queries: {
       retry: (failureCount, error) => {
         // don't retry client errors (4xx)
-        if (error instanceof AppError && error.statusCode >= 400 && error.statusCode < 500) {
+        if (
+          error instanceof AppError &&
+          error.statusCode >= 400 &&
+          error.statusCode < 500
+        ) {
           return false;
         }
         // retry up to 3 times for network errors and server errors
@@ -38,20 +42,20 @@ const queryClient = new QueryClient({
       gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
 
       // offline behavior
-      networkMode: 'offlineFirst',
+      networkMode: "offlineFirst",
       refetchOnReconnect: true,
       refetchOnWindowFocus: true,
     },
     mutations: {
       retry: 1, // Retry mutations once
-      networkMode: 'offlineFirst',
+      networkMode: "offlineFirst",
     },
   },
 });
 
 const persister = createAsyncStoragePersister({
   storage: AsyncStorage,
-  key: 'REACT_QUERY_OFFLINE_CACHE',
+  key: "REACT_QUERY_OFFLINE_CACHE",
   throttleTime: 1000, // Throttle writes to once per second
 });
 
@@ -76,23 +80,23 @@ function RootLayoutNav() {
       return;
     }
 
-    const inAuthGroup = segments[0] === '(auth)';
+    const inAuthGroup = segments[0] === "(auth)";
 
     // If the user is signed in and the initial segment is the auth group,
     // redirect them to the main app.
     if (user && inAuthGroup) {
-      router.replace('/(tabs)');
+      router.replace("/(tabs)");
     }
     // If the user is not signed in and not in the auth group,
     // redirect them to login.
     else if (!(user || inAuthGroup)) {
-      router.replace('/(auth)/login');
+      router.replace("/(auth)/login");
     }
   }, [user, segments, isLoading, router]);
 
   const handleRetry = () => {
     queryClient.refetchQueries({
-      type: 'active',
+      type: "active",
       stale: true,
     });
   };
@@ -109,16 +113,20 @@ function RootLayoutNav() {
         <Stack.Screen
           name="truck-map"
           options={{
-            presentation: 'modal',
-            animation: reducedMotion ? 'fade' : 'slide_from_bottom',
-            animationDuration: reducedMotion ? ANIMATION_DURATIONS.QUICK : ANIMATION_DURATIONS.NORMAL,
+            presentation: "modal",
+            animation: reducedMotion ? "fade" : "slide_from_bottom",
+            animationDuration: reducedMotion
+              ? ANIMATION_DURATIONS.QUICK
+              : ANIMATION_DURATIONS.NORMAL,
           }}
         />
         <Stack.Screen name="help" />
         <Stack.Screen name="privacy" />
         <Stack.Screen name="terms" />
       </Stack>
-      {isOffline && <OfflineBanner isVisible={isOffline} onRetry={handleRetry} />}
+      {isOffline && (
+        <OfflineBanner isVisible={isOffline} onRetry={handleRetry} />
+      )}
     </>
   );
 }

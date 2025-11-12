@@ -1,7 +1,7 @@
-import { Stack } from 'expo-router';
-import { FeatureErrorBoundary } from '@/components/shared/feature-error-boundary';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { ANIMATION_DURATIONS } from '@/constants/animations';
+import { Stack } from "expo-router";
+import { FeatureErrorBoundary } from "@/components/shared/feature-error-boundary";
+import { ANIMATION_DURATIONS } from "@/constants/animations";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 export default function AuthLayout() {
   const reducedMotion = useReducedMotion();
@@ -15,8 +15,10 @@ export default function AuthLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: reducedMotion ? 'fade' : 'slide_from_right',
-          animationDuration: reducedMotion ? ANIMATION_DURATIONS.QUICK : ANIMATION_DURATIONS.NORMAL,
+          animation: reducedMotion ? "fade" : "slide_from_right",
+          animationDuration: reducedMotion
+            ? ANIMATION_DURATIONS.QUICK
+            : ANIMATION_DURATIONS.NORMAL,
         }}
       />
     </FeatureErrorBoundary>

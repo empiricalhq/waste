@@ -1,26 +1,39 @@
-import { FlatList, StyleSheet, Text, View, type ViewStyle } from 'react-native';
-import { ErrorState } from '@/components/shared/error-state';
-import { Header } from '@/components/shared/header';
-import { ListSkeleton } from '@/components/shared/loading-skeleton';
-import { Card } from '@/components/ui/card';
-import { EmptyState } from '@/components/ui/empty-state';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { WASTE_TYPES } from '@/constants/waste-types';
-import { useCollections } from '@/features/collections/hooks/use-collections';
-import { useNetworkStatus } from '@/lib/hooks/use-network-status';
-import { formatFullDate } from '@/lib/utils/date-helpers';
-import type { Collection } from '@/types';
+import { FlatList, StyleSheet, Text, View, type ViewStyle } from "react-native";
+import { ErrorState } from "@/components/shared/error-state";
+import { Header } from "@/components/shared/header";
+import { ListSkeleton } from "@/components/shared/loading-skeleton";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { WASTE_TYPES } from "@/constants/waste-types";
+import { useCollections } from "@/features/collections/hooks/use-collections";
+import { useNetworkStatus } from "@/lib/hooks/use-network-status";
+import { formatFullDate } from "@/lib/utils/date-helpers";
+import type { Collection } from "@/types";
 
 export default function ScheduleScreen() {
   const { isOffline } = useNetworkStatus();
-  const { data: collections, isLoading, error, refetch, dataUpdatedAt } = useCollections();
+  const {
+    data: collections,
+    isLoading,
+    error,
+    refetch,
+    dataUpdatedAt,
+  } = useCollections();
 
-  // Check if data is older than 7 days
+  // check if data is older than 7 days
   const isDataOld = dataUpdatedAt && Date.now() - dataUpdatedAt > 7 * 24 * 60 * 60 * 1000;
 
   const renderItem = ({ item }: { item: Collection }) => {
     const wasteInfo = WASTE_TYPES[item.type];
-    const cardStyle: ViewStyle = item.completed ? { ...styles.card, ...styles.completedCard } : styles.card;
+    const cardStyle: ViewStyle = item.completed
+      ? { ...styles.card, ...styles.completedCard }
+      : styles.card;
     return (
       <Card style={cardStyle}>
         <View style={styles.cardContent}>
@@ -49,13 +62,16 @@ export default function ScheduleScreen() {
         <>
           {isDataOld && (
             <View style={styles.warningBanner}>
-              <Text style={styles.warningText}>⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.</Text>
+              <Text style={styles.warningText}>
+                ⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.
+              </Text>
             </View>
           )}
           {dataUpdatedAt && (
             <View style={styles.timestampBanner}>
               <Text style={styles.timestampText}>
-                Última actualización: {new Date(dataUpdatedAt).toLocaleString('es-PE')}
+                Última actualización:{" "}
+                {new Date(dataUpdatedAt).toLocaleString("es-PE")}
               </Text>
             </View>
           )}
@@ -64,7 +80,9 @@ export default function ScheduleScreen() {
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.list}
-            ListEmptyComponent={<EmptyState title="No hay fechas de recolección disponibles." />}
+            ListEmptyComponent={
+              <EmptyState title="No hay fechas de recolección disponibles." />
+            }
           />
         </>
       )}
@@ -87,8 +105,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.md,
   },
   dot: {
@@ -114,7 +132,7 @@ const styles = StyleSheet.create({
   warningText: {
     color: Colors.textInverse,
     fontSize: Typography.fontSize.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
   timestampBanner: {
     padding: Spacing.sm,
@@ -124,6 +142,6 @@ const styles = StyleSheet.create({
   timestampText: {
     color: Colors.textSecondary,
     fontSize: Typography.fontSize.xs,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

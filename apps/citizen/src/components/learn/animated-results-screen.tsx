@@ -1,6 +1,6 @@
-import type React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import type React from "react";
+import { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
@@ -11,11 +11,20 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { Button } from '@/components/ui/button';
-import { ANIMATION_DURATIONS, EASING, SPRING_CONFIGS } from '@/constants/animations';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
+} from "react-native-reanimated";
+import { Button } from "@/components/ui/button";
+import {
+  ANIMATION_DURATIONS,
+  EASING,
+  SPRING_CONFIGS,
+} from "@/constants/animations";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
@@ -25,7 +34,11 @@ interface AnimatedResultsScreenProps {
   onContinue: () => void;
 }
 
-export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ score, total, onContinue }) => {
+export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
+  score,
+  total,
+  onContinue,
+}) => {
   const reducedMotion = useReducedMotion();
   const percentage = Math.round((score / total) * 100);
 
@@ -70,7 +83,10 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
       if (percentage >= 80) {
         confettiOpacity.value = withDelay(
           800,
-          withSequence(withTiming(1, { duration: 300 }), withDelay(2000, withTiming(0, { duration: 500 }))),
+          withSequence(
+            withTiming(1, { duration: 300 }),
+            withDelay(2000, withTiming(0, { duration: 500 })),
+          ),
         );
       }
     }
@@ -106,31 +122,31 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
 
   const getPerformanceMessage = () => {
     if (percentage === 100) {
-      return '¡Perfecto! 🎉';
+      return "¡Perfecto! 🎉";
     }
     if (percentage >= 80) {
-      return '¡Excelente trabajo! 🌟';
+      return "¡Excelente trabajo! 🌟";
     }
     if (percentage >= 60) {
-      return '¡Buen trabajo! 👍';
+      return "¡Buen trabajo! 👍";
     }
     if (percentage >= 40) {
-      return '¡Sigue practicando! 💪';
+      return "¡Sigue practicando! 💪";
     }
-    return '¡Inténtalo de nuevo! 📚';
+    return "¡Inténtalo de nuevo! 📚";
   };
 
   const getStars = () => {
     if (percentage === 100) {
-      return '⭐⭐⭐';
+      return "⭐⭐⭐";
     }
     if (percentage >= 80) {
-      return '⭐⭐';
+      return "⭐⭐";
     }
     if (percentage >= 60) {
-      return '⭐';
+      return "⭐";
     }
-    return '';
+    return "";
   };
 
   return (
@@ -140,7 +156,10 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({ sc
 
         <View style={styles.scoreContainer}>
           <View style={styles.scoreCircle}>
-            <AnimatedText style={styles.scoreText} animatedProps={animatedScoreProps} />
+            <AnimatedText
+              style={styles.scoreText}
+              animatedProps={animatedScoreProps}
+            />
             <Text style={styles.totalText}>/ {total}</Text>
           </View>
           <Text style={styles.percentageText}>{percentage}%</Text>
@@ -211,33 +230,45 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
   }, [delay, opacity, rotate, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { translateX: translateX.value }, { rotate: `${rotate.value}deg` }],
+    transform: [
+      { translateY: translateY.value },
+      { translateX: translateX.value },
+      { rotate: `${rotate.value}deg` },
+    ],
     opacity: opacity.value,
   }));
 
   const colors = [
     Colors.error, // Red
-    '#4ECDC4', // Teal (decorative)
+    "#4ECDC4", // Teal (decorative)
     Colors.info, // Blue
-    '#FFA07A', // Light coral (decorative)
-    '#98D8C8', // Mint (decorative)
+    "#FFA07A", // Light coral (decorative)
+    "#98D8C8", // Mint (decorative)
     Colors.warning, // Yellow
   ];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
-  return <Animated.View style={[styles.confettiParticle, animatedStyle, { backgroundColor: color }]} />;
+  return (
+    <Animated.View
+      style={[
+        styles.confettiParticle,
+        animatedStyle,
+        { backgroundColor: color },
+      ]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: Spacing.xl,
   },
   content: {
-    alignItems: 'center',
-    width: '100%',
+    alignItems: "center",
+    width: "100%",
   },
   title: {
     fontSize: Typography.fontSize.xxxl,
@@ -246,7 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xxl,
   },
   scoreContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: Spacing.xl,
   },
   scoreCircle: {
@@ -254,8 +285,8 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: BorderRadius.round,
     backgroundColor: Colors.cardBackground,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 8,
     borderColor: Colors.primary,
     marginBottom: Spacing.md,
@@ -282,11 +313,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.xl,
     fontWeight: Typography.fontWeight.medium,
     color: Colors.text,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.xxl,
   },
   buttonContainer: {
-    width: '100%',
+    width: "100%",
     maxWidth: 300,
   },
   confettiContainer: {
@@ -294,7 +325,7 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   confettiParticle: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     width: 12,
     height: 12,

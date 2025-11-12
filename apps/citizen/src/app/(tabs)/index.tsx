@@ -1,18 +1,18 @@
-import { useRouter } from 'expo-router';
-import { useCallback } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { NearestTruckCard } from '@/components/home/nearest-truck-card';
-import { NextCollectionCard } from '@/components/home/next-collection-card';
-import { QuickActions } from '@/components/home/quick-actions';
-import { ErrorState } from '@/components/shared/error-state';
-import { Header } from '@/components/shared/header';
-import { ListSkeleton } from '@/components/shared/loading-skeleton';
-import { EmptyState } from '@/components/ui/empty-state';
-import { ROUTES } from '@/constants/app-config';
-import { Spacing } from '@/constants/design-tokens';
-import { useNextCollection } from '@/features/collections/hooks/use-next-collection';
-import { useNearestTruck } from '@/features/trucks/hooks/use-nearest-truck';
-import { useNetworkStatus } from '@/lib/hooks/use-network-status';
+import { useRouter } from "expo-router";
+import { useCallback } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { NearestTruckCard } from "@/components/home/nearest-truck-card";
+import { NextCollectionCard } from "@/components/home/next-collection-card";
+import { QuickActions } from "@/components/home/quick-actions";
+import { ErrorState } from "@/components/shared/error-state";
+import { Header } from "@/components/shared/header";
+import { ListSkeleton } from "@/components/shared/loading-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ROUTES } from "@/constants/app-config";
+import { Spacing } from "@/constants/design-tokens";
+import { useNextCollection } from "@/features/collections/hooks/use-next-collection";
+import { useNearestTruck } from "@/features/trucks/hooks/use-nearest-truck";
+import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -23,7 +23,12 @@ export default function HomeScreen() {
     error: collectionsError,
     refetch: refetchCollections,
   } = useNextCollection();
-  const { nearestTruck, isLoading: isLoadingTrucks, error: trucksError, refetch: refetchTrucks } = useNearestTruck();
+  const {
+    nearestTruck,
+    isLoading: isLoadingTrucks,
+    error: trucksError,
+    refetch: refetchTrucks,
+  } = useNearestTruck();
 
   const isLoading = isLoadingCollections || isLoadingTrucks;
   const hasError = collectionsError || trucksError;
@@ -53,7 +58,11 @@ export default function HomeScreen() {
           <ListSkeleton count={2} />
         </View>
       ) : hasError ? (
-        <ErrorState error={collectionsError || trucksError} onRetry={handleRetry} isOffline={isOffline} />
+        <ErrorState
+          error={collectionsError || trucksError}
+          onRetry={handleRetry}
+          isOffline={isOffline}
+        />
       ) : (
         <ScrollView contentContainerStyle={styles.content}>
           {nextCollection ? (

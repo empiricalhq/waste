@@ -1,7 +1,7 @@
-import { Check, X } from 'lucide-react-native';
-import type React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Check, X } from "lucide-react-native";
+import type React from "react";
+import { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -10,11 +10,26 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { ANIMATION_DURATIONS, EASING, FEEDBACK_COLORS, SPRING_CONFIGS, STAGGER_DELAY } from '@/constants/animations';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
-import { hapticError, hapticSelection, hapticSuccess } from '@/lib/utils/haptics';
+} from "react-native-reanimated";
+import {
+  ANIMATION_DURATIONS,
+  EASING,
+  FEEDBACK_COLORS,
+  SPRING_CONFIGS,
+  STAGGER_DELAY,
+} from "@/constants/animations";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import {
+  hapticError,
+  hapticSelection,
+  hapticSuccess,
+} from "@/lib/utils/haptics";
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -58,7 +73,10 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
         translateY.value = 0;
         opacity.value = 1;
       } else {
-        translateY.value = withDelay(delay, withSpring(0, SPRING_CONFIGS.DEFAULT));
+        translateY.value = withDelay(
+          delay,
+          withSpring(0, SPRING_CONFIGS.DEFAULT),
+        );
         opacity.value = withDelay(
           delay,
           withTiming(1, {
@@ -83,7 +101,10 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
         borderColor.value = FEEDBACK_COLORS.success.border;
 
         if (!reducedMotion) {
-          scale.value = withSequence(withSpring(1.05, SPRING_CONFIGS.DEFAULT), withSpring(1, SPRING_CONFIGS.DEFAULT));
+          scale.value = withSequence(
+            withSpring(1.05, SPRING_CONFIGS.DEFAULT),
+            withSpring(1, SPRING_CONFIGS.DEFAULT),
+          );
         }
       } else if (isSelected) {
         // Error animation
@@ -135,7 +156,11 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   };
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { translateX: translateX.value }, { scale: scale.value }],
+    transform: [
+      { translateY: translateY.value },
+      { translateX: translateX.value },
+      { scale: scale.value },
+    ],
     opacity: opacity.value,
     backgroundColor: backgroundColor.value,
     borderColor: borderColor.value,
@@ -151,17 +176,21 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
       activeOpacity={0.7}
     >
       <Text style={styles.optionText}>{label}</Text>
-      {isAnswered && isCorrect && <Check color={FEEDBACK_COLORS.success.border} size={24} />}
-      {isAnswered && isSelected && !isCorrect && <X color={FEEDBACK_COLORS.error.border} size={24} />}
+      {isAnswered && isCorrect && (
+        <Check color={FEEDBACK_COLORS.success.border} size={24} />
+      )}
+      {isAnswered && isSelected && !isCorrect && (
+        <X color={FEEDBACK_COLORS.error.border} size={24} />
+      )}
     </AnimatedTouchable>
   );
 };
 
 const styles = StyleSheet.create({
   option: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: Colors.cardBackground,
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,

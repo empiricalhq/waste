@@ -1,6 +1,6 @@
 import type React from "react";
 import {
-  Modal as RNModal,
+  Modal as RnModal,
   StyleSheet,
   Text,
   View,
@@ -48,12 +48,12 @@ export const Modal: React.FC<ModalProps> = ({
   const reducedMotion = useReducedMotion();
 
   return (
-    <RNModal
+    <RnModal
       visible={visible}
-      transparent
+      transparent={true}
       animationType="none"
       onRequestClose={onClose}
-      statusBarTranslucent
+      statusBarTranslucent={true}
     >
       <Animated.View
         style={styles.overlay}
@@ -89,7 +89,7 @@ export const Modal: React.FC<ModalProps> = ({
           </View>
         </Animated.View>
       </Animated.View>
-    </RNModal>
+    </RnModal>
   );
 };
 

@@ -1,16 +1,20 @@
-import type React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import type React from "react";
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
-import { ANIMATION_DURATIONS, FEEDBACK_COLORS, SPRING_CONFIGS } from '@/constants/animations';
-import { BorderRadius, Colors, Spacing } from '@/constants/design-tokens';
-import { useReducedMotion } from '@/lib/hooks/use-reduced-motion';
+} from "react-native-reanimated";
+import {
+  ANIMATION_DURATIONS,
+  FEEDBACK_COLORS,
+  SPRING_CONFIGS,
+} from "@/constants/animations";
+import { BorderRadius, Colors, Spacing } from "@/constants/design-tokens";
+import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 interface AnimatedProgressBarProps {
   current: number;
@@ -18,7 +22,11 @@ interface AnimatedProgressBarProps {
   isCorrect?: boolean;
 }
 
-export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ current, total, isCorrect }) => {
+export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({
+  current,
+  total,
+  isCorrect,
+}) => {
   const reducedMotion = useReducedMotion();
   const progress = useSharedValue(0);
   const backgroundColor = useSharedValue<string>(Colors.primary);
@@ -31,12 +39,7 @@ export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ curren
     } else {
       progress.value = withSpring(targetProgress, SPRING_CONFIGS.DEFAULT);
     }
-  }, [
-    current,
-    total,
-    reducedMotion,
-    progress,
-  ]);
+  }, [current, total, reducedMotion, progress]);
 
   // Flash success color when answer is correct
   useEffect(() => {
@@ -71,12 +74,12 @@ const styles = StyleSheet.create({
     height: 6,
     backgroundColor: Colors.border,
     borderRadius: BorderRadius.round,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   fill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Colors.primary,
     borderRadius: BorderRadius.round,
-    transformOrigin: 'left',
+    transformOrigin: "left",
   },
 });

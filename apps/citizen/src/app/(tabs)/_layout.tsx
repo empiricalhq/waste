@@ -1,7 +1,7 @@
-import { Tabs } from 'expo-router';
-import { BookOpen, Camera, Home, LogIn, User } from 'lucide-react-native';
-import { Colors } from '@/constants/design-tokens';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { Tabs } from "expo-router";
+import { BookOpen, Camera, Home, LogIn, User } from "lucide-react-native";
+import { Colors } from "@/constants/design-tokens";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export default function TabLayout() {
   const { user } = useAuth();
@@ -17,21 +17,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
+          title: "Inicio",
           tabBarIcon: ({ color }) => <Home color={color} />,
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
-          title: 'Aprender',
+          title: "Aprender",
           tabBarIcon: ({ color }) => <BookOpen color={color} />,
         }}
       />
       <Tabs.Screen
         name="report"
         options={{
-          title: 'Reportar',
+          title: "Reportar",
           tabBarIcon: ({ color }) => <Camera color={color} />,
         }}
       />
@@ -39,7 +39,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'Perfil',
+            title: "Perfil",
             tabBarIcon: ({ color }) => <User color={color} />,
           }}
         />
@@ -47,9 +47,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'Ingresar',
+            title: "Ingresar",
             tabBarIcon: ({ color }) => <LogIn color={color} />,
-            href: '/(auth)/login',
+            href: "/(auth)/login",
           }}
         />
       )}

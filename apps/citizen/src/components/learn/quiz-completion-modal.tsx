@@ -65,7 +65,7 @@ export const QuizCompletionModal: React.FC<QuizCompletionModalProps> = ({
   return (
     <Modal
       visible={visible}
-      transparent
+      transparent={true}
       animationType="fade"
       onRequestClose={onContinue}
     >

@@ -1,32 +1,36 @@
-import { useRouter } from 'expo-router';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Header } from '@/components/shared/header';
-import { CardSkeleton } from '@/components/shared/loading-skeleton';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { ROUTES } from '@/constants/app-config';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useRouter } from "expo-router";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Header } from "@/components/shared/header";
+import { CardSkeleton } from "@/components/shared/loading-skeleton";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ROUTES } from "@/constants/app-config";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export default function ProfileScreen() {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
-    Alert.alert('Cerrar Sesión', '¿Estás seguro de que quieres cerrar sesión?', [
-      {
-        text: 'Cancelar',
-        style: 'cancel',
-      },
-      {
-        text: 'Cerrar Sesión',
-        style: 'destructive',
-        onPress: async () => {
-          await logout();
-          router.replace(ROUTES.LOGIN);
+    Alert.alert(
+      "Cerrar sesión",
+      "¿Estás seguro de que quieres cerrar sesión?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
         },
-      },
-    ]);
+        {
+          text: "Cerrar sesión",
+          style: "destructive",
+          onPress: async () => {
+            await logout();
+            router.replace(ROUTES.LOGIN);
+          },
+        },
+      ],
+    );
   };
 
   if (isLoading) {
@@ -46,7 +50,9 @@ export default function ProfileScreen() {
 
   const accuracy =
     user.progress.totalQuestions > 0
-      ? Math.round((user.progress.correctAnswers / user.progress.totalQuestions) * 100)
+      ? Math.round(
+          (user.progress.correctAnswers / user.progress.totalQuestions) * 100,
+        )
       : 0;
 
   return (
@@ -61,13 +67,23 @@ export default function ProfileScreen() {
             <StatItem value={user.progress.totalQuestions} label="Tests" />
           </View>
         </Card>
-        <Button title="Cerrar Sesión" onPress={handleLogout} variant="secondary" />
+        <Button
+          title="Cerrar sesión"
+          onPress={handleLogout}
+          variant="secondary"
+        />
       </ScrollView>
     </View>
   );
 }
 
-const StatItem = ({ value, label }: { value: string | number; label: string }) => (
+const StatItem = ({
+  value,
+  label,
+}: {
+  value: string | number;
+  label: string;
+}) => (
   <View style={styles.statItem}>
     <Text style={styles.statValue}>{value}</Text>
     <Text style={styles.statLabel}>{label}</Text>
@@ -88,11 +104,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   statItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statValue: {
     fontSize: Typography.fontSize.xxl,

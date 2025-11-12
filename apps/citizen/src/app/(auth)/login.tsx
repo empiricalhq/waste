@@ -1,22 +1,25 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
-import { ErrorState } from '@/components/shared/error-state';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ROUTES } from '@/constants/app-config';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useLogin } from '@/features/auth/hooks/use-login';
-import { loginSchema } from '@/features/auth/schemas';
-import { useNetworkStatus } from '@/lib/hooks/use-network-status';
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
+import { ErrorState } from "@/components/shared/error-state";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ROUTES } from "@/constants/app-config";
+import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import { useLogin } from "@/features/auth/hooks/use-login";
+import { loginSchema } from "@/features/auth/schemas";
+import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 
 export default function LoginScreen() {
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
   const { login, isPending, error, reset } = useLogin();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({});
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [validationErrors, setValidationErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
 
   const handleLogin = () => {
     setValidationErrors({});
@@ -28,7 +31,7 @@ export default function LoginScreen() {
     if (!result.success) {
       const errors: { email?: string; password?: string } = {};
       result.error.issues.forEach((err) => {
-        const field = err.path[0] as 'email' | 'password';
+        const field = err.path[0] as "email" | "password";
         errors[field] = err.message;
       });
       setValidationErrors(errors);
@@ -40,7 +43,7 @@ export default function LoginScreen() {
         router.replace(ROUTES.HOME);
       },
       onError: (err) => {
-        console.error('Login error:', err);
+        console.error("Login error:", err);
       },
     });
   };
@@ -73,7 +76,9 @@ export default function LoginScreen() {
         autoCapitalize="none"
         autoCorrect={false}
       />
-      {validationErrors.email && <Text style={styles.fieldError}>{validationErrors.email}</Text>}
+      {validationErrors.email && (
+        <Text style={styles.fieldError}>{validationErrors.email}</Text>
+      )}
       <Input
         label="Contraseña"
         placeholder="••••••••"
@@ -82,8 +87,15 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         autoCapitalize="none"
       />
-      {validationErrors.password && <Text style={styles.fieldError}>{validationErrors.password}</Text>}
-      <Button title="Entrar" onPress={handleLogin} loading={isPending} disabled={isPending} />
+      {validationErrors.password && (
+        <Text style={styles.fieldError}>{validationErrors.password}</Text>
+      )}
+      <Button
+        title="Entrar"
+        onPress={handleLogin}
+        loading={isPending}
+        disabled={isPending}
+      />
       <Button
         title="Crear cuenta"
         variant="secondary"
@@ -98,14 +110,14 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: Spacing.xl,
     backgroundColor: Colors.background,
   },
   title: {
     fontSize: Typography.fontSize.xxxl,
     fontWeight: Typography.fontWeight.bold,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: Spacing.xxxl,
     color: Colors.text,
   },

@@ -1,34 +1,44 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { ReportCameraStep } from '@/components/report/report-camera-step';
-import { ReportDetailsStep } from '@/components/report/report-details-step';
-import { ReportSuccessStep } from '@/components/report/report-success-step';
-import { ReportTypeStep } from '@/components/report/report-type-step';
-import { AuthPrompt } from '@/components/shared/auth-prompt';
-import { ErrorState } from '@/components/shared/error-state';
-import { Header } from '@/components/shared/header';
-import { ListSkeleton } from '@/components/shared/loading-skeleton';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useAuth } from '@/features/auth/hooks/use-auth';
-import { ReportFeatureWrapper } from '@/features/reports/components/report-feature-wrapper';
-import { useReportTypes } from '@/features/reports/hooks/use-reports';
-import { useSubmitReport } from '@/features/reports/hooks/use-submit-report';
-import { useNetworkStatus } from '@/lib/hooks/use-network-status';
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { ReportCameraStep } from "@/components/report/report-camera-step";
+import { ReportDetailsStep } from "@/components/report/report-details-step";
+import { ReportSuccessStep } from "@/components/report/report-success-step";
+import { ReportTypeStep } from "@/components/report/report-type-step";
+import { AuthPrompt } from "@/components/shared/auth-prompt";
+import { ErrorState } from "@/components/shared/error-state";
+import { Header } from "@/components/shared/header";
+import { ListSkeleton } from "@/components/shared/loading-skeleton";
+import {
+  BorderRadius,
+  Colors,
+  Spacing,
+  Typography,
+} from "@/constants/design-tokens";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { ReportFeatureWrapper } from "@/features/reports/components/report-feature-wrapper";
+import { useReportTypes } from "@/features/reports/hooks/use-reports";
+import { useSubmitReport } from "@/features/reports/hooks/use-submit-report";
+import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 
-type ReportStep = 'type' | 'camera' | 'details' | 'success';
+type ReportStep = "type" | "camera" | "details" | "success";
 
 function ReportScreenContent() {
   const { user } = useAuth();
   const { isOffline } = useNetworkStatus();
-  const [step, setStep] = useState<ReportStep>('type');
-  const [reportData, setReportData] = useState({ type: '', imageUri: '', description: '', location: '' });
+  const [step, setStep] = useState<ReportStep>("type");
+  const [reportData, setReportData] = useState({
+    type: "",
+    imageUri: "",
+    description: "",
+    location: "",
+  });
   const [submitError, setSubmitError] = useState<Error | null>(null);
 
   const { data: reportTypes, isLoading, error, refetch } = useReportTypes();
   const { mutate: submitReport, isPending } = useSubmitReport({
     onSuccess: () => {
       setSubmitError(null);
-      setStep('success');
+      setStep("success");
     },
     onError: (error) => {
       setSubmitError(error);
@@ -50,16 +60,16 @@ function ReportScreenContent() {
 
   const handleSelectType = (type: string) => {
     setReportData({ ...reportData, type });
-    setStep('camera');
+    setStep("camera");
   };
 
   const handlePhotoTaken = (uri: string) => {
     setReportData({ ...reportData, imageUri: uri });
-    setStep('details');
+    setStep("details");
   };
 
   const handleSkipPhoto = () => {
-    setStep('details');
+    setStep("details");
   };
 
   const handleSubmit = (details: { description: string; location: string }) => {
@@ -74,9 +84,9 @@ function ReportScreenContent() {
   };
 
   const resetFlow = () => {
-    setReportData({ type: '', imageUri: '', description: '', location: '' });
+    setReportData({ type: "", imageUri: "", description: "", location: "" });
     setSubmitError(null);
-    setStep('type');
+    setStep("type");
   };
 
   const renderContent = () => {
@@ -90,7 +100,7 @@ function ReportScreenContent() {
     }
 
     switch (step) {
-      case 'type':
+      case "type":
         if (isLoading) {
           return (
             <View style={styles.content}>
@@ -99,15 +109,32 @@ function ReportScreenContent() {
           );
         }
         if (error) {
-          return <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />;
+          return (
+            <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
+          );
         }
-        return <ReportTypeStep reportTypes={reportTypes || []} onSelectType={handleSelectType} />;
-      case 'camera':
-        return <ReportCameraStep onPhotoTaken={handlePhotoTaken} onSkip={handleSkipPhoto} />;
-      case 'details':
+        return (
+          <ReportTypeStep
+            reportTypes={reportTypes || []}
+            onSelectType={handleSelectType}
+          />
+        );
+      case "camera":
+        return (
+          <ReportCameraStep
+            onPhotoTaken={handlePhotoTaken}
+            onSkip={handleSkipPhoto}
+          />
+        );
+      case "details":
         if (submitError) {
           return (
-            <ErrorState error={submitError} onRetry={handleRetrySubmit} isOffline={isOffline} isRetrying={isPending} />
+            <ErrorState
+              error={submitError}
+              onRetry={handleRetrySubmit}
+              isOffline={isOffline}
+              isRetrying={isPending}
+            />
           );
         }
         return (
@@ -115,7 +142,8 @@ function ReportScreenContent() {
             {isOffline && (
               <View style={styles.offlineNotice}>
                 <Text style={styles.offlineText}>
-                  📱 Sin conexión - Tu reporte se enviará cuando vuelvas a estar en línea
+                  📱 Sin conexión - Tu reporte se enviará cuando vuelvas a estar
+                  en línea
                 </Text>
               </View>
             )}
@@ -127,7 +155,7 @@ function ReportScreenContent() {
             />
           </>
         );
-      case 'success':
+      case "success":
         return <ReportSuccessStep onDone={resetFlow} />;
       default:
         return null;
@@ -167,6 +195,6 @@ const styles = StyleSheet.create({
   offlineText: {
     color: Colors.textInverse,
     fontSize: Typography.fontSize.sm,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
