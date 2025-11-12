@@ -21,7 +21,10 @@ export default function SignUpScreen() {
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
-        fieldErrors[issue.path[0]] = issue.message;
+        const field = issue.path[0];
+        if (typeof field === "string") {
+          fieldErrors[field] = issue.message;
+        }
       });
       setErrors(fieldErrors);
       return;

@@ -10,8 +10,8 @@ import { storage } from "./storage";
 interface AuthContext {
   user: User | null;
   isLoading: boolean;
-  login: (data: LoginInput) => Promise<void>;
-  signUp: (data: SignUpInput) => Promise<void>;
+  login: (data: LoginInput) => Promise<User>;
+  signUp: (data: SignUpInput) => Promise<User>;
   logout: () => Promise<void>;
 }
 
