@@ -1,5 +1,4 @@
-import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { theme } from "@/theme";
 
 export function Loading() {

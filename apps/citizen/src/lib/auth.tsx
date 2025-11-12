@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSegments } from "expo-router";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { QUERY_KEYS, ROUTES } from "@/constants";
 import { api } from "./api";
+import type { LoginInput, SignUpInput, User } from "./schemas";
 import { storage } from "./storage";
-import type { User, LoginInput, SignUpInput } from "./schemas";
 
 interface AuthContext {
   user: User | null;
@@ -64,18 +65,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // navigation guard
   useEffect(() => {
-    if (isLoading || !isReady) return;
+    if (isLoading || !isReady) {
+      return;
+    }
 
     const inAuthGroup = segments[0] === "(auth)";
 
     if (user && inAuthGroup) {
       router.replace(ROUTES.HOME);
-    } else if (!user && !inAuthGroup) {
+    } else if (!(user || inAuthGroup)) {
       router.replace(ROUTES.LOGIN);
     }
   }, [user, segments, isLoading, isReady, router]);
 
-  if (!isReady || isLoading) return null;
+  if (!isReady || isLoading) {
+    return null;
+  }
 
   return (
     <AuthContext.Provider
@@ -94,6 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
   return context;
 }

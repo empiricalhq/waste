@@ -1,4 +1,4 @@
-import { getItemAsync, setItemAsync, deleteItemAsync } from "expo-secure-store";
+import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 import { TOKEN_KEY } from "@/constants";
 
 export const storage = {

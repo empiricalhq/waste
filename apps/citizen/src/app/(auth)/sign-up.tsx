@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Text, StyleSheet, ScrollView } from "react-native";
-import { useAuth } from "@/lib/auth";
-import { SignUpSchema } from "@/lib/schemas";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useAuth } from "@/lib/auth";
+import { SignUpSchema } from "@/lib/schemas";
 import { theme } from "@/theme";
-import { useRouter } from "expo-router";
 
 export default function SignUpScreen() {
   const [name, setName] = useState("");
@@ -17,7 +17,7 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     const result = SignUpSchema.safeParse({ name, email, password });
-    
+
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
@@ -37,16 +37,16 @@ export default function SignUpScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Crear Cuenta</Text>
-      
+
       {errors.general && <Text style={styles.error}>{errors.general}</Text>}
-      
+
       <Input
         label="Nombre"
         value={name}
         onChangeText={setName}
         error={errors.name}
       />
-      
+
       <Input
         label="Email"
         value={email}
@@ -55,7 +55,7 @@ export default function SignUpScreen() {
         autoCapitalize="none"
         error={errors.email}
       />
-      
+
       <Input
         label="Contraseña"
         value={password}
@@ -63,9 +63,9 @@ export default function SignUpScreen() {
         secureTextEntry
         error={errors.password}
       />
-      
+
       <Button title="Registrarse" onPress={handleSignUp} loading={isLoading} />
-      
+
       <Button
         title="Ya tengo cuenta"
         variant="secondary"

@@ -1,34 +1,34 @@
-import React from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-import { useAuth } from "@/lib/auth";
-import { Card } from "@/components/ui/Card";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { useAuth } from "@/lib/auth";
 import { theme } from "@/theme";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
-  const accuracy = user.progress.totalQuestions > 0
-    ? Math.round((user.progress.correctAnswers / user.progress.totalQuestions) * 100)
-    : 0;
+  const accuracy =
+    user.progress.totalQuestions > 0
+      ? Math.round(
+          (user.progress.correctAnswers / user.progress.totalQuestions) * 100,
+        )
+      : 0;
 
   const handleLogout = () => {
-    Alert.alert(
-      "Cerrar sesión",
-      "¿Estás seguro?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Cerrar sesión", style: "destructive", onPress: logout },
-      ]
-    );
+    Alert.alert("Cerrar sesión", "¿Estás seguro?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Cerrar sesión", style: "destructive", onPress: logout },
+    ]);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{user.name}</Text>
-      
+
       <Card>
         <Text style={styles.sectionTitle}>Estadísticas</Text>
         <View style={styles.stats}>
@@ -47,7 +47,11 @@ export default function ProfileScreen() {
         </View>
       </Card>
 
-      <Button title="Cerrar sesión" variant="secondary" onPress={handleLogout} />
+      <Button
+        title="Cerrar sesión"
+        variant="secondary"
+        onPress={handleLogout}
+      />
     </View>
   );
 }

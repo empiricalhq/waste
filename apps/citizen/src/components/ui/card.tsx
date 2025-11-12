@@ -1,5 +1,4 @@
-import React from "react";
-import { View, StyleSheet, type ViewProps } from "react-native";
+import { StyleSheet, View, type ViewProps } from "react-native";
 import { theme } from "@/theme";
 
 export function Card({ style, ...props }: ViewProps) {

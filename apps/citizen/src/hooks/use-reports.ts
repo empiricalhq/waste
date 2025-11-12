@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants";
 import { api } from "@/lib/api";
 import type { Report } from "@/lib/schemas";
@@ -28,7 +28,7 @@ export function useReportTypes() {
   return useQuery({
     queryKey: [QUERY_KEYS.REPORT_TYPES],
     queryFn: api.getReportTypes,
-    staleTime: Infinity,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 
@@ -47,12 +47,15 @@ export function useSubmitReport() {
             data,
             timestamp: Date.now(),
           };
-          
+
           const existing = await AsyncStorage.getItem(PENDING_REPORTS_KEY);
           const queue: PendingReport[] = existing ? JSON.parse(existing) : [];
           queue.push(pending);
-          await AsyncStorage.setItem(PENDING_REPORTS_KEY, JSON.stringify(queue));
-          
+          await AsyncStorage.setItem(
+            PENDING_REPORTS_KEY,
+            JSON.stringify(queue),
+          );
+
           return {
             id: pending.id,
             type: data.type,
@@ -64,9 +67,10 @@ export function useSubmitReport() {
       }
     },
     onSuccess: (report) => {
-      queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) => 
-        [report, ...old]
-      );
+      queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) => [
+        report,
+        ...old,
+      ]);
     },
   });
 }
@@ -77,7 +81,9 @@ export function useRetryPendingReports() {
 
   return async () => {
     const pending = await AsyncStorage.getItem(PENDING_REPORTS_KEY);
-    if (!pending) return;
+    if (!pending) {
+      return;
+    }
 
     const queue: PendingReport[] = JSON.parse(pending);
     const failed: PendingReport[] = [];
@@ -86,7 +92,7 @@ export function useRetryPendingReports() {
       try {
         const report = await api.createReport(item.data);
         queryClient.setQueryData<Report[]>([QUERY_KEYS.REPORTS], (old = []) =>
-          old.map((r) => (r.id === item.id ? report : r))
+          old.map((r) => (r.id === item.id ? report : r)),
         );
       } catch {
         failed.push(item);

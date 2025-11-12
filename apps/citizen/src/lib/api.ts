@@ -1,28 +1,31 @@
-import { API_URL, API_TIMEOUT } from "@/constants";
-import { storage } from "./storage";
+import { API_TIMEOUT, API_URL } from "@/constants";
 import type {
-  User,
   Collection,
-  Truck,
+  LoginInput,
+  QuizQuestion,
   Report,
   ReportType,
-  QuizQuestion,
-  LoginInput,
   SignUpInput,
+  Truck,
+  User,
 } from "./schemas";
+import { storage } from "./storage";
 
 class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public code?: string
+    public code?: string,
   ) {
     super(message);
     this.name = "ApiError";
   }
 }
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<T> {
   const token = await storage.getToken();
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
@@ -45,15 +48,19 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       throw new ApiError(
         error.message || "Error en la solicitud",
         response.status,
-        error.code
+        error.code,
       );
     }
 
-    if (response.status === 204) return null as T;
+    if (response.status === 204) {
+      return null as T;
+    }
     return response.json();
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error instanceof ApiError) throw error;
+    if (error instanceof ApiError) {
+      throw error;
+    }
     if ((error as Error).name === "AbortError") {
       throw new ApiError("Tiempo agotado", 408, "TIMEOUT");
     }
@@ -66,7 +73,7 @@ export const api = {
   async login(data: LoginInput) {
     const result = await request<{ user: User; session: { token: string } }>(
       "/api/auth/sign-in/email",
-      { method: "POST", body: JSON.stringify(data) }
+      { method: "POST", body: JSON.stringify(data) },
     );
     await storage.setToken(result.session.token);
     return result.user;
@@ -75,7 +82,7 @@ export const api = {
   async signUp(data: SignUpInput) {
     const result = await request<{ user: User; session: { token: string } }>(
       "/api/auth/sign-up/email",
-      { method: "POST", body: JSON.stringify(data) }
+      { method: "POST", body: JSON.stringify(data) },
     );
     await storage.setToken(result.session.token);
     return result.user;
@@ -90,9 +97,7 @@ export const api = {
   },
 
   async getCurrentUser() {
-    const { user } = await request<{ user: User }>(
-      "/api/auth/get-session"
-    );
+    const { user } = await request<{ user: User }>("/api/auth/get-session");
     return user;
   },
 
@@ -105,7 +110,12 @@ export const api = {
   // reports
   getReports: () => request<Report[]>("/reports"),
   getReportTypes: () => request<ReportType[]>("/report-types"),
-  createReport: (data: { type: string; description: string; location: string; imageUri?: string }) =>
+  createReport: (data: {
+    type: string;
+    description: string;
+    location: string;
+    imageUri?: string;
+  }) =>
     request<Report>("/reports", {
       method: "POST",
       body: JSON.stringify(data),

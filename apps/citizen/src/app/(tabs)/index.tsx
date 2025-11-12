@@ -1,21 +1,32 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useNextCollection } from "@/hooks/use-collections";
-import { useNearestTruck } from "@/hooks/use-trucks";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Card } from "@/components/ui/Card";
-import { Loading } from "@/components/ui/Loading";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
-import { useNetwork } from "@/hooks/use-network";
-import { theme } from "@/theme";
+import { Loading } from "@/components/ui/Loading";
 import { WASTE_TYPES } from "@/constants";
+import { useNextCollection } from "@/hooks/use-collections";
+import { useNetwork } from "@/hooks/use-network";
+import { useNearestTruck } from "@/hooks/use-trucks";
+import { theme } from "@/theme";
 
 export default function HomeScreen() {
-  const { nextCollection, isLoading: loadingCollection, error: collectionError, refetch: refetchCollection } = useNextCollection();
-  const { nearestTruck, isLoading: loadingTruck, error: truckError, refetch: refetchTruck } = useNearestTruck();
+  const {
+    nextCollection,
+    isLoading: loadingCollection,
+    error: collectionError,
+    refetch: refetchCollection,
+  } = useNextCollection();
+  const {
+    nearestTruck,
+    isLoading: loadingTruck,
+    error: truckError,
+    refetch: refetchTruck,
+  } = useNearestTruck();
   const { isOffline } = useNetwork();
 
-  if (loadingCollection || loadingTruck) return <Loading />;
-  
+  if (loadingCollection || loadingTruck) {
+    return <Loading />;
+  }
+
   if (collectionError || truckError) {
     return (
       <ErrorMessage
@@ -37,10 +48,19 @@ export default function HomeScreen() {
         <Card style={styles.section}>
           <Text style={styles.label}>Próxima recolección</Text>
           <View style={styles.row}>
-            <View style={[styles.dot, { backgroundColor: WASTE_TYPES[nextCollection.type].color }]} />
+            <View
+              style={[
+                styles.dot,
+                { backgroundColor: WASTE_TYPES[nextCollection.type].color },
+              ]}
+            />
             <View>
-              <Text style={styles.type}>{WASTE_TYPES[nextCollection.type].label}</Text>
-              <Text style={styles.time}>{nextCollection.date} - {nextCollection.time}</Text>
+              <Text style={styles.type}>
+                {WASTE_TYPES[nextCollection.type].label}
+              </Text>
+              <Text style={styles.time}>
+                {nextCollection.date} - {nextCollection.time}
+              </Text>
             </View>
           </View>
         </Card>
@@ -50,9 +70,16 @@ export default function HomeScreen() {
         <Card style={styles.section}>
           <Text style={styles.label}>Camión cercano</Text>
           <View style={styles.row}>
-            <View style={[styles.dot, { backgroundColor: WASTE_TYPES[nearestTruck.type].color }]} />
+            <View
+              style={[
+                styles.dot,
+                { backgroundColor: WASTE_TYPES[nearestTruck.type].color },
+              ]}
+            />
             <View style={{ flex: 1 }}>
-              <Text style={styles.type}>{WASTE_TYPES[nearestTruck.type].label}</Text>
+              <Text style={styles.type}>
+                {WASTE_TYPES[nearestTruck.type].label}
+              </Text>
               <Text style={styles.time}>{nearestTruck.route}</Text>
             </View>
             <View>

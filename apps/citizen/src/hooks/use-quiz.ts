@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants";
 import { api } from "@/lib/api";
 
@@ -6,7 +6,7 @@ export function useQuiz() {
   return useQuery({
     queryKey: [QUERY_KEYS.QUIZ],
     queryFn: api.getQuizQuestions,
-    staleTime: Infinity,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 

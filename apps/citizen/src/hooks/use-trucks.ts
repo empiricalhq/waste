@@ -6,17 +6,20 @@ export function useTrucks() {
   return useQuery({
     queryKey: [QUERY_KEYS.TRUCKS],
     queryFn: api.getTrucks,
-    refetchInterval: 30000, // 30 seconds
-    staleTime: 60000, // 1 minute
+    refetchInterval: 30_000, // 30 seconds
+    staleTime: 60_000, // 1 minute
   });
 }
 
 export function useNearestTruck() {
   const { data: trucks = [], ...rest } = useTrucks();
-  
-  const nearestTruck = trucks.length > 0
-    ? trucks.reduce((closest, truck) => (truck.eta < closest.eta ? truck : closest))
-    : null;
+
+  const nearestTruck =
+    trucks.length > 0
+      ? trucks.reduce((closest, truck) =>
+          truck.eta < closest.eta ? truck : closest,
+        )
+      : null;
 
   return { nearestTruck, ...rest };
 }

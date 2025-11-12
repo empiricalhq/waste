@@ -12,7 +12,7 @@ export function useCollections() {
 
 export function useNextCollection() {
   const { data: collections = [], ...rest } = useCollections();
-  
+
   const nextCollection = collections
     .filter((c) => !c.completed)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];

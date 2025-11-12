@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Text, StyleSheet, ScrollView } from "react-native";
-import { useAuth } from "@/lib/auth";
-import { LoginSchema } from "@/lib/schemas";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { theme } from "@/theme";
-import { useRouter } from "expo-router";
 import { ROUTES } from "@/constants";
+import { useAuth } from "@/lib/auth";
+import { LoginSchema } from "@/lib/schemas";
+import { theme } from "@/theme";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     const result = LoginSchema.safeParse({ email, password });
-    
+
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
@@ -37,9 +37,9 @@ export default function LoginScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Iniciar sesión</Text>
-      
+
       {errors.general && <Text style={styles.error}>{errors.general}</Text>}
-      
+
       <Input
         label="Email"
         value={email}
@@ -48,7 +48,7 @@ export default function LoginScreen() {
         autoCapitalize="none"
         error={errors.email}
       />
-      
+
       <Input
         label="Contraseña"
         value={password}
@@ -56,9 +56,9 @@ export default function LoginScreen() {
         secureTextEntry
         error={errors.password}
       />
-      
+
       <Button title="Entrar" onPress={handleLogin} loading={isLoading} />
-      
+
       <Button
         title="Crear cuenta"
         variant="secondary"

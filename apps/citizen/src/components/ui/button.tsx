@@ -1,9 +1,8 @@
-import React from "react";
 import {
-  TouchableOpacity,
-  Text,
   ActivityIndicator,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   type TouchableOpacityProps,
 } from "react-native";
 import { theme } from "@/theme";
@@ -32,9 +31,13 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "primary" ? "#fff" : theme.colors.primary} />
+        <ActivityIndicator
+          color={variant === "primary" ? "#fff" : theme.colors.primary}
+        />
       ) : (
-        <Text style={[styles.text, variant === "secondary" && styles.secondaryText]}>
+        <Text
+          style={[styles.text, variant === "secondary" && styles.secondaryText]}
+        >
           {title}
         </Text>
       )}

@@ -1,19 +1,25 @@
-import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { useCollections } from "@/hooks/use-collections";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Card } from "@/components/ui/Card";
-import { Loading } from "@/components/ui/Loading";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Loading } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
+import { useCollections } from "@/hooks/use-collections";
 import { useNetwork } from "@/hooks/use-network";
 import { theme } from "@/theme";
-import { WASTE_TYPES } from "@/constants";
 
 export default function ScheduleScreen() {
-  const { data: collections = [], isLoading, error, refetch } = useCollections();
+  const {
+    data: collections = [],
+    isLoading,
+    error,
+    refetch,
+  } = useCollections();
   const { isOffline } = useNetwork();
 
-  if (isLoading) return <Loading />;
-  
+  if (isLoading) {
+    return <Loading />;
+  }
+
   if (error) {
     return (
       <ErrorMessage
@@ -33,10 +39,17 @@ export default function ScheduleScreen() {
         renderItem={({ item }) => (
           <Card style={[styles.card, item.completed && styles.completed]}>
             <View style={styles.row}>
-              <View style={[styles.dot, { backgroundColor: WASTE_TYPES[item.type].color }]} />
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: WASTE_TYPES[item.type].color },
+                ]}
+              />
               <View>
                 <Text style={styles.type}>{WASTE_TYPES[item.type].label}</Text>
-                <Text style={styles.time}>{item.date} - {item.time}</Text>
+                <Text style={styles.time}>
+                  {item.date} - {item.time}
+                </Text>
               </View>
             </View>
           </Card>

@@ -1,6 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
 import { AlertCircle, WifiOff } from "lucide-react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { theme } from "@/theme";
 import { Button } from "./Button";
 
@@ -10,7 +9,11 @@ interface ErrorMessageProps {
   onRetry?: () => void;
 }
 
-export function ErrorMessage({ message, isOffline, onRetry }: ErrorMessageProps) {
+export function ErrorMessage({
+  message,
+  isOffline,
+  onRetry,
+}: ErrorMessageProps) {
   return (
     <View style={styles.container}>
       {isOffline ? (
@@ -19,7 +22,9 @@ export function ErrorMessage({ message, isOffline, onRetry }: ErrorMessageProps)
         <AlertCircle size={48} color={theme.colors.textSecondary} />
       )}
       <Text style={styles.message}>{message}</Text>
-      {onRetry && <Button title="Reintentar" onPress={onRetry} variant="secondary" />}
+      {onRetry && (
+        <Button title="Reintentar" onPress={onRetry} variant="secondary" />
+      )}
     </View>
   );
 }

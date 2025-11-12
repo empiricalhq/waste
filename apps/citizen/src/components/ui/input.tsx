@@ -1,10 +1,9 @@
-import React from "react";
 import {
-  View,
+  StyleSheet,
   Text,
   TextInput,
-  StyleSheet,
   type TextInputProps,
+  View,
 } from "react-native";
 import { theme } from "@/theme";
 

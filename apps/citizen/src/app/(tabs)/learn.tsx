@@ -1,26 +1,28 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Loading } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
 import { useQuiz, useUpdateProgress } from "@/hooks/use-quiz";
 import { useAuth } from "@/lib/auth";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Loading } from "@/components/ui/Loading";
-import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { theme } from "@/theme";
-import { WASTE_TYPES } from "@/constants";
 
 export default function LearnScreen() {
   const { user } = useAuth();
   const { data: questions = [], isLoading, error, refetch } = useQuiz();
   const { mutate: updateProgress } = useUpdateProgress();
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
 
-  if (isLoading) return <Loading />;
-  
+  if (isLoading) {
+    return <Loading />;
+  }
+
   if (error) {
     return <ErrorMessage message="Error al cargar el quiz" onRetry={refetch} />;
   }
@@ -35,7 +37,7 @@ export default function LearnScreen() {
 
   if (showResults) {
     const percentage = Math.round((score / questions.length) * 100);
-    
+
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.resultsTitle}>Quiz completado</Text>
@@ -45,7 +47,9 @@ export default function LearnScreen() {
         </View>
         <Text style={styles.percentage}>{percentage}%</Text>
         <Text style={styles.message}>
-          {percentage >= 80 ? "¡Excelente trabajo! 🌟" : "¡Sigue practicando! 💪"}
+          {percentage >= 80
+            ? "¡Excelente trabajo! 🌟"
+            : "¡Sigue practicando! 💪"}
         </Text>
         <Button
           title="Reiniciar"
@@ -90,7 +94,7 @@ export default function LearnScreen() {
       </Text>
 
       <Image source={{ uri: question.imageUrl }} style={styles.image} />
-      
+
       <Text style={styles.question}>{question.question}</Text>
       <Text style={styles.item}>{question.item}</Text>
 
@@ -126,7 +130,11 @@ export default function LearnScreen() {
 
       {isAnswered && (
         <Button
-          title={currentIndex === questions.length - 1 ? "Ver resultados" : "Siguiente"}
+          title={
+            currentIndex === questions.length - 1
+              ? "Ver resultados"
+              : "Siguiente"
+          }
           onPress={handleNext}
         />
       )}

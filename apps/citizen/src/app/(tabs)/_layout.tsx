@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, Calendar, Camera, BookOpen, User } from "lucide-react-native";
+import { BookOpen, Calendar, Camera, Home, User } from "lucide-react-native";
 import { theme } from "@/theme";
 
 export default function TabLayout() {
