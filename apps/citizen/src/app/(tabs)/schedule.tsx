@@ -1,48 +1,63 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { Header } from '@/components/shared/header';
-import { Card } from '@/components/ui/card';
-import { EmptyState } from '@/components/ui/empty-state';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { WASTE_TYPES } from '@/constants/waste-types';
-import { useCollections } from '@/features/collections/hooks/use-collections';
-import { formatFullDate } from '@/lib/utils/date-helpers';
-import type { Collection } from '@/types';
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Loading } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
+import { useCollections } from "@/hooks/use-collections";
+import { useNetwork } from "@/hooks/use-network";
+import { theme } from "@/theme";
 
 export default function ScheduleScreen() {
-  const { data: collections, isLoading } = useCollections();
+  const {
+    data: collections = [],
+    isLoading,
+    error,
+    refetch,
+  } = useCollections();
+  const { isOffline } = useNetwork();
 
-  const renderItem = ({ item }: { item: Collection }) => {
-    const wasteInfo = WASTE_TYPES[item.type];
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
     return (
-      <Card style={[styles.card, item.completed && styles.completedCard]}>
-        <View style={styles.cardContent}>
-          <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
-          <View>
-            <Text style={styles.typeText}>{wasteInfo.label}</Text>
-            <Text style={styles.dateText}>
-              {formatFullDate(item.date)} - {item.time}
-            </Text>
-          </View>
-        </View>
-      </Card>
+      <ErrorMessage
+        message={isOffline ? "Sin conexión" : "Error al cargar el calendario"}
+        isOffline={isOffline}
+        onRetry={refetch}
+      />
     );
-  };
+  }
 
   return (
     <View style={styles.container}>
-      <Header title="Calendario de Recolección" />
-      {isLoading ? (
-        <LoadingSpinner fullScreen={true} />
-      ) : (
-        <FlatList
-          data={collections}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          ListEmptyComponent={<EmptyState title="No hay fechas de recolección disponibles." />}
-        />
-      )}
+      <Text style={styles.header}>Calendario</Text>
+      <FlatList
+        data={collections}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Card style={[styles.card, item.completed && styles.completed]}>
+            <View style={styles.row}>
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: WASTE_TYPES[item.type].color },
+                ]}
+              />
+              <View>
+                <Text style={styles.type}>{WASTE_TYPES[item.type].label}</Text>
+                <Text style={styles.time}>
+                  {item.date} - {item.time}
+                </Text>
+              </View>
+            </View>
+          </Card>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.empty}>No hay recolecciones programadas</Text>
+        }
+      />
     </View>
   );
 }
@@ -50,33 +65,40 @@ export default function ScheduleScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: theme.spacing.lg,
   },
-  list: {
-    padding: Spacing.lg,
-    gap: Spacing.md,
+  header: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+    marginBottom: theme.spacing.lg,
   },
   card: {
-    padding: Spacing.lg,
+    marginBottom: theme.spacing.md,
   },
-  completedCard: {
-    opacity: 0.6,
+  completed: {
+    opacity: 0.5,
   },
-  cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.md,
   },
   dot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: theme.radius.full,
   },
-  typeText: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.semibold,
+  type: {
+    fontSize: theme.text.base,
+    fontWeight: "600",
   },
-  dateText: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.textSecondary,
+  time: {
+    fontSize: theme.text.sm,
+    color: theme.colors.textSecondary,
+  },
+  empty: {
+    textAlign: "center",
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing.xl,
   },
 });

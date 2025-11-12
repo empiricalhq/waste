@@ -1,90 +1,158 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ReportCameraStep } from '@/components/report/report-camera-step';
-import { ReportDetailsStep } from '@/components/report/report-details-step';
-import { ReportSuccessStep } from '@/components/report/report-success-step';
-import { ReportTypeStep } from '@/components/report/report-type-step';
-import { AuthPrompt } from '@/components/shared/auth-prompt';
-import { Header } from '@/components/shared/header';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useAuth } from '@/features/auth/hooks/use-auth';
-import { useReportTypes } from '@/features/reports/hooks/use-reports';
-import { useSubmitReport } from '@/features/reports/hooks/use-submit-report';
-
-type ReportStep = 'type' | 'camera' | 'details' | 'success';
+import { useState } from "react";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import { Pressable } from "react-native-gesture-handler";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Input } from "@/components/ui/Input";
+import { Loading } from "@/components/ui/Loading";
+import { useNetwork } from "@/hooks/use-network";
+import { useReportTypes, useSubmitReport } from "@/hooks/use-reports";
+import { useAuth } from "@/lib/auth";
+import { theme } from "@/theme";
 
 export default function ReportScreen() {
   const { user } = useAuth();
-  const [step, setStep] = useState<ReportStep>('type');
-  const [reportData, setReportData] = useState({ type: '', imageUri: '' });
+  const [step, setStep] = useState<"type" | "details" | "success">("type");
+  const [selectedType, setSelectedType] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
 
-  const { data: reportTypes, isLoading } = useReportTypes();
-  const { mutate: submitReport, isPending } = useSubmitReport({
-    onSuccess: () => setStep('success'),
-  });
+  const { data: types = [], isLoading, error, refetch } = useReportTypes();
+  const { mutate: submit, isPending } = useSubmitReport();
+  const { isOffline } = useNetwork();
 
-  const handleSelectType = (type: string) => {
-    setReportData({ ...reportData, type });
-    setStep('camera');
-  };
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Reportar</Text>
+        <Card>
+          <Text style={styles.authMessage}>
+            Inicia sesión para enviar reportes
+          </Text>
+        </Card>
+      </View>
+    );
+  }
 
-  const handlePhotoTaken = (uri: string) => {
-    setReportData({ ...reportData, imageUri: uri });
-    setStep('details');
-  };
+  if (isLoading) {
+    return <Loading />;
+  }
 
-  const handleSkipPhoto = () => {
-    setStep('details');
-  };
+  if (error) {
+    return (
+      <ErrorMessage
+        message="Error al cargar tipos de reporte"
+        isOffline={isOffline}
+        onRetry={refetch}
+      />
+    );
+  }
 
-  const handleSubmit = (details: { description: string; location: string }) => {
-    submitReport({ ...reportData, ...details });
-  };
-
-  const resetFlow = () => {
-    setReportData({ type: '', imageUri: '' });
-    setStep('type');
-  };
-
-  const renderContent = () => {
-    if (!user) {
-      return (
-        <AuthPrompt
-          title="Función para miembros"
-          message="Para enviar un reporte y ayudarnos a dar seguimiento, por favor inicia sesión o crea una cuenta."
+  if (step === "success") {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.successTitle}>✓ Reporte enviado</Text>
+        <Text style={styles.successMessage}>
+          {isOffline
+            ? "Se enviará cuando recuperes la conexión"
+            : "Gracias por tu colaboración"}
+        </Text>
+        <Button
+          title="Crear otro reporte"
+          onPress={() => {
+            setStep("type");
+            setSelectedType("");
+            setDescription("");
+            setLocation("");
+          }}
         />
-      );
-    }
+      </View>
+    );
+  }
 
-    switch (step) {
-      case 'type':
-        return isLoading ? (
-          <LoadingSpinner fullScreen={true} />
-        ) : (
-          <ReportTypeStep reportTypes={reportTypes || []} onSelectType={handleSelectType} />
-        );
-      case 'camera':
-        return <ReportCameraStep onPhotoTaken={handlePhotoTaken} onSkip={handleSkipPhoto} />;
-      case 'details':
-        return (
-          <ReportDetailsStep
-            reportType={reportData.type}
-            imageUri={reportData.imageUri}
-            isSubmitting={isPending}
-            onSubmit={handleSubmit}
-          />
-        );
-      case 'success':
-        return <ReportSuccessStep onDone={resetFlow} />;
-      default:
-        return null;
-    }
-  };
+  if (step === "details") {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.header}>Detalles del reporte</Text>
+
+        {isOffline && (
+          <Card style={styles.offlineNotice}>
+            <Text style={styles.offlineText}>
+              📱 Sin conexión. Se enviará automáticamente cuando vuelvas a estar
+              en línea
+            </Text>
+          </Card>
+        )}
+
+        <Input label="Tipo" value={selectedType} editable={false} />
+
+        <Input
+          label="Ubicación"
+          value={location}
+          onChangeText={setLocation}
+          placeholder="Calle y número"
+        />
+
+        <Input
+          label="Descripción"
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Describe el problema..."
+          multiline={true}
+          style={{ height: 100, textAlignVertical: "top" }}
+        />
+
+        <Button
+          title="Enviar reporte"
+          onPress={() => {
+            submit(
+              { type: selectedType, description, location },
+              {
+                onSuccess: () => setStep("success"),
+                onError: (error: any) => {
+                  if (error.code === "NETWORK_ERROR") {
+                    setStep("success");
+                  } else {
+                    Alert.alert("Error", error.message);
+                  }
+                },
+              },
+            );
+          }}
+          loading={isPending}
+          disabled={!(description.trim() && location.trim())}
+        />
+
+        <Button
+          title="Volver"
+          variant="secondary"
+          onPress={() => setStep("type")}
+          style={{ marginTop: theme.spacing.md }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Header title="Reportar un problema" />
-      {renderContent()}
+      <Text style={styles.header}>Selecciona un problema</Text>
+      <FlatList
+        data={types}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() => {
+              setSelectedType(item.label);
+              setStep("details");
+            }}
+          >
+            <Card style={styles.typeCard}>
+              <Text style={styles.typeText}>{item.label}</Text>
+            </Card>
+          </Pressable>
+        )}
+      />
     </View>
   );
 }
@@ -92,5 +160,46 @@ export default function ReportScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: theme.spacing.lg,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: theme.spacing.xl,
+    gap: theme.spacing.lg,
+  },
+  header: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+    marginBottom: theme.spacing.lg,
+  },
+  authMessage: {
+    textAlign: "center",
+    color: theme.colors.textSecondary,
+  },
+  typeCard: {
+    marginBottom: theme.spacing.md,
+  },
+  typeText: {
+    fontSize: theme.text.base,
+    fontWeight: "600",
+  },
+  offlineNotice: {
+    backgroundColor: theme.colors.info,
+    marginBottom: theme.spacing.lg,
+  },
+  offlineText: {
+    color: theme.colors.textInverse,
+    fontSize: theme.text.sm,
+  },
+  successTitle: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+  },
+  successMessage: {
+    fontSize: theme.text.base,
+    color: theme.colors.textSecondary,
+    textAlign: "center",
   },
 });

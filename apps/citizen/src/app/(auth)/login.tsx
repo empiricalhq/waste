@@ -1,54 +1,92 @@
-import { useRouter } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ROUTES } from '@/constants/app-config';
-import { Colors, Spacing, Typography } from '@/constants/design-tokens';
-import { useLogin } from '@/features/auth/hooks/use-login';
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { ROUTES } from "@/constants";
+import { useAuth } from "@/lib/auth";
+import { LoginSchema } from "@/lib/schemas";
+import { theme } from "@/theme";
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { login, isLoading } = useAuth();
   const router = useRouter();
-  const { login, isPending, error } = useLogin();
 
-  const handleLogin = () => {
-    // In a real app, get email/password from state
-    login({ email: 'user@example.com', password: 'password' });
+  const handleLogin = async () => {
+    const result = LoginSchema.safeParse({ email, password });
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0];
+        if (typeof field === "string") {
+          fieldErrors[field] = issue.message;
+        }
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+
+    try {
+      await login(result.data);
+    } catch (error: any) {
+      setErrors({ general: error.message || "Error al iniciar sesión" });
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar Sesión</Text>
-      <Input label="Email" placeholder="tu@email.com" keyboardType="email-address" />
-      <Input label="Contraseña" placeholder="••••••••" secureTextEntry={true} />
-      {error && <Text style={styles.error}>{error.message}</Text>}
-      <Button title="Entrar" onPress={handleLogin} loading={isPending} />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Iniciar sesión</Text>
+
+      {errors.general && <Text style={styles.error}>{errors.general}</Text>}
+
+      <Input
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        error={errors.email}
+      />
+
+      <Input
+        label="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+        error={errors.password}
+      />
+
+      <Button title="Entrar" onPress={handleLogin} loading={isLoading} />
+
       <Button
         title="Crear cuenta"
         variant="secondary"
         onPress={() => router.push(ROUTES.SIGN_UP)}
-        style={{ marginTop: Spacing.md }}
+        style={{ marginTop: theme.spacing.md }}
       />
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: Spacing.xl,
-    backgroundColor: Colors.background,
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: theme.spacing.xl,
   },
   title: {
-    fontSize: Typography.fontSize.xxxl,
-    fontWeight: Typography.fontWeight.bold,
-    textAlign: 'center',
-    marginBottom: Spacing.xxxl,
-    color: Colors.text,
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: theme.spacing.xxxl,
   },
   error: {
-    color: Colors.error,
-    textAlign: 'center',
-    marginBottom: Spacing.md,
+    color: theme.colors.error,
+    textAlign: "center",
+    marginBottom: theme.spacing.md,
   },
 });

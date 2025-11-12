@@ -1,55 +1,141 @@
-import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { NearestTruckCard } from '@/components/home/nearest-truck-card';
-import { NextCollectionCard } from '@/components/home/next-collection-card';
-import { QuickActions } from '@/components/home/quick-actions';
-import { Header } from '@/components/shared/header';
-import { EmptyState } from '@/components/ui/empty-state';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { ROUTES } from '@/constants/app-config';
-import { Spacing } from '@/constants/design-tokens';
-import { useNextCollection } from '@/features/collections/hooks/use-next-collection';
-import { useNearestTruck } from '@/features/trucks/hooks/use-nearest-truck';
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Card } from "@/components/ui/Card";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { Loading } from "@/components/ui/Loading";
+import { WASTE_TYPES } from "@/constants";
+import { useNextCollection } from "@/hooks/use-collections";
+import { useNetwork } from "@/hooks/use-network";
+import { useNearestTruck } from "@/hooks/use-trucks";
+import { theme } from "@/theme";
 
 export default function HomeScreen() {
-  const router = useRouter();
-  const { nextCollection, isLoading: isLoadingCollections } = useNextCollection();
-  const { nearestTruck, isLoading: isLoadingTrucks } = useNearestTruck();
+  const {
+    nextCollection,
+    isLoading: loadingCollection,
+    error: collectionError,
+    refetch: refetchCollection,
+  } = useNextCollection();
+  const {
+    nearestTruck,
+    isLoading: loadingTruck,
+    error: truckError,
+    refetch: refetchTruck,
+  } = useNearestTruck();
+  const { isOffline } = useNetwork();
 
-  const isLoading = isLoadingCollections || isLoadingTrucks;
+  if (loadingCollection || loadingTruck) {
+    return <Loading />;
+  }
+
+  if (collectionError || truckError) {
+    return (
+      <ErrorMessage
+        message={isOffline ? "Sin conexión" : "Error al cargar datos"}
+        isOffline={isOffline}
+        onRetry={() => {
+          refetchCollection();
+          refetchTruck();
+        }}
+      />
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Header title="Recolección de residuos" />
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <ScrollView contentContainerStyle={styles.content}>
-          {nextCollection ? (
-            <NextCollectionCard collection={nextCollection} />
-          ) : (
-            <EmptyState title="No hay recolecciones próximas" />
-          )}
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>Inicio</Text>
 
-          {nearestTruck && <NearestTruckCard truck={nearestTruck} />}
-
-          <QuickActions
-            onSchedulePress={() => router.push(ROUTES.SCHEDULE)}
-            onMapPress={() => router.push(ROUTES.TRUCK_MAP)}
-            onHelpPress={() => router.push(ROUTES.HELP)}
-          />
-        </ScrollView>
+      {nextCollection && (
+        <Card style={styles.section}>
+          <Text style={styles.label}>Próxima recolección</Text>
+          <View style={styles.row}>
+            <View
+              style={[
+                styles.dot,
+                { backgroundColor: WASTE_TYPES[nextCollection.type].color },
+              ]}
+            />
+            <View>
+              <Text style={styles.type}>
+                {WASTE_TYPES[nextCollection.type].label}
+              </Text>
+              <Text style={styles.time}>
+                {nextCollection.date} - {nextCollection.time}
+              </Text>
+            </View>
+          </View>
+        </Card>
       )}
-    </View>
+
+      {nearestTruck && (
+        <Card style={styles.section}>
+          <Text style={styles.label}>Camión cercano</Text>
+          <View style={styles.row}>
+            <View
+              style={[
+                styles.dot,
+                { backgroundColor: WASTE_TYPES[nearestTruck.type].color },
+              ]}
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.type}>
+                {WASTE_TYPES[nearestTruck.type].label}
+              </Text>
+              <Text style={styles.time}>{nearestTruck.route}</Text>
+            </View>
+            <View>
+              <Text style={styles.eta}>{nearestTruck.eta}</Text>
+              <Text style={styles.etaLabel}>min</Text>
+            </View>
+          </View>
+        </Card>
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: theme.spacing.lg,
   },
-  content: {
-    padding: Spacing.lg,
-    gap: Spacing.xxl,
+  header: {
+    fontSize: theme.text.xxxl,
+    fontWeight: "700",
+    marginBottom: theme.spacing.lg,
+  },
+  section: {
+    marginBottom: theme.spacing.lg,
+  },
+  label: {
+    fontSize: theme.text.sm,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.md,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.md,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: theme.radius.full,
+  },
+  type: {
+    fontSize: theme.text.base,
+    fontWeight: "600",
+  },
+  time: {
+    fontSize: theme.text.sm,
+    color: theme.colors.textSecondary,
+  },
+  eta: {
+    fontSize: theme.text.xxl,
+    fontWeight: "700",
+    textAlign: "right",
+  },
+  etaLabel: {
+    fontSize: theme.text.xs,
+    color: theme.colors.textSecondary,
   },
 });

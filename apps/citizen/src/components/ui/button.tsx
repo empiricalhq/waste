@@ -1,68 +1,72 @@
-import type React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
-import { BorderRadius, Colors, Spacing, Typography } from '@/constants/design-tokens';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  type TouchableOpacityProps,
+} from "react-native";
+import { theme } from "@/theme";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary';
   loading?: boolean;
+  variant?: "primary" | "secondary";
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export function Button({
   title,
-  variant = 'primary',
-  loading = false,
-  disabled,
+  loading,
+  variant = "primary",
   style,
   ...props
-}) => {
-  const containerStyle = [
-    styles.container,
-    variant === 'primary' ? styles.primaryContainer : styles.secondaryContainer,
-    (disabled || loading) && styles.disabled,
-    style,
-  ];
-
-  const textStyle = [styles.text, variant === 'primary' ? styles.primaryText : styles.secondaryText];
-
+}: ButtonProps) {
   return (
-    <TouchableOpacity style={containerStyle} disabled={disabled || loading} activeOpacity={0.8} {...props}>
+    <TouchableOpacity
+      style={[
+        styles.base,
+        variant === "primary" ? styles.primary : styles.secondary,
+        style,
+      ]}
+      disabled={loading || props.disabled}
+      {...props}
+    >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? Colors.textInverse : Colors.primary} />
+        <ActivityIndicator
+          color={variant === "primary" ? "#fff" : theme.colors.primary}
+        />
       ) : (
-        <Text style={textStyle}>{title}</Text>
+        <Text
+          style={[styles.text, variant === "secondary" && styles.secondaryText]}
+        >
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+  base: {
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.md,
+    alignItems: "center",
+    minHeight: 44,
   },
-  primaryContainer: {
-    backgroundColor: Colors.primary,
+  primary: {
+    backgroundColor: theme.colors.primary,
   },
-  secondaryContainer: {
-    backgroundColor: Colors.cardBackground,
+  secondary: {
+    backgroundColor: theme.colors.card,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: theme.colors.border,
   },
   text: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.medium,
-  },
-  primaryText: {
-    color: Colors.textInverse,
+    fontSize: theme.text.base,
+    fontWeight: "600",
+    color: theme.colors.textInverse,
   },
   secondaryText: {
-    color: Colors.text,
-  },
-  disabled: {
-    opacity: 0.6,
+    color: theme.colors.text,
   },
 });

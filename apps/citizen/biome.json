@@ -1,0 +1,37 @@
+{
+  "root": false,
+  "extends": "//",
+  "formatter": {
+    "lineWidth": 80
+  },
+  "linter": {
+    "domains": {
+      "react": "all",
+      "solid": "none"
+    },
+    "rules": {
+      "style": {
+        "noDefaultExport": "off",
+        "noMagicNumbers": "off",
+        "useNamingConvention": "off",
+        "useExportsLast": "off",
+        "noProcessEnv": "off",
+        "useComponentExportOnlyModules": "off"
+      },
+      "suspicious": {
+        "noConsole": "off"
+      },
+      "security": {
+        "noSecrets": "off"
+      },
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
+    }
+  }
+}
