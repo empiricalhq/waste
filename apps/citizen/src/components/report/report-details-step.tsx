@@ -1,4 +1,8 @@
-import * as Location from "expo-location";
+import {
+  getCurrentPositionAsync,
+  requestForegroundPermissionsAsync,
+  reverseGeocodeAsync,
+} from "expo-location";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -14,7 +18,7 @@ interface ReportDetailsStepProps {
   onSubmit: (details: { description: string; location: string }) => void;
 }
 
-export const ReportDetailsStep: React.FC<ReportDetailsStepProps> = ({
+const ReportDetailsStep: React.FC<ReportDetailsStepProps> = ({
   imageUri,
   reportType,
   isSubmitting,
@@ -25,14 +29,14 @@ export const ReportDetailsStep: React.FC<ReportDetailsStepProps> = ({
 
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setLocation("Permiso de ubicación denegado");
         return;
       }
       try {
-        const loc = await Location.getCurrentPositionAsync({});
-        const addresses = await Location.reverseGeocodeAsync(loc.coords);
+        const loc = await getCurrentPositionAsync({});
+        const addresses = await reverseGeocodeAsync(loc.coords);
         if (addresses.length > 0) {
           const { street, streetNumber, city } = addresses[0];
           setLocation(`${street || ""} ${streetNumber || ""}, ${city || ""}`);
@@ -87,3 +91,5 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
 });
+
+export { ReportDetailsStep };

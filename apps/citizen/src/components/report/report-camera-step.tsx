@@ -18,7 +18,7 @@ interface ReportCameraStepProps {
   onSkip: () => void;
 }
 
-export const ReportCameraStep: React.FC<ReportCameraStepProps> = ({
+const ReportCameraStep: React.FC<ReportCameraStepProps> = ({
   onPhotoTaken,
   onSkip,
 }) => {
@@ -262,3 +262,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export { ReportCameraStep };

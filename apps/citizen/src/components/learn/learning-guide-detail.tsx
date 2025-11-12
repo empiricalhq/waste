@@ -14,9 +14,7 @@ interface LearningGuideDetailProps {
   guide: LearningGuide;
 }
 
-export const LearningGuideDetail: React.FC<LearningGuideDetailProps> = ({
-  guide,
-}) => {
+const LearningGuideDetail: React.FC<LearningGuideDetailProps> = ({ guide }) => {
   const wasteInfo = WASTE_TYPES[guide.category];
   return (
     <View style={styles.container}>
@@ -30,8 +28,8 @@ export const LearningGuideDetail: React.FC<LearningGuideDetailProps> = ({
           </View>
           <Text style={styles.description}>{guide.description}</Text>
           <Text style={styles.sectionTitle}>Ejemplos</Text>
-          {guide.examples.map((example, index) => (
-            <Text key={index} style={styles.exampleText}>
+          {guide.examples.map((example) => (
+            <Text key={example} style={styles.exampleText}>
               • {example}
             </Text>
           ))}
@@ -86,3 +84,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
 });
+
+// Export after non-export statements
+export { LearningGuideDetail };

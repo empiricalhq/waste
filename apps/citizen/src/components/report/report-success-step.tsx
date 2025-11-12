@@ -8,9 +8,7 @@ interface ReportSuccessStepProps {
   onDone: () => void;
 }
 
-export const ReportSuccessStep: React.FC<ReportSuccessStepProps> = ({
-  onDone,
-}) => {
+const ReportSuccessStep: React.FC<ReportSuccessStepProps> = ({ onDone }) => {
   return (
     <View style={styles.container}>
       <CheckCircle2 size={80} color={Colors.success} />
@@ -46,3 +44,5 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
 });
+
+export { ReportSuccessStep };

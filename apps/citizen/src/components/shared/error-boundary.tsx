@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Colors, Spacing, Typography } from "@/constants/design-tokens";
+import { logError } from "@/lib/utils/error-logger";
 
 interface Props {
   children: ReactNode;
@@ -9,14 +10,20 @@ interface State {
   hasError: boolean;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  public state: State = { hasError: false };
+class ErrorBoundary extends Component<Props, State> {
+  state: State = { hasError: false };
 
-  public static getDerivedStateFromError(_: Error): State {
+  static getDerivedStateFromError(_: Error): State {
     return { hasError: true };
   }
 
-  public componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {}
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // log the error and provide component stack info for debugging
+    logError(error, {
+      componentStack: errorInfo.componentStack ?? undefined,
+      errorBoundary: "ErrorBoundary",
+    });
+  }
 
   render() {
     if (this.state.hasError) {
@@ -56,3 +63,5 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
 });
+
+export { ErrorBoundary };

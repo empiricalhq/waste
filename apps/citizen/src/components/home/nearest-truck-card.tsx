@@ -15,29 +15,37 @@ interface NearestTruckCardProps {
   index?: number;
 }
 
-export const NearestTruckCard = React.memo<NearestTruckCardProps>(
-  ({ truck, index = 1 }) => {
-    const wasteInfo = WASTE_TYPES[truck.type];
-    return (
-      <AnimatedCard index={index}>
-        <Text style={styles.label}>Camión Cercano</Text>
-        <View style={styles.content}>
-          <View style={styles.info}>
-            <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
-            <View>
-              <Text style={styles.typeText}>{wasteInfo.label}</Text>
-              <Text style={styles.routeText}>{truck.route}</Text>
-            </View>
-          </View>
-          <View style={styles.eta}>
-            <Text style={styles.etaNumber}>{truck.eta}</Text>
-            <Text style={styles.etaLabel}>min</Text>
+const NearestTruckCardComponent = ({
+  truck,
+  index = 1,
+}: NearestTruckCardProps) => {
+  return (
+    <AnimatedCard index={index}>
+      <Text style={styles.label}>Camión Cercano</Text>
+      <View style={styles.content}>
+        <View style={styles.info}>
+          <View
+            style={[
+              styles.dot,
+              {
+                backgroundColor:
+                  WASTE_TYPES[truck.type as keyof typeof WASTE_TYPES].color,
+              },
+            ]}
+          />
+          <View>
+            <Text style={styles.typeText}>{WASTE_TYPES[truck.type].label}</Text>
+            <Text style={styles.routeText}>{truck.route}</Text>
           </View>
         </View>
-      </AnimatedCard>
-    );
-  },
-);
+        <View style={styles.eta}>
+          <Text style={styles.etaNumber}>{truck.eta}</Text>
+          <Text style={styles.etaLabel}>min</Text>
+        </View>
+      </View>
+    </AnimatedCard>
+  );
+};
 
 const styles = StyleSheet.create({
   label: {
@@ -81,4 +89,12 @@ const styles = StyleSheet.create({
   },
 });
 
+const NearestTruckCard = React.memo<NearestTruckCardProps>(
+  NearestTruckCardComponent,
+);
+
+/* biome-disable security/no-secrets */
 NearestTruckCard.displayName = "NearestTruckCard";
+/* biome-enable security/no-secrets */
+
+export { NearestTruckCard };

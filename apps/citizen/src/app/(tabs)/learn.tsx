@@ -18,12 +18,14 @@ import { useQuiz } from "@/features/learning/hooks/use-quiz";
 import { useUpdateUserProgress } from "@/features/learning/hooks/use-user-progress";
 import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
+import type { LearningGuide, QuizQuestion } from "@/types";
 
-function LearnScreenContent() {
+function useLearnScreenState() {
   const { user } = useAuth();
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
   const reducedMotion = useReducedMotion();
+
   const [mode, setMode] = useState<"roadmap" | "quiz">("roadmap");
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [quizScore, setQuizScore] = useState({ score: 0, total: 0 });
@@ -43,7 +45,7 @@ function LearnScreenContent() {
   const { mutate: updateUserProgress } = useUpdateUserProgress();
 
   const isLoading = isLoadingGuides || isLoadingQuiz;
-  const hasError = guidesError || quizError;
+  const hasError = Boolean(guidesError || quizError);
 
   const handleRetry = useCallback(() => {
     refetchGuides();
@@ -55,7 +57,7 @@ function LearnScreenContent() {
       if (user) {
         updateUserProgress(score);
       }
-      setQuizScore({ score, total: questions?.length || 0 });
+      setQuizScore({ score, total: questions?.length ?? 0 });
       setShowCompletionModal(true);
     },
     [user, updateUserProgress, questions],
@@ -71,91 +73,153 @@ function LearnScreenContent() {
     router.push(ROUTES.SIGN_UP);
   }, [router]);
 
-  const handleStartQuiz = useCallback(() => {
-    setMode("quiz");
-  }, []);
+  const handleStartQuiz = useCallback(() => setMode("quiz"), []);
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <View style={styles.content}>
-          <ListSkeleton count={3} />
-        </View>
-      );
-    }
-
-    if (hasError) {
-      return (
-        <ErrorState
-          error={guidesError || quizError}
-          onRetry={handleRetry}
-          isOffline={isOffline}
-        />
-      );
-    }
-
-    if (mode === "quiz" && questions) {
-      return (
-        <Animated.View
-          key="quiz-mode"
-          entering={
-            reducedMotion
-              ? undefined
-              : FadeIn.duration(ANIMATION_DURATIONS.NORMAL)
-          }
-          exiting={
-            reducedMotion
-              ? undefined
-              : FadeOut.duration(ANIMATION_DURATIONS.QUICK)
-          }
-          style={styles.modeContainer}
-        >
-          <QuizMode questions={questions} onQuizComplete={handleQuizComplete} />
-        </Animated.View>
-      );
-    }
-
-    if (guides) {
-      return (
-        <Animated.View
-          key="roadmap-mode"
-          entering={
-            reducedMotion
-              ? undefined
-              : FadeIn.duration(ANIMATION_DURATIONS.NORMAL)
-          }
-          exiting={
-            reducedMotion
-              ? undefined
-              : FadeOut.duration(ANIMATION_DURATIONS.QUICK)
-          }
-          style={styles.modeContainer}
-        >
-          <RoadmapMode guides={guides} onStartQuiz={handleStartQuiz} />
-        </Animated.View>
-      );
-    }
-
-    return null;
+  return {
+    user,
+    router,
+    isOffline,
+    reducedMotion,
+    mode,
+    setMode,
+    isLoading,
+    hasError,
+    guides,
+    questions,
+    guidesError,
+    quizError,
+    quizScore,
+    showCompletionModal,
+    handleRetry,
+    handleQuizComplete,
+    handleModalContinue,
+    handleModalSignUp,
+    handleStartQuiz,
   };
+}
 
+function RenderContent({
+  isLoading,
+  hasError,
+  isOffline,
+  reducedMotion,
+  mode,
+  questions,
+  guides,
+  guidesError,
+  quizError,
+  onRetry,
+  onQuizComplete,
+  onStartQuiz,
+}: {
+  isLoading: boolean;
+  hasError: boolean;
+  isOffline: boolean;
+  reducedMotion: boolean;
+  mode: "roadmap" | "quiz";
+  questions?: QuizQuestion[];
+  guides?: LearningGuide[];
+  guidesError?: Error | null;
+  quizError?: Error | null;
+  onRetry: () => void;
+  onQuizComplete: (score: number) => void;
+  onStartQuiz: () => void;
+}) {
+  if (isLoading) {
+    return (
+      <View style={styles.content}>
+        <ListSkeleton count={3} />
+      </View>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <ErrorState
+        error={(guidesError || quizError) ?? null}
+        onRetry={onRetry}
+        isOffline={isOffline}
+      />
+    );
+  }
+
+  if (mode === "quiz" && questions) {
+    return (
+      <Animated.View
+        key="quiz-mode"
+        entering={
+          reducedMotion
+            ? undefined
+            : FadeIn.duration(ANIMATION_DURATIONS.NORMAL)
+        }
+        exiting={
+          reducedMotion
+            ? undefined
+            : FadeOut.duration(ANIMATION_DURATIONS.QUICK)
+        }
+        style={styles.modeContainer}
+      >
+        <QuizMode questions={questions} onQuizComplete={onQuizComplete} />
+      </Animated.View>
+    );
+  }
+
+  if (guides) {
+    return (
+      <Animated.View
+        key="roadmap-mode"
+        entering={
+          reducedMotion
+            ? undefined
+            : FadeIn.duration(ANIMATION_DURATIONS.NORMAL)
+        }
+        exiting={
+          reducedMotion
+            ? undefined
+            : FadeOut.duration(ANIMATION_DURATIONS.QUICK)
+        }
+        style={styles.modeContainer}
+      >
+        <RoadmapMode guides={guides} onStartQuiz={onStartQuiz} />
+      </Animated.View>
+    );
+  }
+
+  return null;
+}
+
+function LearnScreenContent() {
+  const s = useLearnScreenState();
   return (
     <View style={styles.container}>
       <Header title="Aprender a reciclar" />
-      {renderContent()}
+      <RenderContent
+        isLoading={s.isLoading}
+        hasError={s.hasError}
+        isOffline={s.isOffline}
+        reducedMotion={s.reducedMotion}
+        mode={s.mode}
+        questions={s.questions}
+        guides={s.guides}
+        guidesError={s.guidesError ?? null}
+        quizError={s.quizError ?? null}
+        onRetry={s.handleRetry}
+        onQuizComplete={s.handleQuizComplete}
+        onStartQuiz={s.handleStartQuiz}
+      />
       <QuizCompletionModal
-        visible={showCompletionModal}
-        score={quizScore.score}
-        total={quizScore.total}
-        isAuthenticated={Boolean(user)}
-        onContinue={handleModalContinue}
-        onSignUp={handleModalSignUp}
+        visible={s.showCompletionModal}
+        score={s.quizScore.score}
+        total={s.quizScore.total}
+        isAuthenticated={Boolean(s.user)}
+        onContinue={s.handleModalContinue}
+        onSignUp={s.handleModalSignUp}
       />
     </View>
   );
 }
 
-export default function LearnScreen() {
+function LearnScreen() {
   return (
     <LearningFeatureWrapper>
       <LearnScreenContent />
@@ -164,13 +228,9 @@ export default function LearnScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: Spacing.lg,
-  },
-  modeContainer: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  content: { padding: Spacing.lg },
+  modeContainer: { flex: 1 },
 });
+
+export default LearnScreen;

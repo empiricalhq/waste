@@ -13,7 +13,7 @@ interface ReportCardProps {
   report: Report;
 }
 
-export const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
+const ReportCard: React.FC<ReportCardProps> = ({ report }) => {
   // const _isPending = report.status === "pending";
   const isOptimistic = report.id.startsWith("temp-");
 
@@ -118,3 +118,5 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 });
+
+export { ReportCard };

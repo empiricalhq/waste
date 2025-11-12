@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export interface QueuedMutation {
+interface QueuedMutation {
   id: string;
   mutationKey: string[];
   variables: unknown;
@@ -11,7 +11,7 @@ export interface QueuedMutation {
 
 class MutationQueue {
   private queue: QueuedMutation[] = [];
-  private readonly STORAGE_KEY = "MUTATION_QUEUE";
+  private readonly storageKey = "MUTATION_QUEUE";
 
   /**
    * Add a mutation to the queue
@@ -91,8 +91,10 @@ class MutationQueue {
    */
   private async persist(): Promise<void> {
     try {
-      await AsyncStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.queue));
-    } catch (_error) {}
+      await AsyncStorage.setItem(this.storageKey, JSON.stringify(this.queue));
+    } catch (_error) {
+      // Ignore errors when persisting queue to storage
+    }
   }
 
   /**
@@ -100,7 +102,7 @@ class MutationQueue {
    */
   async hydrate(): Promise<void> {
     try {
-      const stored = await AsyncStorage.getItem(this.STORAGE_KEY);
+      const stored = await AsyncStorage.getItem(this.storageKey);
       if (stored) {
         this.queue = JSON.parse(stored);
       }
@@ -111,3 +113,5 @@ class MutationQueue {
 }
 
 export const mutationQueue = new MutationQueue();
+
+export type { QueuedMutation };

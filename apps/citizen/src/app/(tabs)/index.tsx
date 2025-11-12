@@ -13,8 +13,20 @@ import { Spacing } from "@/constants/design-tokens";
 import { useNextCollection } from "@/features/collections/hooks/use-next-collection";
 import { useNearestTruck } from "@/features/trucks/hooks/use-nearest-truck";
 import { useNetworkStatus } from "@/lib/hooks/use-network-status";
+import type { Collection, Truck } from "@/types";
 
-export default function HomeScreen() {
+function HomeScreen() {
+  const home = useHome();
+
+  return (
+    <View style={styles.container}>
+      <Header title="Recolección de residuos" />
+      <HomeView {...home} />
+    </View>
+  );
+}
+
+function useHome() {
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
   const {
@@ -31,7 +43,7 @@ export default function HomeScreen() {
   } = useNearestTruck();
 
   const isLoading = isLoadingCollections || isLoadingTrucks;
-  const hasError = collectionsError || trucksError;
+  const hasError = Boolean(collectionsError || trucksError);
 
   const handleRetry = useCallback(() => {
     refetchCollections();
@@ -50,37 +62,78 @@ export default function HomeScreen() {
     router.push(ROUTES.HELP);
   }, [router]);
 
+  return {
+    nextCollection,
+    nearestTruck,
+    isLoading,
+    collectionsError,
+    trucksError,
+    isOffline,
+    hasError,
+    handleRetry,
+    handleSchedulePress,
+    handleMapPress,
+    handleHelpPress,
+  };
+}
+
+function HomeView({
+  nextCollection,
+  nearestTruck,
+  isLoading,
+  collectionsError,
+  trucksError,
+  isOffline,
+  handleRetry,
+  handleSchedulePress,
+  handleMapPress,
+  handleHelpPress,
+}: {
+  nextCollection?: Collection | null | undefined;
+  nearestTruck?: Truck | null | undefined;
+  isLoading: boolean;
+  collectionsError: Error | null;
+  trucksError: Error | null;
+  isOffline: boolean;
+  handleRetry: () => void;
+  handleSchedulePress: () => void;
+  handleMapPress: () => void;
+  handleHelpPress: () => void;
+}) {
+  if (isLoading) {
+    return (
+      <View style={styles.content}>
+        <ListSkeleton count={2} />
+      </View>
+    );
+  }
+
+  if (collectionsError || trucksError) {
+    return (
+      <ErrorState
+        error={collectionsError || trucksError}
+        onRetry={handleRetry}
+        isOffline={isOffline}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Header title="Recolección de residuos" />
-      {isLoading ? (
-        <View style={styles.content}>
-          <ListSkeleton count={2} />
-        </View>
-      ) : hasError ? (
-        <ErrorState
-          error={collectionsError || trucksError}
-          onRetry={handleRetry}
-          isOffline={isOffline}
-        />
+    <ScrollView contentContainerStyle={styles.content}>
+      {nextCollection ? (
+        <NextCollectionCard collection={nextCollection} />
       ) : (
-        <ScrollView contentContainerStyle={styles.content}>
-          {nextCollection ? (
-            <NextCollectionCard collection={nextCollection} />
-          ) : (
-            <EmptyState title="No hay recolecciones próximas" />
-          )}
-
-          {nearestTruck && <NearestTruckCard truck={nearestTruck} />}
-
-          <QuickActions
-            onSchedulePress={handleSchedulePress}
-            onMapPress={handleMapPress}
-            onHelpPress={handleHelpPress}
-          />
-        </ScrollView>
+        <EmptyState title="No hay recolecciones próximas" />
       )}
-    </View>
+
+      {nearestTruck && <NearestTruckCard truck={nearestTruck} />}
+
+      <QuickActions
+        onSchedulePress={handleSchedulePress}
+        onMapPress={handleMapPress}
+        onHelpPress={handleHelpPress}
+      />
+    </ScrollView>
   );
 }
 
@@ -93,3 +146,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xxl,
   },
 });
+
+export default HomeScreen;
+
+// export after non-export statements

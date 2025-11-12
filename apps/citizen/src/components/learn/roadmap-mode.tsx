@@ -10,10 +10,7 @@ interface RoadmapModeProps {
   onStartQuiz: () => void;
 }
 
-export const RoadmapMode: React.FC<RoadmapModeProps> = ({
-  guides,
-  onStartQuiz,
-}) => {
+const RoadmapMode: React.FC<RoadmapModeProps> = ({ guides, onStartQuiz }) => {
   return (
     <View style={styles.container}>
       <Button
@@ -34,3 +31,5 @@ const styles = StyleSheet.create({
     margin: Spacing.lg,
   },
 });
+
+export { RoadmapMode };

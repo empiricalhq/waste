@@ -25,10 +25,12 @@ interface QuizViewProps {
   onQuizComplete: (score: number) => void;
 }
 
-export const QuizView: React.FC<QuizViewProps> = ({
-  questions,
-  onQuizComplete,
-}) => {
+const IMAGE_SCALE_INITIAL = 0.9;
+const TRANSLATE_DISTANCE = 300;
+const CELEBRATION_DISPLAY_MS = 2000;
+const NEXT_BUTTON_INITIAL_Y = 50;
+
+const QuizView: React.FC<QuizViewProps> = ({ questions, onQuizComplete }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [score, setScore] = useState(0);
@@ -45,7 +47,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
   // question card animation
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
-  const imageScale = useSharedValue(0.9);
+  const imageScale = useSharedValue(IMAGE_SCALE_INITIAL);
 
   // entrance animation for new question
   useEffect(() => {
@@ -56,9 +58,9 @@ export const QuizView: React.FC<QuizViewProps> = ({
       opacity.value = 1;
       imageScale.value = 1;
     } else {
-      translateX.value = 300;
+      translateX.value = TRANSLATE_DISTANCE;
       opacity.value = 0;
-      imageScale.value = 0.9;
+      imageScale.value = IMAGE_SCALE_INITIAL;
 
       translateX.value = withTiming(0, {
         duration: ANIMATION_DURATIONS.NORMAL,
@@ -100,7 +102,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
       // hide celebration after delay
       setTimeout(() => {
         setShowCelebration(false);
-      }, 2000);
+      }, CELEBRATION_DISPLAY_MS);
     } else {
       setStreak(0);
     }
@@ -112,7 +114,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
     } else {
       // exit animation
       if (!reducedMotion) {
-        translateX.value = withTiming(-300, {
+        translateX.value = withTiming(-TRANSLATE_DISTANCE, {
           duration: ANIMATION_DURATIONS.QUICK,
           easing: EASING.IN_OUT_CUBIC,
         });
@@ -144,7 +146,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
   }));
 
   // next button animation
-  const nextButtonTranslateY = useSharedValue(50);
+  const nextButtonTranslateY = useSharedValue(NEXT_BUTTON_INITIAL_Y);
   const nextButtonOpacity = useSharedValue(0);
 
   useEffect(() => {
@@ -162,7 +164,7 @@ export const QuizView: React.FC<QuizViewProps> = ({
         });
       }
     } else {
-      nextButtonTranslateY.value = 50;
+      nextButtonTranslateY.value = NEXT_BUTTON_INITIAL_Y;
       nextButtonOpacity.value = 0;
     }
 
@@ -270,3 +272,5 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
   },
 });
+
+export { QuizView };

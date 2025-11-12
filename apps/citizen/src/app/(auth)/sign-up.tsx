@@ -10,7 +10,7 @@ import { useSignUp } from "@/features/auth/hooks/use-sign-up";
 import { signUpSchema } from "@/features/auth/schemas";
 import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 
-export default function SignUpScreen() {
+function useSignUpForm() {
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
   const { signUp, isPending, error, reset } = useSignUp();
@@ -31,10 +31,10 @@ export default function SignUpScreen() {
 
     if (!result.success) {
       const errors: { name?: string; email?: string; password?: string } = {};
-      result.error.issues.forEach((err) => {
+      for (const err of result.error.issues) {
         const field = err.path[0] as "name" | "email" | "password";
         errors[field] = err.message;
-      });
+      }
       setValidationErrors(errors);
       return;
     }
@@ -54,6 +54,109 @@ export default function SignUpScreen() {
     handleSignUp();
   };
 
+  return {
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    validationErrors,
+    isPending,
+    isOffline,
+    error,
+    handleSignUp,
+    handleRetry,
+  };
+}
+
+function SignUpScreen() {
+  const router = useRouter();
+  const {
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    validationErrors,
+    isPending,
+    isOffline,
+    error,
+    handleSignUp,
+    handleRetry,
+  } = useSignUpForm();
+
+  return (
+    <SignUpView
+      name={name}
+      email={email}
+      password={password}
+      setName={setName}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      validationErrors={validationErrors}
+      onSignUp={handleSignUp}
+      onBack={() => router.back()}
+      isPending={isPending}
+      isOffline={isOffline}
+      error={error}
+      onRetry={handleRetry}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: Spacing.xl,
+    backgroundColor: Colors.background,
+  },
+  title: {
+    fontSize: Typography.fontSize.xxxl,
+    fontWeight: Typography.fontWeight.bold,
+    textAlign: "center",
+    marginBottom: Spacing.xxxl,
+    color: Colors.text,
+  },
+  fieldError: {
+    color: Colors.error,
+    fontSize: Typography.fontSize.sm,
+    marginTop: -Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+});
+
+function SignUpView({
+  name,
+  email,
+  password,
+  setName,
+  setEmail,
+  setPassword,
+  validationErrors,
+  onSignUp,
+  onBack,
+  isPending,
+  isOffline,
+  error,
+  onRetry,
+}: {
+  name: string;
+  email: string;
+  password: string;
+  setName: (v: string) => void;
+  setEmail: (v: string) => void;
+  setPassword: (v: string) => void;
+  validationErrors: { name?: string; email?: string; password?: string };
+  onSignUp: () => void;
+  onBack: () => void;
+  isPending: boolean;
+  isOffline: boolean;
+  error: Error | null;
+  onRetry: () => void;
+}) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Crear Cuenta</Text>
@@ -61,7 +164,7 @@ export default function SignUpScreen() {
       {error && (
         <ErrorState
           error={error}
-          onRetry={handleRetry}
+          onRetry={onRetry}
           isOffline={isOffline}
           isRetrying={isPending}
           variant="compact"
@@ -104,14 +207,14 @@ export default function SignUpScreen() {
       )}
       <Button
         title="Registrarse"
-        onPress={handleSignUp}
+        onPress={onSignUp}
         loading={isPending}
         disabled={isPending}
       />
       <Button
         title="Ya tengo cuenta"
         variant="secondary"
-        onPress={() => router.back()}
+        onPress={onBack}
         style={{ marginTop: Spacing.md }}
         disabled={isPending}
       />
@@ -119,24 +222,4 @@ export default function SignUpScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: Spacing.xl,
-    backgroundColor: Colors.background,
-  },
-  title: {
-    fontSize: Typography.fontSize.xxxl,
-    fontWeight: Typography.fontWeight.bold,
-    textAlign: "center",
-    marginBottom: Spacing.xxxl,
-    color: Colors.text,
-  },
-  fieldError: {
-    color: Colors.error,
-    fontSize: Typography.fontSize.sm,
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.sm,
-  },
-});
+export default SignUpScreen;

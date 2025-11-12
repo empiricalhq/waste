@@ -16,7 +16,15 @@ import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 import { formatFullDate } from "@/lib/utils/date-helpers";
 import type { Collection } from "@/types";
 
-export default function ScheduleScreen() {
+// Constants for time calculations
+const SECOND_MS = 1000;
+const MINUTE_MS = 60 * SECOND_MS;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+const DAYS_TO_CONSIDER_OLD = 7;
+const SEVEN_DAYS_MS = DAYS_TO_CONSIDER_OLD * DAY_MS;
+
+function ScheduleScreen() {
   const { isOffline } = useNetworkStatus();
   const {
     data: collections,
@@ -27,8 +35,8 @@ export default function ScheduleScreen() {
   } = useCollections();
 
   // check if data is older than 7 days
-  const isDataOld =
-    dataUpdatedAt && Date.now() - dataUpdatedAt > 7 * 24 * 60 * 60 * 1000;
+  // check if data is older than 7 days
+  const isDataOld = dataUpdatedAt && Date.now() - dataUpdatedAt > SEVEN_DAYS_MS;
 
   const renderItem = ({ item }: { item: Collection }) => {
     const wasteInfo = WASTE_TYPES[item.type];
@@ -50,43 +58,53 @@ export default function ScheduleScreen() {
     );
   };
 
+  let content: React.ReactNode;
+
+  if (isLoading) {
+    content = (
+      <View style={styles.list}>
+        <ListSkeleton count={5} />
+      </View>
+    );
+  } else if (error) {
+    content = (
+      <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
+    );
+  } else {
+    content = (
+      <>
+        {isDataOld && (
+          <View style={styles.warningBanner}>
+            <Text style={styles.warningText}>
+              ⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.
+            </Text>
+          </View>
+        )}
+        {dataUpdatedAt && (
+          <View style={styles.timestampBanner}>
+            <Text style={styles.timestampText}>
+              Última actualización:{" "}
+              {new Date(dataUpdatedAt).toLocaleString("es-PE")}
+            </Text>
+          </View>
+        )}
+        <FlatList
+          data={collections}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          ListEmptyComponent={
+            <EmptyState title="No hay fechas de recolección disponibles." />
+          }
+        />
+      </>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Header title="Calendario de Recolección" />
-      {isLoading ? (
-        <View style={styles.list}>
-          <ListSkeleton count={5} />
-        </View>
-      ) : error ? (
-        <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
-      ) : (
-        <>
-          {isDataOld && (
-            <View style={styles.warningBanner}>
-              <Text style={styles.warningText}>
-                ⚠️ Los datos tienen más de 7 días. Conéctate para actualizar.
-              </Text>
-            </View>
-          )}
-          {dataUpdatedAt && (
-            <View style={styles.timestampBanner}>
-              <Text style={styles.timestampText}>
-                Última actualización:{" "}
-                {new Date(dataUpdatedAt).toLocaleString("es-PE")}
-              </Text>
-            </View>
-          )}
-          <FlatList
-            data={collections}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.list}
-            ListEmptyComponent={
-              <EmptyState title="No hay fechas de recolección disponibles." />
-            }
-          />
-        </>
-      )}
+      {content}
     </View>
   );
 }
@@ -146,3 +164,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export default ScheduleScreen;
+
+// export after non-export statements

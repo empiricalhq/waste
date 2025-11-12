@@ -3,7 +3,7 @@ import { BookOpen, Camera, Home, LogIn, User } from "lucide-react-native";
 import { Colors } from "@/constants/design-tokens";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 
-export default function TabLayout() {
+function TabLayout() {
   const { user } = useAuth();
 
   return (
@@ -57,3 +57,5 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+export default TabLayout;

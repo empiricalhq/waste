@@ -18,9 +18,13 @@ export const getAdaptiveQueryOptions = (
   }
 
   // on cellular, we are more conservative
+  const SecondMs = 1000;
+  const MinuteMs = 60 * SecondMs;
+  const StaleTimeCellularMinutes = 15;
+  const StaleTimeCellularMs = StaleTimeCellularMinutes * MinuteMs; // 15 minutes (vs 5 minutes default)
   return {
     ...baseOptions,
-    staleTime: 15 * 60 * 1000, // 15 minutes (vs 5 minutes default)
+    staleTime: StaleTimeCellularMs,
     refetchOnWindowFocus: false, // Don't refetch on focus
     refetchOnReconnect: false, // Don't refetch on reconnect
     refetchInterval: false, // Disable polling

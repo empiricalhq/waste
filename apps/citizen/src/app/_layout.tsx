@@ -3,7 +3,7 @@ import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persi
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack, useRouter, useSegments } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { hideAsync, preventAutoHideAsync } from "expo-splash-screen";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -18,7 +18,23 @@ import { AppError } from "@/lib/utils/error-handler";
 
 const APP_VERSION = "1.0.0";
 
-SplashScreen.preventAutoHideAsync();
+// time constants to avoid magic numbers
+const SECOND_MS = 1000;
+const MINUTE_MS = 60 * SECOND_MS;
+const HOUR_MS = 60 * MINUTE_MS;
+const DAY_MS = 24 * HOUR_MS;
+const MAX_RETRIES = 3;
+const MAX_RETRY_DELAY_MS = 30_000; // 30s
+const STALE_TIME_MINUTES = 5;
+const STALE_TIME_MS = STALE_TIME_MINUTES * MINUTE_MS; // 5 minutes
+const GC_TIME_MINUTES = 10;
+const GC_TIME_MS = GC_TIME_MINUTES * MINUTE_MS; // 10 minutes
+const PERSIST_MAX_AGE_DAYS = 7;
+const PERSIST_MAX_AGE_MS = PERSIST_MAX_AGE_DAYS * DAY_MS; // 7 days
+const HTTP_STATUS_CLIENT_ERROR_MIN = 400;
+const HTTP_STATUS_CLIENT_ERROR_MAX = 500;
+
+preventAutoHideAsync();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,28 +43,33 @@ const queryClient = new QueryClient({
         // don't retry client errors (4xx)
         if (
           error instanceof AppError &&
-          error.statusCode >= 400 &&
-          error.statusCode < 500
+          error.statusCode >= HTTP_STATUS_CLIENT_ERROR_MIN &&
+          error.statusCode < HTTP_STATUS_CLIENT_ERROR_MAX
         ) {
           return false;
         }
         // retry up to 3 times for network errors and server errors
-        return failureCount < 3;
+        return failureCount < MAX_RETRIES;
       },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000), // 1s, 2s, 4s, max 30s
+      retryDelay: (attemptIndex) =>
+        Math.min(SECOND_MS * 2 ** attemptIndex, MAX_RETRY_DELAY_MS), // 1s, 2s, 4s, max 30s
 
       // cache configuration
-      staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-      gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
+      staleTime: STALE_TIME_MS, // Consider data fresh for 5 minutes
+      gcTime: GC_TIME_MS, // Keep unused data in cache for 10 minutes
 
       // offline behavior
+      /* biome-disable security/no-secrets */
       networkMode: "offlineFirst",
+      /* biome-enable security/no-secrets */
       refetchOnReconnect: true,
       refetchOnWindowFocus: true,
     },
     mutations: {
       retry: 1, // Retry mutations once
+      /* biome-disable security/no-secrets */
       networkMode: "offlineFirst",
+      /* biome-enable security/no-secrets */
     },
   },
 });
@@ -71,7 +92,7 @@ function RootLayoutNav() {
 
   useEffect(() => {
     if (!isLoading) {
-      SplashScreen.hideAsync();
+      hideAsync();
     }
   }, [isLoading]);
 
@@ -131,14 +152,14 @@ function RootLayoutNav() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <ErrorBoundary>
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={{
           persister,
-          maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+          maxAge: PERSIST_MAX_AGE_MS, // 7 days
           buster: `${APP_VERSION}-${Platform.OS}`, // Clear cache on app update or platform change
         }}
       >
@@ -151,3 +172,5 @@ export default function RootLayout() {
     </ErrorBoundary>
   );
 }
+
+export default RootLayout;

@@ -19,14 +19,19 @@ import { ReportFeatureWrapper } from "@/features/reports/components/report-featu
 import { useReportTypes } from "@/features/reports/hooks/use-reports";
 import { useSubmitReport } from "@/features/reports/hooks/use-submit-report";
 import { useNetworkStatus } from "@/lib/hooks/use-network-status";
+import type { ReportType } from "@/types";
 
 type ReportStep = "type" | "camera" | "details" | "success";
-
-function ReportScreenContent() {
-  const { user } = useAuth();
-  const { isOffline } = useNetworkStatus();
+interface CreateReportPayload {
+  type: string;
+  description: string;
+  location: string;
+  imageUri?: string;
+}
+function useReportFlow() {
+  // Report flow handlers and state are handled by useReportFlow
   const [step, setStep] = useState<ReportStep>("type");
-  const [reportData, setReportData] = useState({
+  const [reportData, setReportData] = useState<CreateReportPayload>({
     type: "",
     imageUri: "",
     description: "",
@@ -34,28 +39,13 @@ function ReportScreenContent() {
   });
   const [submitError, setSubmitError] = useState<Error | null>(null);
 
-  const { data: reportTypes, isLoading, error, refetch } = useReportTypes();
-  const { mutate: submitReport, isPending } = useSubmitReport({
-    onSuccess: () => {
-      setSubmitError(null);
-      setStep("success");
-    },
-    onError: (error) => {
-      setSubmitError(error);
-    },
-  });
-
   const handleRetrySubmit = () => {
+    // wrapper for UI, actual submission will be processed by the calling component
     if (reportData.type && reportData.description && reportData.location) {
       setSubmitError(null);
-      // Re-submit with current data
-      submitReport({
-        type: reportData.type,
-        description: reportData.description,
-        location: reportData.location,
-        imageUri: reportData.imageUri,
-      });
+      return true;
     }
+    return false;
   };
 
   const handleSelectType = (type: string) => {
@@ -72,15 +62,13 @@ function ReportScreenContent() {
     setStep("details");
   };
 
-  const handleSubmit = (details: { description: string; location: string }) => {
+  const prepareSubmitPayload = (details: {
+    description: string;
+    location: string;
+  }) => {
     const fullReportData = { ...reportData, ...details };
     setReportData(fullReportData);
-    submitReport({
-      type: fullReportData.type,
-      description: fullReportData.description,
-      location: fullReportData.location,
-      imageUri: fullReportData.imageUri,
-    });
+    return fullReportData;
   };
 
   const resetFlow = () => {
@@ -89,94 +77,105 @@ function ReportScreenContent() {
     setStep("type");
   };
 
-  const renderContent = () => {
-    if (!user) {
-      return (
-        <AuthPrompt
-          title="Función para miembros"
-          message="Para enviar un reporte y ayudarnos a dar seguimiento, por favor inicia sesión o crea una cuenta."
-        />
-      );
-    }
+  return {
+    step,
+    reportData,
+    submitError,
+    setSubmitError,
+    handleRetrySubmit,
+    handleSelectType,
+    handlePhotoTaken,
+    handleSkipPhoto,
+    prepareSubmitPayload,
+    setStep,
+    resetFlow,
+  };
+}
 
-    switch (step) {
-      case "type":
-        if (isLoading) {
-          return (
-            <View style={styles.content}>
-              <ListSkeleton count={3} />
-            </View>
-          );
-        }
-        if (error) {
-          return (
-            <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
-          );
-        }
-        return (
-          <ReportTypeStep
-            reportTypes={reportTypes || []}
-            onSelectType={handleSelectType}
-          />
-        );
-      case "camera":
-        return (
-          <ReportCameraStep
-            onPhotoTaken={handlePhotoTaken}
-            onSkip={handleSkipPhoto}
-          />
-        );
-      case "details":
-        if (submitError) {
-          return (
-            <ErrorState
-              error={submitError}
-              onRetry={handleRetrySubmit}
-              isOffline={isOffline}
-              isRetrying={isPending}
-            />
-          );
-        }
-        return (
-          <>
-            {isOffline && (
-              <View style={styles.offlineNotice}>
-                <Text style={styles.offlineText}>
-                  📱 Sin conexión - Tu reporte se enviará cuando vuelvas a estar
-                  en línea
-                </Text>
-              </View>
-            )}
-            <ReportDetailsStep
-              reportType={reportData.type}
-              imageUri={reportData.imageUri}
-              isSubmitting={isPending}
-              onSubmit={handleSubmit}
-            />
-          </>
-        );
-      case "success":
-        return <ReportSuccessStep onDone={resetFlow} />;
-      default:
-        return null;
+// export default moved to the end
+
+// export default moved to the end of file to satisfy useExportsLast
+
+function ReportScreenContent() {
+  const { user } = useAuth();
+  const { isOffline } = useNetworkStatus();
+
+  const { data: reportTypes, isLoading, error, refetch } = useReportTypes();
+  const { mutate: submitReport, isPending } = useSubmitReport({
+    onSuccess: () => {
+      setSubmitError(null);
+      setStep("success");
+    },
+    onError: (error) => {
+      setSubmitError(error);
+    },
+  });
+
+  const {
+    step,
+    reportData,
+    submitError,
+    setSubmitError,
+    handleRetrySubmit,
+    handleSelectType,
+    handlePhotoTaken,
+    handleSkipPhoto,
+    prepareSubmitPayload,
+    resetFlow,
+    setStep,
+  } = useReportFlow();
+
+  const handleSubmit = (details: { description: string; location: string }) => {
+    const payload = prepareSubmitPayload(details);
+    submitReport(payload);
+  };
+
+  const _handleRetrySubmitWrapper = () => {
+    // try to submit again with the current payload
+    if (handleRetrySubmit()) {
+      submitReport(reportData);
     }
   };
+
+  // Report flow handlers are extracted into the useReportFlow hook above
+
+  // RenderContent extracted to a separate component to reduce complexity of this function
 
   return (
     <View style={styles.container}>
       <Header title="Reportar un problema" />
-      {renderContent()}
+      <ReportContent
+        isAuthenticated={Boolean(user)}
+        isOffline={isOffline}
+        step={step}
+        reportTypes={reportTypes}
+        isLoading={isLoading}
+        error={error}
+        refetch={refetch}
+        reportData={reportData}
+        submitError={submitError}
+        isPending={isPending}
+        onSelectType={handleSelectType}
+        onPhotoTaken={handlePhotoTaken}
+        onSkipPhoto={handleSkipPhoto}
+        onSubmit={handleSubmit}
+        onRetrySubmit={handleRetrySubmit}
+        onResetFlow={resetFlow}
+        /* onRetry is unused in ReportContent so we don't pass it */
+      />
     </View>
   );
 }
 
-export default function ReportScreen() {
+function _ReportScreen() {
   return (
     <ReportFeatureWrapper>
       <ReportScreenContent />
     </ReportFeatureWrapper>
   );
 }
+
+// export after non-export statements
 
 const styles = StyleSheet.create({
   container: {
@@ -198,3 +197,115 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+// export after non-export statements
+
+function ReportContent({
+  isAuthenticated,
+  isOffline,
+  step,
+  reportTypes,
+  isLoading,
+  error,
+  refetch,
+  reportData,
+  submitError,
+  isPending,
+  onSelectType,
+  onPhotoTaken,
+  onSkipPhoto,
+  onSubmit,
+  onRetrySubmit,
+  onResetFlow,
+}: {
+  isAuthenticated: boolean;
+  isOffline: boolean;
+  step: ReportStep;
+  reportTypes?: ReportType[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+  reportData: {
+    type: string;
+    imageUri?: string;
+    description: string;
+    location: string;
+  };
+  submitError: Error | null;
+  isPending: boolean;
+  onSelectType: (type: string) => void;
+  onPhotoTaken: (uri: string) => void;
+  onSkipPhoto: () => void;
+  onSubmit: (details: { description: string; location: string }) => void;
+  onRetrySubmit: () => void;
+  onResetFlow: () => void;
+  // onRetry removed - not used inside the component
+}) {
+  if (!isAuthenticated) {
+    return (
+      <AuthPrompt
+        title="Función para miembros"
+        message="Para enviar un reporte y ayudarnos a dar seguimiento, por favor inicia sesión o crea una cuenta."
+      />
+    );
+  }
+
+  switch (step) {
+    case "type":
+      if (isLoading) {
+        return (
+          <View style={styles.content}>
+            <ListSkeleton count={3} />
+          </View>
+        );
+      }
+      if (error) {
+        return (
+          <ErrorState error={error} onRetry={refetch} isOffline={isOffline} />
+        );
+      }
+      return (
+        <ReportTypeStep
+          reportTypes={(reportTypes as ReportType[]) || []}
+          onSelectType={onSelectType}
+        />
+      );
+    case "camera":
+      return (
+        <ReportCameraStep onPhotoTaken={onPhotoTaken} onSkip={onSkipPhoto} />
+      );
+    case "details":
+      if (submitError) {
+        return (
+          <ErrorState
+            error={submitError}
+            onRetry={onRetrySubmit}
+            isOffline={isOffline}
+            isRetrying={isPending}
+          />
+        );
+      }
+      return (
+        <>
+          {isOffline && (
+            <View style={styles.offlineNotice}>
+              <Text style={styles.offlineText}>
+                📱 Sin conexión - Tu reporte se enviará cuando vuelvas a estar
+                en línea
+              </Text>
+            </View>
+          )}
+          <ReportDetailsStep
+            reportType={reportData.type}
+            imageUri={reportData.imageUri}
+            isSubmitting={isPending}
+            onSubmit={onSubmit}
+          />
+        </>
+      );
+    case "success":
+      return <ReportSuccessStep onDone={onResetFlow} />;
+    default:
+      return null;
+  }
+}

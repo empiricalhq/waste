@@ -53,8 +53,10 @@ export const createPressAnimation = (
   if (reducedMotion) {
     return 1;
   }
+  const PressedScale = 0.95;
+  const DefaultScale = 1;
 
-  return withTiming(pressed ? 0.95 : 1, {
+  return withTiming(pressed ? PressedScale : DefaultScale, {
     duration: ANIMATION_DURATIONS.QUICK,
     easing: EASING.OUT_QUAD,
   });
@@ -80,11 +82,21 @@ export const createExitAnimation = (
     };
   }
 
-  const distance = 300;
-  const translateX =
-    direction === "left" ? -distance : direction === "right" ? distance : 0;
-  const translateY =
-    direction === "up" ? -distance : direction === "down" ? distance : 0;
+  const SlideDistance = 300;
+  const distance = SlideDistance;
+  let translateX = 0;
+  if (direction === "left") {
+    translateX = -distance;
+  } else if (direction === "right") {
+    translateX = distance;
+  }
+
+  let translateY = 0;
+  if (direction === "up") {
+    translateY = -distance;
+  } else if (direction === "down") {
+    translateY = distance;
+  }
 
   return {
     opacity: withTiming(0, {

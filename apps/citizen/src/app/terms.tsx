@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Header } from "@/components/shared/header";
 
-export default function TermsScreen() {
+function TermsScreen() {
   return (
     <View style={styles.container}>
       <Header title="Términos de Servicio" />
@@ -12,7 +12,11 @@ export default function TermsScreen() {
   );
 }
 
+// export after non-export statements
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
+
+export default TermsScreen;

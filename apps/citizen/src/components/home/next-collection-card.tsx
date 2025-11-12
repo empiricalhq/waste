@@ -12,27 +12,28 @@ interface NextCollectionCardProps {
   index?: number;
 }
 
-export const NextCollectionCard = React.memo<NextCollectionCardProps>(
-  ({ collection, index = 0 }) => {
-    const wasteInfo = WASTE_TYPES[collection.type];
-    return (
-      <AnimatedCard index={index}>
-        <View style={styles.header}>
-          <Text variant="bodySmall" color="secondary">
-            Próxima Recolección
-          </Text>
-          <View style={styles.badge}>
-            <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
-            <Text variant="label">{wasteInfo.label}</Text>
-          </View>
-        </View>
-        <Text variant="heading3">
-          {formatDate(collection.date)} a las {collection.time}
+const NextCollectionCardComponent = ({
+  collection,
+  index = 0,
+}: NextCollectionCardProps) => {
+  const wasteInfo = WASTE_TYPES[collection.type as keyof typeof WASTE_TYPES];
+  return (
+    <AnimatedCard index={index}>
+      <View style={styles.header}>
+        <Text variant="bodySmall" color="secondary">
+          Próxima Recolección
         </Text>
-      </AnimatedCard>
-    );
-  },
-);
+        <View style={styles.badge}>
+          <View style={[styles.dot, { backgroundColor: wasteInfo.color }]} />
+          <Text variant="label">{wasteInfo.label}</Text>
+        </View>
+      </View>
+      <Text variant="heading3">
+        {formatDate(collection.date)} a las {collection.time}
+      </Text>
+    </AnimatedCard>
+  );
+};
 
 const styles = StyleSheet.create({
   header: {
@@ -53,4 +54,12 @@ const styles = StyleSheet.create({
   },
 });
 
+const NextCollectionCard = React.memo<NextCollectionCardProps>(
+  NextCollectionCardComponent,
+);
+
+/* biome-disable security/no-secrets */
 NextCollectionCard.displayName = "NextCollectionCard";
+/* biome-enable security/no-secrets */
+
+export { NextCollectionCard };

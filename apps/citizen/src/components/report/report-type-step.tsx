@@ -16,7 +16,7 @@ interface ReportTypeStepProps {
   onSelectType: (type: string) => void;
 }
 
-export const ReportTypeStep: React.FC<ReportTypeStepProps> = ({
+const ReportTypeStep: React.FC<ReportTypeStepProps> = ({
   reportTypes,
   onSelectType,
 }) => {
@@ -63,3 +63,5 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
 });
+
+export { ReportTypeStep };

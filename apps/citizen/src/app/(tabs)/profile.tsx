@@ -8,7 +8,7 @@ import { ROUTES } from "@/constants/app-config";
 import { Colors, Spacing, Typography } from "@/constants/design-tokens";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 
-export default function ProfileScreen() {
+function ProfileScreen() {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
 
@@ -48,10 +48,12 @@ export default function ProfileScreen() {
     return null;
   }
 
+  const PercentMultiplier = 100;
   const accuracy =
     user.progress.totalQuestions > 0
       ? Math.round(
-          (user.progress.correctAnswers / user.progress.totalQuestions) * 100,
+          (user.progress.correctAnswers / user.progress.totalQuestions) *
+            PercentMultiplier,
         )
       : 0;
 
@@ -119,3 +121,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 });
+
+export default ProfileScreen;
+
+// export after non-export statements

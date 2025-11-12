@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   cancelAnimation,
@@ -25,6 +25,21 @@ interface SuccessCelebrationProps {
 }
 
 const CONFETTI_COUNT = 20;
+const PARTICLE_INITIAL_Y = -100;
+const PARTICLE_X_RANGE = 300;
+const PARTICLE_X_OFFSET = 150;
+const PARTICLE_TARGET_Y = 800;
+const PARTICLE_DURATION = 2000;
+const PARTICLE_ROTATION_MULTIPLIER = 3;
+const PARTICLE_OPACITY_DELAY = 1500;
+const PARTICLE_OPACITY_DURATION = 500;
+const ROTATION_DEGREES = 360;
+const CELEBRATION_INITIAL_Y = 20;
+const ID_CHAR_BASE = 36;
+const ID_SLICE_START = 2;
+const ID_SLICE_END = 9;
+const MIN_STREAK_FOR_RALLY = 3;
+const CONFETTI_SPACING_SUCCESS = 50;
 const CONFETTI_COLORS = [
   Colors.error, // Red
   "#4ECDC4", // Teal (decorative)
@@ -38,8 +53,10 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({
   delay,
   color,
 }) => {
-  const translateY = useSharedValue(-100);
-  const translateX = useSharedValue(Math.random() * 300 - 150);
+  const translateY = useSharedValue(PARTICLE_INITIAL_Y);
+  const translateX = useSharedValue(
+    Math.random() * PARTICLE_X_RANGE - PARTICLE_X_OFFSET,
+  );
   const rotate = useSharedValue(0);
   const opacity = useSharedValue(1);
   const reducedMotion = useReducedMotion();
@@ -52,23 +69,23 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({
 
     translateY.value = withDelay(
       delay,
-      withTiming(800, {
-        duration: 2000,
+      withTiming(PARTICLE_TARGET_Y, {
+        duration: PARTICLE_DURATION,
         easing: Easing.out(Easing.quad),
       }),
     );
 
     rotate.value = withDelay(
       delay,
-      withTiming(360 * 3, {
-        duration: 2000,
+      withTiming(ROTATION_DEGREES * PARTICLE_ROTATION_MULTIPLIER, {
+        duration: PARTICLE_DURATION,
       }),
     );
 
     opacity.value = withDelay(
-      delay + 1500,
+      delay + PARTICLE_OPACITY_DELAY,
       withTiming(0, {
-        duration: 500,
+        duration: PARTICLE_OPACITY_DURATION,
       }),
     );
 
@@ -92,13 +109,33 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({
   return <Animated.View style={[styles.confetti, animatedStyle]} />;
 };
 
-export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({
+const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({
   visible,
   streak = 0,
 }) => {
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
+  const translateY = useSharedValue(CELEBRATION_INITIAL_Y);
   const reducedMotion = useReducedMotion();
+
+  const confettiIds = useMemo<string[]>(
+    () =>
+      Array.from({ length: CONFETTI_COUNT }).map(() =>
+        Math.random()
+          .toString(ID_CHAR_BASE)
+          .slice(ID_SLICE_START, ID_SLICE_END),
+      ),
+    [],
+  );
+
+  const messages = [
+    "¡Excelente!",
+    "¡Muy bien!",
+    "¡Correcto!",
+    "¡Perfecto!",
+    "¡Genial!",
+    "¡Increíble!",
+    "¡Fantástico!",
+  ];
 
   useEffect(() => {
     if (visible) {
@@ -115,7 +152,7 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({
       }
     } else {
       opacity.value = 0;
-      translateY.value = 20;
+      translateY.value = CELEBRATION_INITIAL_Y;
     }
 
     return () => {
@@ -133,28 +170,18 @@ export const SuccessCelebration: React.FC<SuccessCelebrationProps> = ({
     return null;
   }
 
-  const messages = [
-    "¡Excelente!",
-    "¡Muy bien!",
-    "¡Correcto!",
-    "¡Perfecto!",
-    "¡Genial!",
-    "¡Increíble!",
-    "¡Fantástico!",
-  ];
-
   const message =
-    streak >= 3
+    streak >= MIN_STREAK_FOR_RALLY
       ? `¡Racha de ${streak}! 🔥`
       : messages[Math.floor(Math.random() * messages.length)];
 
   return (
     <View style={styles.container} pointerEvents="none">
       {/* confetti particles */}
-      {Array.from({ length: CONFETTI_COUNT }).map((_, i) => (
+      {confettiIds.map((id, i) => (
         <ConfettiParticle
-          key={i}
-          delay={i * 50}
+          key={id}
+          delay={i * CONFETTI_SPACING_SUCCESS}
           color={
             CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]
           }
@@ -197,3 +224,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export { SuccessCelebration };

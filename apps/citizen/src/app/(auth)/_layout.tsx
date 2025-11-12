@@ -3,7 +3,7 @@ import { FeatureErrorBoundary } from "@/components/shared/feature-error-boundary
 import { ANIMATION_DURATIONS } from "@/constants/animations";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
-export default function AuthLayout() {
+function AuthLayout() {
   const reducedMotion = useReducedMotion();
 
   return (
@@ -24,3 +24,5 @@ export default function AuthLayout() {
     </FeatureErrorBoundary>
   );
 }
+
+export default AuthLayout;

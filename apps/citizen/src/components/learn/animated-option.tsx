@@ -1,6 +1,6 @@
 import { Check, X } from "lucide-react-native";
 import type React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import Animated, {
   cancelAnimation,
@@ -33,6 +33,13 @@ import {
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
+// Animation constants
+const ENTRANCE_TRANSLATE_Y = 50;
+const SCALE_PULSE = 1.05;
+const SCALE_PRESSED = 0.95;
+const SHAKE_DISTANCE = 8;
+const SHAKE_DURATION = 50;
+
 interface AnimatedOptionProps {
   label: string;
   isSelected: boolean;
@@ -43,7 +50,7 @@ interface AnimatedOptionProps {
   isVisible: boolean;
 }
 
-export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
+const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   label,
   isSelected,
   isCorrect,
@@ -55,7 +62,7 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
   const reducedMotion = useReducedMotion();
 
   // Entrance animation values
-  const translateY = useSharedValue(50);
+  const translateY = useSharedValue(ENTRANCE_TRANSLATE_Y);
   const opacity = useSharedValue(0);
 
   // Interaction animation values
@@ -79,9 +86,7 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
         );
         opacity.value = withDelay(
           delay,
-          withTiming(1, {
-            duration: ANIMATION_DURATIONS.NORMAL,
-          }),
+          withTiming(1, { duration: ANIMATION_DURATIONS.NORMAL }),
         );
       }
     }
@@ -92,53 +97,57 @@ export const AnimatedOption: React.FC<AnimatedOptionProps> = ({
     };
   }, [isVisible, index, reducedMotion, opacity, translateY]);
 
+  const playSuccessAnimation = useCallback(() => {
+    hapticSuccess();
+    backgroundColor.value = FEEDBACK_COLORS.success.background;
+    borderColor.value = FEEDBACK_COLORS.success.border;
+
+    if (!reducedMotion) {
+      scale.value = withSequence(
+        withSpring(SCALE_PULSE, SPRING_CONFIGS.DEFAULT),
+        withSpring(1, SPRING_CONFIGS.DEFAULT),
+      );
+    }
+  }, [reducedMotion, backgroundColor, borderColor, scale]);
+
+  const playErrorAnimation = useCallback(() => {
+    hapticError();
+    backgroundColor.value = FEEDBACK_COLORS.error.background;
+    borderColor.value = FEEDBACK_COLORS.error.border;
+
+    if (!reducedMotion) {
+      translateX.value = withSequence(
+        withTiming(-SHAKE_DISTANCE, { duration: SHAKE_DURATION }),
+        withTiming(SHAKE_DISTANCE, { duration: SHAKE_DURATION }),
+        withTiming(-SHAKE_DISTANCE, { duration: SHAKE_DURATION }),
+        withTiming(0, { duration: SHAKE_DURATION }),
+      );
+    }
+  }, [reducedMotion, backgroundColor, borderColor, translateX]);
+
   // Answer feedback animations
   useEffect(() => {
-    if (isAnswered) {
-      if (isCorrect) {
-        hapticSuccess();
-        backgroundColor.value = FEEDBACK_COLORS.success.background;
-        borderColor.value = FEEDBACK_COLORS.success.border;
-
-        if (!reducedMotion) {
-          scale.value = withSequence(
-            withSpring(1.05, SPRING_CONFIGS.DEFAULT),
-            withSpring(1, SPRING_CONFIGS.DEFAULT),
-          );
-        }
-      } else if (isSelected) {
-        // Error animation
-        hapticError();
-        backgroundColor.value = FEEDBACK_COLORS.error.background;
-        borderColor.value = FEEDBACK_COLORS.error.border;
-
-        if (!reducedMotion) {
-          // Shake animation
-          translateX.value = withSequence(
-            withTiming(-8, { duration: 50 }),
-            withTiming(8, { duration: 50 }),
-            withTiming(-8, { duration: 50 }),
-            withTiming(0, { duration: 50 }),
-          );
-        }
-      }
+    if (!isAnswered) {
+      return;
+    }
+    if (isCorrect) {
+      playSuccessAnimation();
+    } else if (isSelected) {
+      playErrorAnimation();
     }
   }, [
     isAnswered,
     isCorrect,
     isSelected,
-    reducedMotion,
-    backgroundColor,
-    borderColor, // Success pulse
-    scale, // Shake animation
-    translateX,
+    playErrorAnimation,
+    playSuccessAnimation,
   ]);
 
   const handlePressIn = () => {
     if (!isAnswered) {
       hapticSelection();
       if (!reducedMotion) {
-        scale.value = withTiming(0.95, {
+        scale.value = withTiming(SCALE_PRESSED, {
           duration: ANIMATION_DURATIONS.QUICK,
           easing: EASING.OUT_QUAD,
         });
@@ -204,3 +213,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+// Export after all non-export statements
+export { AnimatedOption };

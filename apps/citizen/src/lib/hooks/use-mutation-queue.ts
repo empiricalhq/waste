@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   mutationQueue,
   type QueuedMutation,
@@ -15,12 +15,12 @@ export const useMutationQueue = () => {
     mutations: [],
   });
 
-  const updateState = () => {
+  const updateState = useCallback(() => {
     setState({
       count: mutationQueue.getCount(),
       mutations: mutationQueue.getQueue(),
     });
-  };
+  }, []);
 
   // Hydrate queue on mount
   useEffect(() => {
@@ -32,17 +32,18 @@ export const useMutationQueue = () => {
     loadQueue();
   }, [updateState]);
 
-  const retryAll = async (
-    mutationFn: (mutation: QueuedMutation) => Promise<void>,
-  ) => {
-    await mutationQueue.retryAll(mutationFn);
-    updateState();
-  };
+  const retryAll = useCallback(
+    async (mutationFn: (mutation: QueuedMutation) => Promise<void>) => {
+      await mutationQueue.retryAll(mutationFn);
+      updateState();
+    },
+    [updateState],
+  );
 
-  const clear = async () => {
+  const clear = useCallback(async () => {
     await mutationQueue.clear();
     updateState();
-  };
+  }, [updateState]);
 
   return {
     count: state.count,

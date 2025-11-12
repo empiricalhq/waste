@@ -11,7 +11,7 @@ interface AuthPromptProps {
   message: string;
 }
 
-export const AuthPrompt: React.FC<AuthPromptProps> = ({ title, message }) => {
+const AuthPrompt: React.FC<AuthPromptProps> = ({ title, message }) => {
   const router = useRouter();
 
   return (
@@ -53,3 +53,5 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
 });
+
+export { AuthPrompt };

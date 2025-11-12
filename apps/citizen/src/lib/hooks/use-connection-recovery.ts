@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { mutationQueue } from "@/lib/offline/mutation-queue";
 import { useNetworkStatus } from "./use-network-status";
 
@@ -16,7 +16,7 @@ export const useConnectionRecovery = () => {
   const { isOffline } = useNetworkStatus();
   const queryClient = useQueryClient();
 
-  const handleConnectionRecovery = async () => {
+  const handleConnectionRecovery = useCallback(async () => {
     try {
       setState((prev) => ({ ...prev, isRecovering: true }));
 
@@ -37,7 +37,7 @@ export const useConnectionRecovery = () => {
     } catch (_error) {
       setState((prev) => ({ ...prev, isRecovering: false }));
     }
-  };
+  }, [queryClient]);
 
   useEffect(() => {
     if (state.wasOffline && !isOffline) {

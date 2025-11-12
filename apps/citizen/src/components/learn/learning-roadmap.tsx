@@ -14,7 +14,7 @@ interface LearningRoadmapProps {
   guides: LearningGuide[];
 }
 
-export const LearningRoadmap: React.FC<LearningRoadmapProps> = ({ guides }) => {
+const LearningRoadmap: React.FC<LearningRoadmapProps> = ({ guides }) => {
   return (
     <FlatList
       data={guides}
@@ -69,3 +69,5 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 });
+
+export { LearningRoadmap };

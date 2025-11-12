@@ -16,13 +16,18 @@ import {
 import { BorderRadius, Colors, Spacing } from "@/constants/design-tokens";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
+// -- keep later declaration --
+const PROGRESS_PERCENTAGE_SCALE = 100;
+const TRACK_HEIGHT = 6;
+const FLASH_DURATION = 100;
+
 interface AnimatedProgressBarProps {
   current: number;
   total: number;
   isCorrect?: boolean;
 }
 
-export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({
+const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({
   current,
   total,
   isCorrect,
@@ -32,7 +37,7 @@ export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({
   const backgroundColor = useSharedValue<string>(Colors.primary);
 
   useEffect(() => {
-    const targetProgress = (current / total) * 100;
+    const targetProgress = (current / total) * PROGRESS_PERCENTAGE_SCALE;
 
     if (reducedMotion) {
       progress.value = targetProgress;
@@ -45,14 +50,16 @@ export const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({
   useEffect(() => {
     if (isCorrect && !reducedMotion) {
       backgroundColor.value = withSequence(
-        withTiming(FEEDBACK_COLORS.success.border, { duration: 100 }),
+        withTiming(FEEDBACK_COLORS.success.border, {
+          duration: FLASH_DURATION,
+        }),
         withTiming(Colors.primary, { duration: ANIMATION_DURATIONS.NORMAL }),
       );
     }
   }, [isCorrect, reducedMotion, backgroundColor]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scaleX: progress.value / 100 }],
+    transform: [{ scaleX: progress.value / PROGRESS_PERCENTAGE_SCALE }],
     backgroundColor: backgroundColor.value,
   }));
 
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
   track: {
-    height: 6,
+    height: TRACK_HEIGHT,
     backgroundColor: Colors.border,
     borderRadius: BorderRadius.round,
     overflow: "hidden",
@@ -83,3 +90,5 @@ const styles = StyleSheet.create({
     transformOrigin: "left",
   },
 });
+
+export { AnimatedProgressBar };

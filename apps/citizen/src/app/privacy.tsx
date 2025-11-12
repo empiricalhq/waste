@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Header } from "@/components/shared/header";
 
-export default function PrivacyScreen() {
+function PrivacyScreen() {
   return (
     <View style={styles.container}>
       <Header title="Política de Privacidad" />
@@ -12,7 +12,11 @@ export default function PrivacyScreen() {
   );
 }
 
+// export after non-export statements
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, justifyContent: "center", alignItems: "center" },
 });
+
+export default PrivacyScreen;

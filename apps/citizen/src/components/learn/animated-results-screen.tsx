@@ -1,10 +1,12 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
-  useAnimatedProps,
+  // runOnJS,
+  // useAnimatedProps,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -12,6 +14,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { Button } from "@/components/ui/button";
 import {
   ANIMATION_DURATIONS,
@@ -26,7 +29,31 @@ import {
 } from "@/constants/design-tokens";
 import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
-const AnimatedText = Animated.createAnimatedComponent(Text);
+const _AnimatedText = Animated.createAnimatedComponent(Text);
+
+// Constants
+const PERCENT_SCALE = 100;
+const ENTRANCE_TRANSLATE_Y = 50;
+const INITIAL_SCALE = 0.8;
+const CONFETTI_COUNT = 30;
+const CONFETTI_ID_SLICE_START = 2;
+const CONFETTI_ID_SLICE_END = 9;
+const SCORE_ANIMATION_DELAY = 300;
+const CONFETTI_TRIGGER_PERCENT = 80;
+const CONFETTI_DELAY = 800;
+const CONFETTI_SEQUENCE_DELAY = 2000;
+const CONFETTI_PARTICLE_DURATION = 2500;
+const ID_CHAR_BASE = 36;
+const CONFETTI_SPACING = 30;
+const ROTATION_DEGREES = 360;
+const CONFETTI_FADE_IN_DURATION = 300;
+const CONFETTI_FADE_OUT_DURATION = 500;
+const SCORE_TEXT_SCALE = 2.3;
+const STARS_TEXT_SCALE = 1.7;
+const STAR_PERCENT_TOP = 100;
+const STAR_PERCENT_2 = 80;
+const STAR_PERCENT_1 = 60;
+const STAR_PERCENT_LOW = 40;
 
 interface AnimatedResultsScreenProps {
   score: number;
@@ -34,22 +61,33 @@ interface AnimatedResultsScreenProps {
   onContinue: () => void;
 }
 
-export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
+const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
   score,
   total,
   onContinue,
 }) => {
   const reducedMotion = useReducedMotion();
-  const percentage = Math.round((score / total) * 100);
+  const percentage = Math.round((score / total) * PERCENT_SCALE);
 
   // Animation values
   const displayScore = useSharedValue(0);
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(50);
-  const scale = useSharedValue(0.8);
+  const translateY = useSharedValue(ENTRANCE_TRANSLATE_Y);
+  const scale = useSharedValue(INITIAL_SCALE);
 
   // Confetti for high scores
   const confettiOpacity = useSharedValue(0);
+  // use top-level constants ID_CHAR_BASE, CONFETTI_SPACING
+
+  const confettiIds = useMemo(
+    () =>
+      Array.from({ length: CONFETTI_COUNT }).map(() =>
+        Math.random()
+          .toString(ID_CHAR_BASE)
+          .slice(CONFETTI_ID_SLICE_START, CONFETTI_ID_SLICE_END),
+      ),
+    [],
+  );
 
   useEffect(() => {
     if (reducedMotion) {
@@ -72,7 +110,7 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
 
       // score count-up animation
       displayScore.value = withDelay(
-        300,
+        SCORE_ANIMATION_DELAY,
         withTiming(score, {
           duration: ANIMATION_DURATIONS.CELEBRATION,
           easing: EASING.OUT_CUBIC,
@@ -80,12 +118,15 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
       );
 
       // confetti for high scores (80%+)
-      if (percentage >= 80) {
+      if (percentage >= CONFETTI_TRIGGER_PERCENT) {
         confettiOpacity.value = withDelay(
-          800,
+          CONFETTI_DELAY,
           withSequence(
-            withTiming(1, { duration: 300 }),
-            withDelay(2000, withTiming(0, { duration: 500 })),
+            withTiming(1, { duration: CONFETTI_FADE_IN_DURATION }),
+            withDelay(
+              CONFETTI_SEQUENCE_DELAY,
+              withTiming(0, { duration: CONFETTI_FADE_OUT_DURATION }),
+            ),
           ),
         );
       }
@@ -114,36 +155,38 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
     transform: [{ translateY: translateY.value }, { scale: scale.value }],
   }));
 
-  const animatedScoreProps = useAnimatedProps(() => {
-    return {
-      text: Math.round(displayScore.value).toString(),
-    } as any;
-  });
+  const [displayValue, setDisplayValue] = useState("0");
+  useAnimatedReaction(
+    () => Math.round(displayScore.value),
+    (value) => {
+      scheduleOnRN(() => setDisplayValue(value.toString()));
+    },
+  );
 
   const getPerformanceMessage = () => {
-    if (percentage === 100) {
+    if (percentage === STAR_PERCENT_TOP) {
       return "¡Perfecto! 🎉";
     }
-    if (percentage >= 80) {
+    if (percentage >= STAR_PERCENT_2) {
       return "¡Excelente trabajo! 🌟";
     }
-    if (percentage >= 60) {
+    if (percentage >= STAR_PERCENT_1) {
       return "¡Buen trabajo! 👍";
     }
-    if (percentage >= 40) {
+    if (percentage >= STAR_PERCENT_LOW) {
       return "¡Sigue practicando! 💪";
     }
     return "¡Inténtalo de nuevo! 📚";
   };
 
   const getStars = () => {
-    if (percentage === 100) {
+    if (percentage === STAR_PERCENT_TOP) {
       return "⭐⭐⭐";
     }
-    if (percentage >= 80) {
+    if (percentage >= STAR_PERCENT_2) {
       return "⭐⭐";
     }
-    if (percentage >= 60) {
+    if (percentage >= STAR_PERCENT_1) {
       return "⭐";
     }
     return "";
@@ -156,10 +199,7 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
 
         <View style={styles.scoreContainer}>
           <View style={styles.scoreCircle}>
-            <AnimatedText
-              style={styles.scoreText}
-              animatedProps={animatedScoreProps}
-            />
+            <Text style={styles.scoreText}>{displayValue}</Text>
             <Text style={styles.totalText}>/ {total}</Text>
           </View>
           <Text style={styles.percentageText}>{percentage}%</Text>
@@ -174,7 +214,7 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
       </View>
 
       {/* confetti overlay for high scores */}
-      {percentage >= 80 && (
+      {percentage >= CONFETTI_TRIGGER_PERCENT && (
         <Animated.View
           style={[
             styles.confettiContainer,
@@ -184,8 +224,8 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
           ]}
           pointerEvents="none"
         >
-          {Array.from({ length: 30 }).map((_, i) => (
-            <ConfettiParticle key={i} delay={i * 30} />
+          {confettiIds.map((id, i) => (
+            <ConfettiParticle key={id} delay={i * CONFETTI_SPACING} />
           ))}
         </Animated.View>
       )}
@@ -194,31 +234,39 @@ export const AnimatedResultsScreen: React.FC<AnimatedResultsScreenProps> = ({
 };
 
 const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
-  const translateY = useSharedValue(-100);
-  const translateX = useSharedValue(Math.random() * 400 - 200);
+  const ParticleInitialY = -100;
+  const ParticleXRange = 400;
+  const ParticleXOffset = 200;
+  const ParticleTargetY = 1000;
+  const ParticleRotationMultiplier = 4;
+
+  const translateY = useSharedValue(ParticleInitialY);
+  const translateX = useSharedValue(
+    Math.random() * ParticleXRange - ParticleXOffset,
+  );
   const rotate = useSharedValue(0);
   const opacity = useSharedValue(1);
 
   useEffect(() => {
     translateY.value = withDelay(
       delay,
-      withTiming(1000, {
-        duration: 2500,
+      withTiming(ParticleTargetY, {
+        duration: CONFETTI_PARTICLE_DURATION,
         easing: Easing.out(Easing.quad),
       }),
     );
 
     rotate.value = withDelay(
       delay,
-      withTiming(360 * 4, {
-        duration: 2500,
+      withTiming(ROTATION_DEGREES * ParticleRotationMultiplier, {
+        duration: CONFETTI_PARTICLE_DURATION,
       }),
     );
 
     opacity.value = withDelay(
-      delay + 2000,
+      delay + CONFETTI_SEQUENCE_DELAY,
       withTiming(0, {
-        duration: 500,
+        duration: CONFETTI_FADE_OUT_DURATION,
       }),
     );
 
@@ -292,7 +340,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   scoreText: {
-    fontSize: Typography.fontSize.xxxl * 2.3, // ~64px
+    fontSize: Typography.fontSize.xxxl * SCORE_TEXT_SCALE, // ~64px
     fontWeight: Typography.fontWeight.bold,
     color: Colors.primary,
   },
@@ -306,7 +354,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   stars: {
-    fontSize: Typography.fontSize.xxxl * 1.7, // ~48px
+    fontSize: Typography.fontSize.xxxl * STARS_TEXT_SCALE, // ~48px
     marginBottom: Spacing.lg,
   },
   message: {
@@ -332,3 +380,5 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
 });
+
+export { AnimatedResultsScreen };

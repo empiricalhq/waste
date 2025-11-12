@@ -26,14 +26,13 @@ interface State {
  * Feature-level error boundary that catches errors within a specific feature
  * and provides a fallback UI with retry functionality.
  */
-export class FeatureErrorBoundary extends Component<Props, State> {
-  public state: State = { hasError: false, error: null };
+class FeatureErrorBoundary extends Component<Props, State> {
+  state: State = { hasError: false, error: null };
 
-  public static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
-
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     logError(error, {
       feature: this.props.featureName,
       componentStack: errorInfo.componentStack ?? undefined,
@@ -41,7 +40,7 @@ export class FeatureErrorBoundary extends Component<Props, State> {
     });
   }
 
-  private readonly handleReset = () => {
+  handleReset = () => {
     this.setState({ hasError: false, error: null });
     this.props.onReset?.();
   };
@@ -116,3 +115,5 @@ const styles = StyleSheet.create({
     minWidth: 140,
   },
 });
+
+export { FeatureErrorBoundary };

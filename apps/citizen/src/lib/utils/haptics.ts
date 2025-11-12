@@ -1,9 +1,14 @@
-import * as Haptics from "expo-haptics";
+import {
+  ImpactFeedbackStyle,
+  impactAsync,
+  NotificationFeedbackType,
+  notificationAsync,
+} from "expo-haptics";
 
 // light haptic feedback for selections and taps
 export const hapticSelection = async (): Promise<void> => {
   try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await impactAsync(ImpactFeedbackStyle.Light);
   } catch {
     // Haptics may not be available on all devices
   }
@@ -12,7 +17,7 @@ export const hapticSelection = async (): Promise<void> => {
 // Success haptic feedback for correct answers
 export const hapticSuccess = async (): Promise<void> => {
   try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    await notificationAsync(NotificationFeedbackType.Success);
   } catch {
     // haptics may not be available on all devices
   }
@@ -21,7 +26,7 @@ export const hapticSuccess = async (): Promise<void> => {
 // Error haptic feedback for incorrect answers
 export const hapticError = async (): Promise<void> => {
   try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    await notificationAsync(NotificationFeedbackType.Error);
   } catch {
     // Haptics may not be available on all devices
   }
@@ -30,7 +35,7 @@ export const hapticError = async (): Promise<void> => {
 // Warning haptic feedback for important notifications
 export const hapticWarning = async (): Promise<void> => {
   try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    await notificationAsync(NotificationFeedbackType.Warning);
   } catch {
     // Haptics may not be available on all devices
   }

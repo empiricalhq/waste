@@ -1,4 +1,4 @@
-import { Calendar, Map, MessageSquare } from "lucide-react-native";
+import { Calendar, Map as MapIcon, MessageSquare } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -14,32 +14,34 @@ interface QuickActionsProps {
   onHelpPress: () => void;
 }
 
-export const QuickActions = React.memo<QuickActionsProps>(
-  ({ onSchedulePress, onMapPress, onHelpPress }) => {
-    return (
-      <View>
-        <Text style={styles.title}>Acciones rápidas</Text>
-        <View style={styles.grid}>
-          <ActionButton
-            icon={<Calendar color={Colors.text} />}
-            text="Calendario"
-            onPress={onSchedulePress}
-          />
-          <ActionButton
-            icon={<Map color={Colors.text} />}
-            text="Ver Mapa"
-            onPress={onMapPress}
-          />
-          <ActionButton
-            icon={<MessageSquare color={Colors.text} />}
-            text="Ayuda"
-            onPress={onHelpPress}
-          />
-        </View>
+const QuickActionsComponent = ({
+  onSchedulePress,
+  onMapPress,
+  onHelpPress,
+}: QuickActionsProps) => {
+  return (
+    <View>
+      <Text style={styles.title}>Acciones rápidas</Text>
+      <View style={styles.grid}>
+        <ActionButton
+          icon={<Calendar color={Colors.text} />}
+          text="Calendario"
+          onPress={onSchedulePress}
+        />
+        <ActionButton
+          icon={<MapIcon color={Colors.text} />}
+          text="Ver Mapa"
+          onPress={onMapPress}
+        />
+        <ActionButton
+          icon={<MessageSquare color={Colors.text} />}
+          text="Ayuda"
+          onPress={onHelpPress}
+        />
       </View>
-    );
-  },
-);
+    </View>
+  );
+};
 
 const ActionButton = ({
   icon,
@@ -89,4 +91,10 @@ const styles = StyleSheet.create({
   },
 });
 
+const QuickActions = React.memo<QuickActionsProps>(QuickActionsComponent);
+
+/* biome-disable security/no-secrets */
 QuickActions.displayName = "QuickActions";
+/* biome-enable security/no-secrets */
+
+export { QuickActions };

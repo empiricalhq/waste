@@ -10,7 +10,7 @@ import { useLogin } from "@/features/auth/hooks/use-login";
 import { loginSchema } from "@/features/auth/schemas";
 import { useNetworkStatus } from "@/lib/hooks/use-network-status";
 
-export default function LoginScreen() {
+function useLoginForm() {
   const router = useRouter();
   const { isOffline } = useNetworkStatus();
   const { login, isPending, error, reset } = useLogin();
@@ -30,10 +30,10 @@ export default function LoginScreen() {
 
     if (!result.success) {
       const errors: { email?: string; password?: string } = {};
-      result.error.issues.forEach((err) => {
+      for (const err of result.error.issues) {
         const field = err.path[0] as "email" | "password";
         errors[field] = err.message;
-      });
+      }
       setValidationErrors(errors);
       return;
     }
@@ -53,6 +53,99 @@ export default function LoginScreen() {
     handleLogin();
   };
 
+  return {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    validationErrors,
+    isPending,
+    isOffline,
+    error,
+    handleLogin,
+    handleRetry,
+  };
+}
+
+function LoginScreen() {
+  const router = useRouter();
+  const {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    validationErrors,
+    isPending,
+    isOffline,
+    error,
+    handleLogin,
+    handleRetry,
+  } = useLoginForm();
+
+  return (
+    <LoginView
+      email={email}
+      password={password}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      validationErrors={validationErrors}
+      onLogin={handleLogin}
+      onCreateAccount={() => router.push(ROUTES.SIGN_UP)}
+      isPending={isPending}
+      isOffline={isOffline}
+      error={error}
+      onRetry={handleRetry}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: Spacing.xl,
+    backgroundColor: Colors.background,
+  },
+  title: {
+    fontSize: Typography.fontSize.xxxl,
+    fontWeight: Typography.fontWeight.bold,
+    textAlign: "center",
+    marginBottom: Spacing.xxxl,
+    color: Colors.text,
+  },
+  fieldError: {
+    color: Colors.error,
+    fontSize: Typography.fontSize.sm,
+    marginTop: -Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+});
+
+function LoginView({
+  email,
+  password,
+  setEmail,
+  setPassword,
+  validationErrors,
+  onLogin,
+  onCreateAccount,
+  isPending,
+  isOffline,
+  error,
+  onRetry,
+}: {
+  email: string;
+  password: string;
+  setEmail: (v: string) => void;
+  setPassword: (v: string) => void;
+  validationErrors: { email?: string; password?: string };
+  onLogin: () => void;
+  onCreateAccount: () => void;
+  isPending: boolean;
+  isOffline: boolean;
+  error: Error | null;
+  onRetry: () => void;
+}) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Iniciar Sesión</Text>
@@ -60,7 +153,7 @@ export default function LoginScreen() {
       {error && (
         <ErrorState
           error={error}
-          onRetry={handleRetry}
+          onRetry={onRetry}
           isOffline={isOffline}
           isRetrying={isPending}
           variant="compact"
@@ -92,14 +185,14 @@ export default function LoginScreen() {
       )}
       <Button
         title="Entrar"
-        onPress={handleLogin}
+        onPress={onLogin}
         loading={isPending}
         disabled={isPending}
       />
       <Button
         title="Crear cuenta"
         variant="secondary"
-        onPress={() => router.push(ROUTES.SIGN_UP)}
+        onPress={onCreateAccount}
         style={{ marginTop: Spacing.md }}
         disabled={isPending}
       />
@@ -107,24 +200,4 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    padding: Spacing.xl,
-    backgroundColor: Colors.background,
-  },
-  title: {
-    fontSize: Typography.fontSize.xxxl,
-    fontWeight: Typography.fontWeight.bold,
-    textAlign: "center",
-    marginBottom: Spacing.xxxl,
-    color: Colors.text,
-  },
-  fieldError: {
-    color: Colors.error,
-    fontSize: Typography.fontSize.sm,
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.sm,
-  },
-});
+export default LoginScreen;

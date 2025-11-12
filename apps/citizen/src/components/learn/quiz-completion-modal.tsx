@@ -27,7 +27,11 @@ interface QuizCompletionModalProps {
   onSignUp: () => void;
 }
 
-export const QuizCompletionModal: React.FC<QuizCompletionModalProps> = ({
+const INITIAL_SCALE = 0.8;
+const PERCENT_SCALE = 100;
+const PASSING_PERCENT = 70;
+
+const QuizCompletionModal: React.FC<QuizCompletionModalProps> = ({
   visible,
   score,
   total,
@@ -36,7 +40,7 @@ export const QuizCompletionModal: React.FC<QuizCompletionModalProps> = ({
   onSignUp,
 }) => {
   const reducedMotion = useReducedMotion();
-  const scale = useSharedValue(0.8);
+  const scale = useSharedValue(INITIAL_SCALE);
   const opacity = useSharedValue(0);
 
   useEffect(() => {
@@ -49,7 +53,7 @@ export const QuizCompletionModal: React.FC<QuizCompletionModalProps> = ({
         opacity.value = withTiming(1, { duration: ANIMATION_DURATIONS.NORMAL });
       }
     } else {
-      scale.value = 0.8;
+      scale.value = INITIAL_SCALE;
       opacity.value = 0;
     }
   }, [visible, reducedMotion, scale, opacity]);
@@ -59,8 +63,8 @@ export const QuizCompletionModal: React.FC<QuizCompletionModalProps> = ({
     opacity: opacity.value,
   }));
 
-  const percentage = Math.round((score / total) * 100);
-  const isGoodScore = percentage >= 70;
+  const percentage = Math.round((score / total) * PERCENT_SCALE);
+  const isGoodScore = percentage >= PASSING_PERCENT;
 
   return (
     <Modal
@@ -170,3 +174,5 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
+
+export { QuizCompletionModal };
