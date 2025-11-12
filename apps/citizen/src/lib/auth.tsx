@@ -7,7 +7,7 @@ import { api } from "./api";
 import type { LoginInput, SignUpInput, User } from "./schemas";
 import { storage } from "./storage";
 
-interface AuthContext {
+interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (data: LoginInput) => Promise<User>;
@@ -15,7 +15,7 @@ interface AuthContext {
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContext | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
