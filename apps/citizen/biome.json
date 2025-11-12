@@ -15,7 +15,8 @@
         "noMagicNumbers": "off",
         "useNamingConvention": "off",
         "useExportsLast": "off",
-        "noProcessEnv": "off"
+        "noProcessEnv": "off",
+        "useComponentExportOnlyModules": "off"
       },
       "suspicious": {
         "noConsole": "off"
