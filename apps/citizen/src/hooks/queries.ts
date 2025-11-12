@@ -5,7 +5,7 @@ import { api } from "@/lib/api";
 import { storage } from "@/lib/storage";
 import type { PendingReport, Report } from "@/types";
 
-// Collections
+// collections
 export function useCollections() {
   return useQuery({
     queryKey: [QUERY_KEYS.COLLECTIONS],
@@ -22,7 +22,7 @@ export function useNextCollection() {
   });
 }
 
-// Trucks
+// trucks
 export function useTrucks() {
   return useQuery({
     queryKey: [QUERY_KEYS.TRUCKS],
@@ -54,7 +54,7 @@ export function useNearestTruck() {
   return { nearestTruck, ...rest };
 }
 
-// Reports
+// reports
 export function useReports() {
   return useQuery({
     queryKey: [QUERY_KEYS.REPORTS],
@@ -139,7 +139,7 @@ export function useRetryPendingReports() {
   }, [queryClient]);
 }
 
-// Quiz
+// quiz
 export function useQuiz() {
   return useQuery({
     queryKey: [QUERY_KEYS.QUIZ],

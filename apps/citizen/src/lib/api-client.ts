@@ -125,7 +125,6 @@ class ApiClient {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
 
-  // Auth-specific method with cookie handling
   async authRequest<T>(endpoint: string, data: unknown): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
@@ -144,7 +143,7 @@ class ApiClient {
         await this.handleErrorResponse(response);
       }
 
-      // Extract and store session token
+      // extract and store session token
       const cookieHeader = response.headers.get("set-cookie");
       const sessionToken = this.extractSessionToken(cookieHeader);
 

@@ -13,7 +13,7 @@ export const CONFIG = {
     minAccuracy: 100,
   },
   polling: {
-    trucks: 60_000, // 1 minute - reduced from 30s
+    trucks: 60_000, // 1 minute
     collections: 5 * 60 * 1000, // 5 minutes
   },
 } as const;

@@ -20,7 +20,7 @@ class StorageService {
     await deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN);
   }
 
-  // AsyncStorage for non-sensitive data
+  // asyncStorage for non-sensitive data
   async getPendingReports(): Promise<PendingReport[]> {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEYS.PENDING_REPORTS);
