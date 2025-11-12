@@ -1,6 +1,9 @@
 {
   "root": false,
   "extends": "//",
+  "formatter": {
+    "lineWidth": 80
+  },
   "linter": {
     "domains": {
       "react": "all",
@@ -9,9 +12,10 @@
     "rules": {
       "style": {
         "noDefaultExport": "off",
-        "useComponentExportOnlyModules": "off",
         "noMagicNumbers": "off",
-        "useNamingConvention": "off"
+        "useNamingConvention": "off",
+        "useExportsLast": "off",
+        "noProcessEnv": "off"
       },
       "suspicious": {
         "noConsole": "off"
@@ -20,9 +24,13 @@
         "noSecrets": "off"
       },
       "complexity": {
-        "noExcessiveLinesPerFunction": "off",
-        "noExcessiveCognitiveComplexity": "off"
+        "noExcessiveLinesPerFunction": "off"
       }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
     }
   }
 }
