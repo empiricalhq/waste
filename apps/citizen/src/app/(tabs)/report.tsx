@@ -99,7 +99,7 @@ export default function ReportScreen() {
           value={description}
           onChangeText={setDescription}
           placeholder="Describe el problema..."
-          multiline
+          multiline={true}
           style={{ height: 100, textAlignVertical: "top" }}
         />
 

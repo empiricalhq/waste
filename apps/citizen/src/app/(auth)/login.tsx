@@ -53,7 +53,7 @@ export default function LoginScreen() {
         label="Contraseña"
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry={true}
         error={errors.password}
       />
 

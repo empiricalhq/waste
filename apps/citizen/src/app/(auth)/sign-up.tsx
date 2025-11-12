@@ -60,7 +60,7 @@ export default function SignUpScreen() {
         label="Contraseña"
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry={true}
         error={errors.password}
       />
 
