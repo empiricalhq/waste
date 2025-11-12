@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Loading } from "@/components/ui/Loading";
 import { useLocation } from "@/hooks/use-location";
 import { useNetwork } from "@/hooks/use-network";

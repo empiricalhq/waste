@@ -1,6 +1,7 @@
 import {
   getCurrentPositionAsync,
   hasServicesEnabledAsync,
+  requestForegroundPermissionsAsync,
 } from "expo-location";
 import { useState } from "react";
 

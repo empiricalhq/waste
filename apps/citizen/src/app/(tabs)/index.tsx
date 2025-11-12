@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { Loading } from "@/components/ui/Loading";
 import { WASTE_TYPES } from "@/constants";

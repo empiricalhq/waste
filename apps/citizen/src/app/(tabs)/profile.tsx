@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, View } from "react-native";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth";
 import { theme } from "@/theme";
 

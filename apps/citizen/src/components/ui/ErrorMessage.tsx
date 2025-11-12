@@ -1,7 +1,7 @@
 import { AlertCircle, WifiOff } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { theme } from "@/theme";
-import { Button } from "./Button";
+import { Button } from "./button";
 
 interface ErrorMessageProps {
   message: string;
