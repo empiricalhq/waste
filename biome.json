@@ -7,11 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!!**/node_modules",
-      "!!**/.next"
-    ]
+    "includes": ["**", "!!**/node_modules", "!!**/.next"]
   },
   "formatter": {
     "enabled": true,
