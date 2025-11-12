@@ -13,21 +13,21 @@ export const reportService = {
    * Fetches the user's past reports.
    * This is a protected endpoint.
    */
-  getReports: async (): Promise<Report[]> => {
+  getReports: (): Promise<Report[]> => {
     return apiClient.get<Report[]>("/reports");
   },
   /**
    * Fetches the available types of reports.
    * This is a public endpoint accessible to guest users.
    */
-  getReportTypes: async (): Promise<ReportType[]> => {
+  getReportTypes: (): Promise<ReportType[]> => {
     return apiClient.get<ReportType[]>("/report-types");
   },
   /**
    * Submits a new report.
    * This is a protected endpoint.
    */
-  submitReport: async (payload: CreateReportPayload): Promise<Report> => {
+  submitReport: (payload: CreateReportPayload): Promise<Report> => {
     return apiClient.post<Report, CreateReportPayload>("/reports", payload);
   },
 };

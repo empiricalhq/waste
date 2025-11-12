@@ -8,10 +8,7 @@ interface EmptyStateProps {
   description?: string;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
-  title,
-  description,
-}) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ title, description }) => {
   return (
     <View style={styles.container}>
       <Info size={32} color={Colors.textTertiary} />
@@ -40,3 +37,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export { EmptyState };

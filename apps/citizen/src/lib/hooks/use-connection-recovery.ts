@@ -25,6 +25,7 @@ export const useConnectionRecovery = () => {
       // This is just a placeholder for now
       const queueCount = mutationQueue.getCount();
       if (queueCount > 0) {
+        // TODO: Implement mutation retry logic
       }
 
       // Refetch all stale queries

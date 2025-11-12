@@ -8,7 +8,7 @@ interface HeaderProps {
   title: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ title }) => {
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -30,3 +30,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
 });
+
+export { Header };

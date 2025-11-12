@@ -37,7 +37,7 @@ interface ModalProps extends ViewProps {
   };
 }
 
-export const Modal: React.FC<ModalProps> = ({
+const Modal: React.FC<ModalProps> = ({
   visible,
   onClose,
   title,
@@ -129,3 +129,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export { Modal };

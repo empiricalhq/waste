@@ -36,7 +36,7 @@ interface TextProps extends RnTextProps {
   children: React.ReactNode;
 }
 
-export const Text: React.FC<TextProps> = ({
+const Text: React.FC<TextProps> = ({
   variant = "body",
   weight,
   color = "primary",
@@ -145,3 +145,5 @@ const styles = StyleSheet.create({
     color: Colors.info,
   },
 });
+
+export { Text };

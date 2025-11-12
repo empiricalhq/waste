@@ -46,22 +46,24 @@ class MutationQueue {
   ): Promise<void> {
     const mutations = [...this.queue];
 
-    for (const mutation of mutations) {
-      try {
-        await mutationFn(mutation);
-        await this.remove(mutation.id);
-      } catch (_error) {
-        mutation.retryCount++;
-
-        // remove after max retries
-        if (mutation.retryCount >= mutation.maxRetries) {
+    await Promise.all(
+      mutations.map(async (mutation) => {
+        try {
+          await mutationFn(mutation);
           await this.remove(mutation.id);
-        } else {
-          // update retry count
-          await this.persist();
+        } catch (_error) {
+          mutation.retryCount++;
+
+          // remove after max retries
+          if (mutation.retryCount >= mutation.maxRetries) {
+            await this.remove(mutation.id);
+          } else {
+            // update retry count
+            await this.persist();
+          }
         }
-      }
-    }
+      }),
+    );
   }
 
   /**

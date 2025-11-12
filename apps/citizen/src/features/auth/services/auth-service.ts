@@ -125,17 +125,14 @@ export const authService = {
       throw new AppError("No authentication token found", 401);
     }
 
-    const rawResponse = await makeAuthRequest<unknown>(
+    const rawResponse = await makeAuthRequest<{ user: unknown }>(
       "/api/auth/get-session",
       {},
       token,
     );
 
     // validate response, we just need the user object
-    const validated = validateApiResponse(
-      UserSchema,
-      (rawResponse as any).user,
-    );
+    const validated = validateApiResponse(UserSchema, rawResponse.user);
     return validated;
   },
 };

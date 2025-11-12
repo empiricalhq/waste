@@ -21,7 +21,7 @@ interface OfflineBannerProps {
   pendingMutations?: number;
 }
 
-export const OfflineBanner: React.FC<OfflineBannerProps> = ({
+const OfflineBanner: React.FC<OfflineBannerProps> = ({
   isVisible = true,
   onRetry,
   pendingMutations = 0,
@@ -111,3 +111,5 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.sm,
   },
 });
+
+export { OfflineBanner };

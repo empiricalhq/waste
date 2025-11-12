@@ -33,7 +33,7 @@ interface CardProps extends Omit<ViewProps, "style"> {
   accessibilityHint?: string;
 }
 
-export const Card: React.FC<CardProps> = ({
+const Card: React.FC<CardProps> = ({
   children,
   variant = "outlined",
   onPress,
@@ -131,3 +131,5 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
 });
+
+export { Card };

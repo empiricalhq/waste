@@ -6,7 +6,7 @@ export const truckService = {
    * Fetches the list of all active trucks.
    * This is a public endpoint accessible to guest users.
    */
-  getTrucks: async (): Promise<Truck[]> => {
+  getTrucks: (): Promise<Truck[]> => {
     return apiClient.get<Truck[]>("/trucks");
   },
 };

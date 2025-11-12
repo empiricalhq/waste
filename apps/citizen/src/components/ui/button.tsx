@@ -121,8 +121,6 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-export { Button };
-
 const styles = StyleSheet.create({
   container: {
     borderRadius: BorderRadius.md,
@@ -213,3 +211,5 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
 });
+
+export { Button };

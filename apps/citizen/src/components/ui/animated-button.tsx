@@ -131,8 +131,6 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   );
 };
 
-export { AnimatedButton };
-
 const styles = StyleSheet.create({
   container: {
     borderRadius: BorderRadius.md,
@@ -202,3 +200,5 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
 });
+
+export { AnimatedButton };

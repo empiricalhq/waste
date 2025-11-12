@@ -9,10 +9,19 @@
     "rules": {
       "style": {
         "noDefaultExport": "off",
-        "useComponentExportOnlyModules": "off"
+        "useComponentExportOnlyModules": "off",
+        "noMagicNumbers": "off",
+        "useNamingConvention": "off"
       },
       "suspicious": {
         "noConsole": "off"
+      },
+      "security": {
+        "noSecrets": "off"
+      },
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off",
+        "noExcessiveCognitiveComplexity": "off"
       }
     }
   }

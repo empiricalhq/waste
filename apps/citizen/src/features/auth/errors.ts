@@ -12,8 +12,8 @@ export type AuthErrorCode =
   (typeof AUTH_ERROR_CODE)[keyof typeof AUTH_ERROR_CODE];
 
 export class AuthError extends Error {
-  public code: AuthErrorCode;
-  public originalError?: Error;
+  code: AuthErrorCode;
+  originalError?: Error;
 
   constructor(code: AuthErrorCode, message: string, originalError?: Error) {
     super(message);

@@ -16,7 +16,7 @@ import { BorderRadius, Colors, Spacing } from "@/constants/design-tokens";
 import { AppError } from "@/lib/utils/error-handler";
 import { logError } from "@/lib/utils/error-logger";
 
-export type ErrorType =
+type ErrorType =
   | "network"
   | "timeout"
   | "server"
@@ -241,6 +241,79 @@ const getErrorInfoByType = (type: ErrorType, message?: string): ErrorInfo => {
   }
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  iconContainer: {
+    marginBottom: Spacing.xl,
+  },
+  title: {
+    marginBottom: Spacing.md,
+  },
+  message: {
+    marginBottom: Spacing.xl,
+  },
+  retryContainer: {
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  retryButton: {
+    minWidth: 140,
+  },
+  retryCount: {
+    marginTop: Spacing.xs,
+  },
+  retryLimitText: {
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  debugInfo: {
+    marginTop: Spacing.xl,
+    padding: Spacing.md,
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.md,
+    maxWidth: "100%",
+  },
+  debugText: {
+    fontFamily: "monospace",
+  },
+  compactContainer: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.lg,
+    marginVertical: Spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.error,
+  },
+  compactContent: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: Spacing.md,
+  },
+  compactIconContainer: {
+    marginRight: Spacing.md,
+  },
+  compactTextContainer: {
+    flex: 1,
+  },
+  compactMessage: {
+    lineHeight: 20,
+  },
+  compactRetryButton: {
+    alignSelf: "flex-start",
+  },
+  compactRetryLimitText: {
+    marginTop: Spacing.sm,
+  },
+});
+
+export type { ErrorType };
+
 export const ErrorState: React.FC<ErrorStateProps> = ({
   error,
   onRetry,
@@ -390,74 +463,3 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: Spacing.xl,
-  },
-  iconContainer: {
-    marginBottom: Spacing.xl,
-  },
-  title: {
-    marginBottom: Spacing.md,
-  },
-  message: {
-    marginBottom: Spacing.xl,
-  },
-  retryContainer: {
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  retryButton: {
-    minWidth: 140,
-  },
-  retryCount: {
-    marginTop: Spacing.xs,
-  },
-  retryLimitText: {
-    marginTop: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-  },
-  debugInfo: {
-    marginTop: Spacing.xl,
-    padding: Spacing.md,
-    backgroundColor: Colors.cardBackground,
-    borderRadius: BorderRadius.md,
-    maxWidth: "100%",
-  },
-  debugText: {
-    fontFamily: "monospace",
-  },
-  compactContainer: {
-    backgroundColor: Colors.cardBackground,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    marginHorizontal: Spacing.lg,
-    marginVertical: Spacing.md,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.error,
-  },
-  compactContent: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: Spacing.md,
-  },
-  compactIconContainer: {
-    marginRight: Spacing.md,
-  },
-  compactTextContainer: {
-    flex: 1,
-  },
-  compactMessage: {
-    lineHeight: 20,
-  },
-  compactRetryButton: {
-    alignSelf: "flex-start",
-  },
-  compactRetryLimitText: {
-    marginTop: Spacing.sm,
-  },
-});

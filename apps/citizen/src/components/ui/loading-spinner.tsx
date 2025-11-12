@@ -11,7 +11,7 @@ interface LoadingSpinnerProps extends ViewProps {
   fullScreen?: boolean;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   fullScreen = false,
   style,
 }) => {
@@ -38,3 +38,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+export { LoadingSpinner };

@@ -14,7 +14,7 @@ interface AnimatedCardProps extends ViewProps {
   index?: number;
 }
 
-export const AnimatedCard: React.FC<AnimatedCardProps> = ({
+const AnimatedCard: React.FC<AnimatedCardProps> = ({
   children,
   style,
   index = 0,
@@ -51,3 +51,5 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
 });
+
+export { AnimatedCard };
