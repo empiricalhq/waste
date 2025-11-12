@@ -1,4 +1,3 @@
-import { API_TIMEOUT, API_URL } from "@/constants";
 import type {
   Collection,
   LoginInput,
@@ -7,126 +6,177 @@ import type {
   ReportType,
   SignUpInput,
   Truck,
+  TruckWithLocation,
   User,
-} from "./schemas";
+} from "@/types";
+import { apiClient } from "./api-client";
 import { storage } from "./storage";
 
-class ApiError extends Error {
-  status: number;
-  code?: string;
-
-  constructor(message: string, status: number, code?: string) {
-    super(message);
-    this.name = "ApiError";
-    this.status = status;
-    this.code = code;
-  }
-}
-
-async function request<T>(
-  endpoint: string,
-  options: RequestInit = {},
-): Promise<T> {
-  const token = await storage.getToken();
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
-  try {
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
-      },
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new ApiError(
-        error.message || "Error en la solicitud",
-        response.status,
-        error.code,
-      );
-    }
-
-    if (response.status === 204) {
-      return null as T;
-    }
-    return response.json();
-  } catch (error) {
-    clearTimeout(timeoutId);
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    if ((error as Error).name === "AbortError") {
-      throw new ApiError("Tiempo agotado", 408, "TIMEOUT");
-    }
-    throw new ApiError("Error de conexión", 0, "NETWORK_ERROR");
-  }
-}
-
 export const api = {
-  // auth
-  async login(data: LoginInput) {
-    const result = await request<{ user: User; session: { token: string } }>(
-      "/api/auth/sign-in/email",
-      { method: "POST", body: JSON.stringify(data) },
-    );
-    await storage.setToken(result.session.token);
-    return result.user;
+  // Authentication
+  login(data: LoginInput): Promise<User> {
+    return apiClient.authRequest<User>("/api/auth/sign-in/email", data);
   },
 
-  async signUp(data: SignUpInput) {
-    const result = await request<{ user: User; session: { token: string } }>(
-      "/api/auth/sign-up/email",
-      { method: "POST", body: JSON.stringify(data) },
-    );
-    await storage.setToken(result.session.token);
-    return result.user;
+  signUp(data: SignUpInput): Promise<User> {
+    return apiClient.authRequest<User>("/api/auth/sign-up/email", data);
   },
 
-  async logout() {
+  async logout(): Promise<void> {
     try {
-      await request("/api/auth/sign-out", { method: "POST" });
+      await apiClient.post("/api/auth/sign-out");
     } finally {
-      await storage.removeToken();
+      await storage.clearAll();
     }
   },
 
-  async getCurrentUser() {
-    const { user } = await request<{ user: User }>("/api/auth/get-session");
-    return user;
+  async getCurrentUser(): Promise<User> {
+    const result = await apiClient.get<{ user: User; session: unknown }>(
+      "/api/auth/get-session",
+    );
+    return result.user;
   },
 
-  // collections
-  getCollections: () => request<Collection[]>("/collections"),
+  // Collections
+  getCollections(): Promise<Collection[]> {
+    return apiClient.get<Collection[]>("/api/citizen/collections");
+  },
 
-  // trucks
-  getTrucks: () => request<Truck[]>("/trucks"),
+  async getNextCollection(): Promise<Collection | null> {
+    const collections = await this.getCollections();
+    const upcoming = collections
+      .filter((c) => !c.completed)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  // reports
-  getReports: () => request<Report[]>("/reports"),
-  getReportTypes: () => request<ReportType[]>("/report-types"),
-  createReport: (data: {
+    return upcoming[0] || null;
+  },
+
+  // Trucks
+  async getTruckStatus(): Promise<Truck[]> {
+    const status = await apiClient.get<{
+      status: string;
+      message?: string;
+      etaMinutes?: number;
+      truck?: string;
+    }>("/api/citizen/truck/status");
+
+    if (
+      status.status === "LOCATION_NOT_SET" ||
+      status.status === "NOT_SCHEDULED"
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        id: status.truck || "unknown",
+        type: "general",
+        eta: status.etaMinutes || 0,
+        route: status.truck || "",
+      },
+    ];
+  },
+
+  getTrucksWithLocations(): Promise<TruckWithLocation[]> {
+    return apiClient.get<TruckWithLocation[]>("/api/citizen/trucks");
+  },
+
+  // Reports
+  async getReports(): Promise<Report[]> {
+    const issues = await apiClient.get<
+      {
+        id: string;
+        user_id: string;
+        type: string;
+        status: string;
+        description?: string;
+        photo_url?: string;
+        lat: number;
+        lng: number;
+        created_at: string | Date;
+      }[]
+    >("/api/citizen/issues");
+
+    const statusMap: Record<string, "pending" | "in-progress" | "resolved"> = {
+      open: "pending",
+      in_progress: "in-progress",
+      resolved: "resolved",
+    };
+
+    return issues.map((issue) => ({
+      id: issue.id,
+      type: issue.type,
+      description: issue.description || "",
+      status: statusMap[issue.status] || "pending",
+      createdAt:
+        typeof issue.created_at === "string"
+          ? issue.created_at
+          : issue.created_at.toISOString(),
+    }));
+  },
+
+  getReportTypes(): Promise<ReportType[]> {
+    return apiClient.get<ReportType[]>("/api/citizen/report-types");
+  },
+
+  async createReport(data: {
     type: string;
     description: string;
-    location: string;
+    latitude: number;
+    longitude: number;
     imageUri?: string;
-  }) =>
-    request<Report>("/reports", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+  }): Promise<Report> {
+    const typeMap: Record<string, "missed_collection" | "illegal_dumping"> = {
+      "Recolección perdida": "missed_collection",
+      "Vertido ilegal": "illegal_dumping",
+    };
 
-  // quiz
-  getQuizQuestions: () => request<QuizQuestion[]>("/quiz/questions"),
-  updateProgress: (score: number) =>
-    request<User>("/users/me/progress", {
-      method: "PATCH",
-      body: JSON.stringify({ score }),
-    }),
+    const issue = await apiClient.post<{
+      id: string;
+      user_id: string;
+      type: string;
+      status: string;
+      description?: string;
+      photo_url?: string;
+      lat: number;
+      lng: number;
+      created_at: string | Date;
+    }>("/api/citizen/issues", {
+      type: typeMap[data.type] || "illegal_dumping",
+      description: data.description,
+      photo_url: data.imageUri,
+      lat: data.latitude,
+      lng: data.longitude,
+    });
+
+    const statusMap: Record<string, "pending" | "in-progress" | "resolved"> = {
+      open: "pending",
+      in_progress: "in-progress",
+      resolved: "resolved",
+    };
+
+    return {
+      id: issue.id,
+      type: issue.type,
+      description: issue.description || "",
+      status: statusMap[issue.status] || "pending",
+      createdAt:
+        typeof issue.created_at === "string"
+          ? issue.created_at
+          : issue.created_at.toISOString(),
+    };
+  },
+
+  // Quiz
+  getQuizQuestions(): Promise<QuizQuestion[]> {
+    return apiClient.get<QuizQuestion[]>("/api/citizen/quiz/questions");
+  },
+
+  async updateProgress(score: number): Promise<User> {
+    await apiClient.post("/api/citizen/education/progress", {
+      content_id: "waste-quiz",
+      score,
+    });
+    return this.getCurrentUser();
+  },
 };

@@ -1,13 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSegments } from "expo-router";
-import type React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
-import { QUERY_KEYS, ROUTES } from "@/constants";
+import {
+  createContext,
+  memo,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { CONFIG, QUERY_KEYS, ROUTES } from "@/constants";
+import type { LoginInput, SignUpInput, User } from "@/types";
 import { api } from "./api";
-import type { LoginInput, SignUpInput, User } from "./schemas";
 import { storage } from "./storage";
 
-interface AuthContextType {
+interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
   login: (data: LoginInput) => Promise<User>;
@@ -15,15 +22,14 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export const AuthProvider = memo<{ children: ReactNode }>(({ children }) => {
   const [isReady, setIsReady] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
   const segments = useSegments();
 
-  // check if we have a token on mount
   useEffect(() => {
     storage.getToken().then((token) => {
       setIsReady(true);
@@ -38,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryFn: api.getCurrentUser,
     enabled: isReady,
     retry: false,
-    staleTime: 5 * 60 * 1000,
+    staleTime: CONFIG.api.staleTime,
   });
 
   const loginMutation = useMutation({
@@ -63,7 +69,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  // navigation guard
+  const handleLogin = useCallback(
+    (data: LoginInput) => {
+      return loginMutation.mutateAsync(data);
+    },
+    [loginMutation],
+  );
+
+  const handleSignUp = useCallback(
+    (data: SignUpInput) => {
+      return signUpMutation.mutateAsync(data);
+    },
+    [signUpMutation],
+  );
+
+  const handleLogout = useCallback(() => {
+    return logoutMutation.mutateAsync();
+  }, [logoutMutation]);
+
   useEffect(() => {
     if (isLoading || !isReady) {
       return;
@@ -82,22 +105,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user: user ?? null,
-        isLoading: loginMutation.isPending || signUpMutation.isPending,
-        login: loginMutation.mutateAsync,
-        signUp: signUpMutation.mutateAsync,
-        logout: logoutMutation.mutateAsync,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-}
+  const value: AuthContextValue = {
+    user: user ?? null,
+    isLoading: loginMutation.isPending || signUpMutation.isPending,
+    login: handleLogin,
+    signUp: handleSignUp,
+    logout: handleLogout,
+  };
 
-export function useAuth() {
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+});
+
+AuthProvider.displayName = "AuthProvider";
+
+export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within AuthProvider");

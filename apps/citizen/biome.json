@@ -19,7 +19,8 @@
         "useComponentExportOnlyModules": "off"
       },
       "suspicious": {
-        "noConsole": "off"
+        "noConsole": "off",
+        "noExplicitAny": "off"
       },
       "security": {
         "noSecrets": "off"

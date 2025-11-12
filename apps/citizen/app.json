@@ -51,6 +51,13 @@
           "locationAlwaysAndWhenInUsePermission": "Permitir que $(PRODUCT_NAME) use tu ubicación para reportes precisos."
         }
       ],
+      [
+        "expo-maps",
+        {
+          "requestLocationPermission": true,
+          "locationPermission": "Permitir que $(PRODUCT_NAME) use tu ubicación para mostrar tu posición en el mapa."
+        }
+      ],
       "expo-font"
     ],
     "experiments": {

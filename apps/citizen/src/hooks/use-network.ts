@@ -1,17 +1,31 @@
-import NetInfo from "@react-native-community/netinfo";
-import { useEffect, useState } from "react";
+import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
+import { useCallback, useEffect, useState } from "react";
 
-export function useNetwork() {
-  const [isOffline, setIsOffline] = useState(false);
-  const [isWifi, setIsWifi] = useState(true);
+interface NetworkStatus {
+  isOffline: boolean;
+  isWifi: boolean;
+  isConnected: boolean;
+}
 
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!state.isConnected);
-      setIsWifi(state.type === "wifi");
+export function useNetwork(): NetworkStatus {
+  const [status, setStatus] = useState<NetworkStatus>({
+    isOffline: false,
+    isWifi: true,
+    isConnected: true,
+  });
+
+  const handleConnectivityChange = useCallback((state: NetInfoState) => {
+    setStatus({
+      isOffline: !state.isConnected,
+      isWifi: state.type === "wifi",
+      isConnected: state.isConnected ?? false,
     });
-    return unsubscribe;
   }, []);
 
-  return { isOffline, isWifi };
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    return unsubscribe;
+  }, [handleConnectivityChange]);
+
+  return status;
 }

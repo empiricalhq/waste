@@ -1,30 +1,37 @@
+import { memo } from "react";
 import {
   StyleSheet,
   Text,
   TextInput,
   type TextInputProps,
   View,
+  type ViewStyle,
 } from "react-native";
 import { theme } from "@/theme";
 
 interface InputProps extends TextInputProps {
   label: string;
   error?: string;
+  containerStyle?: ViewStyle;
 }
 
-export function Input({ label, error, style, ...props }: InputProps) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.input, error && styles.inputError, style]}
-        placeholderTextColor={theme.colors.textTertiary}
-        {...props}
-      />
-      {error && <Text style={styles.error}>{error}</Text>}
-    </View>
-  );
-}
+export const Input = memo<InputProps>(
+  ({ label, error, style, containerStyle, ...props }) => {
+    return (
+      <View style={[styles.container, containerStyle]}>
+        <Text style={styles.label}>{label}</Text>
+        <TextInput
+          style={[styles.input, error && styles.inputError, style]}
+          placeholderTextColor={theme.colors.textTertiary}
+          {...props}
+        />
+        {error && <Text style={styles.error}>{error}</Text>}
+      </View>
+    );
+  },
+);
+
+Input.displayName = "Input";
 
 const styles = StyleSheet.create({
   container: {
@@ -32,16 +39,17 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: theme.text.sm,
-    fontWeight: "500",
+    fontWeight: theme.fontWeight.medium,
     color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   input: {
     backgroundColor: theme.colors.card,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
     fontSize: theme.text.base,
     color: theme.colors.text,
     minHeight: 44,
@@ -50,7 +58,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.error,
   },
   error: {
-    fontSize: theme.text.sm,
+    fontSize: theme.text.xs,
     color: theme.colors.error,
     marginTop: theme.spacing.xs,
   },
