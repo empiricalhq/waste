@@ -27,7 +27,8 @@ export default function ScheduleScreen() {
   } = useCollections();
 
   // check if data is older than 7 days
-  const isDataOld = dataUpdatedAt && Date.now() - dataUpdatedAt > 7 * 24 * 60 * 60 * 1000;
+  const isDataOld =
+    dataUpdatedAt && Date.now() - dataUpdatedAt > 7 * 24 * 60 * 60 * 1000;
 
   const renderItem = ({ item }: { item: Collection }) => {
     const wasteInfo = WASTE_TYPES[item.type];
