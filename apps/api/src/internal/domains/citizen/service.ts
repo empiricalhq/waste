@@ -2,7 +2,7 @@ import type { DatabaseInterface } from '@/internal/shared/database/database';
 import { BaseService } from '@/internal/shared/services/base-service';
 import type { CitizenIssueReport, CreateCitizenIssueRequest } from '../issues/models';
 import type { IssueRepository } from '../issues/repository';
-import type { TruckStatusResponse } from '../locations/models';
+import type { TruckStatusResponse, TruckWithLocation } from '../locations/models';
 import { LocationQueries } from '../locations/queries';
 
 const ETA_MINUTES_PER_KM = 10;
@@ -53,6 +53,14 @@ export class CitizenService extends BaseService {
 
   async updateLocation(userId: string, lat: number, lng: number): Promise<void> {
     await this.db.query(LocationQueries.upsertCitizenProfileLocation, [userId, lat, lng]);
+  }
+
+  async getAllTrucksWithLocations(): Promise<TruckWithLocation[]> {
+    const result = await this.db.query<TruckWithLocation>(
+      LocationQueries.findAllActiveTrucksWithLocations,
+    );
+
+    return result.rows;
   }
 
   async reportIssue(userId: string, data: CreateCitizenIssueRequest): Promise<CitizenIssueReport> {

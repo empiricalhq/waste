@@ -18,6 +18,7 @@
     "expo-constants": "~18.0.3",
     "expo-dev-client": "~6.0.17",
     "expo-location": "~19.0.7",
+    "expo-maps": "~0.12.8",
     "expo-router": "~6.0.14",
     "expo-secure-store": "~15.0.7",
     "lucide-react-native": "^0.553.0",

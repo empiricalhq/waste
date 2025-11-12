@@ -1,5 +1,5 @@
 export const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://lima-api.vercel.app";
+  process.env.EXPO_PUBLIC_API_URL || "https://lima-api.vercel.app/api";
 export const API_TIMEOUT = 15_000;
 export const TOKEN_KEY = "authToken";
 
@@ -22,6 +22,7 @@ export const QUERY_KEYS = {
   USER: "user",
   COLLECTIONS: "collections",
   TRUCKS: "trucks",
+  TRUCKS_LOCATIONS: "trucks-locations",
   REPORTS: "reports",
   REPORT_TYPES: "reportTypes",
   QUIZ: "quiz",

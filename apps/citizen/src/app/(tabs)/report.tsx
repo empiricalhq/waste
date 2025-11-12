@@ -113,9 +113,7 @@ export default function ReportScreen() {
               } catch (error) {
                 Alert.alert(
                   "Error de ubicación",
-                  error instanceof Error
-                    ? error.message
-                    : "No se pudo obtener la ubicación",
+                  error instanceof Error ? error.message : "No se pudo obtener la ubicación",
                 );
               }
             }}
@@ -128,8 +126,7 @@ export default function ReportScreen() {
           )}
           {coords && (
             <Text style={styles.locationSuccess}>
-              Coordenadas: {coords.latitude.toFixed(6)},{" "}
-              {coords.longitude.toFixed(6)}
+              ✓ Coordenadas: {coords.latitude.toFixed(6)}, {coords.longitude.toFixed(6)}
             </Text>
           )}
         </View>
@@ -146,10 +143,7 @@ export default function ReportScreen() {
         <Button
           title="Enviar reporte"
           onPress={async () => {
-            const submitReport = (locationCoords: {
-              latitude: number;
-              longitude: number;
-            }) => {
+            const submitReport = (locationCoords: { latitude: number; longitude: number }) => {
               submit(
                 {
                   type: selectedType,
@@ -170,9 +164,7 @@ export default function ReportScreen() {
               );
             };
 
-            if (coords) {
-              submitReport(coords);
-            } else {
+            if (!coords) {
               try {
                 const locationCoords = await requestLocation();
                 submitReport(locationCoords);
@@ -184,6 +176,8 @@ export default function ReportScreen() {
                     : "Se necesita la ubicación para enviar el reporte.",
                 );
               }
+            } else {
+              submitReport(coords);
             }
           }}
           loading={isPending || isLoadingLocation}

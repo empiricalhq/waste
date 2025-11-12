@@ -14,3 +14,13 @@ export interface TruckStatusResponse {
   etaMinutes?: number;
   truck?: string;
 }
+
+export interface TruckWithLocation {
+  id: string;
+  name: string;
+  license_plate: string;
+  lat: number;
+  lng: number;
+  location_updated_at: Date;
+  assignment_status?: string;
+}

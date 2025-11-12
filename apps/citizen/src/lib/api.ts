@@ -5,6 +5,8 @@ import type {
   QuizQuestion,
   ReportType,
   SignUpInput,
+  Truck,
+  TruckWithLocation,
   User,
 } from "./schemas";
 import { storage } from "./storage";
@@ -22,11 +24,9 @@ class ApiError extends Error {
 }
 
 function extractSessionToken(cookieHeader: string | null): string | null {
-  if (!cookieHeader) {
-    return null;
-  }
+  if (!cookieHeader) return null;
   // Handle both single cookie and multiple cookies (comma-separated or semicolon-separated)
-  const cookies = cookieHeader.split(/[,;]/).map((c) => c.trim());
+  const cookies = cookieHeader.split(/[,;]/).map(c => c.trim());
   for (const cookie of cookies) {
     const match = cookie.match(/better-auth\.session_token=([^;]+)/);
     if (match) {
@@ -52,7 +52,7 @@ async function request<T>(
 
     // Better-auth uses cookies for authentication
     if (token) {
-      headers.Cookie = `better-auth.session_token=${token}`;
+      headers["Cookie"] = `better-auth.session_token=${token}`;
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -75,7 +75,7 @@ async function request<T>(
     if (response.status === 204) {
       return null as T;
     }
-
+    
     const json = await response.json();
     // API wraps responses in { data: ... } format
     return (json.data !== undefined ? json.data : json) as T;
@@ -104,19 +104,19 @@ async function handleAuthResponse(response: Response): Promise<User> {
   // Extract session token from cookie
   const cookieHeader = response.headers.get("set-cookie");
   const sessionToken = extractSessionToken(cookieHeader);
-
+  
   if (sessionToken) {
     await storage.setToken(sessionToken);
   }
 
   const json = await response.json();
   const result = json.data !== undefined ? json.data : json;
-
+  
   // Better-auth returns { user, session } in the response
   if (result.user) {
     return result.user as User;
   }
-
+  
   // If user is not in response, fetch it separately
   return api.getCurrentUser();
 }
@@ -126,7 +126,7 @@ export const api = {
   async login(data: LoginInput) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
+    
     try {
       const response = await fetch(`${API_URL}/api/auth/sign-in/email`, {
         method: "POST",
@@ -152,7 +152,7 @@ export const api = {
   async signUp(data: SignUpInput) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
-
+    
     try {
       const response = await fetch(`${API_URL}/api/auth/sign-up/email`, {
         method: "POST",
@@ -184,9 +184,7 @@ export const api = {
   },
 
   async getCurrentUser() {
-    const result = await request<{ user: User; session: unknown }>(
-      "/api/auth/get-session",
-    );
+    const result = await request<{ user: User; session: unknown }>("/api/auth/get-session");
     return result.user;
   },
 
@@ -201,59 +199,52 @@ export const api = {
       etaMinutes?: number;
       truck?: string;
     }>("/api/citizen/truck/status");
-
+    
     // Transform to array format expected by the app
-    if (
-      status.status === "LOCATION_NOT_SET" ||
-      status.status === "NOT_SCHEDULED"
-    ) {
+    if (status.status === "LOCATION_NOT_SET" || status.status === "NOT_SCHEDULED") {
       return [];
     }
-
+    
     // Return a single truck status as an array
-    return [
-      {
-        id: status.truck || "unknown",
-        type: "general" as const, // Default type, API doesn't provide this
-        eta: status.etaMinutes || 0,
-        route: status.truck || "",
-      },
-    ];
+    return [{
+      id: status.truck || "unknown",
+      type: "general" as const, // Default type, API doesn't provide this
+      eta: status.etaMinutes || 0,
+      route: status.truck || "",
+    }];
   },
+
+  getTrucksWithLocations: () => request<TruckWithLocation[]>("/api/citizen/trucks"),
 
   // reports
   async getReports() {
-    const issues = await request<
-      Array<{
-        id: string;
-        user_id: string;
-        type: string;
-        status: string;
-        description?: string;
-        photo_url?: string;
-        lat: number;
-        lng: number;
-        created_at: string | Date;
-      }>
-    >("/api/citizen/issues");
-
+    const issues = await request<Array<{
+      id: string;
+      user_id: string;
+      type: string;
+      status: string;
+      description?: string;
+      photo_url?: string;
+      lat: number;
+      lng: number;
+      created_at: string | Date;
+    }>>("/api/citizen/issues");
+    
     return issues.map((issue) => {
-      const statusMap: Record<string, "pending" | "in-progress" | "resolved"> =
-        {
-          open: "pending",
-          in_progress: "in-progress",
-          resolved: "resolved",
-        };
-
+      const statusMap: Record<string, "pending" | "in-progress" | "resolved"> = {
+        "open": "pending",
+        "in_progress": "in-progress",
+        "resolved": "resolved",
+      };
+      
       return {
         id: issue.id,
         type: issue.type,
         description: issue.description || "",
         status: statusMap[issue.status] || "pending",
-        createdAt:
-          typeof issue.created_at === "string"
-            ? issue.created_at
-            : issue.created_at.toISOString(),
+        createdAt: typeof issue.created_at === "string" 
+          ? issue.created_at 
+          : issue.created_at.toISOString(),
       };
     });
   },
@@ -269,9 +260,10 @@ export const api = {
   }) {
     // Validate coordinates
     if (
-      !(data.latitude && data.longitude) ||
-      Number.isNaN(data.latitude) ||
-      Number.isNaN(data.longitude) ||
+      !data.latitude ||
+      !data.longitude ||
+      isNaN(data.latitude) ||
+      isNaN(data.longitude) ||
       data.latitude < -90 ||
       data.latitude > 90 ||
       data.longitude < -180 ||
@@ -279,15 +271,15 @@ export const api = {
     ) {
       throw new ApiError("Coordenadas inválidas", 400, "INVALID_COORDINATES");
     }
-
+    
     // Map report type label to API type
     const typeMap: Record<string, "missed_collection" | "illegal_dumping"> = {
       "Recolección perdida": "missed_collection",
       "Vertido ilegal": "illegal_dumping",
     };
-
+    
     const apiType = typeMap[data.type] || "illegal_dumping";
-
+    
     const issue = await request<{
       id: string;
       user_id: string;
@@ -310,27 +302,25 @@ export const api = {
     });
 
     const statusMap: Record<string, "pending" | "in-progress" | "resolved"> = {
-      open: "pending",
-      in_progress: "in-progress",
-      resolved: "resolved",
+      "open": "pending",
+      "in_progress": "in-progress",
+      "resolved": "resolved",
     };
-
+    
     return {
       id: issue.id,
       type: issue.type,
       description: issue.description || "",
       status: statusMap[issue.status] || "pending",
-      createdAt:
-        typeof issue.created_at === "string"
-          ? issue.created_at
-          : issue.created_at.toISOString(),
+      createdAt: typeof issue.created_at === "string" 
+        ? issue.created_at 
+        : issue.created_at.toISOString(),
     };
   },
 
   // quiz
-  getQuizQuestions: () =>
-    request<QuizQuestion[]>("/api/citizen/quiz/questions"),
-
+  getQuizQuestions: () => request<QuizQuestion[]>("/api/citizen/quiz/questions"),
+  
   async updateProgress(score: number) {
     // The API expects { content_id: string, score: number }
     // We'll use a default content_id for now
@@ -338,7 +328,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ content_id: "waste-quiz", score }),
     });
-
+    
     // Return updated user by fetching session
     return this.getCurrentUser();
   },
