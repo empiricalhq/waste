@@ -35,22 +35,4 @@ export const LocationQueries = {
     ORDER BY distance_km ASC
     LIMIT 1
   `,
-  findAllActiveTrucksWithLocations: `
-    SELECT
-      t.id,
-      t.name,
-      t.license_plate,
-      tcl.lat,
-      tcl.lng,
-      tcl.updated_at as location_updated_at,
-      ra.status as assignment_status
-    FROM truck t
-    LEFT JOIN truck_current_location tcl ON t.id = tcl.truck_id
-    LEFT JOIN route_assignment ra ON tcl.route_assignment_id = ra.id AND ra.status IN ('scheduled', 'active')
-    WHERE t.is_active = true 
-      AND tcl.lat IS NOT NULL 
-      AND tcl.lng IS NOT NULL
-      AND tcl.updated_at > NOW() - INTERVAL '10 minutes'
-    ORDER BY t.name ASC
-  `,
 } as const;

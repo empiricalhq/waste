@@ -1,5 +1,4 @@
 import { Hono, type MiddlewareHandler } from 'hono';
-import { z } from 'zod';
 import { created, success } from '@/internal/shared/utils/response';
 import { validateJson } from '@/internal/shared/utils/validation';
 import type { AuthEnv } from '../auth/types';
@@ -21,11 +20,6 @@ export function createCitizenHandler(
     return success(c, status);
   });
 
-  citizen.get('/trucks', async (c) => {
-    const trucks = await citizenService.getAllTrucksWithLocations();
-    return success(c, trucks);
-  });
-
   citizen.put('/profile/location', validateJson(UpdateLocationSchema), async (c) => {
     const { lat, lng } = c.req.valid('json');
     const user = c.get('user');
@@ -36,40 +30,14 @@ export function createCitizenHandler(
   citizen.post('/issues', validateJson(CreateCitizenIssueSchema), async (c) => {
     const issueData = c.req.valid('json');
     const user = c.get('user');
-    const issue = await citizenService.reportIssue(user.id, issueData);
-    return created(c, issue);
+    await citizenService.reportIssue(user.id, issueData);
+    return created(c, { message: 'Issue reported successfully' });
   });
 
   citizen.get('/issues', async (c) => {
     const user = c.get('user');
     const issues = await citizenService.getUserIssues(user.id);
     return success(c, issues);
-  });
-
-  citizen.get('/collections', async (c) => {
-    const user = c.get('user');
-    const collections = await citizenService.getCollections(user.id);
-    return success(c, collections);
-  });
-
-  citizen.get('/report-types', async (c) => {
-    const types = citizenService.getReportTypes();
-    return success(c, types);
-  });
-
-  citizen.get('/quiz/questions', async (c) => {
-    const questions = citizenService.getQuizQuestions();
-    return success(c, questions);
-  });
-
-  citizen.post('/education/progress', validateJson(z.object({
-    content_id: z.string(),
-    score: z.number(),
-  })), async (c) => {
-    const { content_id, score } = c.req.valid('json');
-    const user = c.get('user');
-    await citizenService.updateEducationProgress(user.id, content_id, score);
-    return success(c, { success: true });
   });
 
   return citizen;

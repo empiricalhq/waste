@@ -2,7 +2,7 @@ import type { DatabaseInterface } from '@/internal/shared/database/database';
 import { BaseService } from '@/internal/shared/services/base-service';
 import type { CitizenIssueReport, CreateCitizenIssueRequest } from '../issues/models';
 import type { IssueRepository } from '../issues/repository';
-import type { TruckStatusResponse, TruckWithLocation } from '../locations/models';
+import type { TruckStatusResponse } from '../locations/models';
 import { LocationQueries } from '../locations/queries';
 
 const ETA_MINUTES_PER_KM = 10;
@@ -55,82 +55,11 @@ export class CitizenService extends BaseService {
     await this.db.query(LocationQueries.upsertCitizenProfileLocation, [userId, lat, lng]);
   }
 
-  async getAllTrucksWithLocations(): Promise<TruckWithLocation[]> {
-    const result = await this.db.query<TruckWithLocation>(
-      LocationQueries.findAllActiveTrucksWithLocations,
-    );
-
-    return result.rows;
-  }
-
-  async reportIssue(userId: string, data: CreateCitizenIssueRequest): Promise<CitizenIssueReport> {
-    return this.issueRepo.createCitizenIssue(userId, data);
+  async reportIssue(userId: string, data: CreateCitizenIssueRequest): Promise<void> {
+    await this.issueRepo.createCitizenIssue(userId, data);
   }
 
   async getUserIssues(userId: string): Promise<CitizenIssueReport[]> {
     return this.issueRepo.findCitizenIssuesByUserId(userId);
-  }
-
-  async getCollections(userId: string): Promise<Array<{
-    id: string;
-    type: 'general' | 'recycling' | 'organic' | 'hazardous';
-    date: string;
-    time: string;
-    completed: boolean;
-  }>> {
-    // TODO: Implement actual collection schedule based on user location
-    // For now, return empty array or mock data
-    // This should query the database for scheduled collections based on user's location
-    return [];
-  }
-
-  getReportTypes(): Array<{ id: string; label: string }> {
-    return [
-      { id: 'missed_collection', label: 'Recolección perdida' },
-      { id: 'illegal_dumping', label: 'Vertido ilegal' },
-    ];
-  }
-
-  getQuizQuestions(): Array<{
-    id: string;
-    item: string;
-    question: string;
-    imageUrl: string;
-    options: Array<'general' | 'recycling' | 'organic' | 'hazardous'>;
-    correctAnswer: 'general' | 'recycling' | 'organic' | 'hazardous';
-  }> {
-    // TODO: Store quiz questions in database
-    // For now, return mock quiz questions
-    return [
-      {
-        id: '1',
-        item: 'Botella de plástico',
-        question: '¿En qué contenedor va?',
-        imageUrl: 'https://via.placeholder.com/200?text=Plastic+Bottle',
-        options: ['general', 'recycling', 'organic', 'hazardous'],
-        correctAnswer: 'recycling',
-      },
-      {
-        id: '2',
-        item: 'Cáscara de plátano',
-        question: '¿En qué contenedor va?',
-        imageUrl: 'https://via.placeholder.com/200?text=Banana+Peel',
-        options: ['general', 'recycling', 'organic', 'hazardous'],
-        correctAnswer: 'organic',
-      },
-      {
-        id: '3',
-        item: 'Batería',
-        question: '¿En qué contenedor va?',
-        imageUrl: 'https://via.placeholder.com/200?text=Battery',
-        options: ['general', 'recycling', 'organic', 'hazardous'],
-        correctAnswer: 'hazardous',
-      },
-    ];
-  }
-
-  async updateEducationProgress(userId: string, contentId: string, score: number): Promise<void> {
-    // TODO: Store quiz progress in database
-    // For now, this is a no-op
   }
 }
