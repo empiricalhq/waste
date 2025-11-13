@@ -10,28 +10,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/loading";
 import { useToast } from "@/context/ToastContext";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { storage } from "@/lib/storage";
+import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
 import { theme } from "@/theme";
-import type { QuizProgress } from "@/types";
 
 export default function ProfileScreen() {
   const { user, isAuthenticated, login, signUp, logout, isAuthLoading } =
     useAuth();
   const { show } = useToast();
+  const { progress, isLoadingProgress } = useQuizProgress();
+
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [progress, setProgress] = useState<QuizProgress | null>(null);
 
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
-
-  useEffect(() => {
-    storage.getQuizProgress().then(setProgress);
-  }, [isAuthenticated]);
 
   useEffect(() => {
     opacity.value = withTiming(1, { duration: theme.animation.duration.slow });
@@ -103,11 +100,9 @@ export default function ProfileScreen() {
                 ? "Inicia sesión para reportar problemas y guardar tu progreso"
                 : "Crea una cuenta para reportar problemas y guardar tu progreso"}
             </Text>
-
             {mode === "signup" && (
               <Input label="Nombre" value={name} onChangeText={setName} />
             )}
-
             <Input
               label="Correo electrónico"
               value={email}
@@ -115,21 +110,18 @@ export default function ProfileScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
             />
-
             <Input
               label="Contraseña"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={true}
             />
-
             <Button
               title={mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
               onPress={handleAuth}
               loading={isAuthLoading}
               fullWidth={true}
             />
-
             <Button
               title={
                 mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"
@@ -163,22 +155,26 @@ export default function ProfileScreen() {
 
           <Card variant="elevated">
             <Text style={styles.cardTitle}>Estadísticas del quiz</Text>
-            <View style={styles.stats}>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>{progress?.streak || 0}</Text>
-                <Text style={styles.statLabel}>Racha</Text>
+            {isLoadingProgress ? (
+              <Loading />
+            ) : (
+              <View style={styles.stats}>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{progress?.streak || 0}</Text>
+                  <Text style={styles.statLabel}>Racha</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>{accuracy}%</Text>
+                  <Text style={styles.statLabel}>Precisión</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statValue}>
+                    {progress?.totalAnswered || 0}
+                  </Text>
+                  <Text style={styles.statLabel}>Respondidas</Text>
+                </View>
               </View>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>{accuracy}%</Text>
-                <Text style={styles.statLabel}>Precisión</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>
-                  {progress?.totalAnswered || 0}
-                </Text>
-                <Text style={styles.statLabel}>Respondidas</Text>
-              </View>
-            </View>
+            )}
           </Card>
 
           <Button

@@ -8,18 +8,18 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/context/ToastContext";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { QuizGame } from "@/features/quiz/components/quiz-game";
 import { quizQuestions } from "@/features/quiz/data/quiz-questions";
-import { storage } from "@/lib/storage";
+import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
 import { theme } from "@/theme";
 
 type Screen = "menu" | "quiz" | "results";
 
 export default function LearnScreen() {
   const { isAuthenticated } = useAuth();
-  const { show } = useToast();
+  const { updateProgress } = useQuizProgress();
+
   const [screen, setScreen] = useState<Screen>("menu");
   const [score, setScore] = useState(0);
 
@@ -45,22 +45,10 @@ export default function LearnScreen() {
     setScreen("results");
 
     if (isAuthenticated) {
-      const progress = await storage.getQuizProgress();
-      const today = new Date().toISOString().split("T")[0];
-      const isNewDay = progress.lastPlayed !== today;
-
-      await storage.setQuizProgress({
-        streak: isNewDay ? progress.streak + 1 : progress.streak,
-        totalAnswered: progress.totalAnswered + quizQuestions.length,
-        correctAnswers: progress.correctAnswers + finalScore,
-        lastPlayed: today,
-      });
-
-      if (isNewDay) {
-        show("¡Racha actualizada! 🔥", {
-          type: "success",
-          position: "top",
-        });
+      try {
+        await updateProgress(finalScore);
+      } catch (error) {
+        console.error("handleQuizComplete failed:", error);
       }
     }
   };

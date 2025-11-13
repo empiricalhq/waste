@@ -3,15 +3,22 @@ import {
   LocationAccuracy,
   requestForegroundPermissionsAsync,
 } from "expo-location";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { LocationCoords } from "@/types";
 
-export function useLocation() {
+interface UseLocationOptions {
+  // if true, location will be requested immediately upon component mount
+  fetchOnMount?: boolean;
+}
+
+export function useLocation(options: UseLocationOptions = {}) {
+  const { fetchOnMount = false } = options;
+
   const [coords, setCoords] = useState<LocationCoords | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(fetchOnMount);
   const [error, setError] = useState<string | null>(null);
 
-  const requestLocation = useCallback(async () => {
+  const requestLocation = useCallback(async (): Promise<LocationCoords> => {
     setIsLoading(true);
     setError(null);
 
@@ -33,15 +40,24 @@ export function useLocation() {
 
       setCoords(newCoords);
       return newCoords;
-    } catch (err) {
+    } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "No se pudo obtener la ubicación";
       setError(message);
+      setCoords(null);
+      // Re-throw the error so the calling component can handle it if needed
+      // (e.g., in a try/catch block for an imperative call).
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (fetchOnMount) {
+      requestLocation().catch(() => {});
+    }
+  }, [fetchOnMount, requestLocation]);
 
   const clearLocation = useCallback(() => {
     setCoords(null);
