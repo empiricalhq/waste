@@ -1,7 +1,6 @@
 import { API_URL, RETRY_CONFIG, TOKEN_EXPIRY_BUFFER } from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
-  AuthTokens,
   CreateReportInput,
   LoginInput,
   Report,
@@ -28,7 +27,9 @@ class ApiClient {
 
   private async getValidToken(): Promise<string | null> {
     const tokens = await storage.getAuthTokens();
-    if (!tokens) return null;
+    if (!tokens) {
+      return null;
+    }
 
     // If token expires in less than TOKEN_EXPIRY_BUFFER, try to refresh
     const timeUntilExpiry = tokens.expiresAt - Date.now();
@@ -95,7 +96,9 @@ class ApiClient {
 
         // Don't retry auth errors or client errors (4xx)
         if (error instanceof ApiError) {
-          if (error.code === "AUTH_EXPIRED") throw error;
+          if (error.code === "AUTH_EXPIRED") {
+            throw error;
+          }
           throw error;
         }
 

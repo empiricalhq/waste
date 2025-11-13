@@ -74,11 +74,7 @@ export function Toast({ toast, index }: ToastProps) {
 
   return (
     <Animated.View
-      style={[
-        styles.container,
-        animatedStyle,
-        { marginBottom: bottomOffset },
-      ]}
+      style={[styles.container, animatedStyle, { marginBottom: bottomOffset }]}
     >
       <Pressable
         style={[styles.toast, { backgroundColor }, theme.shadow.lg]}
