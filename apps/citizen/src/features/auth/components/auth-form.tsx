@@ -8,7 +8,7 @@ import { useToast } from "@/context/ToastContext";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
-import type { LoginInput, SignUpInput } from "@/types";
+import type { SignUpInput } from "@/types";
 
 type FormData = SignUpInput;
 
@@ -32,7 +32,11 @@ export function AuthForm() {
         await login({ email: data.email, password: data.password });
         show("Sesión iniciada correctamente", { type: "success" });
       } else {
-        await signUp({ name: data.name, email: data.email, password: data.password });
+        await signUp({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        });
         show("Cuenta creada correctamente", { type: "success" });
       }
     } catch (error: any) {

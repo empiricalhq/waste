@@ -18,7 +18,12 @@ type FormData = Pick<CreateReportInput, "description">;
 
 export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
   const [type, setType] = useState<CreateReportInput["type"] | null>(null);
-  const { coords, isLoading: isLoadingLocation, error: locationError, requestLocation } = useLocation();
+  const {
+    coords,
+    isLoading: isLoadingLocation,
+    error: locationError,
+    requestLocation,
+  } = useLocation();
   const { show } = useToast();
 
   const {
@@ -94,7 +99,11 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
         name="description"
         rules={{
           required: "La descripción es obligatoria",
-          minLength: { value: 10, message: "Describe el problema con más detalle (mín. 10 caracteres)" },
+          minLength: {
+            value: 10,
+            message:
+              "Describe el problema con más detalle (mín. 10 caracteres)",
+          },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
