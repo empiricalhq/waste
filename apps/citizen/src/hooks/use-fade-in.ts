@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -13,14 +13,18 @@ interface FadeInOptions {
 }
 
 /**
- * A hook to fade in a component when it's laid out.
+ * A hook to fade in a component when it's mounted.
  * @param options - Configuration for the animation.
- * @returns A tuple containing the animated style and the onLayout handler.
+ * @returns An animated style object.
  */
 export function useFadeIn(options: FadeInOptions = {}) {
   const { duration = theme.animation.duration.slow, translateY = 20 } = options;
 
   const isVisible = useSharedValue(false);
+
+  useEffect(() => {
+    isVisible.value = true;
+  }, [isVisible]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: withTiming(isVisible.value ? 1 : 0, { duration }),
@@ -34,9 +38,5 @@ export function useFadeIn(options: FadeInOptions = {}) {
     ],
   }));
 
-  const onLayout = useCallback(() => {
-    isVisible.value = true;
-  }, [isVisible]);
-
-  return [animatedStyle, onLayout] as const;
+  return animatedStyle;
 }

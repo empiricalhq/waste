@@ -11,5 +11,7 @@ export function useTrucks() {
     queryFn: () => api.getTrucks(),
     refetchInterval: isActive ? POLLING.TRUCKS : false,
     staleTime: POLLING.TRUCKS,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000), // 2s, 4s, 8s, ... up to 30s
   });
 }

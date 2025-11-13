@@ -15,7 +15,7 @@ export function ProfileScreen() {
   const { user, isAuthenticated, logout } = useAuth();
   const { show } = useToast();
   const { progress, isLoadingProgress } = useQuizProgress();
-  const [animatedStyle, onLayout] = useFadeIn();
+  const animatedStyle = useFadeIn();
 
   const handleLogout = () => {
     show("¿Cerrar sesión?", {
@@ -54,10 +54,7 @@ export function ProfileScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View
-          onLayout={onLayout}
-          style={[styles.contentWrapper, animatedStyle]}
-        >
+        <Animated.View style={[styles.contentWrapper, animatedStyle]}>
           <Text style={styles.title}>Perfil</Text>
           <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.email}>{user?.email}</Text>

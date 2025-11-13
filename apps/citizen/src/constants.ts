@@ -19,8 +19,8 @@ export const REPORT_TYPES = {
 
 // polling intervals (ms)
 export const POLLING = {
-  TRUCKS: 30_000, // 30s when visible
-  STATUS: 60_000, // 1min when visible
+  TRUCKS: 90_000, // 90s when visible (was 30s)
+  STATUS: 120_000, // 2min when visible (was 60s)
 } as const;
 
 // map defaults

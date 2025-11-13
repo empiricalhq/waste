@@ -24,12 +24,11 @@ export function TruckMap({ trucks, userLocation }: TruckMapProps) {
   const markers = useMemo(
     () =>
       trucks.map((truck) => ({
-        id: truck.id,
+        key: truck.id,
         coordinates: { latitude: truck.lat, longitude: truck.lng },
         title: truck.name,
-        ...(Platform.OS === "android" && {
-          snippet: `Placa: ${truck.licensePlate}`,
-        }),
+        // works only in Android (Google Maps)
+        snippet: `Placa: ${truck.licensePlate}`,
       })),
     [trucks],
   );
@@ -39,7 +38,7 @@ export function TruckMap({ trucks, userLocation }: TruckMapProps) {
       <MapComponent
         style={styles.map}
         cameraPosition={camera}
-        markers={markers}
+        {...(Platform.OS === "ios" ? { annotations: markers } : { markers })}
         properties={{ isMyLocationEnabled: Boolean(userLocation) }}
         uiSettings={{ myLocationButtonEnabled: Boolean(userLocation) }}
       />

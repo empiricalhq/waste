@@ -26,7 +26,7 @@ export function HomeScreen() {
     isRefetching,
   } = useTruckStatus();
 
-  const [animatedStyle, onLayout] = useFadeIn();
+  const animatedStyle = useFadeIn();
 
   const renderContent = () => {
     if (isLoading) {
@@ -42,10 +42,7 @@ export function HomeScreen() {
     }
 
     return (
-      <Animated.View
-        onLayout={onLayout}
-        style={[styles.contentWrapper, animatedStyle]}
-      >
+      <Animated.View style={[styles.contentWrapper, animatedStyle]}>
         {status && <TruckCard status={status} />}
 
         <View style={styles.section}>

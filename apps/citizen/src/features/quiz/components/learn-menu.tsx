@@ -9,13 +9,10 @@ interface LearnMenuProps {
 }
 
 export function LearnMenu({ onStart }: LearnMenuProps) {
-  const [animatedStyle, onLayout] = useFadeIn();
+  const animatedStyle = useFadeIn();
 
   return (
-    <Animated.View
-      onLayout={onLayout}
-      style={[styles.container, animatedStyle]}
-    >
+    <Animated.View style={[styles.container, animatedStyle]}>
       <Text style={styles.title}>Aprender</Text>
       <Text style={styles.description}>
         Aprende a clasificar diferentes tipos de residuos correctamente
