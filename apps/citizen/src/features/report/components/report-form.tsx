@@ -49,7 +49,6 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
       } catch {
         show("Se necesita la ubicación para enviar el reporte", {
           type: "error",
-          position: "bottom",
         });
         return;
       }
