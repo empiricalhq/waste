@@ -1,8 +1,11 @@
 import { Tabs } from "expo-router";
 import { BookOpen, Home, MapPin, User } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { theme } from "@/theme";
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
@@ -13,12 +16,13 @@ export default function TabLayout() {
           backgroundColor: theme.colors.card,
           borderTopColor: theme.colors.border,
           borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom + 8,
           paddingTop: 8,
+          ...theme.shadow.sm,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: theme.fontSize.xs,
           fontWeight: theme.fontWeight.medium,
         },
       }}

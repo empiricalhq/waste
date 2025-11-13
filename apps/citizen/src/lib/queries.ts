@@ -32,7 +32,6 @@ export function useCreateReport() {
   return useMutation({
     mutationFn: (input: CreateReportInput) => api.createReport(input),
     onSuccess: () => {
-      // invalidate any reports list if we add that later
       queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });

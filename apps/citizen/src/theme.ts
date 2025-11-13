@@ -2,6 +2,7 @@ export const theme = {
   colors: {
     primary: "#0A0A0A",
     primaryHover: "#262626",
+    primaryLight: "#F5F5F5",
 
     text: "#0A0A0A",
     textSecondary: "#525252",
@@ -25,6 +26,8 @@ export const theme = {
     warningLight: "#FEF3C7",
     info: "#3B82F6",
     infoLight: "#DBEAFE",
+    overlay: "rgba(0, 0, 0, 0.5)",
+    backdrop: "rgba(0, 0, 0, 0.3)",
   },
 
   spacing: {
@@ -42,6 +45,7 @@ export const theme = {
     md: 8,
     lg: 12,
     xl: 16,
+    xxl: 20,
     full: 9999,
   },
 
@@ -83,6 +87,18 @@ export const theme = {
       shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 5,
+    },
+  },
+
+  animation: {
+    duration: {
+      fast: 200,
+      normal: 300,
+      slow: 500,
+    },
+    easing: {
+      default: [0.25, 0.46, 0.45, 0.94] as const,
+      spring: { damping: 25, stiffness: 120, mass: 0.8 } as const,
     },
   },
 } as const;

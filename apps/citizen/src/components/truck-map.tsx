@@ -18,7 +18,7 @@ export function TruckMap({ trucks, userLocation }: TruckMapProps) {
       userLocation
         ? { coordinates: userLocation, zoom: 13 }
         : DEFAULT_MAP_CENTER,
-    [userLocation],
+    [userLocation]
   );
 
   const markers = useMemo(
@@ -31,7 +31,7 @@ export function TruckMap({ trucks, userLocation }: TruckMapProps) {
           snippet: `Placa: ${truck.licensePlate}`,
         }),
       })),
-    [trucks],
+    [trucks]
   );
 
   return (

@@ -1,5 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { WASTE_TYPES } from "@/constants";
@@ -11,14 +18,31 @@ interface QuizGameProps {
   onComplete: (score: number) => void;
 }
 
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
 export function QuizGame({ questions, onComplete }: QuizGameProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<WasteType | null>(null);
   const [score, setScore] = useState(0);
 
+  const imageScale = useSharedValue(0.9);
+  const imageOpacity = useSharedValue(0);
+
   const question = questions[currentIndex];
   const isAnswered = selectedAnswer !== null;
   const isLastQuestion = currentIndex === questions.length - 1;
+
+  useEffect(() => {
+    imageOpacity.value = withTiming(1, {
+      duration: theme.animation.duration.slow,
+    });
+    imageScale.value = withSpring(1, theme.animation.easing.spring);
+  }, [currentIndex]);
+
+  const imageAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: imageOpacity.value,
+    transform: [{ scale: imageScale.value }],
+  }));
 
   const handleAnswer = (answer: WasteType) => {
     setSelectedAnswer(answer);
@@ -33,6 +57,8 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
         selectedAnswer === question.correctAnswer ? score + 1 : score;
       onComplete(finalScore);
     } else {
+      imageOpacity.value = 0;
+      imageScale.value = 0.9;
       setCurrentIndex((i) => i + 1);
       setSelectedAnswer(null);
     }
@@ -44,7 +70,10 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
         Pregunta {currentIndex + 1} de {questions.length}
       </Text>
 
-      <Image source={{ uri: question.imageUrl }} style={styles.image} />
+      <Animated.Image
+        source={{ uri: question.imageUrl }}
+        style={[styles.image, imageAnimatedStyle]}
+      />
 
       <View style={styles.questionContainer}>
         <Text style={styles.questionText}>¿Dónde va esto?</Text>
@@ -58,26 +87,15 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
           const isWrong = isAnswered && isSelected && !isCorrect;
 
           return (
-            <TouchableOpacity
+            <OptionButton
               key={option}
+              option={option}
+              isSelected={isSelected}
+              isCorrect={isCorrect}
+              isWrong={isWrong}
+              isAnswered={isAnswered}
               onPress={() => !isAnswered && handleAnswer(option)}
-              disabled={isAnswered}
-              activeOpacity={0.7}
-            >
-              <Card
-                style={[
-                  styles.option,
-                  isCorrect && styles.correctOption,
-                  isWrong && styles.wrongOption,
-                ]}
-              >
-                <Text style={styles.optionText}>
-                  {WASTE_TYPES[option].label}
-                </Text>
-                {isCorrect && <Text style={styles.indicator}>✓</Text>}
-                {isWrong && <Text style={styles.indicator}>✗</Text>}
-              </Card>
-            </TouchableOpacity>
+            />
           );
         })}
       </View>
@@ -90,6 +108,75 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
         />
       )}
     </View>
+  );
+}
+
+interface OptionButtonProps {
+  option: WasteType;
+  isSelected: boolean;
+  isCorrect: boolean;
+  isWrong: boolean;
+  isAnswered: boolean;
+  onPress: () => void;
+}
+
+function OptionButton({
+  option,
+  isSelected,
+  isCorrect,
+  isWrong,
+  isAnswered,
+  onPress,
+}: OptionButtonProps) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (isCorrect) {
+      scale.value = withSequence(
+        withSpring(1.05, theme.animation.easing.spring),
+        withSpring(1, theme.animation.easing.spring)
+      );
+    } else if (isWrong) {
+      scale.value = withSequence(
+        withTiming(0.95, { duration: 100 }),
+        withSpring(1, theme.animation.easing.spring)
+      );
+    }
+  }, [isCorrect, isWrong]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    if (!isAnswered) {
+      scale.value = withSequence(
+        withSpring(0.96, theme.animation.easing.spring),
+        withSpring(1, theme.animation.easing.spring)
+      );
+      onPress();
+    }
+  };
+
+  return (
+    <AnimatedTouchable
+      onPress={handlePress}
+      disabled={isAnswered}
+      activeOpacity={0.7}
+      style={animatedStyle}
+    >
+      <Card
+        style={[
+          styles.option,
+          isCorrect && styles.correctOption,
+          isWrong && styles.wrongOption,
+        ]}
+      >
+        <Text style={styles.optionText}>{WASTE_TYPES[option].label}</Text>
+        {isCorrect && <Text style={styles.indicator}>✓</Text>}
+        {isWrong && <Text style={styles.indicator}>✗</Text>}
+      </Card>
+    </AnimatedTouchable>
   );
 }
 
@@ -141,9 +228,11 @@ const styles = StyleSheet.create({
   correctOption: {
     backgroundColor: theme.colors.successLight,
     borderColor: theme.colors.success,
+    borderWidth: 2,
   },
   wrongOption: {
     backgroundColor: theme.colors.errorLight,
     borderColor: theme.colors.error,
+    borderWidth: 2,
   },
 });

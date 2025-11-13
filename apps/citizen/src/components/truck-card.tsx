@@ -11,7 +11,7 @@ interface TruckCardProps {
 export function TruckCard({ status }: TruckCardProps) {
   if (status.status === "not_scheduled") {
     return (
-      <Card>
+      <Card variant="elevated">
         <Text style={styles.label}>Estado del camión</Text>
         <Text style={styles.message}>No hay recolecciones programadas</Text>
       </Card>
@@ -20,7 +20,7 @@ export function TruckCard({ status }: TruckCardProps) {
 
   if (status.status === "idle") {
     return (
-      <Card>
+      <Card variant="elevated">
         <Text style={styles.label}>Estado del camión</Text>
         <Text style={styles.message}>
           {status.message || "Sin camiones cercanos"}
@@ -78,10 +78,12 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.sm,
     color: theme.colors.textSecondary,
     marginTop: 2,
+    lineHeight: 18,
   },
   message: {
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
+    lineHeight: 22,
   },
   eta: {
     alignItems: "flex-end",
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
   etaValue: {
     fontSize: theme.fontSize.xxl,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    color: theme.colors.primary,
   },
   etaLabel: {
     fontSize: theme.fontSize.xs,

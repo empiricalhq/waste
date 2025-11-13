@@ -1,3 +1,4 @@
+import React from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -5,6 +6,11 @@ import {
   TouchableOpacity,
   type TouchableOpacityProps,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { theme } from "@/theme";
 
 interface ButtonProps extends Omit<TouchableOpacityProps, "style"> {
@@ -15,6 +21,8 @@ interface ButtonProps extends Omit<TouchableOpacityProps, "style"> {
   fullWidth?: boolean;
 }
 
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
 export function Button({
   title,
   variant = "primary",
@@ -22,34 +30,58 @@ export function Button({
   loading,
   fullWidth,
   disabled,
+  onPressIn,
+  onPressOut,
   ...props
 }: ButtonProps) {
+  const scale = useSharedValue(1);
   const isDisabled = disabled || loading;
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = (e: any) => {
+    if (!isDisabled) {
+      scale.value = withSpring(0.96, theme.animation.easing.spring);
+    }
+    onPressIn?.(e);
+  };
+
+  const handlePressOut = (e: any) => {
+    scale.value = withSpring(1, theme.animation.easing.spring);
+    onPressOut?.(e);
+  };
+
   return (
-    <TouchableOpacity
+    <AnimatedTouchable
       style={[
         styles.base,
         styles[variant],
         styles[size],
         fullWidth && styles.fullWidth,
         isDisabled && styles.disabled,
+        animatedStyle,
       ]}
       disabled={isDisabled}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       {...props}
     >
       {loading ? (
         <ActivityIndicator
           size="small"
           color={
-            variant === "primary" ? theme.colors.textInverse : theme.colors.text
+            variant === "primary"
+              ? theme.colors.textInverse
+              : theme.colors.text
           }
         />
       ) : (
         <Text style={[styles.text, styles[`${variant}Text`]]}>{title}</Text>
       )}
-    </TouchableOpacity>
+    </AnimatedTouchable>
   );
 }
 
@@ -61,6 +93,7 @@ const styles = StyleSheet.create({
   },
   primary: {
     backgroundColor: theme.colors.primary,
+    ...theme.shadow.sm,
   },
   secondary: {
     backgroundColor: theme.colors.card,

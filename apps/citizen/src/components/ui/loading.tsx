@@ -15,37 +15,15 @@ export function Loading({ message, size = "large" }: LoadingProps) {
   );
 }
 
-export function SkeletonCard() {
-  return (
-    <View style={styles.skeleton}>
-      <View style={styles.line} />
-      <View style={[styles.line, styles.lineShort]} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing.md,
+    paddingVertical: theme.spacing.xxl,
   },
   message: {
     fontSize: theme.fontSize.sm,
     color: theme.colors.textSecondary,
-  },
-  skeleton: {
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.lg,
-    padding: theme.spacing.lg,
-  },
-  line: {
-    height: 16,
-    backgroundColor: theme.colors.backgroundSecondary,
-    borderRadius: theme.radius.sm,
-    marginBottom: theme.spacing.sm,
-  },
-  lineShort: {
-    width: "60%",
   },
 });
