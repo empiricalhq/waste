@@ -1,5 +1,4 @@
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -22,18 +21,22 @@ export default function ReportScreen() {
   const { show } = useToast();
   const { mutateAsync: createReport, isPending } = useCreateReport();
 
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(30);
-
-  useEffect(() => {
-    opacity.value = withTiming(1, { duration: theme.animation.duration.slow });
-    translateY.value = withSpring(0, theme.animation.easing.spring);
-  }, []);
+  const isVisible = useSharedValue(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }],
+    opacity: withTiming(isVisible.value ? 1 : 0, {
+      duration: theme.animation.duration.slow,
+    }),
+    transform: [
+      {
+        translateY: withSpring(isVisible.value ? 0 : 30, theme.animation.easing.spring),
+      },
+    ],
   }));
+
+  const onLayout = () => {
+    isVisible.value = true;
+  };
 
   const handleSubmit = async (data: CreateReportInput) => {
     try {
@@ -58,7 +61,7 @@ export default function ReportScreen() {
   if (!isAuthenticated) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Animated.View style={[styles.content, animatedStyle]}>
+        <Animated.View style={[styles.content, styles.centerContent, animatedStyle]} onLayout={onLayout}>
           <Text style={styles.title}>Inicia sesión</Text>
           <Text style={styles.message}>
             Necesitas iniciar sesión para enviar reportes
@@ -81,7 +84,7 @@ export default function ReportScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View style={animatedStyle}>
+        <Animated.View onLayout={onLayout} style={animatedStyle}>
           <ReportForm onSubmit={handleSubmit} isSubmitting={isPending} />
         </Animated.View>
       </ScrollView>
@@ -99,6 +102,11 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: theme.spacing.lg,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
   },
   title: {
     fontSize: theme.fontSize.xxxl,
