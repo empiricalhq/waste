@@ -14,6 +14,7 @@
         "noDefaultExport": "off",
         "noMagicNumbers": "off",
         "useNamingConvention": "off",
+        "useFilenamingConvention": "off",
         "useExportsLast": "off",
         "noProcessEnv": "off",
         "useComponentExportOnlyModules": "off"
