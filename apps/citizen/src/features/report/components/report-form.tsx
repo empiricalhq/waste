@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,18 +14,27 @@ interface ReportFormProps {
   isSubmitting: boolean;
 }
 
+type FormData = Pick<CreateReportInput, "description">;
+
 export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
   const [type, setType] = useState<CreateReportInput["type"] | null>(null);
-  const [description, setDescription] = useState("");
-  const { coords, isLoading, error, requestLocation } = useLocation();
+  const { coords, isLoading: isLoadingLocation, error: locationError, requestLocation } = useLocation();
   const { show } = useToast();
 
-  const handleSubmit = async () => {
-    if (!(type && description.trim())) {
-      show("Completa todos los campos", {
-        type: "error",
-        position: "bottom",
-      });
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors, isValid },
+  } = useForm<FormData>({
+    mode: "onChange",
+    defaultValues: { description: "" },
+  });
+
+  const handleFormSubmit = async (data: FormData) => {
+    if (!type) {
+      // This should not happen if UI is correct, but as a safeguard
+      show("Selecciona un tipo de reporte", { type: "error" });
       return;
     }
 
@@ -36,10 +46,6 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
         show("Se necesita la ubicación para enviar el reporte", {
           type: "error",
           position: "bottom",
-          action: {
-            label: "Reintentar",
-            onPress: requestLocation,
-          },
         });
         return;
       }
@@ -47,7 +53,7 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
 
     onSubmit({
       type,
-      description: description.trim(),
+      description: data.description.trim(),
       latitude: location.latitude,
       longitude: location.longitude,
     });
@@ -83,13 +89,25 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
 
       <Input label="Tipo" value={REPORT_TYPES[type]} editable={false} />
 
-      <Input
-        label="Descripción"
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Describe el problema..."
-        multiline={true}
-        style={styles.textArea}
+      <Controller
+        control={control}
+        name="description"
+        rules={{
+          required: "La descripción es obligatoria",
+          minLength: { value: 10, message: "Describe el problema con más detalle (mín. 10 caracteres)" },
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Input
+            label="Descripción"
+            value={value}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            placeholder="Describe el problema..."
+            multiline={true}
+            style={styles.textArea}
+            error={errors.description?.message}
+          />
+        )}
       />
 
       <View>
@@ -97,11 +115,11 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
           title={coords ? "Ubicación obtenida" : "Obtener ubicación"}
           variant={coords ? "secondary" : "primary"}
           onPress={requestLocation}
-          loading={isLoading}
-          disabled={isLoading || Boolean(coords)}
+          loading={isLoadingLocation}
+          disabled={isLoadingLocation || Boolean(coords)}
           fullWidth={true}
         />
-        {error && <Text style={styles.error}>{error}</Text>}
+        {locationError && <Text style={styles.error}>{locationError}</Text>}
         {coords && (
           <Text style={styles.success}>
             Coordenadas: {coords.latitude.toFixed(6)},{" "}
@@ -112,9 +130,9 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
 
       <Button
         title="Enviar reporte"
-        onPress={handleSubmit}
+        onPress={handleSubmit(handleFormSubmit)}
         loading={isSubmitting}
-        disabled={!(description.trim() && (coords || isLoading))}
+        disabled={!isValid || isSubmitting}
         fullWidth={true}
       />
 
@@ -122,6 +140,7 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
         title="Cambiar tipo"
         variant="ghost"
         onPress={() => setType(null)}
+        disabled={isSubmitting}
       />
     </View>
   );
