@@ -15,7 +15,7 @@ interface ToastProps {
   index: number;
 }
 
-const getBackgroundColor = (type: ToastType["options"]["type"]) => {
+const getBackgroundColor = (type: ToastType["options"]["type"]): string => {
   switch (type) {
     case "success":
       return theme.colors.success;
@@ -25,10 +25,12 @@ const getBackgroundColor = (type: ToastType["options"]["type"]) => {
       return theme.colors.warning;
     case "info":
       return theme.colors.info;
+    default:
+      return theme.colors.info;
   }
 };
 
-const getIcon = (type: ToastType["options"]["type"]) => {
+const getIcon = (type: ToastType["options"]["type"]): string => {
   switch (type) {
     case "success":
       return "✓";
@@ -37,6 +39,8 @@ const getIcon = (type: ToastType["options"]["type"]) => {
     case "warning":
       return "⚠";
     case "info":
+      return "ℹ";
+    default:
       return "ℹ";
   }
 };
@@ -70,7 +74,11 @@ export function Toast({ toast, index }: ToastProps) {
 
   return (
     <Animated.View
-      style={[styles.container, animatedStyle, { marginBottom: bottomOffset }]}
+      style={[
+        styles.container,
+        animatedStyle,
+        { marginBottom: bottomOffset },
+      ]}
     >
       <Pressable
         style={[styles.toast, { backgroundColor }, theme.shadow.lg]}
