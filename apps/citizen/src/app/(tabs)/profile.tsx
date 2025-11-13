@@ -35,7 +35,10 @@ export default function ProfileScreen() {
     }),
     transform: [
       {
-        translateY: withSpring(isVisible.value ? 0 : 20, theme.animation.easing.spring),
+        translateY: withSpring(
+          isVisible.value ? 0 : 20,
+          theme.animation.easing.spring,
+        ),
       },
     ],
   }));
@@ -95,7 +98,10 @@ export default function ProfileScreen() {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
         >
-          <Animated.View onLayout={onLayout} style={[styles.contentWrapper, animatedStyle]}>
+          <Animated.View
+            onLayout={onLayout}
+            style={[styles.contentWrapper, animatedStyle]}
+          >
             <Text style={styles.title}>
               {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
             </Text>
@@ -152,7 +158,10 @@ export default function ProfileScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View onLayout={onLayout} style={[styles.contentWrapper, animatedStyle]}>
+        <Animated.View
+          onLayout={onLayout}
+          style={[styles.contentWrapper, animatedStyle]}
+        >
           <Text style={styles.title}>Perfil</Text>
           <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.email}>{user?.email}</Text>

@@ -29,7 +29,10 @@ export default function ReportScreen() {
     }),
     transform: [
       {
-        translateY: withSpring(isVisible.value ? 0 : 30, theme.animation.easing.spring),
+        translateY: withSpring(
+          isVisible.value ? 0 : 30,
+          theme.animation.easing.spring,
+        ),
       },
     ],
   }));
@@ -61,7 +64,10 @@ export default function ReportScreen() {
   if (!isAuthenticated) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Animated.View style={[styles.content, styles.centerContent, animatedStyle]} onLayout={onLayout}>
+        <Animated.View
+          style={[styles.content, styles.centerContent, animatedStyle]}
+          onLayout={onLayout}
+        >
           <Text style={styles.title}>Inicia sesión</Text>
           <Text style={styles.message}>
             Necesitas iniciar sesión para enviar reportes
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
   centerContent: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   title: {
     fontSize: theme.fontSize.xxxl,

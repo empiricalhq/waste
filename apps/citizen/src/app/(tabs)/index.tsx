@@ -30,14 +30,17 @@ export default function HomeScreen() {
   } = useTruckStatus();
 
   const animatedStyle = useAnimatedStyle(() => {
-    const isVisible = !!status && !isLoading;
+    const isVisible = Boolean(status) && !isLoading;
     return {
       opacity: withTiming(isVisible ? 1 : 0, {
         duration: theme.animation.duration.slow,
       }),
       transform: [
         {
-          translateY: withSpring(isVisible ? 0 : 20, theme.animation.easing.spring),
+          translateY: withSpring(
+            isVisible ? 0 : 20,
+            theme.animation.easing.spring,
+          ),
         },
       ],
     };
