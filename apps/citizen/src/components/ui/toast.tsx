@@ -98,7 +98,7 @@ export function Toast({ toast, index }: ToastProps) {
     );
   }, []);
 
-  // Effect to update position if other toasts are dismissed (index changes).
+  // effect to update position if other toasts are dismissed (index changes)
   useEffect(() => {
     translateY.value = withSpring(
       getStackOffset(),
