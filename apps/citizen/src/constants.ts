@@ -17,15 +17,33 @@ export const REPORT_TYPES = {
   other: "Otro",
 } as const;
 
-// polling intervals (ms)
+// Polling intervals (ms) - Increased for battery optimization
 export const POLLING = {
-  TRUCKS: 90_000, // 90s when visible (was 30s)
-  STATUS: 120_000, // 2min when visible (was 60s)
+  TRUCKS: 5 * 60 * 1000, // 5 minutes
+  STATUS: 5 * 60 * 1000, // 5 minutes
 } as const;
 
-// map defaults
+// Retry configuration
+export const RETRY_CONFIG = {
+  MAX_ATTEMPTS: 3,
+  BASE_DELAY: 1000,
+  MAX_DELAY: 30_000,
+} as const;
+
+// Token expiry buffer - refresh 5 minutes before expiry
+export const TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000;
+
+// Map defaults
 export const DEFAULT_MAP_CENTER = {
   latitude: -12.0464,
   longitude: -77.0428,
   zoom: 12,
+} as const;
+
+// Toast configuration
+export const TOAST_CONFIG = {
+  DEFAULT_DURATION: 3000,
+  MAX_VISIBLE_TOASTS: 3,
+  STACK_OFFSET: 8,
+  ANIMATION_DURATION: 200,
 } as const;

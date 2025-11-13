@@ -27,7 +27,7 @@ export interface QuizProgress {
   streak: number;
   totalAnswered: number;
   correctAnswers: number;
-  lastPlayed: string | null;
+  lastPlayed: string | null; // ISO date string YYYY-MM-DD
 }
 
 export interface Report {
@@ -45,6 +45,11 @@ export interface User {
   id: string;
   name: string;
   email: string;
+}
+
+export interface AuthTokens {
+  token: string;
+  expiresAt: number; // timestamp
 }
 
 export type WasteType = "general" | "recycling" | "organic" | "hazardous";
@@ -78,4 +83,10 @@ export interface SignUpInput {
 export interface LocationCoords {
   latitude: number;
   longitude: number;
+}
+
+// Route params
+export interface ReportFlowState {
+  returnTo?: string;
+  requiresAuth?: boolean;
 }

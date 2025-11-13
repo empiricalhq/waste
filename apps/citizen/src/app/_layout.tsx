@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ToastViewport } from "@/components/ui/toast-viewport";
-import { ToastProvider } from "@/context/ToastContext";
+import { ToastProvider } from "@/context/toast-context";
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -6,13 +6,11 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
-import { SkeletonTruckCard } from "@/components/ui/skeleton";
+import { Loading } from "@/components/ui/loading";
 import { useTruckStatus } from "@/features/trucks/hooks/use-truck-status";
-import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 import { TruckCard } from "../components/truck-card";
 
@@ -26,23 +24,24 @@ export function HomeScreen() {
     isRefetching,
   } = useTruckStatus();
 
-  const animatedStyle = useFadeIn();
-
   const renderContent = () => {
     if (isLoading) {
-      return <SkeletonTruckCard />;
+      return <Loading />;
     }
 
     if (error) {
       return (
         <View style={styles.errorContainer}>
-          <ErrorState message="Error al cargar información" onRetry={refetch} />
+          <ErrorState
+            message="No se pudo cargar la información. Verifica tu conexión."
+            onRetry={refetch}
+          />
         </View>
       );
     }
 
     return (
-      <Animated.View style={[styles.contentWrapper, animatedStyle]}>
+      <View style={styles.contentWrapper}>
         {status && <TruckCard status={status} />}
 
         <View style={styles.section}>
@@ -58,7 +57,7 @@ export function HomeScreen() {
             fullWidth={true}
           />
         </View>
-      </Animated.View>
+      </View>
     );
   };
 

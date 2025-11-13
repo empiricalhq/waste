@@ -1,17 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { POLLING } from "@/constants";
-import { useAppState } from "@/hooks/use-app-state";
 import { api } from "@/lib/api";
 
-export function useTrucks() {
-  const isActive = useAppState();
+/**
+ * Hook to fetch trucks with smart polling that only runs when component is mounted
+ */
+export function useTrucks(options: { enabled?: boolean } = {}) {
+  const { enabled = true } = options;
+  const [isComponentMounted, setIsComponentMounted] = useState(true);
+
+  // Track when component using this hook unmounts
+  useEffect(() => {
+    setIsComponentMounted(true);
+    return () => {
+      setIsComponentMounted(false);
+    };
+  }, []);
 
   return useQuery({
     queryKey: ["trucks"],
     queryFn: () => api.getTrucks(),
-    refetchInterval: isActive ? POLLING.TRUCKS : false,
+    // Only poll when:
+    // 1. Component is mounted
+    // 2. Hook is explicitly enabled
+    refetchInterval: isComponentMounted && enabled ? POLLING.TRUCKS : false,
     staleTime: POLLING.TRUCKS,
+    // Keep previous data while refetching for smooth UX
+    placeholderData: (previousData) => previousData,
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000), // 2s, 4s, 8s, ... up to 30s
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
   });
 }

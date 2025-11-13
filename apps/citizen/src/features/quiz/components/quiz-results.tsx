@@ -1,43 +1,56 @@
 import { StyleSheet, Text, View } from "react-native";
-import Animated from "react-native-reanimated";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/features/auth/hooks/use-auth";
 import { quizQuestions } from "@/features/quiz/data/quiz-questions";
-import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 
 interface QuizResultsProps {
   score: number;
   onRestart: () => void;
+  streakIncreased: boolean;
 }
 
-export function QuizResults({ score, onRestart }: QuizResultsProps) {
-  const { isAuthenticated } = useAuth();
-  const animatedStyle = useFadeIn();
-
+export function QuizResults({
+  score,
+  onRestart,
+  streakIncreased,
+}: QuizResultsProps) {
   const percentage = Math.round((score / quizQuestions.length) * 100);
-  const message =
-    percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
+
+  const getMessage = () => {
+    if (percentage === 100) {
+      return "¡Perfecto!";
+    }
+    if (percentage >= 80) {
+      return "¡Excelente trabajo!";
+    }
+    if (percentage >= 60) {
+      return "¡Buen trabajo!";
+    }
+    return "Sigue practicando";
+  };
 
   return (
-    <Animated.View style={[styles.center, animatedStyle]}>
+    <View style={styles.container}>
       <Text style={styles.title}>Quiz completado</Text>
       <View style={styles.scoreCircle}>
         <Text style={styles.scoreValue}>{score}</Text>
         <Text style={styles.scoreTotal}>/ {quizQuestions.length}</Text>
       </View>
       <Text style={styles.percentage}>{percentage}%</Text>
-      <Text style={styles.message}>{message}</Text>
-      {!isAuthenticated && (
-        <Text style={styles.hint}>Inicia sesión para guardar tu progreso</Text>
+      <Text style={styles.message}>{getMessage()}</Text>
+      {streakIncreased && (
+        <View style={styles.streakBadge}>
+          <Text style={styles.streakEmoji}>🔥</Text>
+          <Text style={styles.streakText}>¡Racha activa!</Text>
+        </View>
       )}
-      <Button title="Reintentar" onPress={onRestart} />
-    </Animated.View>
+      <Button title="Volver a intentar" onPress={onRestart} fullWidth={true} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  center: {
+  container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -80,9 +93,21 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     textAlign: "center",
   },
-  hint: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.textSecondary,
-    textAlign: "center",
+  streakBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.sm,
+    backgroundColor: theme.colors.successLight,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.radius.full,
+  },
+  streakEmoji: {
+    fontSize: 20,
+  },
+  streakText: {
+    fontSize: theme.fontSize.base,
+    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.success,
   },
 });

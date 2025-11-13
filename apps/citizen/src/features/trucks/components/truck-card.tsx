@@ -12,8 +12,11 @@ export function TruckCard({ status }: TruckCardProps) {
   if (status.status === "not_scheduled") {
     return (
       <Card variant="elevated">
-        <Text style={styles.label}>Estado del camión</Text>
-        <Text style={styles.message}>No hay recolecciones programadas</Text>
+        <Text style={styles.label}>Recolección de basura</Text>
+        <Text style={styles.message}>
+          La recolección en tu zona no está programada todavía. Te notificaremos
+          cuando esté disponible.
+        </Text>
       </Card>
     );
   }
@@ -21,9 +24,10 @@ export function TruckCard({ status }: TruckCardProps) {
   if (status.status === "idle") {
     return (
       <Card variant="elevated">
-        <Text style={styles.label}>Estado del camión</Text>
+        <Text style={styles.label}>Recolección de basura</Text>
         <Text style={styles.message}>
-          {status.message || "Sin camiones cercanos"}
+          {status.message ||
+            "No hay camiones cerca en este momento. Sigue atento a las actualizaciones."}
         </Text>
       </Card>
     );

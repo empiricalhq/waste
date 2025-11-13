@@ -1,20 +1,13 @@
-import { useCallback, useEffect } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useEffect } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
-  Easing,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { type Toast as ToastType, useToast } from "@/context/ToastContext";
+import { TOAST_CONFIG } from "@/constants";
+import { type Toast as ToastType, useToast } from "@/context/toast-context";
 import { theme } from "@/theme";
 
 interface ToastProps {
@@ -22,7 +15,7 @@ interface ToastProps {
   index: number;
 }
 
-const getBackgroundColor = (type: ToastType["options"]["type"]) => {
+const getBackgroundColor = (type: ToastType["options"]["type"]): string => {
   switch (type) {
     case "success":
       return theme.colors.success;
@@ -33,11 +26,11 @@ const getBackgroundColor = (type: ToastType["options"]["type"]) => {
     case "info":
       return theme.colors.info;
     default:
-      return "#262626";
+      return theme.colors.info;
   }
 };
 
-const getIcon = (type: ToastType["options"]["type"]) => {
+const getIcon = (type: ToastType["options"]["type"]): string => {
   switch (type) {
     case "success":
       return "✓";
@@ -48,102 +41,53 @@ const getIcon = (type: ToastType["options"]["type"]) => {
     case "info":
       return "ℹ";
     default:
-      return "";
+      return "ℹ";
   }
 };
 
 export function Toast({ toast, index }: ToastProps) {
   const { dismiss } = useToast();
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(
-    toast.options.position === "top" ? -100 : 100,
-  );
-  const scale = useSharedValue(0.9);
+  const translateY = useSharedValue(20);
 
-  const getStackOffset = useCallback(() => {
-    const baseOffset = 4;
-    const maxOffset = 12;
-    const offset = Math.min(index * baseOffset, maxOffset);
-    return toast.options.position === "top" ? offset : -offset;
-  }, [index, toast.options.position]);
-
-  const getStackScale = useCallback(() => {
-    const scaleReduction = 0.02;
-    const minScale = 0.94;
-    return Math.max(1 - index * scaleReduction, minScale);
-  }, [index]);
+  useEffect(() => {
+    opacity.value = withTiming(1, {
+      duration: TOAST_CONFIG.ANIMATION_DURATION,
+    });
+    translateY.value = withSpring(0, theme.animation.easing.spring);
+  }, [opacity, translateY]);
 
   const handleDismiss = () => {
     dismiss(toast.id);
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: this should only run once. if not, it would cause the enter animation to re-trigger
-  useEffect(() => {
-    const delay = index * 50;
-
-    opacity.value = withDelay(
-      delay,
-      withTiming(1, {
-        duration: theme.animation.duration.slow,
-        easing: Easing.bezier(...theme.animation.easing.default),
-      }),
-    );
-
-    translateY.value = withDelay(
-      delay,
-      withSpring(getStackOffset(), theme.animation.easing.spring),
-    );
-    scale.value = withDelay(
-      delay,
-      withSpring(getStackScale(), theme.animation.easing.spring),
-    );
-  }, []);
-
-  // effect to update position if other toasts are dismissed (index changes)
-  useEffect(() => {
-    translateY.value = withSpring(
-      getStackOffset(),
-      theme.animation.easing.spring,
-    );
-    scale.value = withSpring(getStackScale(), theme.animation.easing.spring);
-  }, [getStackOffset, getStackScale, scale, translateY]);
-
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ translateY: translateY.value }, { scale: scale.value }],
-    zIndex: 1000 - index,
+    transform: [{ translateY: translateY.value }],
   }));
 
   const backgroundColor = getBackgroundColor(toast.options.type);
   const icon = getIcon(toast.options.type);
 
+  // Calculate offset based on index (stack effect)
+  const bottomOffset = index * TOAST_CONFIG.STACK_OFFSET;
+
   return (
     <Animated.View
-      style={[
-        styles.container,
-        animatedStyle,
-        {
-          position: "absolute",
-          top: toast.options.position === "top" ? 0 : undefined,
-          bottom: toast.options.position === "bottom" ? 0 : undefined,
-        },
-      ]}
+      style={[styles.container, animatedStyle, { marginBottom: bottomOffset }]}
     >
       <Pressable
         style={[styles.toast, { backgroundColor }, theme.shadow.lg]}
         onPress={handleDismiss}
-        android_ripple={{ color: "rgba(255, 255, 255, 0.1)" }}
       >
-        {icon ? <Text style={styles.icon}>{icon}</Text> : null}
+        <Text style={styles.icon}>{icon}</Text>
         <View style={styles.content}>
-          {typeof toast.content === "string" ? (
-            <Text style={styles.text}>{toast.content}</Text>
-          ) : (
-            toast.content
-          )}
+          <Text style={styles.text} numberOfLines={2}>
+            {toast.content}
+          </Text>
         </View>
         {toast.options.action && (
-          <TouchableOpacity
+          <Pressable
             style={styles.actionButton}
             onPress={() => {
               toast.options.action?.onPress();
@@ -151,7 +95,7 @@ export function Toast({ toast, index }: ToastProps) {
             }}
           >
             <Text style={styles.actionText}>{toast.options.action.label}</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </Pressable>
     </Animated.View>
@@ -160,26 +104,23 @@ export function Toast({ toast, index }: ToastProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "90%",
-    maxWidth: 400,
-    alignSelf: "center",
-    marginVertical: 4,
-    borderRadius: theme.radius.lg,
-    overflow: "hidden",
+    width: "100%",
+    paddingHorizontal: theme.spacing.lg,
   },
   toast: {
     flexDirection: "row",
     alignItems: "center",
     padding: theme.spacing.lg,
     borderRadius: theme.radius.lg,
+    minHeight: 56,
   },
   icon: {
     color: theme.colors.textInverse,
-    fontSize: 20,
+    fontSize: 18,
     marginRight: theme.spacing.md,
     fontWeight: theme.fontWeight.bold,
+    width: 20,
     textAlign: "center",
-    width: 24,
   },
   content: {
     flex: 1,

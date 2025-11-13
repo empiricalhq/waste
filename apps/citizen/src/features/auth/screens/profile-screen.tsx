@@ -1,12 +1,10 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
-import { useToast } from "@/context/ToastContext";
+import { useToast } from "@/context/toast-context";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
-import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 import { AuthForm } from "../components/auth-form";
 import { useAuth } from "../hooks/use-auth";
@@ -15,7 +13,6 @@ export function ProfileScreen() {
   const { user, isAuthenticated, logout } = useAuth();
   const { show } = useToast();
   const { progress, isLoadingProgress } = useQuizProgress();
-  const animatedStyle = useFadeIn();
 
   const handleLogout = () => {
     show("¿Cerrar sesión?", {
@@ -24,7 +21,6 @@ export function ProfileScreen() {
         label: "Confirmar",
         onPress: async () => {
           await logout();
-          show("Sesión cerrada", { type: "info" });
         },
       },
     });
@@ -54,7 +50,7 @@ export function ProfileScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View style={[styles.contentWrapper, animatedStyle]}>
+        <View style={styles.contentWrapper}>
           <Text style={styles.title}>Perfil</Text>
           <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.email}>{user?.email}</Text>
@@ -88,7 +84,7 @@ export function ProfileScreen() {
             variant="secondary"
             onPress={handleLogout}
           />
-        </Animated.View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
