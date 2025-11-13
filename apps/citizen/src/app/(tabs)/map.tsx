@@ -8,7 +8,12 @@ import { useTrucks } from "@/features/trucks/hooks/use-trucks";
 import { theme } from "@/theme";
 
 export default function MapScreen() {
-  const { data: trucks = [], isLoading: isLoadingTrucks, error, refetch } = useTrucks();
+  const {
+    data: trucks = [],
+    isLoading: isLoadingTrucks,
+    error,
+    refetch,
+  } = useTrucks();
   const { coords: userLocation, isLoading: isLoadingLocation } = useLocation({
     fetchOnMount: true,
   });
