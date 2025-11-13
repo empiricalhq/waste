@@ -42,6 +42,7 @@ class ApiClient {
     return tokens.token;
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: acceptable tradeoff
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
