@@ -1,6 +1,7 @@
 import { API_URL, RETRY_CONFIG, TOKEN_EXPIRY_BUFFER } from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
+  AuthTokens,
   CreateReportInput,
   LoginInput,
   Report,
@@ -21,17 +22,13 @@ export class ApiError extends Error {
 }
 
 const VALID_REPORT_TYPES = ["missed_collection", "illegal_dumping", "other"];
-const VALID_REPORT_STATUSES = ["open", "in_progress", "resolved"];
 
 class ApiClient {
   private readonly baseUrl = API_URL;
-  private refreshPromise: Promise<AuthTokens> | null = null;
 
   private async getValidToken(): Promise<string | null> {
     const tokens = await storage.getAuthTokens();
-    if (!tokens) {
-      return null;
-    }
+    if (!tokens) return null;
 
     // If token expires in less than TOKEN_EXPIRY_BUFFER, try to refresh
     const timeUntilExpiry = tokens.expiresAt - Date.now();
@@ -59,7 +56,7 @@ class ApiClient {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    let lastError: Error;
+    let lastError: Error | null = null;
 
     for (let attempt = 0; attempt < RETRY_CONFIG.MAX_ATTEMPTS; attempt++) {
       try {
@@ -98,9 +95,7 @@ class ApiClient {
 
         // Don't retry auth errors or client errors (4xx)
         if (error instanceof ApiError) {
-          if (error.code === "AUTH_EXPIRED") {
-            throw error;
-          }
+          if (error.code === "AUTH_EXPIRED") throw error;
           throw error;
         }
 
@@ -113,6 +108,7 @@ class ApiClient {
           console.info(
             `Request failed, retrying in ${delay}ms (attempt ${attempt + 1}/${RETRY_CONFIG.MAX_ATTEMPTS})`,
           );
+          // biome-ignore lint/suspicious/noAwaitInLoops: intentional retry delay
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
@@ -177,7 +173,7 @@ class ApiClient {
    * Gets user from local storage (not API).
    * Call this on app start to restore session.
    */
-  async getStoredUser(): Promise<User | null> {
+  getStoredUser(): Promise<User | null> {
     return storage.getUser();
   }
 
