@@ -13,14 +13,14 @@ interface QuizResultsProps {
 
 export function QuizResults({ score, onRestart }: QuizResultsProps) {
   const { isAuthenticated } = useAuth();
-  const [animatedStyle, onLayout] = useFadeIn();
+  const animatedStyle = useFadeIn();
 
   const percentage = Math.round((score / quizQuestions.length) * 100);
   const message =
     percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
 
   return (
-    <Animated.View onLayout={onLayout} style={[styles.center, animatedStyle]}>
+    <Animated.View style={[styles.center, animatedStyle]}>
       <Text style={styles.title}>Quiz completado</Text>
       <View style={styles.scoreCircle}>
         <Text style={styles.scoreValue}>{score}</Text>

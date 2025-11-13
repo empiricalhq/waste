@@ -16,7 +16,7 @@ export function ReportScreen() {
   const { isAuthenticated } = useAuth();
   const { show } = useToast();
   const { mutateAsync: createReport, isPending } = useCreateReport();
-  const [animatedStyle, onLayout] = useFadeIn({ translateY: 30 });
+  const animatedStyle = useFadeIn({ translateY: 30 });
 
   const handleSubmit = async (data: CreateReportInput) => {
     try {
@@ -51,7 +51,6 @@ export function ReportScreen() {
       <SafeAreaView style={styles.container} edges={["bottom"]}>
         <Animated.View
           style={[styles.content, styles.centerContent, animatedStyle]}
-          onLayout={onLayout}
         >
           <Text style={styles.title}>Inicia sesión</Text>
           <Text style={styles.message}>
@@ -69,7 +68,7 @@ export function ReportScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View onLayout={onLayout} style={animatedStyle}>
+        <Animated.View style={animatedStyle}>
           <ReportForm onSubmit={handleSubmit} isSubmitting={isPending} />
         </Animated.View>
       </ScrollView>

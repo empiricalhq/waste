@@ -18,7 +18,7 @@ export function AuthForm() {
   const { login, signUp } = useAuth();
   const { show } = useToast();
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [animatedStyle, onLayout] = useFadeIn();
+  const animatedStyle = useFadeIn();
 
   const {
     control,
@@ -47,10 +47,7 @@ export function AuthForm() {
   };
 
   return (
-    <Animated.View
-      onLayout={onLayout}
-      style={[styles.container, animatedStyle]}
-    >
+    <Animated.View style={[styles.container, animatedStyle]}>
       <Text style={styles.title}>
         {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
       </Text>
