@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -134,12 +134,12 @@ function OptionButton({
     if (isCorrect) {
       scale.value = withSequence(
         withSpring(1.05, theme.animation.easing.spring),
-        withSpring(1, theme.animation.easing.spring)
+        withSpring(1, theme.animation.easing.spring),
       );
     } else if (isWrong) {
       scale.value = withSequence(
         withTiming(0.95, { duration: 100 }),
-        withSpring(1, theme.animation.easing.spring)
+        withSpring(1, theme.animation.easing.spring),
       );
     }
   }, [isCorrect, isWrong]);
@@ -152,7 +152,7 @@ function OptionButton({
     if (!isAnswered) {
       scale.value = withSequence(
         withSpring(0.96, theme.animation.easing.spring),
-        withSpring(1, theme.animation.easing.spring)
+        withSpring(1, theme.animation.easing.spring),
       );
       onPress();
     }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -7,14 +7,14 @@ import {
   View,
 } from "react-native";
 import Animated, {
+  Easing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-  runOnJS,
-  Easing,
 } from "react-native-reanimated";
-import { useToast, type Toast as ToastType } from "@/context/ToastContext";
+import { type Toast as ToastType, useToast } from "@/context/ToastContext";
 import { theme } from "@/theme";
 
 interface ToastProps {
@@ -56,7 +56,7 @@ export function Toast({ toast, index }: ToastProps) {
   const { dismiss } = useToast();
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(
-    toast.options.position === "top" ? -100 : 100
+    toast.options.position === "top" ? -100 : 100,
   );
   const scale = useSharedValue(0.9);
 
@@ -87,7 +87,10 @@ export function Toast({ toast, index }: ToastProps) {
         easing: Easing.bezier(...theme.animation.easing.default),
       });
 
-      translateY.value = withSpring(getStackOffset(), theme.animation.easing.spring);
+      translateY.value = withSpring(
+        getStackOffset(),
+        theme.animation.easing.spring,
+      );
       scale.value = withSpring(getStackScale(), theme.animation.easing.spring);
     }, delay);
 
@@ -105,7 +108,7 @@ export function Toast({ toast, index }: ToastProps) {
           {
             duration: theme.animation.duration.normal,
             easing: Easing.bezier(...theme.animation.easing.default),
-          }
+          },
         );
 
         scale.value = withTiming(0.95, {
@@ -123,16 +126,16 @@ export function Toast({ toast, index }: ToastProps) {
   }, [toast, index]);
 
   useEffect(() => {
-    translateY.value = withSpring(getStackOffset(), theme.animation.easing.spring);
+    translateY.value = withSpring(
+      getStackOffset(),
+      theme.animation.easing.spring,
+    );
     scale.value = withSpring(getStackScale(), theme.animation.easing.spring);
   }, [index]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [
-      { translateY: translateY.value },
-      { scale: scale.value },
-    ],
+    transform: [{ translateY: translateY.value }, { scale: scale.value }],
     zIndex: 1000 - index,
   }));
 
@@ -147,7 +150,7 @@ export function Toast({ toast, index }: ToastProps) {
       {
         duration: theme.animation.duration.fast,
         easing: Easing.bezier(...theme.animation.easing.default),
-      }
+      },
     );
 
     scale.value = withTiming(0.8, {

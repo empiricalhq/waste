@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { ToastProvider } from "@/context/ToastContext";
 import { ToastViewport } from "@/components/ui/toast-viewport";
+import { ToastProvider } from "@/context/ToastContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {

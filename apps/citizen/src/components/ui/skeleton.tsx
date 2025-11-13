@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -12,11 +12,7 @@ export function SkeletonCard() {
   const opacity = useSharedValue(0.3);
 
   useEffect(() => {
-    opacity.value = withRepeat(
-      withTiming(1, { duration: 1000 }),
-      -1,
-      true
-    );
+    opacity.value = withRepeat(withTiming(1, { duration: 1000 }), -1, true);
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -35,11 +31,7 @@ export function SkeletonTruckCard() {
   const opacity = useSharedValue(0.3);
 
   useEffect(() => {
-    opacity.value = withRepeat(
-      withTiming(1, { duration: 1000 }),
-      -1,
-      true
-    );
+    opacity.value = withRepeat(withTiming(1, { duration: 1000 }), -1, true);
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -52,7 +44,9 @@ export function SkeletonTruckCard() {
         <Animated.View style={[styles.dot, animatedStyle]} />
         <View style={styles.content}>
           <Animated.View style={[styles.line, animatedStyle]} />
-          <Animated.View style={[styles.line, styles.lineShort, animatedStyle]} />
+          <Animated.View
+            style={[styles.line, styles.lineShort, animatedStyle]}
+          />
         </View>
         <Animated.View style={[styles.eta, animatedStyle]} />
       </View>

@@ -12,11 +12,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <View style={styles.container}>
       <View style={[styles.iconContainer, theme.shadow.sm]}>
-        <AlertCircle
-          size={32}
-          color={theme.colors.error}
-          strokeWidth={2}
-        />
+        <AlertCircle size={32} color={theme.colors.error} strokeWidth={2} />
       </View>
       <Text style={styles.message}>{message}</Text>
       {onRetry && (

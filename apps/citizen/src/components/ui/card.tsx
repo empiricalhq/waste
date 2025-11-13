@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, View, type ViewProps } from "react-native";
 import { theme } from "@/theme";
 
@@ -14,11 +13,7 @@ export function Card({
 }: CardProps) {
   return (
     <View
-      style={[
-        styles.card,
-        variant === "elevated" && styles.elevated,
-        style,
-      ]}
+      style={[styles.card, variant === "elevated" && styles.elevated, style]}
       {...props}
     >
       {children}

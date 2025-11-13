@@ -1,4 +1,3 @@
-import React from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -73,9 +72,7 @@ export function Button({
         <ActivityIndicator
           size="small"
           color={
-            variant === "primary"
-              ? theme.colors.textInverse
-              : theme.colors.text
+            variant === "primary" ? theme.colors.textInverse : theme.colors.text
           }
         />
       ) : (

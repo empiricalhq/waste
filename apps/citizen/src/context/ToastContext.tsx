@@ -1,9 +1,5 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-} from "react";
+import type React from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 
 export type ToastType = "success" | "error" | "info" | "warning" | "default";
 export type ToastPosition = "top" | "bottom";
@@ -67,7 +63,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       setToasts((prev) => [...prev, toast]);
       return id;
     },
-    []
+    [],
   );
 
   const dismiss = useCallback((id: string) => {

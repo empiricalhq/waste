@@ -135,7 +135,9 @@ export default function ProfileScreen() {
                 mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"
               }
               variant="ghost"
-              onPress={() => setMode((m) => (m === "login" ? "signup" : "login"))}
+              onPress={() =>
+                setMode((m) => (m === "login" ? "signup" : "login"))
+              }
             />
           </Animated.View>
         </ScrollView>
@@ -150,7 +152,10 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+      >
         <Animated.View style={animatedStyle}>
           <Text style={styles.title}>Perfil</Text>
           <Text style={styles.name}>{user?.name}</Text>

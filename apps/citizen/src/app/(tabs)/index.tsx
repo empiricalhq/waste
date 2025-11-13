@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -36,7 +36,9 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (!isLoading) {
-      opacity.value = withTiming(1, { duration: theme.animation.duration.slow });
+      opacity.value = withTiming(1, {
+        duration: theme.animation.duration.slow,
+      });
       translateY.value = withSpring(0, theme.animation.easing.spring);
     }
   }, [isLoading]);
@@ -61,7 +63,10 @@ export default function HomeScreen() {
           <SkeletonTruckCard />
         ) : error ? (
           <View style={styles.errorContainer}>
-            <ErrorState message="Error al cargar información" onRetry={refetch} />
+            <ErrorState
+              message="Error al cargar información"
+              onRetry={refetch}
+            />
           </View>
         ) : (
           <Animated.View style={animatedStyle}>
