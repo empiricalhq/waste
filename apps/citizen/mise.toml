@@ -1,0 +1,4 @@
+experimental_monorepo_root = true
+
+[tools]
+java = "24.0.2"
