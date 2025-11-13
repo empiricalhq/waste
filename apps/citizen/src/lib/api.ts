@@ -66,7 +66,6 @@ class ApiClient {
           headers,
         });
 
-        // Handle 401 - clear auth and throw specific error
         if (response.status === 401) {
           await storage.clearAuth();
           throw new ApiError(
@@ -94,7 +93,7 @@ class ApiClient {
       } catch (error) {
         lastError = error as Error;
 
-        // Don't retry auth errors or client errors (4xx)
+        // don't retry auth errors or client errors (4xx)
         if (error instanceof ApiError) {
           if (error.code === "AUTH_EXPIRED") {
             throw error;
@@ -102,7 +101,7 @@ class ApiClient {
           throw error;
         }
 
-        // Retry on network errors
+        // retry on network errors
         if (attempt < RETRY_CONFIG.MAX_ATTEMPTS - 1) {
           const delay = Math.min(
             RETRY_CONFIG.BASE_DELAY * 2 ** attempt,
@@ -124,7 +123,7 @@ class ApiClient {
     );
   }
 
-  // Auth
+  // auth
   async login(input: LoginInput): Promise<User> {
     const response = await this.request<{ user: User; token: string }>(
       "/api/auth/sign-in/email",
@@ -135,7 +134,7 @@ class ApiClient {
     );
 
     if (response.token) {
-      // Set expiry to 30 days from now (adjust based on your backend)
+      // set expiry to 30 days from now (TODO: check with apps/api)
       const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
       await storage.setAuthTokens({ token: response.token, expiresAt });
       await storage.setUser(response.user);
@@ -198,7 +197,7 @@ class ApiClient {
     }
   }
 
-  // Trucks
+  // trucks
   async getTrucks(): Promise<Truck[]> {
     const trucks = await this.request<
       Array<{
@@ -244,7 +243,7 @@ class ApiClient {
     };
   }
 
-  // Reports
+  // reports
   async createReport(input: CreateReportInput): Promise<Report> {
     const response = await this.request<{
       id: string;
@@ -266,7 +265,7 @@ class ApiClient {
       }),
     });
 
-    // Validate response
+    // validate response
     if (!VALID_REPORT_TYPES.includes(response.type)) {
       throw new ApiError("Tipo de reporte inválido", "INVALID_REPORT_TYPE");
     }
