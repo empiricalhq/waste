@@ -1,13 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { quizQuestions } from "@/features/quiz/data/quiz-questions";
+import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 
 interface QuizResultsProps {
@@ -17,25 +13,7 @@ interface QuizResultsProps {
 
 export function QuizResults({ score, onRestart }: QuizResultsProps) {
   const { isAuthenticated } = useAuth();
-  const isVisible = useSharedValue(false);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, {
-      duration: theme.animation.duration.slow,
-    }),
-    transform: [
-      {
-        scale: withSpring(
-          isVisible.value ? 1 : 0.9,
-          theme.animation.easing.spring,
-        ),
-      },
-    ],
-  }));
-
-  const onLayout = () => {
-    isVisible.value = true;
-  };
+  const [animatedStyle, onLayout] = useFadeIn();
 
   const percentage = Math.round((score / quizQuestions.length) * 100);
   const message =

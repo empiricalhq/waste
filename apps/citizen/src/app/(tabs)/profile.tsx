@@ -1,10 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,32 +8,14 @@ import { useToast } from "@/context/ToastContext";
 import { AuthForm } from "@/features/auth/components/auth-form";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
+import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 
 export default function ProfileScreen() {
   const { user, isAuthenticated, logout } = useAuth();
   const { show } = useToast();
   const { progress, isLoadingProgress } = useQuizProgress();
-
-  const isVisible = useSharedValue(false);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, {
-      duration: theme.animation.duration.slow,
-    }),
-    transform: [
-      {
-        translateY: withSpring(
-          isVisible.value ? 0 : 20,
-          theme.animation.easing.spring,
-        ),
-      },
-    ],
-  }));
-
-  const onLayout = () => {
-    isVisible.value = true;
-  };
+  const [animatedStyle, onLayout] = useFadeIn();
 
   const handleLogout = () => {
     show("¿Cerrar sesión?", {

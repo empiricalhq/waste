@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/context/ToastContext";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 
 export function AuthForm() {
@@ -21,25 +17,7 @@ export function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const isVisible = useSharedValue(false);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, {
-      duration: theme.animation.duration.slow,
-    }),
-    transform: [
-      {
-        translateY: withSpring(
-          isVisible.value ? 0 : 20,
-          theme.animation.easing.spring,
-        ),
-      },
-    ],
-  }));
-
-  const onLayout = () => {
-    isVisible.value = true;
-  };
+  const [animatedStyle, onLayout] = useFadeIn();
 
   const handleAuth = async () => {
     try {

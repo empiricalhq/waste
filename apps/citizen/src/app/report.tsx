@@ -1,17 +1,13 @@
 import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/context/ToastContext";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { ReportForm } from "@/features/report/components/report-form";
 import { useCreateReport } from "@/features/report/hooks/use-create-report";
+import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 import type { CreateReportInput } from "@/types";
 
@@ -20,26 +16,7 @@ export default function ReportScreen() {
   const { isAuthenticated } = useAuth();
   const { show } = useToast();
   const { mutateAsync: createReport, isPending } = useCreateReport();
-
-  const isVisible = useSharedValue(false);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, {
-      duration: theme.animation.duration.slow,
-    }),
-    transform: [
-      {
-        translateY: withSpring(
-          isVisible.value ? 0 : 30,
-          theme.animation.easing.spring,
-        ),
-      },
-    ],
-  }));
-
-  const onLayout = () => {
-    isVisible.value = true;
-  };
+  const [animatedStyle, onLayout] = useFadeIn({ translateY: 30 });
 
   const handleSubmit = async (data: CreateReportInput) => {
     try {

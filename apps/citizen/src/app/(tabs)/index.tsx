@@ -6,17 +6,14 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { SkeletonTruckCard } from "@/components/ui/skeleton";
 import { TruckCard } from "@/features/trucks/components/truck-card";
 import { useTruckStatus } from "@/features/trucks/hooks/use-truck-status";
+import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 
 export default function HomeScreen() {
@@ -29,22 +26,7 @@ export default function HomeScreen() {
     isRefetching,
   } = useTruckStatus();
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const isVisible = Boolean(status) && !isLoading;
-    return {
-      opacity: withTiming(isVisible ? 1 : 0, {
-        duration: theme.animation.duration.slow,
-      }),
-      transform: [
-        {
-          translateY: withSpring(
-            isVisible ? 0 : 20,
-            theme.animation.easing.spring,
-          ),
-        },
-      ],
-    };
-  }, [status, isLoading]);
+  const [animatedStyle, onLayout] = useFadeIn();
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -67,7 +49,10 @@ export default function HomeScreen() {
             />
           </View>
         ) : (
-          <Animated.View style={[styles.contentWrapper, animatedStyle]}>
+          <Animated.View
+            onLayout={onLayout}
+            style={[styles.contentWrapper, animatedStyle]}
+          >
             {status && <TruckCard status={status} />}
 
             <View style={styles.section}>

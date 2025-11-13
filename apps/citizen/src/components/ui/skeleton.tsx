@@ -1,23 +1,10 @@
-import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from "react-native-reanimated";
+import Animated from "react-native-reanimated";
+import { usePulsingAnimation } from "@/hooks/use-pulsing-animation";
 import { theme } from "@/theme";
 
 export function SkeletonCard() {
-  const opacity = useSharedValue(0.3);
-
-  useEffect(() => {
-    opacity.value = withRepeat(withTiming(1, { duration: 1000 }), -1, true);
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
+  const animatedStyle = usePulsingAnimation();
 
   return (
     <View style={styles.skeleton}>
@@ -28,15 +15,7 @@ export function SkeletonCard() {
 }
 
 export function SkeletonTruckCard() {
-  const opacity = useSharedValue(0.3);
-
-  useEffect(() => {
-    opacity.value = withRepeat(withTiming(1, { duration: 1000 }), -1, true);
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
+  const animatedStyle = usePulsingAnimation();
 
   return (
     <View style={[styles.skeleton, styles.truckCard]}>
