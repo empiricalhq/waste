@@ -146,13 +146,15 @@ class ApiClient {
       truck?: string;
     }>("/api/citizen/truck/status");
 
+    let status: TruckStatus["status"] = "idle";
+    if (response.status === "NEARBY") {
+      status = "active";
+    } else if (response.status === "LOCATION_NOT_SET") {
+      status = "not_scheduled";
+    }
+
     return {
-      status:
-        response.status === "NEARBY"
-          ? "active"
-          : response.status === "LOCATION_NOT_SET"
-            ? "not_scheduled"
-            : "idle",
+      status,
       message: response.message,
       etaMinutes: response.etaMinutes,
       truckId: response.truck,
