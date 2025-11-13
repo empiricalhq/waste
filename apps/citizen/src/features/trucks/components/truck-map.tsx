@@ -38,9 +38,7 @@ export function TruckMap({ trucks, userLocation }: TruckMapProps) {
       <MapComponent
         style={styles.map}
         cameraPosition={camera}
-        {...(Platform.OS === "ios"
-          ? { annotations: markers }
-          : { markers: markers })}
+        {...(Platform.OS === "ios" ? { annotations: markers } : { markers })}
         properties={{ isMyLocationEnabled: Boolean(userLocation) }}
         uiSettings={{ myLocationButtonEnabled: Boolean(userLocation) }}
       />
