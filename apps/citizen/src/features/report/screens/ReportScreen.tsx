@@ -42,7 +42,7 @@ export function ReportScreen() {
     if (router.canGoBack()) {
       router.back();
     }
-    // Navigate to the profile tab. Using replace is better to not build up a weird history stack.
+    // replace is better to not build up a weird history stack
     router.replace("/(tabs)/profile");
   };
 

@@ -45,7 +45,7 @@ export function useLocation(options: UseLocationOptions = {}) {
         err instanceof Error ? err.message : "No se pudo obtener la ubicación";
       setError(message);
       setCoords(null);
-      // Re-throw the error so the calling component can handle it if needed
+      // re-throw the error so the calling component can handle it if needed
       // (e.g., in a try/catch block for an imperative call).
       throw err;
     } finally {
@@ -56,8 +56,6 @@ export function useLocation(options: UseLocationOptions = {}) {
   useEffect(() => {
     if (fetchOnMount) {
       requestLocation().catch((err) => {
-        // The error state is already set within requestLocation.
-        // This log ensures the error is not silently swallowed during development.
         console.error("Failed to fetch location on mount:", err);
       });
     }
