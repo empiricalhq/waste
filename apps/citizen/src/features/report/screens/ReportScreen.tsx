@@ -38,6 +38,14 @@ export function ReportScreen() {
     }
   };
 
+  const handleGoToProfile = () => {
+    if (router.canGoBack()) {
+      router.back();
+    }
+    // replace is better to not build up a weird history stack
+    router.replace("/(tabs)/profile");
+  };
+
   if (!isAuthenticated) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -49,13 +57,7 @@ export function ReportScreen() {
           <Text style={styles.message}>
             Necesitas iniciar sesión para enviar reportes
           </Text>
-          <Button
-            title="Ir al perfil"
-            onPress={() => {
-              router.back();
-              router.push("/(tabs)/profile");
-            }}
-          />
+          <Button title="Ir al perfil" onPress={handleGoToProfile} />
         </Animated.View>
       </SafeAreaView>
     );
