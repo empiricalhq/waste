@@ -14,11 +14,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TruckCard } from "@/components/truck-card";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { SkeletonTruckCard } from "@/components/ui/skeleton";
-import { useTruckStatus } from "@/lib/queries";
+import { TruckCard } from "@/features/trucks/components/truck-card";
+import { useTruckStatus } from "@/features/trucks/hooks/use-truck-status";
 import { theme } from "@/theme";
 
 export default function HomeScreen() {

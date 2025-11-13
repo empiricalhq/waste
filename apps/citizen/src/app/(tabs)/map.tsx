@@ -6,10 +6,10 @@ import {
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TruckMap } from "@/components/truck-map";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
-import { useTrucks } from "@/lib/queries";
+import { TruckMap } from "@/features/trucks/components/truck-map";
+import { useTrucks } from "@/features/trucks/hooks/use-trucks";
 import { theme } from "@/theme";
 import type { LocationCoords } from "@/types";
 

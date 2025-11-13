@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/context/ToastContext";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { storage } from "@/lib/storage";
 import { theme } from "@/theme";
 import type { QuizProgress } from "@/types";
