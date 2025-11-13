@@ -29,7 +29,6 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
   const {
     control,
     handleSubmit,
-    getValues,
     formState: { errors, isValid },
   } = useForm<FormData>({
     mode: "onChange",
@@ -38,7 +37,7 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
 
   const handleFormSubmit = async (data: FormData) => {
     if (!type) {
-      // This should not happen if UI is correct, but as a safeguard
+      // this should not happen if UI is correct, but as a safeguard
       show("Selecciona un tipo de reporte", { type: "error" });
       return;
     }
