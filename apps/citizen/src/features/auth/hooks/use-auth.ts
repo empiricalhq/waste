@@ -15,7 +15,9 @@ export function useAuth() {
     queryFn: async () => {
       // First, try to get stored user
       const storedUser = await api.getStoredUser();
-      if (!storedUser) return null;
+      if (!storedUser) {
+        return null;
+      }
 
       // If we have a stored user, validate the session in background
       try {

@@ -29,7 +29,6 @@ export function useTrucks(options: { enabled?: boolean } = {}) {
     // Keep previous data while refetching for smooth UX
     placeholderData: (previousData) => previousData,
     retry: 3,
-    retryDelay: (attemptIndex) =>
-      Math.min(1000 * 2 ** attemptIndex, 30_000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
   });
 }

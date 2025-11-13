@@ -15,11 +15,17 @@ export function QuizResults({
   streakIncreased,
 }: QuizResultsProps) {
   const percentage = Math.round((score / quizQuestions.length) * 100);
-  
+
   const getMessage = () => {
-    if (percentage === 100) return "¡Perfecto!";
-    if (percentage >= 80) return "¡Excelente trabajo!";
-    if (percentage >= 60) return "¡Buen trabajo!";
+    if (percentage === 100) {
+      return "¡Perfecto!";
+    }
+    if (percentage >= 80) {
+      return "¡Excelente trabajo!";
+    }
+    if (percentage >= 60) {
+      return "¡Buen trabajo!";
+    }
     return "Sigue practicando";
   };
 

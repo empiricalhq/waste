@@ -41,10 +41,12 @@ class SecureStorage {
   async getAuthTokens(): Promise<AuthTokens | null> {
     try {
       const data = await this.getSecure(KEYS.AUTH_TOKEN);
-      if (!data) return null;
+      if (!data) {
+        return null;
+      }
 
       const parsed = JSON.parse(data) as AuthTokens;
-      
+
       // Validate structure
       if (!parsed.token || typeof parsed.expiresAt !== "number") {
         console.warn("Invalid token structure, clearing auth");
@@ -80,12 +82,14 @@ class SecureStorage {
   async getUser(): Promise<User | null> {
     try {
       const data = await AsyncStorage.getItem(KEYS.USER);
-      if (!data) return null;
+      if (!data) {
+        return null;
+      }
 
       const parsed = JSON.parse(data) as User;
-      
+
       // Validate structure
-      if (!parsed.id || !parsed.email || !parsed.name) {
+      if (!(parsed.id && parsed.email && parsed.name)) {
         console.warn("Invalid user structure, clearing");
         await AsyncStorage.removeItem(KEYS.USER);
         return null;
@@ -130,7 +134,9 @@ class SecureStorage {
 
     try {
       const data = await AsyncStorage.getItem(KEYS.QUIZ_PROGRESS);
-      if (!data) return defaultValue;
+      if (!data) {
+        return defaultValue;
+      }
 
       const parsed = JSON.parse(data) as QuizProgress;
 

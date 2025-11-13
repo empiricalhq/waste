@@ -24,7 +24,6 @@ export function useTruckStatus(options: { enabled?: boolean } = {}) {
     staleTime: POLLING.STATUS,
     placeholderData: (previousData) => previousData,
     retry: 3,
-    retryDelay: (attemptIndex) =>
-      Math.min(1000 * 2 ** attemptIndex, 30_000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
   });
 }

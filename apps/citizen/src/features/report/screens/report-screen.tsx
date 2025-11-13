@@ -15,8 +15,9 @@ export function ReportScreen() {
   const { isAuthenticated } = useAuth();
   const { show } = useToast();
   const { mutateAsync: createReport, isPending } = useCreateReport();
-  const [pendingReport, setPendingReport] =
-    useState<CreateReportInput | null>(null);
+  const [pendingReport, setPendingReport] = useState<CreateReportInput | null>(
+    null,
+  );
 
   const handleSubmit = async (data: CreateReportInput) => {
     try {

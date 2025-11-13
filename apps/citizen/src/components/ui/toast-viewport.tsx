@@ -7,7 +7,9 @@ export function ToastViewport() {
   const { toasts } = useToast();
   const insets = useSafeAreaInsets();
 
-  if (toasts.length === 0) return null;
+  if (toasts.length === 0) {
+    return null;
+  }
 
   return (
     <View
