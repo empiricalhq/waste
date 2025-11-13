@@ -28,6 +28,43 @@ export function HomeScreen() {
 
   const [animatedStyle, onLayout] = useFadeIn();
 
+  const renderContent = () => {
+    if (isLoading) {
+      return <SkeletonTruckCard />;
+    }
+
+    if (error) {
+      return (
+        <View style={styles.errorContainer}>
+          <ErrorState message="Error al cargar información" onRetry={refetch} />
+        </View>
+      );
+    }
+
+    return (
+      <Animated.View
+        onLayout={onLayout}
+        style={[styles.contentWrapper, animatedStyle]}
+      >
+        {status && <TruckCard status={status} />}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Reportar problema</Text>
+          <Text style={styles.sectionDescription}>
+            Informa sobre recolecciones perdidas o problemas con la basura en tu
+            zona
+          </Text>
+          <Button
+            title="Crear reporte"
+            onPress={() => router.push("/report")}
+            variant="secondary"
+            fullWidth={true}
+          />
+        </View>
+      </Animated.View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
@@ -38,38 +75,7 @@ export function HomeScreen() {
         }
       >
         <Text style={styles.title}>Inicio</Text>
-
-        {isLoading ? (
-          <SkeletonTruckCard />
-        ) : error ? (
-          <View style={styles.errorContainer}>
-            <ErrorState
-              message="Error al cargar información"
-              onRetry={refetch}
-            />
-          </View>
-        ) : (
-          <Animated.View
-            onLayout={onLayout}
-            style={[styles.contentWrapper, animatedStyle]}
-          >
-            {status && <TruckCard status={status} />}
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Reportar problema</Text>
-              <Text style={styles.sectionDescription}>
-                Informa sobre recolecciones perdidas o problemas con la basura
-                en tu zona
-              </Text>
-              <Button
-                title="Crear reporte"
-                onPress={() => router.push("/report")}
-                variant="secondary"
-                fullWidth={true}
-              />
-            </View>
-          </Animated.View>
-        )}
+        {renderContent()}
       </ScrollView>
     </SafeAreaView>
   );
