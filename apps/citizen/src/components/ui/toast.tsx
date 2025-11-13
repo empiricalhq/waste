@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -60,24 +60,23 @@ export function Toast({ toast, index }: ToastProps) {
   );
   const scale = useSharedValue(0.9);
 
-  const getStackOffset = () => {
+  const getStackOffset = useCallback(() => {
     const baseOffset = 4;
     const maxOffset = 12;
     const offset = Math.min(index * baseOffset, maxOffset);
     return toast.options.position === "top" ? offset : -offset;
-  };
+  }, [index, toast.options.position]);
 
-  const getStackScale = () => {
+  const getStackScale = useCallback(() => {
     const scaleReduction = 0.02;
     const minScale = 0.94;
     return Math.max(1 - index * scaleReduction, minScale);
-  };
+  }, [index]);
 
   const handleDismiss = () => {
     dismiss(toast.id);
   };
 
-  // Effect for the initial "enter" animation. Runs only once.
   useEffect(() => {
     const delay = index * 50;
 
@@ -106,7 +105,7 @@ export function Toast({ toast, index }: ToastProps) {
       theme.animation.easing.spring,
     );
     scale.value = withSpring(getStackScale(), theme.animation.easing.spring);
-  }, [index]);
+  }, [getStackOffset, getStackScale, scale, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

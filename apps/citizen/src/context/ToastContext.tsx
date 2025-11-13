@@ -48,6 +48,7 @@ const DEFAULT_OPTIONS: Required<Omit<ToastOptions, "action">> & {
   type: "default",
   position: "bottom",
   action: null,
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional no-op for the default options
   onClose: () => {},
 };
 
@@ -58,7 +59,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   // clean up all timers when the provider unmounts
   useEffect(() => {
     return () => {
-      timersRef.current.forEach((timer) => clearTimeout(timer));
+      for (const timer of timersRef.current.values()) {
+        clearTimeout(timer);
+      }
     };
   }, []);
 
@@ -104,8 +107,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 
   const dismissAll = useCallback(() => {
-    // Clear all timers before removing toasts
-    timersRef.current.forEach((timer) => clearTimeout(timer));
+    // clear all timers before removing toasts
+    for (const timer of timersRef.current.values()) {
+      clearTimeout(timer);
+    }
     timersRef.current.clear();
     setToasts([]);
   }, []);
