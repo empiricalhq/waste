@@ -12,6 +12,8 @@ import type { SignUpInput } from "@/types";
 
 type FormData = SignUpInput;
 
+const EMAIL_REGEX = /^\S+@\S+$/i;
+
 export function AuthForm() {
   const { login, signUp } = useAuth();
   const { show } = useToast();
@@ -80,7 +82,7 @@ export function AuthForm() {
         rules={{
           required: "El correo es obligatorio",
           pattern: {
-            value: /^\S+@\S+$/i,
+            value: EMAIL_REGEX,
             message: "Correo electrónico inválido",
           },
         }}
