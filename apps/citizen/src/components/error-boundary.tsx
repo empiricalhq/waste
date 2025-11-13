@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 import { ErrorState } from "@/components/ui/error-state";
 import { theme } from "@/theme";
@@ -12,21 +12,21 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
+  state: State = {
     hasError: false,
   };
 
-  public static getDerivedStateFromError(_: Error): State {
+  static getDerivedStateFromError(_: Error): State {
     // update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // todo: add logging service here. for now we just log to console
     console.error("Uncaught error:", error, errorInfo);
   }
 
-  public render() {
+  render() {
     if (this.state.hasError) {
       return (
         <View style={styles.container}>

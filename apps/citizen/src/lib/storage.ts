@@ -71,10 +71,7 @@ class Storage {
 
   async setQuizProgress(progress: QuizProgress): Promise<void> {
     try {
-      await AsyncStorage.setItem(
-        KEYS.QUIZ_PROGRESS,
-        JSON.stringify(progress),
-      );
+      await AsyncStorage.setItem(KEYS.QUIZ_PROGRESS, JSON.stringify(progress));
     } catch (e) {
       console.error("Failed to set quiz progress in storage", e);
     }

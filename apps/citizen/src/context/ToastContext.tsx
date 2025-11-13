@@ -105,7 +105,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
       return id;
     },
-    [],
+    [dismiss],
   );
 
   const dismissAll = useCallback(() => {

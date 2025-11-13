@@ -1,7 +1,6 @@
 import { API_URL } from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
-  ApiError as ApiErrorType,
   CreateReportInput,
   LoginInput,
   Report,
