@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { QuizGame } from "@/components/quiz-game";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/context/ToastContext";
 import { quizQuestions } from "@/data/quiz-questions";
 import { useAuth } from "@/lib/auth";
 import { storage } from "@/lib/storage";
@@ -11,8 +19,22 @@ type Screen = "menu" | "quiz" | "results";
 
 export default function LearnScreen() {
   const { isAuthenticated } = useAuth();
+  const { show } = useToast();
   const [screen, setScreen] = useState<Screen>("menu");
   const [score, setScore] = useState(0);
+
+  const opacity = useSharedValue(0);
+  const scale = useSharedValue(0.9);
+
+  useEffect(() => {
+    opacity.value = withTiming(1, { duration: theme.animation.duration.slow });
+    scale.value = withSpring(1, theme.animation.easing.spring);
+  }, [screen]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
 
   const handleStartQuiz = () => {
     setScreen("quiz");
@@ -33,22 +55,33 @@ export default function LearnScreen() {
         correctAnswers: progress.correctAnswers + finalScore,
         lastPlayed: today,
       });
+
+      if (isNewDay) {
+        show("¡Racha actualizada! 🔥", {
+          type: "success",
+          position: "top",
+        });
+      }
     }
   };
 
   const handleRestart = () => {
     setScore(0);
+    opacity.value = 0;
+    scale.value = 0.9;
     setScreen("menu");
   };
 
   if (screen === "quiz") {
     return (
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-      >
-        <QuizGame questions={quizQuestions} onComplete={handleQuizComplete} />
-      </ScrollView>
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+        >
+          <QuizGame questions={quizQuestions} onComplete={handleQuizComplete} />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
@@ -58,38 +91,42 @@ export default function LearnScreen() {
       percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
 
     return (
-      <View style={styles.center}>
-        <Text style={styles.title}>Quiz completado</Text>
-        <View style={styles.scoreCircle}>
-          <Text style={styles.scoreValue}>{score}</Text>
-          <Text style={styles.scoreTotal}>/ {quizQuestions.length}</Text>
-        </View>
-        <Text style={styles.percentage}>{percentage}%</Text>
-        <Text style={styles.message}>{message}</Text>
-        {!isAuthenticated && (
-          <Text style={styles.hint}>
-            Inicia sesión para guardar tu progreso
-          </Text>
-        )}
-        <Button title="Reintentar" onPress={handleRestart} />
-      </View>
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <Animated.View style={[styles.center, animatedStyle]}>
+          <Text style={styles.title}>Quiz completado</Text>
+          <View style={styles.scoreCircle}>
+            <Text style={styles.scoreValue}>{score}</Text>
+            <Text style={styles.scoreTotal}>/ {quizQuestions.length}</Text>
+          </View>
+          <Text style={styles.percentage}>{percentage}%</Text>
+          <Text style={styles.message}>{message}</Text>
+          {!isAuthenticated && (
+            <Text style={styles.hint}>
+              Inicia sesión para guardar tu progreso
+            </Text>
+          )}
+          <Button title="Reintentar" onPress={handleRestart} />
+        </Animated.View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Aprender</Text>
-        <Text style={styles.description}>
-          Aprende a clasificar diferentes tipos de residuos correctamente
-        </Text>
-        <Button
-          title="Comenzar quiz"
-          onPress={handleStartQuiz}
-          fullWidth={true}
-        />
+        <Animated.View style={animatedStyle}>
+          <Text style={styles.title}>Aprender</Text>
+          <Text style={styles.description}>
+            Aprende a clasificar diferentes tipos de residuos correctamente
+          </Text>
+          <Button
+            title="Comenzar quiz"
+            onPress={handleStartQuiz}
+            fullWidth={true}
+          />
+        </Animated.View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -97,6 +134,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     padding: theme.spacing.lg,
@@ -117,6 +157,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
+    lineHeight: 22,
   },
   scoreCircle: {
     width: 180,
@@ -127,6 +168,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
     justifyContent: "center",
     alignItems: "center",
+    ...theme.shadow.lg,
   },
   scoreValue: {
     fontSize: 64,

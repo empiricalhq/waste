@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { REPORT_TYPES } from "@/constants";
+import { useToast } from "@/context/ToastContext";
 import { useLocation } from "@/hooks/use-location";
 import { theme } from "@/theme";
 import type { CreateReportInput } from "@/types";
@@ -16,10 +17,14 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
   const [type, setType] = useState<CreateReportInput["type"] | null>(null);
   const [description, setDescription] = useState("");
   const { coords, isLoading, error, requestLocation } = useLocation();
+  const { show } = useToast();
 
   const handleSubmit = async () => {
     if (!(type && description.trim())) {
-      Alert.alert("Error", "Completa todos los campos");
+      show("Completa todos los campos", {
+        type: "error",
+        position: "bottom",
+      });
       return;
     }
 
@@ -28,7 +33,14 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
       try {
         location = await requestLocation();
       } catch {
-        Alert.alert("Error", "Se necesita la ubicación para enviar el reporte");
+        show("Se necesita la ubicación para enviar el reporte", {
+          type: "error",
+          position: "bottom",
+          action: {
+            label: "Reintentar",
+            onPress: requestLocation,
+          },
+        });
         return;
       }
     }
