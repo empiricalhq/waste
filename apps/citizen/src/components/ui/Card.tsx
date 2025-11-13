@@ -1,23 +1,20 @@
-import { memo } from "react";
-import { StyleSheet, View, type ViewProps } from "react-native";
-import { theme } from "@/theme";
+import { StyleSheet, View, type ViewProps } from 'react-native';
+import { theme } from '../../theme';
 
-interface CardProps extends ViewProps {
-  variant?: "default" | "elevated";
+interface CardProps extends Omit<ViewProps, 'style'> {
+  variant?: 'default' | 'elevated';
 }
 
-export const Card = memo<CardProps>(
-  ({ style, variant = "default", ...props }) => {
-    return (
-      <View
-        style={[styles.card, variant === "elevated" && styles.elevated, style]}
-        {...props}
-      />
-    );
-  },
-);
-
-Card.displayName = "Card";
+export function Card({ variant = 'default', children, ...props }: CardProps) {
+  return (
+    <View
+      style={[styles.card, variant === 'elevated' && styles.elevated]}
+      {...props}
+    >
+      {children}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   card: {
