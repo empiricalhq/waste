@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -9,23 +8,17 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Loading } from "@/components/ui/loading";
 import { useToast } from "@/context/ToastContext";
+import { AuthForm } from "@/features/auth/components/auth-form";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
 import { theme } from "@/theme";
 
 export default function ProfileScreen() {
-  const { user, isAuthenticated, login, signUp, logout, isAuthLoading } =
-    useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { show } = useToast();
   const { progress, isLoadingProgress } = useQuizProgress();
-
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const isVisible = useSharedValue(false);
 
@@ -47,45 +40,14 @@ export default function ProfileScreen() {
     isVisible.value = true;
   };
 
-  const handleAuth = async () => {
-    try {
-      if (mode === "login") {
-        await login({ email, password });
-        show("Sesión iniciada correctamente", {
-          type: "success",
-          position: "bottom",
-        });
-      } else {
-        await signUp({ name, email, password });
-        show("Cuenta creada correctamente", {
-          type: "success",
-          position: "bottom",
-        });
-      }
-      setEmail("");
-      setPassword("");
-      setName("");
-    } catch (error: any) {
-      show(error.message || "Error de autenticación", {
-        type: "error",
-        position: "bottom",
-      });
-    }
-  };
-
   const handleLogout = () => {
     show("¿Cerrar sesión?", {
       type: "warning",
-      position: "bottom",
-      duration: 4000,
       action: {
         label: "Confirmar",
         onPress: async () => {
           await logout();
-          show("Sesión cerrada", {
-            type: "info",
-            position: "bottom",
-          });
+          show("Sesión cerrada", { type: "info" });
         },
       },
     });
@@ -98,50 +60,7 @@ export default function ProfileScreen() {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
         >
-          <Animated.View
-            onLayout={onLayout}
-            style={[styles.contentWrapper, animatedStyle]}
-          >
-            <Text style={styles.title}>
-              {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
-            </Text>
-            <Text style={styles.description}>
-              {mode === "login"
-                ? "Inicia sesión para reportar problemas y guardar tu progreso"
-                : "Crea una cuenta para reportar problemas y guardar tu progreso"}
-            </Text>
-            {mode === "signup" && (
-              <Input label="Nombre" value={name} onChangeText={setName} />
-            )}
-            <Input
-              label="Correo electrónico"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <Input
-              label="Contraseña"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={true}
-            />
-            <Button
-              title={mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
-              onPress={handleAuth}
-              loading={isAuthLoading}
-              fullWidth={true}
-            />
-            <Button
-              title={
-                mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"
-              }
-              variant="ghost"
-              onPress={() =>
-                setMode((m) => (m === "login" ? "signup" : "login"))
-              }
-            />
-          </Animated.View>
+          <AuthForm />
         </ScrollView>
       </SafeAreaView>
     );
@@ -210,6 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
+    flexGrow: 1,
     padding: theme.spacing.lg,
   },
   contentWrapper: {
@@ -219,11 +139,6 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-  },
-  description: {
-    fontSize: theme.fontSize.base,
-    color: theme.colors.textSecondary,
-    lineHeight: 22,
   },
   name: {
     fontSize: theme.fontSize.xl,
