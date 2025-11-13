@@ -1,5 +1,4 @@
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -9,7 +8,6 @@ import {
 } from "react-native";
 import Animated, {
   useAnimatedStyle,
-  useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -31,22 +29,22 @@ export default function HomeScreen() {
     isRefetching,
   } = useTruckStatus();
 
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
-
-  useEffect(() => {
-    if (!isLoading) {
-      opacity.value = withTiming(1, {
+  const animatedStyle = useAnimatedStyle(() => {
+    const isVisible = Boolean(status) && !isLoading;
+    return {
+      opacity: withTiming(isVisible ? 1 : 0, {
         duration: theme.animation.duration.slow,
-      });
-      translateY.value = withSpring(0, theme.animation.easing.spring);
-    }
-  }, [isLoading]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }],
-  }));
+      }),
+      transform: [
+        {
+          translateY: withSpring(
+            isVisible ? 0 : 20,
+            theme.animation.easing.spring,
+          ),
+        },
+      ],
+    };
+  }, [status, isLoading]);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -69,24 +67,24 @@ export default function HomeScreen() {
             />
           </View>
         ) : (
-          <Animated.View style={animatedStyle}>
+          <Animated.View style={[styles.contentWrapper, animatedStyle]}>
             {status && <TruckCard status={status} />}
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Reportar problema</Text>
+              <Text style={styles.sectionDescription}>
+                Informa sobre recolecciones perdidas o problemas con la basura
+                en tu zona
+              </Text>
+              <Button
+                title="Crear reporte"
+                onPress={() => router.push("/report")}
+                variant="secondary"
+                fullWidth={true}
+              />
+            </View>
           </Animated.View>
         )}
-
-        <Animated.View style={[styles.section, animatedStyle]}>
-          <Text style={styles.sectionTitle}>Reportar problema</Text>
-          <Text style={styles.sectionDescription}>
-            Informa sobre recolecciones perdidas o problemas con la basura en tu
-            zona
-          </Text>
-          <Button
-            title="Crear reporte"
-            onPress={() => router.push("/report")}
-            variant="secondary"
-            fullWidth={true}
-          />
-        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -102,6 +100,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: theme.spacing.lg,
+  },
+  contentWrapper: {
     gap: theme.spacing.lg,
   },
   title: {

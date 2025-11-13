@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -27,18 +27,25 @@ export default function ProfileScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
-
-  useEffect(() => {
-    opacity.value = withTiming(1, { duration: theme.animation.duration.slow });
-    translateY.value = withSpring(0, theme.animation.easing.spring);
-  }, []);
+  const isVisible = useSharedValue(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }],
+    opacity: withTiming(isVisible.value ? 1 : 0, {
+      duration: theme.animation.duration.slow,
+    }),
+    transform: [
+      {
+        translateY: withSpring(
+          isVisible.value ? 0 : 20,
+          theme.animation.easing.spring,
+        ),
+      },
+    ],
   }));
+
+  const onLayout = () => {
+    isVisible.value = true;
+  };
 
   const handleAuth = async () => {
     try {
@@ -91,7 +98,10 @@ export default function ProfileScreen() {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
         >
-          <Animated.View style={animatedStyle}>
+          <Animated.View
+            onLayout={onLayout}
+            style={[styles.contentWrapper, animatedStyle]}
+          >
             <Text style={styles.title}>
               {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
             </Text>
@@ -148,7 +158,10 @@ export default function ProfileScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View style={animatedStyle}>
+        <Animated.View
+          onLayout={onLayout}
+          style={[styles.contentWrapper, animatedStyle]}
+        >
           <Text style={styles.title}>Perfil</Text>
           <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.email}>{user?.email}</Text>
@@ -198,6 +211,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: theme.spacing.lg,
+  },
+  contentWrapper: {
     gap: theme.spacing.lg,
   },
   title: {
