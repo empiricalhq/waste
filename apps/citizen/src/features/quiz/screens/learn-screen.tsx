@@ -11,14 +11,27 @@ import { useQuizProgress } from "../hooks/use-quiz-progress";
 type Screen = "menu" | "quiz" | "results";
 
 export function LearnScreen() {
-  const { updateProgress } = useQuizProgress();
+  const { progress, updateProgress } = useQuizProgress();
   const [screen, setScreen] = useState<Screen>("menu");
   const [score, setScore] = useState(0);
+  const [streakIncreased, setStreakIncreased] = useState(false);
 
   const handleQuizComplete = async (finalScore: number) => {
     setScore(finalScore);
+
+    const oldStreak = progress?.streak || 0;
     await updateProgress(finalScore);
+    
+    // Check if streak actually increased (not just same day replay)
+    const newProgress = await updateProgress(finalScore);
+    setStreakIncreased(newProgress.streak > oldStreak);
+    
     setScreen("results");
+  };
+
+  const handleRestart = () => {
+    setScreen("menu");
+    setStreakIncreased(false);
   };
 
   const renderScreen = () => {
@@ -29,7 +42,11 @@ export function LearnScreen() {
         );
       case "results":
         return (
-          <QuizResults score={score} onRestart={() => setScreen("menu")} />
+          <QuizResults
+            score={score}
+            onRestart={handleRestart}
+            streakIncreased={streakIncreased}
+          />
         );
       default:
         return <LearnMenu onStart={() => setScreen("quiz")} />;

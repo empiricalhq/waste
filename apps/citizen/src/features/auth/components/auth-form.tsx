@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text } from "react-native";
-import Animated from "react-native-reanimated";
+import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/context/ToastContext";
+import { useToast } from "@/context/toast-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 import type { SignUpInput } from "@/types";
 
@@ -14,11 +12,14 @@ type FormData = SignUpInput;
 
 const EMAIL_REGEX = /^\S+@\S+$/i;
 
-export function AuthForm() {
+interface AuthFormProps {
+  onSuccess?: () => void;
+}
+
+export function AuthForm({ onSuccess }: AuthFormProps) {
   const { login, signUp } = useAuth();
   const { show } = useToast();
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const animatedStyle = useFadeIn();
 
   const {
     control,
@@ -32,29 +33,29 @@ export function AuthForm() {
     try {
       if (mode === "login") {
         await login({ email: data.email, password: data.password });
-        show("Sesión iniciada correctamente", { type: "success" });
       } else {
         await signUp({
           name: data.name,
           email: data.email,
           password: data.password,
         });
-        show("Cuenta creada correctamente", { type: "success" });
       }
+      // No success toast - user can see they're logged in from UI change
+      onSuccess?.();
     } catch (error: any) {
       show(error.message || "Error de autenticación", { type: "error" });
     }
   };
 
   return (
-    <Animated.View style={[styles.container, animatedStyle]}>
+    <View style={styles.container}>
       <Text style={styles.title}>
         {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
       </Text>
       <Text style={styles.description}>
         {mode === "login"
-          ? "Inicia sesión para reportar problemas y guardar tu progreso"
-          : "Crea una cuenta para reportar problemas y guardar tu progreso"}
+          ? "Inicia sesión para reportar problemas y ver tu progreso"
+          : "Crea una cuenta para reportar problemas y ver tu progreso"}
       </Text>
 
       {mode === "signup" && (
@@ -129,7 +130,7 @@ export function AuthForm() {
         onPress={() => setMode((m) => (m === "login" ? "signup" : "login"))}
         disabled={isSubmitting}
       />
-    </Animated.View>
+    </View>
   );
 }
 

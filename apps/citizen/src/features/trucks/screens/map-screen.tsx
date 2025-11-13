@@ -39,7 +39,10 @@ export function MapScreen() {
   if (error) {
     return (
       <SafeAreaView style={styles.center} edges={["top", "bottom"]}>
-        <ErrorState message="Error al cargar camiones" onRetry={refetch} />
+        <ErrorState
+          message="No se pudo cargar el mapa. Verifica tu conexión."
+          onRetry={refetch}
+        />
       </SafeAreaView>
     );
   }
@@ -51,8 +54,7 @@ export function MapScreen() {
         <SafeAreaView style={styles.badgeContainer} edges={["top"]}>
           <View style={[styles.badge, theme.shadow.md]}>
             <Text style={styles.badgeText}>
-              {trucks.length} camión{trucks.length !== 1 ? "es" : ""} activo
-              {trucks.length !== 1 ? "s" : ""}
+              {trucks.length} en servicio ahora
             </Text>
           </View>
         </SafeAreaView>

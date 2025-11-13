@@ -1,11 +1,10 @@
 import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet, Text } from "react-native";
-import Animated from "react-native-reanimated";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/context/ToastContext";
+import { useToast } from "@/context/toast-context";
+import { AuthForm } from "@/features/auth/components/auth-form";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useFadeIn } from "@/hooks/use-fade-in";
 import { theme } from "@/theme";
 import type { CreateReportInput } from "@/types";
 import { ReportForm } from "../components/report-form";
@@ -16,20 +15,24 @@ export function ReportScreen() {
   const { isAuthenticated } = useAuth();
   const { show } = useToast();
   const { mutateAsync: createReport, isPending } = useCreateReport();
-  const animatedStyle = useFadeIn({ translateY: 30 });
+  const [pendingReport, setPendingReport] =
+    useState<CreateReportInput | null>(null);
 
   const handleSubmit = async (data: CreateReportInput) => {
     try {
       await createReport(data);
       show("Reporte enviado correctamente", {
         type: "success",
-        position: "bottom",
       });
       router.back();
     } catch (error: any) {
-      show(error.message || "Error al enviar reporte", {
+      const message =
+        error.code === "NETWORK_ERROR"
+          ? "No se pudo enviar el reporte. Verifica tu conexión."
+          : error.message || "Error al enviar reporte";
+
+      show(message, {
         type: "error",
-        position: "bottom",
         action: {
           label: "Reintentar",
           onPress: () => handleSubmit(data),
@@ -38,26 +41,29 @@ export function ReportScreen() {
     }
   };
 
-  const handleGoToProfile = () => {
-    if (router.canGoBack()) {
-      router.back();
+  const handleAuthSuccess = () => {
+    // After successful auth, if there was a pending report, submit it
+    if (pendingReport) {
+      handleSubmit(pendingReport);
+      setPendingReport(null);
     }
-    // replace is better to not build up a weird history stack
-    router.replace("/(tabs)/profile");
   };
 
   if (!isAuthenticated) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Animated.View
-          style={[styles.content, styles.centerContent, animatedStyle]}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
         >
-          <Text style={styles.title}>Inicia sesión</Text>
-          <Text style={styles.message}>
-            Necesitas iniciar sesión para enviar reportes
-          </Text>
-          <Button title="Ir al perfil" onPress={handleGoToProfile} />
-        </Animated.View>
+          <View style={styles.authWrapper}>
+            <Text style={styles.title}>Inicia sesión para continuar</Text>
+            <Text style={styles.message}>
+              Necesitas una cuenta para enviar reportes
+            </Text>
+            <AuthForm onSuccess={handleAuthSuccess} />
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -68,9 +74,7 @@ export function ReportScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View style={animatedStyle}>
-          <ReportForm onSubmit={handleSubmit} isSubmitting={isPending} />
-        </Animated.View>
+        <ReportForm onSubmit={handleSubmit} isSubmitting={isPending} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -87,22 +91,17 @@ const styles = StyleSheet.create({
   content: {
     padding: theme.spacing.lg,
   },
-  centerContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  authWrapper: {
+    gap: theme.spacing.lg,
   },
   title: {
     fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.md,
   },
   message: {
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xl,
-    textAlign: "center",
     lineHeight: 22,
   },
 });

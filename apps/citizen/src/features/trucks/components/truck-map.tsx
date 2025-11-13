@@ -1,5 +1,5 @@
 import { AppleMaps, GoogleMaps } from "expo-maps";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { DEFAULT_MAP_CENTER } from "@/constants";
 import { theme } from "@/theme";
@@ -10,32 +10,40 @@ interface TruckMapProps {
   userLocation?: LocationCoords | null;
 }
 
-export function TruckMap({ trucks, userLocation }: TruckMapProps) {
+function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
   const MapComponent = Platform.OS === "ios" ? AppleMaps.View : GoogleMaps.View;
 
-  const camera = useMemo(
-    () =>
-      userLocation
-        ? { coordinates: userLocation, zoom: 13 }
-        : DEFAULT_MAP_CENTER,
-    [userLocation],
-  );
+  // Only update camera when user location coordinates actually change
+  const camera = useMemo(() => {
+    if (userLocation) {
+      return {
+        coordinates: userLocation,
+        zoom: 13,
+      };
+    }
+    return DEFAULT_MAP_CENTER;
+  }, [userLocation?.latitude, userLocation?.longitude]);
 
-  const markers = useMemo(
-    () =>
-      trucks.map((truck) => ({
-        key: truck.id,
-        coordinates: { latitude: truck.lat, longitude: truck.lng },
-        title: truck.name,
-        // works only in Android (Google Maps)
-        snippet: `Placa: ${truck.licensePlate}`,
-      })),
+  // Memoize markers array, only recreate when truck IDs or positions change
+  const markers = useMemo(() => {
+    return trucks.map((truck) => ({
+      key: truck.id,
+      coordinates: { latitude: truck.lat, longitude: truck.lng },
+      title: truck.name,
+      snippet: `Placa: ${truck.licensePlate}`,
+    }));
+  }, [trucks]);
+
+  // Create a stable key from truck positions to prevent unnecessary re-renders
+  const trucksKey = useMemo(
+    () => trucks.map((t) => `${t.id}-${t.lat}-${t.lng}`).join(","),
     [trucks],
   );
 
   return (
     <View style={styles.container}>
       <MapComponent
+        key={trucksKey}
         style={styles.map}
         cameraPosition={camera}
         {...(Platform.OS === "ios" ? { annotations: markers } : { markers })}
@@ -45,6 +53,30 @@ export function TruckMap({ trucks, userLocation }: TruckMapProps) {
     </View>
   );
 }
+
+// Memo component to prevent re-renders when props haven't changed
+export const TruckMap = memo(TruckMapComponent, (prevProps, nextProps) => {
+  // Custom comparison to prevent unnecessary re-renders
+  const sameUserLocation =
+    prevProps.userLocation?.latitude === nextProps.userLocation?.latitude &&
+    prevProps.userLocation?.longitude === nextProps.userLocation?.longitude;
+
+  // Check if truck data actually changed
+  const sameTrucks =
+    prevProps.trucks.length === nextProps.trucks.length &&
+    prevProps.trucks.every((truck, index) => {
+      const nextTruck = nextProps.trucks[index];
+      return (
+        truck.id === nextTruck.id &&
+        truck.lat === nextTruck.lat &&
+        truck.lng === nextTruck.lng
+      );
+    });
+
+  return sameUserLocation && sameTrucks;
+});
+
+TruckMap.displayName = "TruckMap";
 
 const styles = StyleSheet.create({
   container: {
