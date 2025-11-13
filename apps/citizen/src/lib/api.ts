@@ -1,7 +1,7 @@
 import { API_URL } from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
-  ApiError,
+  ApiError as ApiErrorType,
   CreateReportInput,
   LoginInput,
   Report,
@@ -10,6 +10,16 @@ import type {
   TruckStatus,
   User,
 } from "@/types";
+
+export class ApiError extends Error {
+  code?: string;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.code = code;
+  }
+}
 
 class ApiClient {
   private readonly baseUrl = API_URL;
@@ -37,11 +47,7 @@ class ApiClient {
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        const apiError: ApiError = {
-          message: error.message || "Request failed",
-          code: error.code,
-        };
-        throw apiError;
+        throw new ApiError(error.message || "Request failed", error.code);
       }
 
       if (response.status === 204) {
@@ -51,13 +57,12 @@ class ApiClient {
       const data = await response.json();
       return data.data !== undefined ? data.data : data;
     } catch (error) {
-      if ((error as ApiError).message) {
+      if (error instanceof ApiError) {
         throw error;
       }
-      throw {
-        message: "Network error",
-        code: "NETWORK_ERROR",
-      } as ApiError;
+      const err = error as Error;
+      console.error("Network or unknown API error:", err);
+      throw new ApiError(err.message || "Network error", "NETWORK_ERROR");
     }
   }
 

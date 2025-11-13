@@ -12,51 +12,72 @@ class Storage {
   async getToken(): Promise<string | null> {
     try {
       return await AsyncStorage.getItem(KEYS.AUTH_TOKEN);
-    } catch {
+    } catch (e) {
+      console.error("Failed to get auth token from storage", e);
       return null;
     }
   }
 
   async setToken(token: string): Promise<void> {
-    await AsyncStorage.setItem(KEYS.AUTH_TOKEN, token);
+    try {
+      await AsyncStorage.setItem(KEYS.AUTH_TOKEN, token);
+    } catch (e) {
+      console.error("Failed to set auth token in storage", e);
+    }
   }
 
   async getUser(): Promise<User | null> {
     try {
       const data = await AsyncStorage.getItem(KEYS.USER);
       return data ? JSON.parse(data) : null;
-    } catch {
+    } catch (e) {
+      console.error("Failed to get user from storage", e);
       return null;
     }
   }
 
   async setUser(user: User): Promise<void> {
-    await AsyncStorage.setItem(KEYS.USER, JSON.stringify(user));
+    try {
+      await AsyncStorage.setItem(KEYS.USER, JSON.stringify(user));
+    } catch (e) {
+      console.error("Failed to set user in storage", e);
+    }
   }
 
   async clearAuth(): Promise<void> {
-    await AsyncStorage.multiRemove([KEYS.AUTH_TOKEN, KEYS.USER]);
+    try {
+      await AsyncStorage.multiRemove([KEYS.AUTH_TOKEN, KEYS.USER]);
+    } catch (e) {
+      console.error("Failed to clear auth from storage", e);
+    }
   }
 
   // quiz progress (local only)
   async getQuizProgress(): Promise<QuizProgress> {
+    const defaultValue = {
+      streak: 0,
+      totalAnswered: 0,
+      correctAnswers: 0,
+      lastPlayed: null,
+    };
     try {
       const data = await AsyncStorage.getItem(KEYS.QUIZ_PROGRESS);
-      return data
-        ? JSON.parse(data)
-        : { streak: 0, totalAnswered: 0, correctAnswers: 0, lastPlayed: null };
-    } catch {
-      return {
-        streak: 0,
-        totalAnswered: 0,
-        correctAnswers: 0,
-        lastPlayed: null,
-      };
+      return data ? JSON.parse(data) : defaultValue;
+    } catch (e) {
+      console.error("Failed to get quiz progress from storage", e);
+      return defaultValue;
     }
   }
 
   async setQuizProgress(progress: QuizProgress): Promise<void> {
-    await AsyncStorage.setItem(KEYS.QUIZ_PROGRESS, JSON.stringify(progress));
+    try {
+      await AsyncStorage.setItem(
+        KEYS.QUIZ_PROGRESS,
+        JSON.stringify(progress),
+      );
+    } catch (e) {
+      console.error("Failed to set quiz progress in storage", e);
+    }
   }
 }
 
