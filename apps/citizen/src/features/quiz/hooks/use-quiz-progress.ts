@@ -10,9 +10,7 @@ function calculateDaysDifference(
   lastPlayed: string | null,
   today: string,
 ): number {
-  if (!lastPlayed) {
-    return -1;
-  }
+  if (!lastPlayed) return -1;
 
   const last = new Date(lastPlayed);
   const current = new Date(today);
@@ -75,7 +73,7 @@ export function useQuizProgress() {
       await storage.setQuizProgress(newProgress);
       return newProgress;
     },
-    onSuccess: (newProgress, finalScore) => {
+    onSuccess: (newProgress) => {
       queryClient.setQueryData(["quizProgress"], newProgress);
     },
     onError: (error) => {
