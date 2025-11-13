@@ -77,6 +77,7 @@ export function Toast({ toast, index }: ToastProps) {
     dismiss(toast.id);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: this should only run once. if not, it would cause the enter animation to re-trigger
   useEffect(() => {
     const delay = index * 50;
 
