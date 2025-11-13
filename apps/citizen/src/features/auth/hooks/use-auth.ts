@@ -13,9 +13,10 @@ export function useAuth() {
       if (!token) {
         return null;
       }
+
       return api.getSession();
     },
-    staleTime: Number.POSITIVE_INFINITY,
+    staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false,
   });
 
