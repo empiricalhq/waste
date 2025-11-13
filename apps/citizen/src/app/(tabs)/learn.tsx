@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { QuizGame } from "@/features/quiz/components/quiz-game";
 import { LearnMenu } from "@/features/quiz/components/learn-menu";
+import { QuizGame } from "@/features/quiz/components/quiz-game";
 import { QuizResults } from "@/features/quiz/components/quiz-results";
 import { quizQuestions } from "@/features/quiz/data/quiz-questions";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
@@ -28,8 +28,9 @@ export default function LearnScreen() {
           <QuizGame questions={quizQuestions} onComplete={handleQuizComplete} />
         );
       case "results":
-        return <QuizResults score={score} onRestart={() => setScreen("menu")} />;
-      case "menu":
+        return (
+          <QuizResults score={score} onRestart={() => setScreen("menu")} />
+        );
       default:
         return <LearnMenu onStart={() => setScreen("quiz")} />;
     }

@@ -20,12 +20,21 @@ export function AuthForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const isVisible = useSharedValue(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, { duration: theme.animation.duration.slow }),
-    transform: [{ translateY: withSpring(isVisible.value ? 0 : 20, theme.animation.easing.spring) }],
+    opacity: withTiming(isVisible.value ? 1 : 0, {
+      duration: theme.animation.duration.slow,
+    }),
+    transform: [
+      {
+        translateY: withSpring(
+          isVisible.value ? 0 : 20,
+          theme.animation.easing.spring,
+        ),
+      },
+    ],
   }));
 
   const onLayout = () => {
@@ -48,7 +57,10 @@ export function AuthForm() {
   };
 
   return (
-    <Animated.View onLayout={onLayout} style={[styles.container, animatedStyle]}>
+    <Animated.View
+      onLayout={onLayout}
+      style={[styles.container, animatedStyle]}
+    >
       <Text style={styles.title}>
         {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
       </Text>
@@ -57,7 +69,7 @@ export function AuthForm() {
           ? "Inicia sesión para reportar problemas y guardar tu progreso"
           : "Crea una cuenta para reportar problemas y guardar tu progreso"}
       </Text>
-      
+
       {mode === "signup" && (
         <Input label="Nombre" value={name} onChangeText={setName} />
       )}
@@ -74,7 +86,7 @@ export function AuthForm() {
         onChangeText={setPassword}
         secureTextEntry={true}
       />
-      
+
       <Button
         title={mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
         onPress={handleAuth}

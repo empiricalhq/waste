@@ -21,7 +21,10 @@ export function LearnMenu({ onStart }: LearnMenuProps) {
     }),
     transform: [
       {
-        translateY: withSpring(isVisible.value ? 0 : 20, theme.animation.easing.spring),
+        translateY: withSpring(
+          isVisible.value ? 0 : 20,
+          theme.animation.easing.spring,
+        ),
       },
     ],
   }));
@@ -31,16 +34,15 @@ export function LearnMenu({ onStart }: LearnMenuProps) {
   };
 
   return (
-    <Animated.View onLayout={onLayout} style={[styles.container, animatedStyle]}>
+    <Animated.View
+      onLayout={onLayout}
+      style={[styles.container, animatedStyle]}
+    >
       <Text style={styles.title}>Aprender</Text>
       <Text style={styles.description}>
         Aprende a clasificar diferentes tipos de residuos correctamente
       </Text>
-      <Button
-        title="Comenzar quiz"
-        onPress={onStart}
-        fullWidth={true}
-      />
+      <Button title="Comenzar quiz" onPress={onStart} fullWidth={true} />
     </Animated.View>
   );
 }

@@ -23,8 +23,17 @@ export default function ProfileScreen() {
   const isVisible = useSharedValue(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, { duration: theme.animation.duration.slow }),
-    transform: [{ translateY: withSpring(isVisible.value ? 0 : 20, theme.animation.easing.spring) }],
+    opacity: withTiming(isVisible.value ? 1 : 0, {
+      duration: theme.animation.duration.slow,
+    }),
+    transform: [
+      {
+        translateY: withSpring(
+          isVisible.value ? 0 : 20,
+          theme.animation.easing.spring,
+        ),
+      },
+    ],
   }));
 
   const onLayout = () => {
@@ -68,7 +77,10 @@ export default function ProfileScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
-        <Animated.View onLayout={onLayout} style={[styles.contentWrapper, animatedStyle]}>
+        <Animated.View
+          onLayout={onLayout}
+          style={[styles.contentWrapper, animatedStyle]}
+        >
           <Text style={styles.title}>Perfil</Text>
           <Text style={styles.name}>{user?.name}</Text>
           <Text style={styles.email}>{user?.email}</Text>

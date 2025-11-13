@@ -20,8 +20,17 @@ export function QuizResults({ score, onRestart }: QuizResultsProps) {
   const isVisible = useSharedValue(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isVisible.value ? 1 : 0, { duration: theme.animation.duration.slow }),
-    transform: [{ scale: withSpring(isVisible.value ? 1 : 0.9, theme.animation.easing.spring) }],
+    opacity: withTiming(isVisible.value ? 1 : 0, {
+      duration: theme.animation.duration.slow,
+    }),
+    transform: [
+      {
+        scale: withSpring(
+          isVisible.value ? 1 : 0.9,
+          theme.animation.easing.spring,
+        ),
+      },
+    ],
   }));
 
   const onLayout = () => {
@@ -29,7 +38,8 @@ export function QuizResults({ score, onRestart }: QuizResultsProps) {
   };
 
   const percentage = Math.round((score / quizQuestions.length) * 100);
-  const message = percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
+  const message =
+    percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
 
   return (
     <Animated.View onLayout={onLayout} style={[styles.center, animatedStyle]}>
@@ -41,9 +51,7 @@ export function QuizResults({ score, onRestart }: QuizResultsProps) {
       <Text style={styles.percentage}>{percentage}%</Text>
       <Text style={styles.message}>{message}</Text>
       {!isAuthenticated && (
-        <Text style={styles.hint}>
-          Inicia sesión para guardar tu progreso
-        </Text>
+        <Text style={styles.hint}>Inicia sesión para guardar tu progreso</Text>
       )}
       <Button title="Reintentar" onPress={onRestart} />
     </Animated.View>
