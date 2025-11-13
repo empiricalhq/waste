@@ -1,12 +1,12 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { theme } from '../../theme';
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { theme } from "../../theme";
 
 interface LoadingProps {
   message?: string;
-  size?: 'small' | 'large';
+  size?: "small" | "large";
 }
 
-export function Loading({ message, size = 'large' }: LoadingProps) {
+export function Loading({ message, size = "large" }: LoadingProps) {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={theme.colors.primary} />
@@ -26,8 +26,8 @@ export function SkeletonCard() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: theme.spacing.md,
   },
   message: {
@@ -46,6 +46,6 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   lineShort: {
-    width: '60%',
+    width: "60%",
   },
 });

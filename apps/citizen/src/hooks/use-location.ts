@@ -1,10 +1,10 @@
 import {
   getCurrentPositionAsync,
-  requestForegroundPermissionsAsync,
   LocationAccuracy,
-} from 'expo-location';
-import { useCallback, useState } from 'react';
-import type { LocationCoords } from '../types';
+  requestForegroundPermissionsAsync,
+} from "expo-location";
+import { useCallback, useState } from "react";
+import type { LocationCoords } from "../types";
 
 export function useLocation() {
   const [coords, setCoords] = useState<LocationCoords | null>(null);
@@ -17,9 +17,9 @@ export function useLocation() {
 
     try {
       const { status } = await requestForegroundPermissionsAsync();
-      
-      if (status !== 'granted') {
-        throw new Error('Permiso de ubicación denegado');
+
+      if (status !== "granted") {
+        throw new Error("Permiso de ubicación denegado");
       }
 
       const location = await getCurrentPositionAsync({
@@ -35,7 +35,7 @@ export function useLocation() {
       return newCoords;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : 'No se pudo obtener la ubicación';
+        err instanceof Error ? err.message : "No se pudo obtener la ubicación";
       setError(message);
       throw err;
     } finally {

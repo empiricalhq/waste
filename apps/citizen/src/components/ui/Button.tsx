@@ -4,21 +4,21 @@ import {
   Text,
   TouchableOpacity,
   type TouchableOpacityProps,
-} from 'react-native';
-import { theme } from '../../theme';
+} from "react-native";
+import { theme } from "../../theme";
 
-interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+interface ButtonProps extends Omit<TouchableOpacityProps, "style"> {
   title: string;
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
   loading?: boolean;
   fullWidth?: boolean;
 }
 
 export function Button({
   title,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   loading,
   fullWidth,
   disabled,
@@ -43,7 +43,7 @@ export function Button({
         <ActivityIndicator
           size="small"
           color={
-            variant === 'primary' ? theme.colors.textInverse : theme.colors.text
+            variant === "primary" ? theme.colors.textInverse : theme.colors.text
           }
         />
       ) : (
@@ -55,8 +55,8 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: theme.radius.md,
   },
   primary: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   ghost: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   sm: {
     height: 36,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xl,
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   disabled: {
     opacity: 0.5,

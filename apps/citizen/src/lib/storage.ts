@@ -1,10 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { QuizProgress, User } from '../types';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { QuizProgress, User } from "../types";
 
 const KEYS = {
-  AUTH_TOKEN: 'auth_token',
-  USER: 'user',
-  QUIZ_PROGRESS: 'quiz_progress',
+  AUTH_TOKEN: "auth_token",
+  USER: "user",
+  QUIZ_PROGRESS: "quiz_progress",
 } as const;
 
 class Storage {
@@ -46,7 +46,12 @@ class Storage {
         ? JSON.parse(data)
         : { streak: 0, totalAnswered: 0, correctAnswers: 0, lastPlayed: null };
     } catch {
-      return { streak: 0, totalAnswered: 0, correctAnswers: 0, lastPlayed: null };
+      return {
+        streak: 0,
+        totalAnswered: 0,
+        correctAnswers: 0,
+        lastPlayed: null,
+      };
     }
   }
 

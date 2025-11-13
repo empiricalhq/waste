@@ -1,5 +1,11 @@
-import { StyleSheet, Text, TextInput, type TextInputProps, View } from 'react-native';
-import { theme } from '../../theme';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  type TextInputProps,
+  View,
+} from "react-native";
+import { theme } from "../../theme";
 
 interface InputProps extends TextInputProps {
   label: string;

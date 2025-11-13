@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { WASTE_TYPES } from '../constants';
-import { theme } from '../theme';
-import type { QuizQuestion, WasteType } from '../types';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { WASTE_TYPES } from "../constants";
+import { theme } from "../theme";
+import type { QuizQuestion, WasteType } from "../types";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
 
 interface QuizGameProps {
   questions: QuizQuestion[];
@@ -29,7 +29,8 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
 
   const handleNext = () => {
     if (isLastQuestion) {
-      const finalScore = selectedAnswer === question.correctAnswer ? score + 1 : score;
+      const finalScore =
+        selectedAnswer === question.correctAnswer ? score + 1 : score;
       onComplete(finalScore);
     } else {
       setCurrentIndex((i) => i + 1);
@@ -83,9 +84,9 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
 
       {isAnswered && (
         <Button
-          title={isLastQuestion ? 'Ver resultados' : 'Siguiente'}
+          title={isLastQuestion ? "Ver resultados" : "Siguiente"}
           onPress={handleNext}
-          fullWidth
+          fullWidth={true}
         />
       )}
     </View>
@@ -102,13 +103,13 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 200,
     borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.backgroundSecondary,
   },
   questionContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: theme.spacing.sm,
   },
   questionText: {
@@ -124,9 +125,9 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   option: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   optionText: {
     fontSize: theme.fontSize.base,

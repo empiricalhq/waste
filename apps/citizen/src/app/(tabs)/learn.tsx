@@ -1,30 +1,30 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { QuizGame } from '../../components/quiz-game';
-import { Button } from '../../components/ui/button';
-import { quizQuestions } from '../../data/quiz-questions';
-import { useAuth } from '../../lib/auth';
-import { storage } from '../../lib/storage';
-import { theme } from '../../theme';
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { QuizGame } from "../../components/quiz-game";
+import { Button } from "../../components/ui/button";
+import { quizQuestions } from "../../data/quiz-questions";
+import { useAuth } from "../../lib/auth";
+import { storage } from "../../lib/storage";
+import { theme } from "../../theme";
 
-type Screen = 'menu' | 'quiz' | 'results';
+type Screen = "menu" | "quiz" | "results";
 
 export default function LearnScreen() {
   const { isAuthenticated } = useAuth();
-  const [screen, setScreen] = useState<Screen>('menu');
+  const [screen, setScreen] = useState<Screen>("menu");
   const [score, setScore] = useState(0);
 
   const handleStartQuiz = () => {
-    setScreen('quiz');
+    setScreen("quiz");
   };
 
   const handleQuizComplete = async (finalScore: number) => {
     setScore(finalScore);
-    setScreen('results');
+    setScreen("results");
 
     if (isAuthenticated) {
       const progress = await storage.getQuizProgress();
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       const isNewDay = progress.lastPlayed !== today;
 
       await storage.setQuizProgress({
@@ -38,21 +38,24 @@ export default function LearnScreen() {
 
   const handleRestart = () => {
     setScore(0);
-    setScreen('menu');
+    setScreen("menu");
   };
 
-  if (screen === 'quiz') {
+  if (screen === "quiz") {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         <QuizGame questions={quizQuestions} onComplete={handleQuizComplete} />
       </ScrollView>
     );
   }
 
-  if (screen === 'results') {
+  if (screen === "results") {
     const percentage = Math.round((score / quizQuestions.length) * 100);
     const message =
-      percentage >= 80 ? '¡Excelente trabajo!' : '¡Sigue practicando!';
+      percentage >= 80 ? "¡Excelente trabajo!" : "¡Sigue practicando!";
 
     return (
       <View style={styles.center}>
@@ -80,7 +83,11 @@ export default function LearnScreen() {
         <Text style={styles.description}>
           Aprende a clasificar diferentes tipos de residuos correctamente
         </Text>
-        <Button title="Comenzar quiz" onPress={handleStartQuiz} fullWidth />
+        <Button
+          title="Comenzar quiz"
+          onPress={handleStartQuiz}
+          fullWidth={true}
+        />
       </ScrollView>
     </View>
   );
@@ -97,8 +104,8 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: theme.spacing.xxl,
     gap: theme.spacing.lg,
   },
@@ -118,8 +125,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.card,
     borderWidth: 8,
     borderColor: theme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   scoreValue: {
     fontSize: 64,
@@ -139,11 +146,11 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.lg,
     fontWeight: theme.fontWeight.medium,
     color: theme.colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
   hint: {
     fontSize: theme.fontSize.sm,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

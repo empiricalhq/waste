@@ -9,7 +9,7 @@ export interface Truck {
 }
 
 export interface TruckStatus {
-  status: 'active' | 'idle' | 'not_scheduled';
+  status: "active" | "idle" | "not_scheduled";
   message?: string;
   etaMinutes?: number;
   truckId?: string;
@@ -32,12 +32,12 @@ export interface QuizProgress {
 
 export interface Report {
   id: string;
-  type: 'missed_collection' | 'illegal_dumping' | 'other';
+  type: "missed_collection" | "illegal_dumping" | "other";
   description: string;
   latitude: number;
   longitude: number;
   photoUrl?: string;
-  status: 'open' | 'in_progress' | 'resolved';
+  status: "open" | "in_progress" | "resolved";
   createdAt: string;
 }
 
@@ -47,7 +47,7 @@ export interface User {
   email: string;
 }
 
-export type WasteType = 'general' | 'recycling' | 'organic' | 'hazardous';
+export type WasteType = "general" | "recycling" | "organic" | "hazardous";
 
 // API types
 export interface ApiError {
@@ -56,7 +56,7 @@ export interface ApiError {
 }
 
 export interface CreateReportInput {
-  type: Report['type'];
+  type: Report["type"];
   description: string;
   latitude: number;
   longitude: number;

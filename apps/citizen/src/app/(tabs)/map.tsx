@@ -1,28 +1,30 @@
 import {
   getCurrentPositionAsync,
-  requestForegroundPermissionsAsync,
   LocationAccuracy,
-} from 'expo-location';
-import { useEffect, useState } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import { TruckMap } from '../../components/truck-map';
-import { ErrorState } from '../../components/ui/error-state';
-import { Loading } from '../../components/ui/loading';
-import { useTrucks } from '../../lib/queries';
-import { theme } from '../../theme';
-import type { LocationCoords } from '../../types';
+  requestForegroundPermissionsAsync,
+} from "expo-location";
+import { useEffect, useState } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { TruckMap } from "../../components/truck-map";
+import { ErrorState } from "../../components/ui/error-state";
+import { Loading } from "../../components/ui/loading";
+import { useTrucks } from "../../lib/queries";
+import { theme } from "../../theme";
+import type { LocationCoords } from "../../types";
 
 export default function MapScreen() {
   const { data: trucks = [], isLoading, error, refetch } = useTrucks();
   const [userLocation, setUserLocation] = useState<LocationCoords | null>(null);
 
   useEffect(() => {
-    if (Platform.OS !== 'ios' && Platform.OS !== 'android') return;
+    if (Platform.OS !== "ios" && Platform.OS !== "android") {
+      return;
+    }
 
     (async () => {
       try {
         const { status } = await requestForegroundPermissionsAsync();
-        if (status === 'granted') {
+        if (status === "granted") {
           const location = await getCurrentPositionAsync({
             accuracy: LocationAccuracy.Balanced,
           });
@@ -32,12 +34,12 @@ export default function MapScreen() {
           });
         }
       } catch (err) {
-        console.error('Location error:', err);
+        console.error("Location error:", err);
       }
     })();
   }, []);
 
-  if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+  if (Platform.OS !== "ios" && Platform.OS !== "android") {
     return (
       <View style={styles.center}>
         <Text style={styles.message}>
@@ -69,8 +71,8 @@ export default function MapScreen() {
       {trucks.length > 0 && (
         <View style={[styles.badge, theme.shadow.md]}>
           <Text style={styles.badgeText}>
-            {trucks.length} camión{trucks.length !== 1 ? 'es' : ''} activo
-            {trucks.length !== 1 ? 's' : ''}
+            {trucks.length} camión{trucks.length !== 1 ? "es" : ""} activo
+            {trucks.length !== 1 ? "s" : ""}
           </Text>
         </View>
       )}
@@ -84,17 +86,17 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: theme.spacing.xxl,
   },
   message: {
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: theme.spacing.lg,
     left: theme.spacing.lg,
     right: theme.spacing.lg,

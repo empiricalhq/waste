@@ -1,14 +1,14 @@
-import { StyleSheet, View, type ViewProps } from 'react-native';
-import { theme } from '../../theme';
+import { StyleSheet, View, type ViewProps } from "react-native";
+import { theme } from "../../theme";
 
-interface CardProps extends Omit<ViewProps, 'style'> {
-  variant?: 'default' | 'elevated';
+interface CardProps extends Omit<ViewProps, "style"> {
+  variant?: "default" | "elevated";
 }
 
-export function Card({ variant = 'default', children, ...props }: CardProps) {
+export function Card({ variant = "default", children, ...props }: CardProps) {
   return (
     <View
-      style={[styles.card, variant === 'elevated' && styles.elevated]}
+      style={[styles.card, variant === "elevated" && styles.elevated]}
       {...props}
     >
       {children}

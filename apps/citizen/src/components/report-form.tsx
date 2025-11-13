@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { REPORT_TYPES } from '../constants';
-import { useLocation } from '../hooks/use-location';
-import { theme } from '../theme';
-import type { CreateReportInput } from '../types';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+import { useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { REPORT_TYPES } from "../constants";
+import { useLocation } from "../hooks/use-location";
+import { theme } from "../theme";
+import type { CreateReportInput } from "../types";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 interface ReportFormProps {
   onSubmit: (data: CreateReportInput) => void;
@@ -13,13 +13,13 @@ interface ReportFormProps {
 }
 
 export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
-  const [type, setType] = useState<CreateReportInput['type'] | null>(null);
-  const [description, setDescription] = useState('');
+  const [type, setType] = useState<CreateReportInput["type"] | null>(null);
+  const [description, setDescription] = useState("");
   const { coords, isLoading, error, requestLocation } = useLocation();
 
   const handleSubmit = async () => {
-    if (!type || !description.trim()) {
-      Alert.alert('Error', 'Completa todos los campos');
+    if (!(type && description.trim())) {
+      Alert.alert("Error", "Completa todos los campos");
       return;
     }
 
@@ -28,7 +28,7 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
       try {
         location = await requestLocation();
       } catch {
-        Alert.alert('Error', 'Se necesita la ubicación para enviar el reporte');
+        Alert.alert("Error", "Se necesita la ubicación para enviar el reporte");
         return;
       }
     }
@@ -46,17 +46,20 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
       <View style={styles.container}>
         <Text style={styles.title}>Tipo de reporte</Text>
         <View style={styles.types}>
-          {(Object.entries(REPORT_TYPES) as [CreateReportInput['type'], string][]).map(
-            ([key, label]) => (
-              <Button
-                key={key}
-                title={label}
-                variant="secondary"
-                onPress={() => setType(key)}
-                fullWidth
-              />
-            )
-          )}
+          {(
+            Object.entries(REPORT_TYPES) as [
+              CreateReportInput["type"],
+              string,
+            ][]
+          ).map(([key, label]) => (
+            <Button
+              key={key}
+              title={label}
+              variant="secondary"
+              onPress={() => setType(key)}
+              fullWidth={true}
+            />
+          ))}
         </View>
       </View>
     );
@@ -66,34 +69,31 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
     <View style={styles.container}>
       <Text style={styles.title}>Detalles del reporte</Text>
 
-      <Input
-        label="Tipo"
-        value={REPORT_TYPES[type]}
-        editable={false}
-      />
+      <Input label="Tipo" value={REPORT_TYPES[type]} editable={false} />
 
       <Input
         label="Descripción"
         value={description}
         onChangeText={setDescription}
         placeholder="Describe el problema..."
-        multiline
+        multiline={true}
         style={styles.textArea}
       />
 
       <View>
         <Button
-          title={coords ? 'Ubicación obtenida' : 'Obtener ubicación'}
-          variant={coords ? 'secondary' : 'primary'}
+          title={coords ? "Ubicación obtenida" : "Obtener ubicación"}
+          variant={coords ? "secondary" : "primary"}
           onPress={requestLocation}
           loading={isLoading}
-          disabled={isLoading || !!coords}
-          fullWidth
+          disabled={isLoading || Boolean(coords)}
+          fullWidth={true}
         />
         {error && <Text style={styles.error}>{error}</Text>}
         {coords && (
           <Text style={styles.success}>
-            Coordenadas: {coords.latitude.toFixed(6)}, {coords.longitude.toFixed(6)}
+            Coordenadas: {coords.latitude.toFixed(6)},{" "}
+            {coords.longitude.toFixed(6)}
           </Text>
         )}
       </View>
@@ -102,8 +102,8 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
         title="Enviar reporte"
         onPress={handleSubmit}
         loading={isSubmitting}
-        disabled={!description.trim() || (!coords && !isLoading)}
-        fullWidth
+        disabled={!(description.trim() && (coords || isLoading))}
+        fullWidth={true}
       />
 
       <Button
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   error: {
     fontSize: theme.fontSize.sm,

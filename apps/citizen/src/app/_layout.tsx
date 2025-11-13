@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,9 +20,9 @@ export default function RootLayout() {
           <Stack.Screen
             name="report"
             options={{
-              presentation: 'modal',
+              presentation: "modal",
               headerShown: true,
-              title: 'Reportar problema',
+              title: "Reportar problema",
             }}
           />
         </Stack>

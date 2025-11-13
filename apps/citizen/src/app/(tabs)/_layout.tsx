@@ -1,6 +1,6 @@
-import { Tabs } from 'expo-router';
-import { BookOpen, Home, MapPin, User } from 'lucide-react-native';
-import { theme } from '../../theme';
+import { Tabs } from "expo-router";
+import { BookOpen, Home, MapPin, User } from "lucide-react-native";
+import { theme } from "../../theme";
 
 export default function TabLayout() {
   return (
@@ -26,28 +26,30 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
+          title: "Inicio",
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Mapa',
+          title: "Mapa",
           tabBarIcon: ({ color, size }) => <MapPin color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
-          title: 'Aprender',
-          tabBarIcon: ({ color, size }) => <BookOpen color={color} size={size} />,
+          title: "Aprender",
+          tabBarIcon: ({ color, size }) => (
+            <BookOpen color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
+          title: "Perfil",
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />

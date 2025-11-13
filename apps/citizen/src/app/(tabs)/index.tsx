@@ -1,15 +1,27 @@
-import { useRouter } from 'expo-router';
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { TruckCard } from '../../components/truck-card';
-import { Button } from '../../components/ui/button';
-import { ErrorState } from '../../components/ui/error-state';
-import { Loading } from '../../components/ui/loading';
-import { useTruckStatus } from '../../lib/queries';
-import { theme } from '../../theme';
+import { useRouter } from "expo-router";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { TruckCard } from "../../components/truck-card";
+import { Button } from "../../components/ui/button";
+import { ErrorState } from "../../components/ui/error-state";
+import { Loading } from "../../components/ui/loading";
+import { useTruckStatus } from "../../lib/queries";
+import { theme } from "../../theme";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { data: status, isLoading, error, refetch, isRefetching } = useTruckStatus();
+  const {
+    data: status,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+  } = useTruckStatus();
 
   if (isLoading) {
     return (
@@ -42,13 +54,14 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Reportar problema</Text>
         <Text style={styles.sectionDescription}>
-          Informa sobre recolecciones perdidas o problemas con la basura en tu zona
+          Informa sobre recolecciones perdidas o problemas con la basura en tu
+          zona
         </Text>
         <Button
           title="Crear reporte"
-          onPress={() => router.push('/report')}
+          onPress={() => router.push("/report")}
           variant="secondary"
-          fullWidth
+          fullWidth={true}
         />
       </View>
     </ScrollView>

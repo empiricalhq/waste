@@ -1,11 +1,11 @@
-import { useRouter } from 'expo-router';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { ReportForm } from '../components/report-form';
-import { Button } from '../components/ui/button';
-import { useAuth } from '../lib/auth';
-import { useCreateReport } from '../lib/queries';
-import { theme } from '../theme';
-import type { CreateReportInput } from '../types';
+import { useRouter } from "expo-router";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ReportForm } from "../components/report-form";
+import { Button } from "../components/ui/button";
+import { useAuth } from "../lib/auth";
+import { useCreateReport } from "../lib/queries";
+import { theme } from "../theme";
+import type { CreateReportInput } from "../types";
 
 export default function ReportScreen() {
   const router = useRouter();
@@ -15,11 +15,11 @@ export default function ReportScreen() {
   const handleSubmit = async (data: CreateReportInput) => {
     try {
       await createReport(data);
-      Alert.alert('Éxito', 'Reporte enviado correctamente', [
-        { text: 'OK', onPress: () => router.back() },
+      Alert.alert("Éxito", "Reporte enviado correctamente", [
+        { text: "OK", onPress: () => router.back() },
       ]);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Error al enviar reporte');
+      Alert.alert("Error", error.message || "Error al enviar reporte");
     }
   };
 
@@ -35,7 +35,7 @@ export default function ReportScreen() {
             title="Ir al perfil"
             onPress={() => {
               router.back();
-              router.push('/(tabs)/profile');
+              router.push("/(tabs)/profile");
             }}
           />
         </View>
@@ -68,6 +68,6 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.xl,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

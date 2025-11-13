@@ -1,5 +1,4 @@
-import { API_URL } from '../constants';
-import { storage } from './storage';
+import { API_URL } from "../constants";
 import type {
   ApiError,
   CreateReportInput,
@@ -9,24 +8,25 @@ import type {
   Truck,
   TruckStatus,
   User,
-} from '../types';
+} from "../types";
+import { storage } from "./storage";
 
 class ApiClient {
-  private baseUrl = API_URL;
+  private readonly baseUrl = API_URL;
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> {
     const token = await storage.getToken();
-    
+
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
     };
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers.Authorization = `Bearer ${token}`;
     }
 
     try {
@@ -38,7 +38,7 @@ class ApiClient {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         const apiError: ApiError = {
-          message: error.message || 'Request failed',
+          message: error.message || "Request failed",
           code: error.code,
         };
         throw apiError;
@@ -55,8 +55,8 @@ class ApiClient {
         throw error;
       }
       throw {
-        message: 'Network error',
-        code: 'NETWORK_ERROR',
+        message: "Network error",
+        code: "NETWORK_ERROR",
       } as ApiError;
     }
   }
@@ -64,11 +64,11 @@ class ApiClient {
   // Auth
   async login(input: LoginInput): Promise<User> {
     const response = await this.request<{ user: User; token: string }>(
-      '/api/auth/sign-in/email',
+      "/api/auth/sign-in/email",
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(input),
-      }
+      },
     );
 
     if (response.token) {
@@ -81,11 +81,11 @@ class ApiClient {
 
   async signUp(input: SignUpInput): Promise<User> {
     const response = await this.request<{ user: User; token: string }>(
-      '/api/auth/sign-up/email',
+      "/api/auth/sign-up/email",
       {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(input),
-      }
+      },
     );
 
     if (response.token) {
@@ -98,7 +98,7 @@ class ApiClient {
 
   async logout(): Promise<void> {
     try {
-      await this.request('/api/auth/sign-out', { method: 'POST' });
+      await this.request("/api/auth/sign-out", { method: "POST" });
     } finally {
       await storage.clearAuth();
     }
@@ -106,7 +106,9 @@ class ApiClient {
 
   async getSession(): Promise<User | null> {
     try {
-      const response = await this.request<{ user: User }>('/api/auth/get-session');
+      const response = await this.request<{ user: User }>(
+        "/api/auth/get-session",
+      );
       return response.user;
     } catch {
       return null;
@@ -124,7 +126,7 @@ class ApiClient {
         lng: number;
         location_updated_at: string;
       }>
-    >('/api/citizen/trucks');
+    >("/api/citizen/trucks");
 
     return trucks.map((t) => ({
       id: t.id,
@@ -142,15 +144,15 @@ class ApiClient {
       message?: string;
       etaMinutes?: number;
       truck?: string;
-    }>('/api/citizen/truck/status');
+    }>("/api/citizen/truck/status");
 
     return {
       status:
-        response.status === 'NEARBY'
-          ? 'active'
-          : response.status === 'LOCATION_NOT_SET'
-          ? 'not_scheduled'
-          : 'idle',
+        response.status === "NEARBY"
+          ? "active"
+          : response.status === "LOCATION_NOT_SET"
+            ? "not_scheduled"
+            : "idle",
       message: response.message,
       etaMinutes: response.etaMinutes,
       truckId: response.truck,
@@ -168,8 +170,8 @@ class ApiClient {
       lng: number;
       photo_url?: string;
       created_at: string;
-    }>('/api/citizen/issues', {
-      method: 'POST',
+    }>("/api/citizen/issues", {
+      method: "POST",
       body: JSON.stringify({
         type: input.type,
         description: input.description,
@@ -181,7 +183,7 @@ class ApiClient {
 
     return {
       id: response.id,
-      type: response.type as Report['type'],
+      type: response.type as Report["type"],
       description: response.description,
       status: this.mapStatus(response.status),
       latitude: response.lat,
@@ -191,10 +193,14 @@ class ApiClient {
     };
   }
 
-  private mapStatus(status: string): Report['status'] {
-    if (status === 'in_progress') return 'in_progress';
-    if (status === 'resolved') return 'resolved';
-    return 'open';
+  private mapStatus(status: string): Report["status"] {
+    if (status === "in_progress") {
+      return "in_progress";
+    }
+    if (status === "resolved") {
+      return "resolved";
+    }
+    return "open";
   }
 }
 

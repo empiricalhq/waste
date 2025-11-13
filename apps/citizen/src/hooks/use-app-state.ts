@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { AppState, type AppStateStatus } from 'react-native';
+import { useEffect, useState } from "react";
+import { AppState, type AppStateStatus } from "react-native";
 
 /**
  * Returns true when app is in foreground/active state
@@ -10,10 +10,10 @@ export function useAppState(): boolean {
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
-      'change',
+      "change",
       (state: AppStateStatus) => {
-        setIsActive(state === 'active');
-      }
+        setIsActive(state === "active");
+      },
     );
 
     return () => subscription.remove();

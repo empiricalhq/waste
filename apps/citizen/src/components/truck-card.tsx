@@ -1,15 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { WASTE_TYPES } from '../constants';
-import { theme } from '../theme';
-import type { TruckStatus } from '../types';
-import { Card } from './ui/card';
+import { StyleSheet, Text, View } from "react-native";
+import { WASTE_TYPES } from "../constants";
+import { theme } from "../theme";
+import type { TruckStatus } from "../types";
+import { Card } from "./ui/card";
 
 interface TruckCardProps {
   status: TruckStatus;
 }
 
 export function TruckCard({ status }: TruckCardProps) {
-  if (status.status === 'not_scheduled') {
+  if (status.status === "not_scheduled") {
     return (
       <Card>
         <Text style={styles.label}>Estado del camión</Text>
@@ -18,12 +18,12 @@ export function TruckCard({ status }: TruckCardProps) {
     );
   }
 
-  if (status.status === 'idle') {
+  if (status.status === "idle") {
     return (
       <Card>
         <Text style={styles.label}>Estado del camión</Text>
         <Text style={styles.message}>
-          {status.message || 'Sin camiones cercanos'}
+          {status.message || "Sin camiones cercanos"}
         </Text>
       </Card>
     );
@@ -34,10 +34,7 @@ export function TruckCard({ status }: TruckCardProps) {
       <Text style={styles.label}>Camión cercano</Text>
       <View style={styles.row}>
         <View
-          style={[
-            styles.dot,
-            { backgroundColor: WASTE_TYPES.general.color },
-          ]}
+          style={[styles.dot, { backgroundColor: WASTE_TYPES.general.color }]}
         />
         <View style={styles.content}>
           <Text style={styles.type}>{WASTE_TYPES.general.label}</Text>
@@ -60,8 +57,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing.md,
   },
   dot: {
@@ -87,7 +84,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   eta: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   etaValue: {
     fontSize: theme.fontSize.xxl,
