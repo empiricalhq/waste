@@ -1,5 +1,12 @@
 import type React from "react";
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export type ToastType = "success" | "error" | "info" | "warning" | "default";
 export type ToastPosition = "top" | "bottom";
@@ -46,31 +53,60 @@ const DEFAULT_OPTIONS: Required<Omit<ToastOptions, "action">> & {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // clean up all timers when the provider unmounts
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach((timer) => clearTimeout(timer));
+    };
+  }, []);
+
+  const dismiss = useCallback((id: string) => {
+    // clear the timer if it exists
+    if (timersRef.current.has(id)) {
+      clearTimeout(timersRef.current.get(id));
+      timersRef.current.delete(id);
+    }
+
+    setToasts((prev) => {
+      const toast = prev.find((t) => t.id === id);
+      if (toast) {
+        toast.options.onClose();
+      }
+      return prev.filter((t) => t.id !== id);
+    });
+  }, []);
 
   const show = useCallback(
     (content: React.ReactNode | string, options?: ToastOptions): string => {
       const id = Math.random().toString(36).substring(2, 9);
-      const toast: Toast = {
-        id,
-        content,
-        options: {
-          ...DEFAULT_OPTIONS,
-          ...options,
-          action: options?.action || null,
-        },
+      const toastOptions = {
+        ...DEFAULT_OPTIONS,
+        ...options,
+        action: options?.action || null,
       };
+      const toast: Toast = { id, content, options: toastOptions };
 
       setToasts((prev) => [...prev, toast]);
+
+      // if duration is greater than 0, set a timer to dismiss it
+      if (toastOptions.duration > 0) {
+        const timer = setTimeout(() => {
+          dismiss(id);
+        }, toastOptions.duration);
+        timersRef.current.set(id, timer);
+      }
+
       return id;
     },
-    [],
+    [dismiss],
   );
 
-  const dismiss = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  }, []);
-
   const dismissAll = useCallback(() => {
+    // Clear all timers before removing toasts
+    timersRef.current.forEach((timer) => clearTimeout(timer));
+    timersRef.current.clear();
     setToasts([]);
   }, []);
 
