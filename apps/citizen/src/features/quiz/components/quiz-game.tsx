@@ -32,6 +32,7 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
   const isAnswered = selectedAnswer !== null;
   const isLastQuestion = currentIndex === questions.length - 1;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: imageOpacity and imageScale are stable shared values.
   useEffect(() => {
     imageOpacity.value = withTiming(1, {
       duration: theme.animation.duration.slow,
@@ -90,7 +91,6 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
             <OptionButton
               key={option}
               option={option}
-              isSelected={isSelected}
               isCorrect={isCorrect}
               isWrong={isWrong}
               isAnswered={isAnswered}
@@ -113,7 +113,6 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
 
 interface OptionButtonProps {
   option: WasteType;
-  isSelected: boolean;
   isCorrect: boolean;
   isWrong: boolean;
   isAnswered: boolean;
@@ -122,7 +121,6 @@ interface OptionButtonProps {
 
 function OptionButton({
   option,
-  isSelected,
   isCorrect,
   isWrong,
   isAnswered,
@@ -130,6 +128,7 @@ function OptionButton({
 }: OptionButtonProps) {
   const scale = useSharedValue(1);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scale is a stable shared value
   useEffect(() => {
     if (isCorrect) {
       scale.value = withSequence(
