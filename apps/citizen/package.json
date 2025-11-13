@@ -2,13 +2,19 @@
   "name": "@lima-garbage/citizens",
   "version": "1.0.0",
   "scripts": {
+    "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "start": "expo start",
     "prebuild": "expo prebuild",
+
+    "dev": "eas build --platform android --profile development",
+    "login": "eas login",
+
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
-    "biome": "biome check --reporter=github --unsafe ."
+    "biome": "biome check --reporter=github --unsafe .",
+
+    "postinstall": "bun install -g eas-cli && bun run login"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
