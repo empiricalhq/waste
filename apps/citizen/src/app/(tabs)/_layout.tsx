@@ -1,16 +1,8 @@
 import { Tabs } from "expo-router";
-import {
-  BookOpen,
-  Calendar,
-  Camera,
-  Home,
-  MapPin,
-  User,
-} from "lucide-react-native";
-import { memo } from "react";
+import { BookOpen, Home, MapPin, User } from "lucide-react-native";
 import { theme } from "@/theme";
 
-export default memo(function TabLayout() {
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
@@ -35,36 +27,14 @@ export default memo(function TabLayout() {
         name="index"
         options={{
           title: "Inicio",
-          tabBarIcon: ({ color, size }) => (
-            <Home color={color} size={size} strokeWidth={2} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="schedule"
-        options={{
-          title: "Calendario",
-          tabBarIcon: ({ color, size }) => (
-            <Calendar color={color} size={size} strokeWidth={2} />
-          ),
+          tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="map"
         options={{
           title: "Mapa",
-          tabBarIcon: ({ color, size }) => (
-            <MapPin color={color} size={size} strokeWidth={2} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="report"
-        options={{
-          title: "Reportar",
-          tabBarIcon: ({ color, size }) => (
-            <Camera color={color} size={size} strokeWidth={2} />
-          ),
+          tabBarIcon: ({ color, size }) => <MapPin color={color} size={size} />,
         }}
       />
       <Tabs.Screen
@@ -72,7 +42,7 @@ export default memo(function TabLayout() {
         options={{
           title: "Aprender",
           tabBarIcon: ({ color, size }) => (
-            <BookOpen color={color} size={size} strokeWidth={2} />
+            <BookOpen color={color} size={size} />
           ),
         }}
       />
@@ -80,11 +50,9 @@ export default memo(function TabLayout() {
         name="profile"
         options={{
           title: "Perfil",
-          tabBarIcon: ({ color, size }) => (
-            <User color={color} size={size} strokeWidth={2} />
-          ),
+          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />
     </Tabs>
   );
-});
+}

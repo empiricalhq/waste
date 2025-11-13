@@ -1,63 +1,124 @@
-import { memo, useCallback, useMemo } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { useEffect, useState } from "react";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/auth";
+import { storage } from "@/lib/storage";
 import { theme } from "@/theme";
+import type { QuizProgress } from "@/types";
 
-const StatItem = memo<{ value: string | number; label: string }>(
-  ({ value, label }) => (
-    <View style={styles.stat}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  ),
-);
+export default function ProfileScreen() {
+  const { user, isAuthenticated, login, signUp, logout, isAuthLoading } =
+    useAuth();
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [progress, setProgress] = useState<QuizProgress | null>(null);
 
-StatItem.displayName = "StatItem";
+  useEffect(() => {
+    storage.getQuizProgress().then(setProgress);
+  }, []);
 
-export default memo(function ProfileScreen() {
-  const { user, logout } = useAuth();
-
-  const stats = useMemo(() => {
-    if (!user?.progress) {
-      return { streak: 0, accuracy: 0, total: 0 };
+  const handleAuth = async () => {
+    try {
+      if (mode === "login") {
+        await login({ email, password });
+      } else {
+        await signUp({ name, email, password });
+      }
+      setEmail("");
+      setPassword("");
+      setName("");
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Error de autenticación");
     }
+  };
 
-    const { streak, correctAnswers, totalQuestions } = user.progress;
-    const accuracy =
-      totalQuestions > 0
-        ? Math.round((correctAnswers / totalQuestions) * 100)
-        : 0;
-
-    return { streak, accuracy, total: totalQuestions };
-  }, [user]);
-
-  const handleLogout = useCallback(() => {
-    Alert.alert("Cerrar sesión", "¿Estás seguro que deseas cerrar sesión?", [
+  const handleLogout = () => {
+    Alert.alert("Cerrar sesión", "¿Estás seguro?", [
       { text: "Cancelar", style: "cancel" },
-      { text: "Cerrar sesión", style: "destructive", onPress: logout },
+      { text: "Salir", style: "destructive", onPress: logout },
     ]);
-  }, [logout]);
+  };
 
-  if (!user) {
-    return null;
+  if (!isAuthenticated) {
+    return (
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
+        <Text style={styles.title}>
+          {mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
+        </Text>
+        <Text style={styles.description}>
+          {mode === "login"
+            ? "Inicia sesión para reportar problemas y guardar tu progreso"
+            : "Crea una cuenta para reportar problemas y guardar tu progreso"}
+        </Text>
+
+        {mode === "signup" && (
+          <Input label="Nombre" value={name} onChangeText={setName} />
+        )}
+
+        <Input
+          label="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <Input
+          label="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+        />
+
+        <Button
+          title={mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
+          onPress={handleAuth}
+          loading={isAuthLoading}
+          fullWidth={true}
+        />
+
+        <Button
+          title={mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}
+          variant="ghost"
+          onPress={() => setMode((m) => (m === "login" ? "signup" : "login"))}
+        />
+      </ScrollView>
+    );
   }
 
+  const accuracy =
+    progress && progress.totalAnswered > 0
+      ? Math.round((progress.correctAnswers / progress.totalAnswered) * 100)
+      : 0;
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Perfil</Text>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-      </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>Perfil</Text>
+      <Text style={styles.name}>{user?.name}</Text>
+      <Text style={styles.email}>{user?.email}</Text>
 
       <Card variant="elevated">
-        <Text style={styles.sectionTitle}>Estadísticas</Text>
-        <View style={styles.statsRow}>
-          <StatItem value={stats.streak} label="Racha" />
-          <StatItem value={`${stats.accuracy}%`} label="Precisión" />
-          <StatItem value={stats.total} label="Quizzes" />
+        <Text style={styles.cardTitle}>Estadísticas del quiz</Text>
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{progress?.streak || 0}</Text>
+            <Text style={styles.statLabel}>Racha</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{accuracy}%</Text>
+            <Text style={styles.statLabel}>Precisión</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{progress?.totalAnswered || 0}</Text>
+            <Text style={styles.statLabel}>Respondidas</Text>
+          </View>
         </View>
       </Card>
 
@@ -65,44 +126,45 @@ export default memo(function ProfileScreen() {
         title="Cerrar sesión"
         variant="secondary"
         onPress={handleLogout}
-        style={styles.logoutButton}
       />
-    </View>
+    </ScrollView>
   );
-});
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    padding: theme.spacing.lg,
   },
-  header: {
-    marginBottom: theme.spacing.xxl,
+  content: {
+    padding: theme.spacing.lg,
+    gap: theme.spacing.lg,
   },
   title: {
-    fontSize: theme.text.xxxl,
+    fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.md,
   },
-  name: {
-    fontSize: theme.text.xl,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
-  },
-  email: {
-    fontSize: theme.text.base,
+  description: {
+    fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
   },
-  sectionTitle: {
-    fontSize: theme.text.lg,
+  name: {
+    fontSize: theme.fontSize.xl,
+    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.text,
+  },
+  email: {
+    fontSize: theme.fontSize.base,
+    color: theme.colors.textSecondary,
+  },
+  cardTitle: {
+    fontSize: theme.fontSize.lg,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
     marginBottom: theme.spacing.lg,
   },
-  statsRow: {
+  stats: {
     flexDirection: "row",
     justifyContent: "space-around",
   },
@@ -110,16 +172,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statValue: {
-    fontSize: theme.text.xxl,
+    fontSize: theme.fontSize.xxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
   },
   statLabel: {
-    fontSize: theme.text.sm,
+    fontSize: theme.fontSize.sm,
     color: theme.colors.textSecondary,
-  },
-  logoutButton: {
-    marginTop: theme.spacing.xl,
+    marginTop: theme.spacing.xs,
   },
 });

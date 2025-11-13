@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { StyleSheet, View, type ViewProps } from "react-native";
 import { theme } from "@/theme";
 
@@ -6,18 +5,21 @@ interface CardProps extends ViewProps {
   variant?: "default" | "elevated";
 }
 
-export const Card = memo<CardProps>(
-  ({ style, variant = "default", ...props }) => {
-    return (
-      <View
-        style={[styles.card, variant === "elevated" && styles.elevated, style]}
-        {...props}
-      />
-    );
-  },
-);
-
-Card.displayName = "Card";
+export function Card({
+  variant = "default",
+  children,
+  style,
+  ...props
+}: CardProps) {
+  return (
+    <View
+      style={[styles.card, variant === "elevated" && styles.elevated, style]}
+      {...props}
+    >
+      {children}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   card: {

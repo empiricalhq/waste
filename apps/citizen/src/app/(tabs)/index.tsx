@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { useRouter } from "expo-router";
 import {
   RefreshControl,
   ScrollView,
@@ -6,104 +6,36 @@ import {
   Text,
   View,
 } from "react-native";
-import { Card } from "@/components/ui/Card";
-import { ErrorMessage } from "@/components/ui/ErrorMessage";
-import { Loading } from "@/components/ui/Loading";
-import { WASTE_TYPES } from "@/constants";
-import { useNearestTruck, useNextCollection } from "@/hooks/queries";
-import { useNetwork } from "@/hooks/use-network";
+import { TruckCard } from "@/components/truck-card";
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+import { Loading } from "@/components/ui/loading";
+import { useTruckStatus } from "@/lib/queries";
 import { theme } from "@/theme";
 
-const CollectionCard = memo<{
-  collection: NonNullable<ReturnType<typeof useNextCollection>["data"]>;
-}>(({ collection }) => {
-  const wasteType = WASTE_TYPES[collection.type];
-
-  return (
-    <Card variant="elevated" style={styles.section}>
-      <Text style={styles.label}>Próxima recolección</Text>
-      <View style={styles.row}>
-        <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
-        <View style={styles.info}>
-          <Text style={styles.type}>{wasteType.label}</Text>
-          <Text style={styles.time}>
-            {collection.date} · {collection.time}
-          </Text>
-        </View>
-      </View>
-    </Card>
-  );
-});
-
-CollectionCard.displayName = "CollectionCard";
-
-const TruckCard = memo<{
-  truck: NonNullable<ReturnType<typeof useNearestTruck>["nearestTruck"]>;
-}>(({ truck }) => {
-  const wasteType = WASTE_TYPES[truck.type];
-
-  return (
-    <Card variant="elevated" style={styles.section}>
-      <Text style={styles.label}>Camión cercano</Text>
-      <View style={styles.row}>
-        <View style={[styles.dot, { backgroundColor: wasteType.color }]} />
-        <View style={styles.infoFlex}>
-          <View>
-            <Text style={styles.type}>{wasteType.label}</Text>
-            <Text style={styles.time}>{truck.route}</Text>
-          </View>
-          <View style={styles.etaContainer}>
-            <Text style={styles.eta}>{truck.eta}</Text>
-            <Text style={styles.etaLabel}>min</Text>
-          </View>
-        </View>
-      </View>
-    </Card>
-  );
-});
-
-TruckCard.displayName = "TruckCard";
-
-export default memo(function HomeScreen() {
+export default function HomeScreen() {
+  const router = useRouter();
   const {
-    data: nextCollection,
-    isLoading: loadingCollection,
-    error: collectionError,
-    refetch: refetchCollection,
-  } = useNextCollection();
-
-  const {
-    nearestTruck,
-    isLoading: loadingTruck,
-    error: truckError,
-    refetch: refetchTruck,
-  } = useNearestTruck();
-
-  const { isOffline } = useNetwork();
-
-  const isLoading = loadingCollection || loadingTruck;
-  const hasError = collectionError || truckError;
-
-  const handleRefresh = useMemo(() => {
-    return () => {
-      refetchCollection();
-      refetchTruck();
-    };
-  }, [refetchCollection, refetchTruck]);
+    data: status,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+  } = useTruckStatus();
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <View style={styles.container}>
+        <Loading />
+      </View>
+    );
   }
 
-  if (hasError) {
+  if (error) {
     return (
-      <ErrorMessage
-        message={
-          isOffline ? "Sin conexión a internet" : "Error al cargar información"
-        }
-        isOffline={isOffline}
-        onRetry={handleRefresh}
-      />
+      <View style={styles.container}>
+        <ErrorState message="Error al cargar información" onRetry={refetch} />
+      </View>
     );
   }
 
@@ -112,24 +44,29 @@ export default memo(function HomeScreen() {
       style={styles.container}
       contentContainerStyle={styles.content}
       refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
     >
-      <Text style={styles.header}>Inicio</Text>
+      <Text style={styles.title}>Inicio</Text>
 
-      {nextCollection && <CollectionCard collection={nextCollection} />}
-      {nearestTruck && <TruckCard truck={nearestTruck} />}
+      {status && <TruckCard status={status} />}
 
-      {!(nextCollection || nearestTruck) && (
-        <Card>
-          <Text style={styles.emptyText}>
-            No hay información disponible en este momento
-          </Text>
-        </Card>
-      )}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Reportar problema</Text>
+        <Text style={styles.sectionDescription}>
+          Informa sobre recolecciones perdidas o problemas con la basura en tu
+          zona
+        </Text>
+        <Button
+          title="Crear reporte"
+          onPress={() => router.push("/report")}
+          variant="secondary"
+          fullWidth={true}
+        />
+      </View>
     </ScrollView>
   );
-});
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -138,66 +75,24 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: theme.spacing.lg,
+    gap: theme.spacing.lg,
   },
-  header: {
-    fontSize: theme.text.xxxl,
+  title: {
+    fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
-    marginBottom: theme.spacing.lg,
     color: theme.colors.text,
   },
   section: {
-    marginBottom: theme.spacing.lg,
+    gap: theme.spacing.sm,
   },
-  label: {
-    fontSize: theme.text.sm,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.md,
-    fontWeight: theme.fontWeight.medium,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.spacing.md,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: theme.radius.full,
-  },
-  info: {
-    flex: 1,
-  },
-  infoFlex: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  type: {
-    fontSize: theme.text.base,
+  sectionTitle: {
+    fontSize: theme.fontSize.lg,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
-    marginBottom: 2,
   },
-  time: {
-    fontSize: theme.text.sm,
+  sectionDescription: {
+    fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
-  },
-  etaContainer: {
-    alignItems: "flex-end",
-  },
-  eta: {
-    fontSize: theme.text.xxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-  },
-  etaLabel: {
-    fontSize: theme.text.xs,
-    color: theme.colors.textSecondary,
-  },
-  emptyText: {
-    fontSize: theme.text.base,
-    color: theme.colors.textSecondary,
-    textAlign: "center",
+    marginBottom: theme.spacing.md,
   },
 });

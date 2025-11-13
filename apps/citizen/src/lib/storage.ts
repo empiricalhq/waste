@@ -1,79 +1,63 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
-import { STORAGE_KEYS } from "@/constants";
-import type { LocationCoords, PendingReport } from "@/types";
+import type { QuizProgress, User } from "@/types";
 
-class StorageService {
+const KEYS = {
+  AUTH_TOKEN: "auth_token",
+  USER: "user",
+  QUIZ_PROGRESS: "quiz_progress",
+} as const;
+
+class Storage {
+  // auth
   async getToken(): Promise<string | null> {
     try {
-      return await getItemAsync(STORAGE_KEYS.AUTH_TOKEN);
+      return await AsyncStorage.getItem(KEYS.AUTH_TOKEN);
     } catch {
       return null;
     }
   }
 
   async setToken(token: string): Promise<void> {
-    await setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token);
+    await AsyncStorage.setItem(KEYS.AUTH_TOKEN, token);
   }
 
-  async removeToken(): Promise<void> {
-    await deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN);
-  }
-
-  // asyncStorage for non-sensitive data
-  async getPendingReports(): Promise<PendingReport[]> {
+  async getUser(): Promise<User | null> {
     try {
-      const data = await AsyncStorage.getItem(STORAGE_KEYS.PENDING_REPORTS);
-      return data ? JSON.parse(data) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  async setPendingReports(reports: PendingReport[]): Promise<void> {
-    await AsyncStorage.setItem(
-      STORAGE_KEYS.PENDING_REPORTS,
-      JSON.stringify(reports),
-    );
-  }
-
-  async addPendingReport(report: PendingReport): Promise<void> {
-    const reports = await this.getPendingReports();
-    reports.push(report);
-    await this.setPendingReports(reports);
-  }
-
-  async removePendingReport(id: string): Promise<void> {
-    const reports = await this.getPendingReports();
-    const filtered = reports.filter((r) => r.id !== id);
-    await this.setPendingReports(filtered);
-  }
-
-  async getLastLocation(): Promise<LocationCoords | null> {
-    try {
-      const data = await AsyncStorage.getItem(STORAGE_KEYS.USER_LOCATION);
+      const data = await AsyncStorage.getItem(KEYS.USER);
       return data ? JSON.parse(data) : null;
     } catch {
       return null;
     }
   }
 
-  async setLastLocation(coords: LocationCoords): Promise<void> {
-    await AsyncStorage.setItem(
-      STORAGE_KEYS.USER_LOCATION,
-      JSON.stringify(coords),
-    );
+  async setUser(user: User): Promise<void> {
+    await AsyncStorage.setItem(KEYS.USER, JSON.stringify(user));
   }
 
-  async clearAll(): Promise<void> {
-    await Promise.all([
-      this.removeToken(),
-      AsyncStorage.multiRemove([
-        STORAGE_KEYS.PENDING_REPORTS,
-        STORAGE_KEYS.USER_LOCATION,
-      ]),
-    ]);
+  async clearAuth(): Promise<void> {
+    await AsyncStorage.multiRemove([KEYS.AUTH_TOKEN, KEYS.USER]);
+  }
+
+  // quiz progress (local only)
+  async getQuizProgress(): Promise<QuizProgress> {
+    try {
+      const data = await AsyncStorage.getItem(KEYS.QUIZ_PROGRESS);
+      return data
+        ? JSON.parse(data)
+        : { streak: 0, totalAnswered: 0, correctAnswers: 0, lastPlayed: null };
+    } catch {
+      return {
+        streak: 0,
+        totalAnswered: 0,
+        correctAnswers: 0,
+        lastPlayed: null,
+      };
+    }
+  }
+
+  async setQuizProgress(progress: QuizProgress): Promise<void> {
+    await AsyncStorage.setItem(KEYS.QUIZ_PROGRESS, JSON.stringify(progress));
   }
 }
 
-export const storage = new StorageService();
+export const storage = new Storage();
