@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -8,9 +8,9 @@ import {
 } from "react-native";
 import Animated, {
   Easing,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -60,108 +60,59 @@ export function Toast({ toast, index }: ToastProps) {
   );
   const scale = useSharedValue(0.9);
 
-  const getStackOffset = () => {
+  const getStackOffset = useCallback(() => {
     const baseOffset = 4;
     const maxOffset = 12;
     const offset = Math.min(index * baseOffset, maxOffset);
     return toast.options.position === "top" ? offset : -offset;
-  };
+  }, [index, toast.options.position]);
 
-  const getStackScale = () => {
+  const getStackScale = useCallback(() => {
     const scaleReduction = 0.02;
     const minScale = 0.94;
     return Math.max(1 - index * scaleReduction, minScale);
-  };
+  }, [index]);
 
   const handleDismiss = () => {
     dismiss(toast.id);
-    toast.options.onClose();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: this should only run once. if not, it would cause the enter animation to re-trigger
   useEffect(() => {
     const delay = index * 50;
 
-    setTimeout(() => {
-      opacity.value = withTiming(1, {
+    opacity.value = withDelay(
+      delay,
+      withTiming(1, {
         duration: theme.animation.duration.slow,
         easing: Easing.bezier(...theme.animation.easing.default),
-      });
+      }),
+    );
 
-      translateY.value = withSpring(
-        getStackOffset(),
-        theme.animation.easing.spring,
-      );
-      scale.value = withSpring(getStackScale(), theme.animation.easing.spring);
-    }, delay);
+    translateY.value = withDelay(
+      delay,
+      withSpring(getStackOffset(), theme.animation.easing.spring),
+    );
+    scale.value = withDelay(
+      delay,
+      withSpring(getStackScale(), theme.animation.easing.spring),
+    );
+  }, []);
 
-    if (toast.options.duration > 0) {
-      const exitDelay = Math.max(0, toast.options.duration - 400);
-
-      const exitAnimation = () => {
-        opacity.value = withTiming(0, {
-          duration: theme.animation.duration.normal,
-          easing: Easing.bezier(...theme.animation.easing.default),
-        });
-
-        translateY.value = withTiming(
-          toast.options.position === "top" ? -20 : 20,
-          {
-            duration: theme.animation.duration.normal,
-            easing: Easing.bezier(...theme.animation.easing.default),
-          },
-        );
-
-        scale.value = withTiming(0.95, {
-          duration: theme.animation.duration.normal,
-          easing: Easing.bezier(...theme.animation.easing.default),
-        });
-
-        setTimeout(() => {
-          runOnJS(handleDismiss)();
-        }, 400);
-      };
-
-      setTimeout(exitAnimation, exitDelay);
-    }
-  }, [toast, index]);
-
+  // effect to update position if other toasts are dismissed (index changes)
   useEffect(() => {
     translateY.value = withSpring(
       getStackOffset(),
       theme.animation.easing.spring,
     );
     scale.value = withSpring(getStackScale(), theme.animation.easing.spring);
-  }, [index]);
+  }, [getStackOffset, getStackScale, scale, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     transform: [{ translateY: translateY.value }, { scale: scale.value }],
     zIndex: 1000 - index,
   }));
-
-  const handlePress = () => {
-    opacity.value = withTiming(0, {
-      duration: theme.animation.duration.fast,
-      easing: Easing.bezier(...theme.animation.easing.default),
-    });
-
-    translateY.value = withTiming(
-      toast.options.position === "top" ? -100 : 100,
-      {
-        duration: theme.animation.duration.fast,
-        easing: Easing.bezier(...theme.animation.easing.default),
-      },
-    );
-
-    scale.value = withTiming(0.8, {
-      duration: theme.animation.duration.fast,
-      easing: Easing.bezier(...theme.animation.easing.default),
-    });
-
-    setTimeout(() => {
-      handleDismiss();
-    }, 250);
-  };
 
   const backgroundColor = getBackgroundColor(toast.options.type);
   const icon = getIcon(toast.options.type);
@@ -180,7 +131,7 @@ export function Toast({ toast, index }: ToastProps) {
     >
       <Pressable
         style={[styles.toast, { backgroundColor }, theme.shadow.lg]}
-        onPress={handlePress}
+        onPress={handleDismiss}
         android_ripple={{ color: "rgba(255, 255, 255, 0.1)" }}
       >
         {icon ? <Text style={styles.icon}>{icon}</Text> : null}
@@ -196,7 +147,7 @@ export function Toast({ toast, index }: ToastProps) {
             style={styles.actionButton}
             onPress={() => {
               toast.options.action?.onPress();
-              handlePress();
+              handleDismiss();
             }}
           >
             <Text style={styles.actionText}>{toast.options.action.label}</Text>
