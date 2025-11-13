@@ -61,6 +61,7 @@ class ApiClient {
 
     for (let attempt = 0; attempt < RETRY_CONFIG.MAX_ATTEMPTS; attempt++) {
       try {
+        // biome-ignore lint/performance/noAwaitInLoops: intentional retry delay
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...options,
           headers,
@@ -110,7 +111,6 @@ class ApiClient {
           console.info(
             `Request failed, retrying in ${delay}ms (attempt ${attempt + 1}/${RETRY_CONFIG.MAX_ATTEMPTS})`,
           );
-          // biome-ignore lint/suspicious/noAwaitInLoops: intentional retry delay
           await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
