@@ -1,44 +1,22 @@
-import {
-  getCurrentPositionAsync,
-  LocationAccuracy,
-  requestForegroundPermissionsAsync,
-} from "expo-location";
-import { useEffect, useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
+import { useLocation } from "@/features/map/hooks/use-location";
 import { TruckMap } from "@/features/trucks/components/truck-map";
 import { useTrucks } from "@/features/trucks/hooks/use-trucks";
 import { theme } from "@/theme";
-import type { LocationCoords } from "@/types";
 
 export default function MapScreen() {
-  const { data: trucks = [], isLoading, error, refetch } = useTrucks();
-  const [userLocation, setUserLocation] = useState<LocationCoords | null>(null);
-
-  useEffect(() => {
-    if (Platform.OS !== "ios" && Platform.OS !== "android") {
-      return;
-    }
-
-    (async () => {
-      try {
-        const { status } = await requestForegroundPermissionsAsync();
-        if (status === "granted") {
-          const location = await getCurrentPositionAsync({
-            accuracy: LocationAccuracy.Balanced,
-          });
-          setUserLocation({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          });
-        }
-      } catch (err) {
-        console.error("Location error:", err);
-      }
-    })();
-  }, []);
+  const {
+    data: trucks = [],
+    isLoading: isLoadingTrucks,
+    error,
+    refetch,
+  } = useTrucks();
+  const { coords: userLocation, isLoading: isLoadingLocation } = useLocation({
+    fetchOnMount: true,
+  });
 
   if (Platform.OS !== "ios" && Platform.OS !== "android") {
     return (
@@ -50,10 +28,10 @@ export default function MapScreen() {
     );
   }
 
-  if (isLoading) {
+  if (isLoadingTrucks || isLoadingLocation) {
     return (
       <SafeAreaView style={styles.center} edges={["top", "bottom"]}>
-        <Loading message="Cargando camiones..." />
+        <Loading message="Cargando mapa..." />
       </SafeAreaView>
     );
   }
