@@ -1,5 +1,5 @@
 export const API_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://lima-api.vercel.app/api";
+  process.env.EXPO_PUBLIC_API_URL || "https://lima-api.vercel.app";
 
 export const CONFIG = {
   api: {
