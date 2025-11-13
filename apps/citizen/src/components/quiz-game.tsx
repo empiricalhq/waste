@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { WASTE_TYPES } from "../constants";
-import { theme } from "../theme";
-import type { QuizQuestion, WasteType } from "../types";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { WASTE_TYPES } from "@/constants";
+import { theme } from "@/theme";
+import type { QuizQuestion, WasteType } from "@/types";
 
 interface QuizGameProps {
   questions: QuizQuestion[];

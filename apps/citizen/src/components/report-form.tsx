@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
-import { REPORT_TYPES } from "../constants";
-import { useLocation } from "../hooks/use-location";
-import { theme } from "../theme";
-import type { CreateReportInput } from "../types";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { REPORT_TYPES } from "@/constants";
+import { useLocation } from "@/hooks/use-location";
+import { theme } from "@/theme";
+import type { CreateReportInput } from "@/types";
 
 interface ReportFormProps {
   onSubmit: (data: CreateReportInput) => void;

@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
-import { theme } from "../../theme";
+import { theme } from "@/theme";
 import { Button } from "./button";
 
 interface ErrorStateProps {

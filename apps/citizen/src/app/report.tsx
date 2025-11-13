@@ -1,11 +1,11 @@
 import { useRouter } from "expo-router";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
-import { ReportForm } from "../components/report-form";
-import { Button } from "../components/ui/button";
-import { useAuth } from "../lib/auth";
-import { useCreateReport } from "../lib/queries";
-import { theme } from "../theme";
-import type { CreateReportInput } from "../types";
+import { ReportForm } from "@/components/report-form";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { useCreateReport } from "@/lib/queries";
+import { theme } from "@/theme";
+import type { CreateReportInput } from "@/types";
 
 export default function ReportScreen() {
   const router = useRouter();

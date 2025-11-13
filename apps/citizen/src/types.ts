@@ -1,4 +1,4 @@
-// Core domain types
+// core domain
 export interface Truck {
   id: string;
   name: string;
@@ -49,7 +49,7 @@ export interface User {
 
 export type WasteType = "general" | "recycling" | "organic" | "hazardous";
 
-// API types
+// api
 export interface ApiError {
   message: string;
   code?: string;
@@ -74,7 +74,7 @@ export interface SignUpInput {
   password: string;
 }
 
-// UI types
+// UI
 export interface LocationCoords {
   latitude: number;
   longitude: number;

@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { BookOpen, Home, MapPin, User } from "lucide-react-native";
-import { theme } from "../../theme";
+import { theme } from "@/theme";
 
 export default function TabLayout() {
   return (

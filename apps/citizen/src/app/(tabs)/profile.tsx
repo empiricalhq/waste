@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button } from "../../components/ui/button";
-import { Card } from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { useAuth } from "../../lib/auth";
-import { storage } from "../../lib/storage";
-import { theme } from "../../theme";
-import type { QuizProgress } from "../../types";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/auth";
+import { storage } from "@/lib/storage";
+import { theme } from "@/theme";
+import type { QuizProgress } from "@/types";
 
 export default function ProfileScreen() {
   const { user, isAuthenticated, login, signUp, logout, isAuthLoading } =

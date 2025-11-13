@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { storage } from "@/lib/storage";
 import type { LoginInput, SignUpInput } from "../types";
-import { api } from "./api";
-import { storage } from "./storage";
 
 export function useAuth() {
   const queryClient = useQueryClient();

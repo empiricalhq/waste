@@ -6,12 +6,12 @@ import {
   Text,
   View,
 } from "react-native";
-import { TruckCard } from "../../components/truck-card";
-import { Button } from "../../components/ui/button";
-import { ErrorState } from "../../components/ui/error-state";
-import { Loading } from "../../components/ui/loading";
-import { useTruckStatus } from "../../lib/queries";
-import { theme } from "../../theme";
+import { TruckCard } from "@/components/truck-card";
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+import { Loading } from "@/components/ui/loading";
+import { useTruckStatus } from "@/lib/queries";
+import { theme } from "@/theme";
 
 export default function HomeScreen() {
   const router = useRouter();

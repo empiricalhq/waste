@@ -1,5 +1,5 @@
 import { StyleSheet, View, type ViewProps } from "react-native";
-import { theme } from "../../theme";
+import { theme } from "@/theme";
 
 interface CardProps extends ViewProps {
   variant?: "default" | "elevated";

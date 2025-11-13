@@ -1,5 +1,5 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { theme } from "../../theme";
+import { theme } from "@/theme";
 
 interface LoadingProps {
   message?: string;

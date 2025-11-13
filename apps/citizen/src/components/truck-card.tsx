@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
-import { WASTE_TYPES } from "../constants";
-import { theme } from "../theme";
-import type { TruckStatus } from "../types";
-import { Card } from "./ui/card";
+import { Card } from "@/components/ui/card";
+import { WASTE_TYPES } from "@/constants";
+import { theme } from "@/theme";
+import type { TruckStatus } from "@/types";
 
 interface TruckCardProps {
   status: TruckStatus;

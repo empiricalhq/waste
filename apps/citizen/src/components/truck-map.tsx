@@ -1,9 +1,9 @@
 import { AppleMaps, GoogleMaps } from "expo-maps";
 import { useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import { DEFAULT_MAP_CENTER } from "../constants";
-import { theme } from "../theme";
-import type { LocationCoords, Truck } from "../types";
+import { DEFAULT_MAP_CENTER } from "@/constants";
+import { theme } from "@/theme";
+import type { LocationCoords, Truck } from "@/types";
 
 interface TruckMapProps {
   trucks: Truck[];

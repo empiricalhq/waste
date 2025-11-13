@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { QuizGame } from "../../components/quiz-game";
-import { Button } from "../../components/ui/button";
-import { quizQuestions } from "../../data/quiz-questions";
-import { useAuth } from "../../lib/auth";
-import { storage } from "../../lib/storage";
-import { theme } from "../../theme";
+import { QuizGame } from "@/components/quiz-game";
+import { Button } from "@/components/ui/button";
+import { quizQuestions } from "@/data/quiz-questions";
+import { useAuth } from "@/lib/auth";
+import { storage } from "@/lib/storage";
+import { theme } from "@/theme";
 
 type Screen = "menu" | "quiz" | "results";
 

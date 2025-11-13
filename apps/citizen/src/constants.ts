@@ -17,13 +17,13 @@ export const REPORT_TYPES = {
   other: "Otro",
 } as const;
 
-// Polling intervals (ms)
+// polling intervals (ms)
 export const POLLING = {
   TRUCKS: 30_000, // 30s when visible
   STATUS: 60_000, // 1min when visible
 } as const;
 
-// Map defaults
+// map defaults
 export const DEFAULT_MAP_CENTER = {
   latitude: -12.0464,
   longitude: -77.0428,

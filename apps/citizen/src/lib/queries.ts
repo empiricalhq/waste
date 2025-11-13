@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { POLLING } from "../constants";
-import { useAppState } from "../hooks/use-app-state";
-import type { CreateReportInput } from "../types";
-import { api } from "./api";
+import { POLLING } from "@/constants";
+import { useAppState } from "@/hooks/use-app-state";
+import { api } from "@/lib/api";
+import type { CreateReportInput } from "@/types";
 
 export function useTrucks() {
   const isActive = useAppState();
@@ -32,7 +32,7 @@ export function useCreateReport() {
   return useMutation({
     mutationFn: (input: CreateReportInput) => api.createReport(input),
     onSuccess: () => {
-      // Invalidate any reports list if we add that later
+      // invalidate any reports list if we add that later
       queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });

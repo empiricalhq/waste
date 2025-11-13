@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { QuizProgress, User } from "../types";
+import type { QuizProgress, User } from "@/types";
 
 const KEYS = {
   AUTH_TOKEN: "auth_token",
@@ -8,7 +8,7 @@ const KEYS = {
 } as const;
 
 class Storage {
-  // Auth
+  // auth
   async getToken(): Promise<string | null> {
     try {
       return await AsyncStorage.getItem(KEYS.AUTH_TOKEN);
@@ -38,7 +38,7 @@ class Storage {
     await AsyncStorage.multiRemove([KEYS.AUTH_TOKEN, KEYS.USER]);
   }
 
-  // Quiz progress (local only)
+  // quiz progress (local only)
   async getQuizProgress(): Promise<QuizProgress> {
     try {
       const data = await AsyncStorage.getItem(KEYS.QUIZ_PROGRESS);

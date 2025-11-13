@@ -1,4 +1,5 @@
-import { API_URL } from "../constants";
+import { API_URL } from "@/constants";
+import { storage } from "@/lib/storage";
 import type {
   ApiError,
   CreateReportInput,
@@ -8,8 +9,7 @@ import type {
   Truck,
   TruckStatus,
   User,
-} from "../types";
-import { storage } from "./storage";
+} from "@/types";
 
 class ApiClient {
   private readonly baseUrl = API_URL;
@@ -61,7 +61,7 @@ class ApiClient {
     }
   }
 
-  // Auth
+  // auth
   async login(input: LoginInput): Promise<User> {
     const response = await this.request<{ user: User; token: string }>(
       "/api/auth/sign-in/email",
@@ -115,7 +115,7 @@ class ApiClient {
     }
   }
 
-  // Trucks
+  // trucks
   async getTrucks(): Promise<Truck[]> {
     const trucks = await this.request<
       Array<{
@@ -161,7 +161,7 @@ class ApiClient {
     };
   }
 
-  // Reports
+  // reports
   async createReport(input: CreateReportInput): Promise<Report> {
     const response = await this.request<{
       id: string;

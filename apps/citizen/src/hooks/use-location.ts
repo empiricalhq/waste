@@ -4,7 +4,7 @@ import {
   requestForegroundPermissionsAsync,
 } from "expo-location";
 import { useCallback, useState } from "react";
-import type { LocationCoords } from "../types";
+import type { LocationCoords } from "@/types";
 
 export function useLocation() {
   const [coords, setCoords] = useState<LocationCoords | null>(null);

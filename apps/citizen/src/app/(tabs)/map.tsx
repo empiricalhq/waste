@@ -5,12 +5,12 @@ import {
 } from "expo-location";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
-import { TruckMap } from "../../components/truck-map";
-import { ErrorState } from "../../components/ui/error-state";
-import { Loading } from "../../components/ui/loading";
-import { useTrucks } from "../../lib/queries";
-import { theme } from "../../theme";
-import type { LocationCoords } from "../../types";
+import { TruckMap } from "@/components/truck-map";
+import { ErrorState } from "@/components/ui/error-state";
+import { Loading } from "@/components/ui/loading";
+import { useTrucks } from "@/lib/queries";
+import { theme } from "@/theme";
+import type { LocationCoords } from "@/types";
 
 export default function MapScreen() {
   const { data: trucks = [], isLoading, error, refetch } = useTrucks();
