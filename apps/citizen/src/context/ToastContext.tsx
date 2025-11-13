@@ -54,7 +54,9 @@ const DEFAULT_OPTIONS: Required<Omit<ToastOptions, "action">> & {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const timersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
 
   // clean up all timers when the provider unmounts
   useEffect(() => {
