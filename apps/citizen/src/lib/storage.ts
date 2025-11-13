@@ -22,7 +22,7 @@ class SecureStorage {
     }
   }
 
-  private async getSecure(key: string): Promise<string | null> {
+  private getSecure(key: string): Promise<string | null> {
     if (Platform.OS === "web") {
       return AsyncStorage.getItem(key);
     }
