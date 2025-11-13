@@ -13,16 +13,19 @@ interface TruckMapProps {
 function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
   const MapComponent = Platform.OS === "ios" ? AppleMaps.View : GoogleMaps.View;
 
+  const userLat = userLocation?.latitude;
+  const userLng = userLocation?.longitude;
+
   // Only update camera when user location coordinates actually change
   const camera = useMemo(() => {
-    if (userLocation) {
+    if (userLat !== undefined && userLng !== undefined) {
       return {
-        coordinates: userLocation,
+        coordinates: { latitude: userLat, longitude: userLng },
         zoom: 13,
       };
     }
     return DEFAULT_MAP_CENTER;
-  }, [userLocation?.latitude, userLocation?.longitude]);
+  }, [userLat, userLng]);
 
   // Memoize markers array, only recreate when truck IDs or positions change
   const markers = useMemo(() => {
