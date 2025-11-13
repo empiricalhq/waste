@@ -7,11 +7,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { QuizGame } from "@/components/quiz-game";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/context/ToastContext";
-import { quizQuestions } from "@/data/quiz-questions";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { QuizGame } from "@/features/quiz/components/quiz-game";
+import { quizQuestions } from "@/features/quiz/data/quiz-questions";
 import { storage } from "@/lib/storage";
 import { theme } from "@/theme";
 

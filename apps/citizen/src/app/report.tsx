@@ -8,11 +8,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ReportForm } from "@/components/report-form";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/context/ToastContext";
-import { useAuth } from "@/lib/auth";
-import { useCreateReport } from "@/lib/queries";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { ReportForm } from "@/features/report/components/report-form";
+import { useCreateReport } from "@/features/report/hooks/use-create-report";
 import { theme } from "@/theme";
 import type { CreateReportInput } from "@/types";
 

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { REPORT_TYPES } from "@/constants";
 import { useToast } from "@/context/ToastContext";
-import { useLocation } from "@/hooks/use-location";
+import { useLocation } from "@/features/map/hooks/use-location";
 import { theme } from "@/theme";
 import type { CreateReportInput } from "@/types";
 
