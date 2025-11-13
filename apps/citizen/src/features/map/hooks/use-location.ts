@@ -55,7 +55,11 @@ export function useLocation(options: UseLocationOptions = {}) {
 
   useEffect(() => {
     if (fetchOnMount) {
-      requestLocation().catch(() => {});
+      requestLocation().catch((err) => {
+        // The error state is already set within requestLocation.
+        // This log ensures the error is not silently swallowed during development.
+        console.error("Failed to fetch location on mount:", err);
+      });
     }
   }, [fetchOnMount, requestLocation]);
 
