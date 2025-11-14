@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -15,9 +16,14 @@ import {
 export function usePulsingAnimation(duration = 1000) {
   const opacity = useSharedValue(0.3);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: opacity is a SharedValue from Reanimated (never changes)
   useEffect(() => {
     opacity.value = withRepeat(withTiming(1, { duration }), -1, true);
-  }, [duration, opacity]);
+
+    return () => {
+      cancelAnimation(opacity);
+    };
+  }, [duration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { POLLING } from "@/constants";
+import { useAppState } from "@/hooks/use-app-state";
 import { api } from "@/lib/api";
 
 /**
@@ -8,19 +8,12 @@ import { api } from "@/lib/api";
  */
 export function useTruckStatus(options: { enabled?: boolean } = {}) {
   const { enabled = true } = options;
-  const [isComponentMounted, setIsComponentMounted] = useState(true);
-
-  useEffect(() => {
-    setIsComponentMounted(true);
-    return () => {
-      setIsComponentMounted(false);
-    };
-  }, []);
+  const isAppActive = useAppState();
 
   return useQuery({
     queryKey: ["truck-status"],
     queryFn: () => api.getTruckStatus(),
-    refetchInterval: isComponentMounted && enabled ? POLLING.STATUS : false,
+    refetchInterval: isAppActive && enabled ? POLLING.STATUS : false,
     staleTime: POLLING.STATUS,
     placeholderData: (previousData) => previousData,
     retry: 3,
