@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
-import { Screen } from "@/components/ui/screen";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
+import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/context/toast-context";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
 import { theme } from "@/theme";

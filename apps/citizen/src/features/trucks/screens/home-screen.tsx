@@ -1,9 +1,9 @@
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
-import { Screen } from "@/components/ui/screen";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
+import { Screen } from "@/components/ui/screen";
 import { useTruckStatus } from "@/features/trucks/hooks/use-truck-status";
 import { theme } from "@/theme";
 import { TruckCard } from "../components/truck-card";

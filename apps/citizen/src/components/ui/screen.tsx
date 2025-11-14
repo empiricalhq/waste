@@ -6,10 +6,7 @@ import {
   View,
   type ViewProps,
 } from "react-native";
-import {
-  SafeAreaView,
-  type Edges,
-} from "react-native-safe-area-context";
+import { type Edges, SafeAreaView } from "react-native-safe-area-context";
 import { theme } from "@/theme";
 
 interface ScreenProps extends ViewProps {
@@ -35,14 +32,19 @@ export function Screen({
       contentContainerStyle={styles.content}
       refreshControl={
         onRefresh ? (
-          <RefreshControl refreshing={!!isRefreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={Boolean(isRefreshing)}
+            onRefresh={onRefresh}
+          />
         ) : undefined
       }
     >
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.content, styles.nonScrollableContent]}>{children}</View>
+    <View style={[styles.content, styles.nonScrollableContent]}>
+      {children}
+    </View>
   );
 
   return (
