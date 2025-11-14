@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
   },
   elevated: {
-    ...theme.shadow.md,
+    ...theme.shadow.sm,
     borderWidth: 0,
   },
 });

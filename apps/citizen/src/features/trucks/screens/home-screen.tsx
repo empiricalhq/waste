@@ -57,7 +57,7 @@ export function HomeScreen() {
 
   return (
     <Screen isRefreshing={isRefetching} onRefresh={refetch}>
-      <Text style={styles.title}>Inicio</Text>
+      <Text style={styles.title}>Lima Limpia</Text>
       {renderContent()}
     </Screen>
   );
@@ -68,10 +68,10 @@ const styles = StyleSheet.create({
     gap: theme.spacing.lg,
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
+    fontSize: theme.fontSize.xxl,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xl,
   },
   errorContainer: {
     paddingVertical: theme.spacing.xxl,

@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.xl,
+    paddingVertical: theme.spacing.sm,
   },
   nonScrollableContent: {
     flex: 1,
