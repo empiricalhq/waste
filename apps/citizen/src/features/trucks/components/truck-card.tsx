@@ -37,9 +37,7 @@ export function TruckCard({ status }: TruckCardProps) {
     <Card variant="elevated">
       <Text style={styles.label}>Camión cercano</Text>
       <View style={styles.row}>
-        <View
-          style={[styles.dot, { backgroundColor: WASTE_TYPES.general.color }]}
-        />
+        <View style={[styles.dot, styles.generalDot]} />
         <View style={styles.content}>
           <Text style={styles.type}>{WASTE_TYPES.general.label}</Text>
           <Text style={styles.subtitle}>{status.message}</Text>
@@ -69,6 +67,9 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: theme.radius.full,
+  },
+  generalDot: {
+    backgroundColor: WASTE_TYPES.general.color,
   },
   content: {
     flex: 1,
