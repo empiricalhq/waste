@@ -20,6 +20,11 @@ export function createCitizenHandler(
     return success(c, status);
   });
 
+  citizen.get('/trucks', async (c) => {
+    const trucks = await citizenService.getTrucks();
+    return success(c, trucks);
+  });
+
   citizen.put('/profile/location', validateJson(UpdateLocationSchema), async (c) => {
     const { lat, lng } = c.req.valid('json');
     const user = c.get('user');

@@ -37,6 +37,14 @@ export interface Truck {
   license_plate: string;
 }
 
+export interface TruckWithDetails extends Truck {
+  lat?: number;
+  lng?: number;
+  location_updated_at?: Date;
+  driver_name?: string;
+  assignment_status?: string;
+}
+
 export interface Route {
   id: string;
   name: string;

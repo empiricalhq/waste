@@ -1,4 +1,4 @@
-export type CitizenIssueType = 'missed_collection' | 'illegal_dumping';
+export type CitizenIssueType = 'missed_collection' | 'illegal_dumping' | 'other';
 export type DriverIssueType = 'mechanical_failure' | 'road_blocked' | 'truck_full' | 'other';
 export type IssueStatus = 'open' | 'in_progress' | 'resolved';
 
