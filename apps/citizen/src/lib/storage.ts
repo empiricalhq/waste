@@ -127,7 +127,9 @@ class Storage {
         typeof parsed.totalAnswered !== "number" ||
         typeof parsed.correctAnswers !== "number"
       ) {
-        console.warn("Invalid quiz progress structure, returning default value.");
+        console.warn(
+          "Invalid quiz progress structure, returning default value.",
+        );
         return defaultValue;
       }
 
