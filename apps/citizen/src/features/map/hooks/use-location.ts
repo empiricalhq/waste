@@ -70,9 +70,7 @@ export function useLocation(options: UseLocationOptions = {}) {
       return newCoords;
     } catch (err: unknown) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "No se pudo obtener la ubicación";
+        err instanceof Error ? err.message : "No se pudo obtener la ubicación";
       setError(message);
       setCoords(null);
       throw err;
