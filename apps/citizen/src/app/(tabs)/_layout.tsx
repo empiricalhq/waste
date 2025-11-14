@@ -31,7 +31,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               canPreventDefault: true,
             });
 
-            if (!isFocused && !event.defaultPrevented) {
+            if (!(isFocused || event.defaultPrevented)) {
               navigation.navigate(route.name);
             }
           };
@@ -85,12 +85,9 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         ]}
         pointerEvents="box-none"
       >
-        <Link href="/report" asChild>
+        <Link href="/report" asChild={true}>
           <Pressable>
-            <FastSquircleView
-              style={styles.centerButton}
-              cornerSmoothing={1.0}
-            >
+            <FastSquircleView style={styles.centerButton} cornerSmoothing={1.0}>
               <Plus color={theme.colors.iconLight} size={20} strokeWidth={3} />
             </FastSquircleView>
           </Pressable>

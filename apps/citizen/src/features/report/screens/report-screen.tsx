@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/context/toast-context";
 import { AuthForm } from "@/features/auth/components/auth-form";

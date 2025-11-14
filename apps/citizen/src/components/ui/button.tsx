@@ -1,10 +1,10 @@
 import {
   ActivityIndicator,
   type GestureResponderEvent,
+  Pressable,
+  type PressableProps,
   StyleSheet,
   Text,
-  type PressableProps,
-  Pressable,
 } from "react-native";
 import FastSquircleView from "react-native-fast-squircle";
 import Animated, {

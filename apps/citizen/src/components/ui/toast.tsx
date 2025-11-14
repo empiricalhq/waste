@@ -60,7 +60,11 @@ export function Toast({ toast }: ToastProps) {
     <Animated.View style={[styles.container, animatedStyle]}>
       <Pressable onPress={handleDismiss}>
         <FastSquircleView
-          style={[styles.toast, { backgroundColor }, theme.shadow["shadow-soft"]]}
+          style={[
+            styles.toast,
+            { backgroundColor },
+            theme.shadow["shadow-soft"],
+          ]}
           cornerSmoothing={0.8}
         >
           <View style={styles.content}>
