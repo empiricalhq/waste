@@ -34,7 +34,7 @@ export function createContainer() {
   const authService = new AuthService(config, db, appAc, appPluginRoles, emailService);
   const adminService = new AdminService(truckRepo, routeRepo, assignmentRepo, issueRepo, authService);
   const driverService = new DriverService(assignmentRepo, routeRepo, issueRepo, db);
-  const citizenService = new CitizenService(issueRepo, db);
+  const citizenService = new CitizenService(issueRepo, db, truckRepo);
 
   // middleware
   const corsMiddleware = createCorsMiddleware(config);

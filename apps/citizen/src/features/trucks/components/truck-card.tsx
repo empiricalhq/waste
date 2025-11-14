@@ -8,28 +8,32 @@ interface TruckCardProps {
 }
 
 export function TruckCard({ status }: TruckCardProps) {
-  if (status.status === "not_scheduled") {
+  if (
+    status.status === "NOT_SCHEDULED" ||
+    status.status === "LOCATION_NOT_SET"
+  ) {
     return (
       <Card variant="elevated">
         <Text style={styles.sectionTitle}>Recolección de basura</Text>
-        <Text style={styles.message}>
-          La recolección en tu zona no está programada. Te notificaremos cuando
-          esté disponible.
-        </Text>
+        <Text style={styles.message}>{status.message}</Text>
       </Card>
     );
   }
 
-  if (status.status === "idle") {
-    return (
-      <Card variant="elevated">
-        <Text style={styles.sectionTitle}>Recolección de basura</Text>
-        <Text style={styles.message}>
-          {status.message ||
-            "No hay camiones cerca. Sigue atento a las actualizaciones."}
-        </Text>
-      </Card>
+  let subtitle: string;
+  let etaDisplay: React.ReactNode;
+
+  if (status.status === "ON_THE_WAY") {
+    subtitle = "En camino a tu ubicación";
+    etaDisplay = (
+      <>
+        <Text style={styles.etaValue}>{status.etaMinutes}</Text>
+        <Text style={styles.etaLabel}>min</Text>
+      </>
     );
+  } else {
+    subtitle = "El camión está llegando";
+    etaDisplay = <Text style={styles.etaValueNow}>AHORA</Text>;
   }
 
   return (
@@ -37,13 +41,10 @@ export function TruckCard({ status }: TruckCardProps) {
       <Text style={styles.sectionTitle}>Camión cercano</Text>
       <View style={styles.row}>
         <View style={styles.content}>
-          <Text style={styles.type}>Basura general</Text>
-          <Text style={styles.subtitle}>{status.message}</Text>
+          <Text style={styles.type}>{status.truckName}</Text>
+          <Text style={styles.subtitle}>{subtitle}</Text>
         </View>
-        <View style={styles.eta}>
-          <Text style={styles.etaValue}>{status.etaMinutes}</Text>
-          <Text style={styles.etaLabel}>min</Text>
-        </View>
+        <View style={styles.eta}>{etaDisplay}</View>
       </View>
     </Card>
   );
@@ -83,6 +84,10 @@ const styles = StyleSheet.create({
   },
   etaValue: {
     ...theme.typography.title1,
+    color: theme.colors.textPrimary,
+  },
+  etaValueNow: {
+    ...theme.typography.title2,
     color: theme.colors.textPrimary,
   },
   etaLabel: {

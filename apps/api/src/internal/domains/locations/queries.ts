@@ -25,6 +25,7 @@ export const LocationQueries = {
   findCitizenProfileLocation: 'SELECT lat, lng FROM citizen_profile WHERE user_id = $1',
   findNearbyTrucks: `
     SELECT
+      t.id as truck_id,
       t.name as truck_name,
       ( 6371 * acos( cos(radians($1)) * cos(radians(tcl.lat)) * cos(radians(tcl.lng) - radians($2)) + sin(radians($1)) * sin(radians(tcl.lat)) ) ) AS distance_km
     FROM truck_current_location tcl
