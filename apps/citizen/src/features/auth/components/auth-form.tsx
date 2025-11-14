@@ -1,17 +1,33 @@
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/context/toast-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { ApiError } from "@/lib/api";
 import { theme } from "@/theme";
-import type { SignUpInput } from "@/types";
 
-type FormData = SignUpInput;
+const baseSchema = z.object({
+  email: z.email("Correo electrónico inválido"),
+});
 
-const EMAIL_REGEX = /^\S+@\S+$/i;
+const signupSchema = baseSchema.extend({
+  name: z.string().min(2, "El nombre es obligatorio"),
+  password: z
+    .string()
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
+});
+
+const loginSchema = baseSchema.extend({
+  password: z.string().min(1, "La contraseña es obligatoria"),
+});
+
+const formSchema = signupSchema.partial({ name: true });
+
+type FormData = z.infer<typeof formSchema>;
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -26,9 +42,16 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<FormData>({
+    resolver: zodResolver(mode === "login" ? loginSchema : signupSchema),
     defaultValues: { name: "", email: "", password: "" },
   });
+
+  // reset form when switching between login/signup
+  useEffect(() => {
+    reset();
+  }, [mode, reset]);
 
   const handleAuth = async (data: FormData) => {
     try {
@@ -36,12 +59,11 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         await login({ email: data.email, password: data.password });
       } else {
         await signUp({
-          name: data.name,
+          name: data.name!,
           email: data.email,
           password: data.password,
         });
       }
-
       onSuccess?.();
     } catch (error: unknown) {
       if (error instanceof ApiError) {
@@ -69,7 +91,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         <Controller
           control={control}
           name="name"
-          rules={{ required: "El nombre es obligatorio" }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               label="Nombre"
@@ -84,13 +105,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
       <Controller
         control={control}
         name="email"
-        rules={{
-          required: "El correo es obligatorio",
-          pattern: {
-            value: EMAIL_REGEX,
-            message: "Correo electrónico inválido",
-          },
-        }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             label="Correo electrónico"
@@ -106,13 +120,6 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
       <Controller
         control={control}
         name="password"
-        rules={{
-          required: "La contraseña es obligatoria",
-          minLength: {
-            value: 6,
-            message: "La contraseña debe tener al menos 6 caracteres",
-          },
-        }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             label="Contraseña"
