@@ -2,8 +2,8 @@ import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
-import { Loading } from "@/components/ui/loading";
 import { Screen } from "@/components/ui/screen";
+import { SkeletonTruckCard } from "@/components/ui/skeleton";
 import { useTruckStatus } from "@/features/trucks/hooks/use-truck-status";
 import { theme } from "@/theme";
 import { TruckCard } from "../components/truck-card";
@@ -20,7 +20,11 @@ export function HomeScreen() {
 
   const renderContent = () => {
     if (isLoading) {
-      return <Loading />;
+      return (
+        <View style={styles.contentWrapper}>
+          <SkeletonTruckCard />
+        </View>
+      );
     }
 
     if (error) {
@@ -39,10 +43,10 @@ export function HomeScreen() {
         {status && <TruckCard status={status} />}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Reportar problema</Text>
+          <Text style={styles.sectionTitle}>Reportar un problema</Text>
           <Text style={styles.sectionDescription}>
-            Informa sobre recolecciones perdidas o problemas con la basura en tu
-            zona
+            Informa sobre recolecciones perdidas, vertidos ilegales o problemas
+            con la basura en tu zona.
           </Text>
           <Button
             title="Crear reporte"
@@ -65,32 +69,27 @@ export function HomeScreen() {
 
 const styles = StyleSheet.create({
   contentWrapper: {
-    gap: theme.spacing.lg,
+    gap: theme.spacing["spacing-xxl"],
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
-    fontWeight: theme.fontWeight.bold,
-    fontFamily: theme.fontFamily.bold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xl,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing["spacing-l"],
   },
   errorContainer: {
-    paddingVertical: theme.spacing.xxl,
+    paddingVertical: theme.spacing["spacing-xxl"],
   },
   section: {
-    gap: theme.spacing.sm,
+    gap: theme.spacing["spacing-s"],
   },
   sectionTitle: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.semibold,
-    fontFamily: theme.fontFamily.semibold,
-    color: theme.colors.text,
+    ...theme.typography.title3,
+    color: theme.colors.textPrimary,
   },
   sectionDescription: {
-    fontSize: theme.fontSize.base,
-    fontFamily: theme.fontFamily.regular,
+    ...theme.typography.callout,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing["spacing-m"],
     lineHeight: 22,
   },
 });

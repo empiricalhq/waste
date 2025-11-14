@@ -5,7 +5,7 @@ export const API_URL =
 
 export const WASTE_TYPES: Record<WasteType, { label: string; color: string }> =
   {
-    general: { label: "Basura General", color: "#71717A" },
+    general: { label: "Basura general", color: "#71717A" },
     recycling: { label: "Reciclables", color: "#3B82F6" },
     organic: { label: "Orgánicos", color: "#10B981" },
     hazardous: { label: "Peligrosos", color: "#EF4444" },
@@ -43,8 +43,6 @@ export const DEFAULT_MAP_CENTER = {
 
 // toast config
 export const TOAST_CONFIG = {
-  DEFAULT_DURATION: 3000,
+  DEFAULT_DURATION: 4000,
   MAX_VISIBLE_TOASTS: 3,
-  STACK_OFFSET: 8,
-  ANIMATION_DURATION: 200,
 } as const;

@@ -30,6 +30,7 @@ export function Screen({
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
       refreshControl={
         onRefresh ? (
           <RefreshControl
@@ -57,15 +58,15 @@ export function Screen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.backgroundPrimary,
   },
   scrollView: {
     flex: 1,
   },
   content: {
     flexGrow: 1,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing["spacing-xl"],
+    paddingVertical: theme.spacing["spacing-l"],
   },
   nonScrollableContent: {
     flex: 1,

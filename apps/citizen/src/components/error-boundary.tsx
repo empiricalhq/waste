@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: theme.spacing.lg,
-    backgroundColor: theme.colors.background,
+    padding: theme.spacing["spacing-l"],
+    backgroundColor: theme.colors.backgroundPrimary,
   },
 });

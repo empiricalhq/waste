@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/context/toast-context";
 import { AuthForm } from "@/features/auth/components/auth-form";
@@ -26,7 +26,7 @@ export function ReportScreen() {
       show("Reporte enviado correctamente", {
         type: "success",
       });
-      router.replace("/");
+      router.back();
     } catch (error: unknown) {
       let message = "Ocurrió un error inesperado al enviar el reporte.";
       if (error instanceof ApiError) {
@@ -58,10 +58,6 @@ export function ReportScreen() {
     return (
       <Screen edges={["bottom"]}>
         <View style={styles.authWrapper}>
-          <Text style={styles.title}>Inicia sesión para continuar</Text>
-          <Text style={styles.message}>
-            Necesitas una cuenta para enviar reportes
-          </Text>
           <AuthForm onSuccess={handleAuthSuccess} />
         </View>
       </Screen>
@@ -77,16 +73,6 @@ export function ReportScreen() {
 
 const styles = StyleSheet.create({
   authWrapper: {
-    gap: theme.spacing.lg,
-  },
-  title: {
-    fontSize: theme.fontSize.xxxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-  },
-  message: {
-    fontSize: theme.fontSize.base,
-    color: theme.colors.textSecondary,
-    lineHeight: 22,
+    gap: theme.spacing["spacing-l"],
   },
 });

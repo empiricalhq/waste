@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import FastSquircleView from "react-native-fast-squircle";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { TOAST_CONFIG } from "@/constants";
 import { type Toast as ToastType, useToast } from "@/context/toast-context";
 import { theme } from "@/theme";
 
@@ -18,47 +18,34 @@ interface ToastProps {
 const getBackgroundColor = (type: ToastType["options"]["type"]): string => {
   switch (type) {
     case "success":
-      return theme.colors.success;
+      return theme.colors.accentIncome;
     case "error":
-      return theme.colors.error;
-    case "warning":
-      return theme.colors.warning;
-    case "info":
-      return theme.colors.info;
+      return theme.colors.accentError;
     default:
-      return theme.colors.info;
+      return theme.colors.backgroundDark;
   }
 };
 
-const getIcon = (type: ToastType["options"]["type"]): string => {
-  switch (type) {
-    case "success":
-      return "✓";
-    case "error":
-      return "✗";
-    case "warning":
-      return "⚠";
-    case "info":
-      return "ℹ";
-    default:
-      return "ℹ";
-  }
-};
-
-export function Toast({ toast, index }: ToastProps) {
+export function Toast({ toast }: ToastProps) {
   const { dismiss } = useToast();
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
+  const translateY = useSharedValue(50); // Start from bottom
 
   useEffect(() => {
-    opacity.value = withTiming(1, {
-      duration: TOAST_CONFIG.ANIMATION_DURATION,
-    });
-    translateY.value = withSpring(0, theme.animation.easing.spring);
+    // animate in
+    opacity.value = withSpring(1, theme.animation.spring);
+    translateY.value = withSpring(0, theme.animation.spring);
   }, [opacity, translateY]);
 
   const handleDismiss = () => {
-    dismiss(toast.id);
+    // animate out
+    opacity.value = withTiming(0, { duration: theme.animation.duration.short });
+    translateY.value = withTiming(50, {
+      duration: theme.animation.duration.short,
+    });
+    setTimeout(() => {
+      dismiss(toast.id);
+    }, theme.animation.duration.short);
   };
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -67,36 +54,38 @@ export function Toast({ toast, index }: ToastProps) {
   }));
 
   const backgroundColor = getBackgroundColor(toast.options.type);
-  const icon = getIcon(toast.options.type);
-
-  // Calculate offset based on index (stack effect)
-  const bottomOffset = index * TOAST_CONFIG.STACK_OFFSET;
+  const textColor = theme.colors.textOnDark;
 
   return (
-    <Animated.View
-      style={[styles.container, animatedStyle, { marginBottom: bottomOffset }]}
-    >
-      <Pressable
-        style={[styles.toast, { backgroundColor }, theme.shadow.lg]}
-        onPress={handleDismiss}
-      >
-        <Text style={styles.icon}>{icon}</Text>
-        <View style={styles.content}>
-          <Text style={styles.text} numberOfLines={2}>
-            {toast.content}
-          </Text>
-        </View>
-        {toast.options.action && (
-          <Pressable
-            style={styles.actionButton}
-            onPress={() => {
-              toast.options.action?.onPress();
-              handleDismiss();
-            }}
-          >
-            <Text style={styles.actionText}>{toast.options.action.label}</Text>
-          </Pressable>
-        )}
+    <Animated.View style={[styles.container, animatedStyle]}>
+      <Pressable onPress={handleDismiss}>
+        <FastSquircleView
+          style={[
+            styles.toast,
+            { backgroundColor },
+            theme.shadow["shadow-soft"],
+          ]}
+          cornerSmoothing={0.8}
+        >
+          <View style={styles.content}>
+            <Text style={[styles.text, { color: textColor }]}>
+              {toast.content}
+            </Text>
+          </View>
+          {toast.options.action && (
+            <Pressable
+              style={styles.actionButton}
+              onPress={() => {
+                toast.options.action?.onPress();
+                handleDismiss();
+              }}
+            >
+              <Text style={styles.actionText}>
+                {toast.options.action.label}
+              </Text>
+            </Pressable>
+          )}
+        </FastSquircleView>
       </Pressable>
     </Animated.View>
   );
@@ -104,46 +93,32 @@ export function Toast({ toast, index }: ToastProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing["spacing-l"],
+    marginBottom: theme.spacing["spacing-m"],
   },
   toast: {
     flexDirection: "row",
     alignItems: "center",
-    padding: theme.spacing.lg,
-    borderRadius: theme.radius.lg,
+    padding: theme.spacing["spacing-l"],
+    borderRadius: theme.radius["radius-m"],
     minHeight: 56,
-  },
-  icon: {
-    color: theme.colors.textInverse,
-    fontSize: 18,
-    marginRight: theme.spacing.md,
-    fontWeight: theme.fontWeight.bold,
-    fontFamily: theme.fontFamily.bold,
-    width: 20,
-    textAlign: "center",
   },
   content: {
     flex: 1,
   },
   text: {
-    color: theme.colors.textInverse,
-    fontSize: theme.fontSize.base,
-    fontWeight: theme.fontWeight.medium,
-    fontFamily: theme.fontFamily.medium,
-    lineHeight: 20,
+    ...theme.typography.callout,
+    lineHeight: 22,
   },
   actionButton: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.md,
+    paddingHorizontal: theme.spacing["spacing-m"],
+    paddingVertical: theme.spacing["spacing-s"],
+    borderRadius: theme.radius["radius-xs"],
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginLeft: theme.spacing.md,
+    marginLeft: theme.spacing["spacing-m"],
   },
   actionText: {
-    color: theme.colors.textInverse,
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.semibold,
-    fontFamily: theme.fontFamily.semibold,
+    color: theme.colors.textOnDark,
+    ...theme.typography.subhead,
   },
 });

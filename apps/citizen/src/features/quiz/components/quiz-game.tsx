@@ -1,12 +1,5 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import { useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { WASTE_TYPES } from "@/constants";
@@ -18,32 +11,14 @@ interface QuizGameProps {
   onComplete: (score: number) => void;
 }
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
-
 export function QuizGame({ questions, onComplete }: QuizGameProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<WasteType | null>(null);
   const [score, setScore] = useState(0);
 
-  const imageScale = useSharedValue(0.9);
-  const imageOpacity = useSharedValue(0);
-
   const question = questions[currentIndex];
   const isAnswered = selectedAnswer !== null;
   const isLastQuestion = currentIndex === questions.length - 1;
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: currentIndex is the trigger to re-run the animation for each new question
-  useEffect(() => {
-    imageOpacity.value = withTiming(1, {
-      duration: theme.animation.duration.slow,
-    });
-    imageScale.value = withSpring(1, theme.animation.easing.spring);
-  }, [currentIndex]);
-
-  const imageAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: imageOpacity.value,
-    transform: [{ scale: imageScale.value }],
-  }));
 
   const handleAnswer = (answer: WasteType) => {
     setSelectedAnswer(answer);
@@ -56,8 +31,6 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
     if (isLastQuestion) {
       onComplete(score);
     } else {
-      imageOpacity.value = 0;
-      imageScale.value = 0.9;
       setCurrentIndex((i) => i + 1);
       setSelectedAnswer(null);
     }
@@ -69,10 +42,7 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
         Pregunta {currentIndex + 1} de {questions.length}
       </Text>
 
-      <Animated.Image
-        source={{ uri: question.imageUrl }}
-        style={[styles.image, imageAnimatedStyle]}
-      />
+      <Image source={{ uri: question.imageUrl }} style={styles.image} />
 
       <View style={styles.questionContainer}>
         <Text style={styles.questionText}>¿Dónde va esto?</Text>
@@ -86,150 +56,97 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
           const isWrong = isAnswered && isSelected && !isCorrect;
 
           return (
-            <OptionButton
+            <Pressable
               key={option}
-              option={option}
-              isCorrect={isCorrect}
-              isWrong={isWrong}
-              isAnswered={isAnswered}
               onPress={() => !isAnswered && handleAnswer(option)}
-            />
+              disabled={isAnswered}
+            >
+              <Card
+                style={[
+                  styles.option,
+                  isCorrect && styles.correctOption,
+                  isWrong && styles.wrongOption,
+                  isAnswered && !isCorrect && styles.disabledOption,
+                ]}
+                variant="outline"
+              >
+                <Text style={styles.optionText}>
+                  {WASTE_TYPES[option].label}
+                </Text>
+              </Card>
+            </Pressable>
           );
         })}
       </View>
 
       {isAnswered && (
-        <Button
-          title={isLastQuestion ? "Ver resultados" : "Siguiente"}
-          onPress={handleNext}
-          fullWidth={true}
-        />
+        <View style={styles.footer}>
+          <Button
+            title={isLastQuestion ? "Ver resultados" : "Siguiente"}
+            onPress={handleNext}
+            fullWidth={true}
+          />
+        </View>
       )}
     </View>
   );
 }
 
-interface OptionButtonProps {
-  option: WasteType;
-  isCorrect: boolean;
-  isWrong: boolean;
-  isAnswered: boolean;
-  onPress: () => void;
-}
-
-function OptionButton({
-  option,
-  isCorrect,
-  isWrong,
-  isAnswered,
-  onPress,
-}: OptionButtonProps) {
-  const scale = useSharedValue(1);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: isCorrect and isWrong are the triggers
-  useEffect(() => {
-    if (isCorrect) {
-      scale.value = withSequence(
-        withSpring(1.05, theme.animation.easing.spring),
-        withSpring(1, theme.animation.easing.spring),
-      );
-    } else if (isWrong) {
-      scale.value = withSequence(
-        withTiming(0.95, { duration: 100 }),
-        withSpring(1, theme.animation.easing.spring),
-      );
-    }
-  }, [isCorrect, isWrong]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePress = () => {
-    if (!isAnswered) {
-      scale.value = withSequence(
-        withSpring(0.96, theme.animation.easing.spring),
-        withSpring(1, theme.animation.easing.spring),
-      );
-      onPress();
-    }
-  };
-
-  return (
-    <AnimatedTouchable
-      onPress={handlePress}
-      disabled={isAnswered}
-      activeOpacity={0.7}
-      style={animatedStyle}
-    >
-      <Card
-        style={[
-          styles.option,
-          isCorrect && styles.correctOption,
-          isWrong && styles.wrongOption,
-        ]}
-      >
-        <Text style={styles.optionText}>{WASTE_TYPES[option].label}</Text>
-        {isCorrect && <Text style={styles.indicator}>✓</Text>}
-        {isWrong && <Text style={styles.indicator}>✗</Text>}
-      </Card>
-    </AnimatedTouchable>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
-    gap: theme.spacing.lg,
+    flex: 1,
+    gap: theme.spacing["spacing-l"],
   },
   progress: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.medium,
+    ...theme.typography.caption,
     color: theme.colors.textSecondary,
+    textAlign: "center",
+    textTransform: "uppercase",
   },
   image: {
     width: "100%",
     height: 200,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius["radius-xl"],
     backgroundColor: theme.colors.backgroundSecondary,
   },
   questionContainer: {
     alignItems: "center",
-    gap: theme.spacing.sm,
+    gap: theme.spacing["spacing-xs"],
   },
   questionText: {
-    fontSize: theme.fontSize.base,
+    ...theme.typography.callout,
     color: theme.colors.textSecondary,
   },
   item: {
-    fontSize: theme.fontSize.xxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
   },
   options: {
-    gap: theme.spacing.md,
+    gap: theme.spacing["spacing-m"],
+    marginTop: theme.spacing["spacing-m"],
   },
   option: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
   },
   optionText: {
-    fontSize: theme.fontSize.base,
-    fontWeight: theme.fontWeight.medium,
-    color: theme.colors.text,
-  },
-  indicator: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.bold,
+    ...theme.typography.body,
+    color: theme.colors.textPrimary,
   },
   correctOption: {
-    backgroundColor: theme.colors.successLight,
-    borderColor: theme.colors.success,
-    borderWidth: 2,
+    backgroundColor: theme.colors.accentIncome,
+    borderColor: theme.colors.accentIncome,
   },
   wrongOption: {
-    backgroundColor: theme.colors.errorLight,
-    borderColor: theme.colors.error,
-    borderWidth: 2,
+    backgroundColor: theme.colors.accentBudgetRed,
+    borderColor: theme.colors.accentBudgetRed,
+  },
+  disabledOption: {
+    opacity: 0.5,
+  },
+  footer: {
+    marginTop: "auto",
+    paddingBottom: theme.spacing["spacing-l"],
   },
 });

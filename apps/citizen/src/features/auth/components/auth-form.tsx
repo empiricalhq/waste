@@ -83,8 +83,8 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
       </Text>
       <Text style={styles.description}>
         {mode === "login"
-          ? "Inicia sesión para reportar problemas y ver tu progreso"
-          : "Crea una cuenta para reportar problemas y ver tu progreso"}
+          ? "Inicia sesión para reportar problemas y ver tu progreso."
+          : "Crea una cuenta para acceder a todas las funciones."}
       </Text>
 
       {mode === "signup" && (
@@ -139,7 +139,11 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         fullWidth={true}
       />
       <Button
-        title={mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}
+        title={
+          mode === "login"
+            ? "¿No tienes cuenta? Regístrate"
+            : "¿Ya tienes cuenta? Inicia sesión"
+        }
         variant="ghost"
         onPress={() => setMode((m) => (m === "login" ? "signup" : "login"))}
         disabled={isSubmitting}
@@ -150,16 +154,15 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: theme.spacing.lg,
+    gap: theme.spacing["spacing-xl"],
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
   },
   description: {
-    fontSize: theme.fontSize.base,
+    ...theme.typography.body,
     color: theme.colors.textSecondary,
-    lineHeight: 22,
+    lineHeight: 24,
   },
 });

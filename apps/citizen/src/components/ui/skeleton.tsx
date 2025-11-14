@@ -35,34 +35,34 @@ export function SkeletonTruckCard() {
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.lg,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.md,
+    backgroundColor: theme.colors.backgroundSecondary,
+    borderRadius: theme.radius["radius-m"],
+    padding: theme.spacing["spacing-l"],
+    marginBottom: theme.spacing["spacing-m"],
   },
   line: {
     height: 16,
-    backgroundColor: theme.colors.backgroundSecondary,
-    borderRadius: theme.radius.sm,
-    marginBottom: theme.spacing.sm,
+    backgroundColor: theme.colors.backgroundTertiary,
+    borderRadius: theme.radius["radius-xs"],
+    marginBottom: theme.spacing["spacing-s"],
   },
   lineShort: {
     width: "60%",
   },
   truckCard: {
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderOutline,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.spacing.md,
+    gap: theme.spacing["spacing-m"],
   },
   dot: {
     width: 8,
     height: 8,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.backgroundSecondary,
+    borderRadius: theme.radius["radius-full"],
+    backgroundColor: theme.colors.backgroundTertiary,
   },
   content: {
     flex: 1,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   eta: {
     width: 40,
     height: 40,
-    borderRadius: theme.radius.md,
-    backgroundColor: theme.colors.backgroundSecondary,
+    borderRadius: theme.radius["radius-s"],
+    backgroundColor: theme.colors.backgroundTertiary,
   },
 });

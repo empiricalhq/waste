@@ -74,6 +74,9 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Tipo de reporte</Text>
+        <Text style={styles.description}>
+          Selecciona el tipo de problema que quieres reportar.
+        </Text>
         <View style={styles.types}>
           {(
             Object.entries(REPORT_TYPES) as [
@@ -119,8 +122,8 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
 
       <View>
         <Button
-          title={coords ? "Ubicación obtenida" : "Obtener ubicación"}
-          variant={coords ? "secondary" : "primary"}
+          title={coords ? "Ubicación obtenida" : "Obtener mi ubicación"}
+          variant="secondary"
           onPress={requestLocation}
           loading={isLoadingLocation}
           disabled={isLoadingLocation || Boolean(coords)}
@@ -129,8 +132,8 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
         {locationError && <Text style={styles.error}>{locationError}</Text>}
         {coords && (
           <Text style={styles.success}>
-            Coordenadas: {coords.latitude.toFixed(6)},{" "}
-            {coords.longitude.toFixed(6)}
+            Ubicación: {coords.latitude.toFixed(4)},{" "}
+            {coords.longitude.toFixed(4)}
           </Text>
         )}
       </View>
@@ -144,7 +147,7 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
       />
 
       <Button
-        title="Cambiar tipo"
+        title="Cambiar tipo de reporte"
         variant="ghost"
         onPress={() => setType(null)}
         disabled={isSubmitting}
@@ -155,28 +158,33 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: theme.spacing.lg,
+    gap: theme.spacing["spacing-xl"],
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    ...theme.typography.title2,
+    color: theme.colors.textPrimary,
+  },
+  description: {
+    ...theme.typography.callout,
+    color: theme.colors.textSecondary,
+    marginTop: -theme.spacing["spacing-s"],
   },
   types: {
-    gap: theme.spacing.md,
+    gap: theme.spacing["spacing-m"],
+    marginTop: theme.spacing["spacing-s"],
   },
   textArea: {
     height: 120,
     textAlignVertical: "top",
   },
   error: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.error,
-    marginTop: theme.spacing.xs,
+    ...theme.typography.footnote,
+    color: theme.colors.accentError,
+    marginTop: theme.spacing["spacing-xs"],
   },
   success: {
-    fontSize: theme.fontSize.sm,
-    color: theme.colors.success,
-    marginTop: theme.spacing.xs,
+    ...theme.typography.footnote,
+    color: theme.colors.textSecondary,
+    marginTop: theme.spacing["spacing-xs"],
   },
 });
