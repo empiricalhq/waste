@@ -1,4 +1,9 @@
-import { API_URL, RETRY_CONFIG, TOKEN_EXPIRY_BUFFER } from "@/constants";
+import {
+  API_URL,
+  AUTH_TOKEN_DURATION_MS,
+  RETRY_CONFIG,
+  TOKEN_EXPIRY_BUFFER,
+} from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
   CreateReportInput,
@@ -12,11 +17,13 @@ import type {
 
 export class ApiError extends Error {
   code?: string;
+  status?: number;
 
-  constructor(message: string, code?: string) {
+  constructor(message: string, code?: string, status?: number) {
     super(message);
     this.name = "ApiError";
     this.code = code;
+    this.status = status;
   }
 }
 
@@ -71,19 +78,30 @@ class ApiClient {
         if (response.status === 401) {
           await storage.clearAuth();
           throw new ApiError(
-            "Sesión expirada. Por favor, inicia sesión nuevamente",
+            "Sesión expirada. Por favor, inicia sesión nuevamente.",
             "AUTH_EXPIRED",
+            401,
           );
         }
 
         if (!response.ok) {
-          const error = await response.json().catch(() => ({
-            message: "Error del servidor",
+          const errorBody = await response.json().catch(() => ({
+            message: "Ocurrió un error en el servidor.",
           }));
-          throw new ApiError(
-            error.message || "Error en la solicitud",
-            error.code,
+          const apiError = new ApiError(
+            errorBody.message || "Error en la solicitud.",
+            errorBody.code,
+            response.status,
           );
+
+          // don't retry client-side errors (4xx)
+          if (response.status >= 400 && response.status < 500) {
+            throw apiError;
+          }
+
+          // for server errors (5xx), we will retry
+          lastError = apiError;
+          throw apiError;
         }
 
         if (response.status === 204) {
@@ -92,18 +110,20 @@ class ApiClient {
 
         const data = await response.json();
         return data.data !== undefined ? data.data : data;
-      } catch (error) {
+      } catch (error: unknown) {
         lastError = error as Error;
 
-        // don't retry auth errors or client errors (4xx)
-        if (error instanceof ApiError) {
-          if (error.code === "AUTH_EXPIRED") {
-            throw error;
-          }
-          throw error;
+        // if it's a known ApiError we already handled, re-throw if it's not retryable
+        if (
+          error instanceof ApiError &&
+          error.status &&
+          error.status >= 400 &&
+          error.status < 500
+        ) {
+          throw error; // Not retryable, exit loop immediately
         }
 
-        // retry on network errors
+        // retry on network errors or 5xx errors
         if (attempt < RETRY_CONFIG.MAX_ATTEMPTS - 1) {
           const delay = Math.min(
             RETRY_CONFIG.BASE_DELAY * 2 ** attempt,
@@ -118,8 +138,12 @@ class ApiClient {
     }
 
     console.error("All retry attempts failed:", lastError);
+    if (lastError instanceof ApiError) {
+      throw lastError; // throw the last known API error
+    }
+
     throw new ApiError(
-      "No se pudo conectar con el servidor. Verifica tu conexión",
+      "No se pudo conectar con el servidor. Verifica tu conexión.",
       "NETWORK_ERROR",
     );
   }
@@ -135,8 +159,7 @@ class ApiClient {
     );
 
     if (response.token) {
-      // set expiry to 30 days from now (TODO: check with apps/api)
-      const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+      const expiresAt = Date.now() + AUTH_TOKEN_DURATION_MS;
       await storage.setAuthTokens({ token: response.token, expiresAt });
       await storage.setUser(response.user);
     }
@@ -154,7 +177,7 @@ class ApiClient {
     );
 
     if (response.token) {
-      const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+      const expiresAt = Date.now() + AUTH_TOKEN_DURATION_MS;
       await storage.setAuthTokens({ token: response.token, expiresAt });
       await storage.setUser(response.user);
     }
@@ -165,7 +188,7 @@ class ApiClient {
   async logout(): Promise<void> {
     try {
       await this.request("/api/auth/sign-out", { method: "POST" });
-    } catch (error) {
+    } catch (error: unknown) {
       console.warn("Logout request failed, clearing local data anyway", error);
     } finally {
       await storage.clearAuth();
@@ -190,7 +213,7 @@ class ApiClient {
         "/api/auth/get-session",
       );
       return response.user;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ApiError && error.code === "AUTH_EXPIRED") {
         return null;
       }

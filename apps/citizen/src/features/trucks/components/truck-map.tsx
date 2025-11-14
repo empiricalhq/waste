@@ -37,16 +37,9 @@ function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
     }));
   }, [trucks]);
 
-  // Create a stable key from truck positions to prevent unnecessary re-renders
-  const trucksKey = useMemo(
-    () => trucks.map((t) => `${t.id}-${t.lat}-${t.lng}`).join(","),
-    [trucks],
-  );
-
   return (
     <View style={styles.container}>
       <MapComponent
-        key={trucksKey}
         style={styles.map}
         cameraPosition={camera}
         {...(Platform.OS === "ios" ? { annotations: markers } : { markers })}

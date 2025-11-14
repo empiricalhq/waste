@@ -17,30 +17,31 @@ export const REPORT_TYPES = {
   other: "Otro",
 } as const;
 
-// Polling intervals (ms) - Increased for battery optimization
+// polling intervals (ms)
 export const POLLING = {
   TRUCKS: 5 * 60 * 1000, // 5 minutes
   STATUS: 5 * 60 * 1000, // 5 minutes
 } as const;
 
-// Retry configuration
+// retry config
 export const RETRY_CONFIG = {
   MAX_ATTEMPTS: 3,
   BASE_DELAY: 1000,
   MAX_DELAY: 30_000,
 } as const;
 
-// Token expiry buffer - refresh 5 minutes before expiry
-export const TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000;
+// token config
+export const AUTH_TOKEN_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+export const TOKEN_EXPIRY_BUFFER = 5 * 60 * 1000; // refresh 5 minutes before expiry
 
-// Map defaults
+// map defaults
 export const DEFAULT_MAP_CENTER = {
   latitude: -12.0464,
   longitude: -77.0428,
   zoom: 12,
 } as const;
 
-// Toast configuration
+// toast config
 export const TOAST_CONFIG = {
   DEFAULT_DURATION: 3000,
   MAX_VISIBLE_TOASTS: 3,

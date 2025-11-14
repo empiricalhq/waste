@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useToast } from "@/context/toast-context";
 import { AuthForm } from "@/features/auth/components/auth-form";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { ApiError } from "@/lib/api";
 import { theme } from "@/theme";
 import type { CreateReportInput } from "@/types";
 import { ReportForm } from "../components/report-form";
@@ -26,11 +27,11 @@ export function ReportScreen() {
         type: "success",
       });
       router.back();
-    } catch (error: any) {
+    } catch (error: unknown) {
       const message =
-        error.code === "NETWORK_ERROR"
-          ? "No se pudo enviar el reporte. Verifica tu conexión."
-          : error.message || "Error al enviar reporte";
+        error instanceof ApiError
+          ? error.message
+          : "Ocurrió un error inesperado al enviar el reporte.";
 
       show(message, {
         type: "error",
@@ -43,7 +44,7 @@ export function ReportScreen() {
   };
 
   const handleAuthSuccess = () => {
-    // After successful auth, if there was a pending report, submit it
+    // after successful auth, if there was a pending report, submit it
     if (pendingReport) {
       handleSubmit(pendingReport);
       setPendingReport(null);
