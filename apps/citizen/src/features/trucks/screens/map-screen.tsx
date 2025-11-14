@@ -1,23 +1,13 @@
+import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
+import { useToast } from "@/context/toast-context";
 import { useLocation } from "@/features/map/hooks/use-location";
 import { useTrucks } from "@/features/trucks/hooks/use-trucks";
 import { theme } from "@/theme";
 import { TruckMap } from "../components/truck-map";
-
-function EmptyState() {
-  return (
-    <SafeAreaView style={styles.emptyContainer} edges={["bottom"]}>
-      <View style={[styles.badge, theme.shadow.md]}>
-        <Text style={styles.badgeText}>
-          No hay camiones en servicio en este momento.
-        </Text>
-      </View>
-    </SafeAreaView>
-  );
-}
 
 export function MapScreen() {
   const {
@@ -29,6 +19,16 @@ export function MapScreen() {
   const { coords: userLocation, isLoading: isLoadingLocation } = useLocation({
     fetchOnMount: true,
   });
+  const { show } = useToast();
+
+  useEffect(() => {
+    if (!isLoadingTrucks && trucks.length === 0) {
+      show("No hay camiones en servicio en este momento.", {
+        type: "info",
+        duration: 5000,
+      });
+    }
+  }, [isLoadingTrucks, trucks.length, show]);
 
   if (isLoadingTrucks || isLoadingLocation) {
     return (
@@ -49,8 +49,6 @@ export function MapScreen() {
     );
   }
 
-  const showEmptyState = !isLoadingTrucks && trucks.length === 0;
-
   return (
     <View style={styles.container}>
       <TruckMap trucks={trucks} userLocation={userLocation} />
@@ -64,9 +62,6 @@ export function MapScreen() {
           </View>
         </SafeAreaView>
       )}
-
-      {/* message shown when no trucks are available */}
-      {showEmptyState && <EmptyState />}
     </View>
   );
 }
@@ -85,15 +80,6 @@ const styles = StyleSheet.create({
   badgeContainerTop: {
     position: "absolute",
     top: 0,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    paddingHorizontal: theme.spacing.lg,
-    pointerEvents: "none",
-  },
-  emptyContainer: {
-    position: "absolute",
-    bottom: 20,
     left: 0,
     right: 0,
     alignItems: "center",

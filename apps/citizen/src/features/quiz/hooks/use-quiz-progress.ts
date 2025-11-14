@@ -3,9 +3,6 @@ import { quizQuestions } from "@/features/quiz/data/quiz-questions";
 import { storage } from "@/lib/storage";
 import type { QuizProgress } from "@/types";
 
-/**
- * Calculate days between two ISO date strings (YYYY-MM-DD)
- */
 function calculateDaysDifference(
   lastPlayed: string | null,
   today: string,
@@ -17,19 +14,13 @@ function calculateDaysDifference(
   const last = new Date(lastPlayed);
   const current = new Date(today);
 
-  // Reset time to midnight for accurate day comparison
   last.setHours(0, 0, 0, 0);
   current.setHours(0, 0, 0, 0);
 
   const diffTime = current.getTime() - last.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-  return diffDays;
+  return Math.round(diffTime / (1000 * 60 * 60 * 24));
 }
 
-/**
- * Manages quiz progress with correct streak logic
- */
 export function useQuizProgress() {
   const queryClient = useQueryClient();
 
@@ -41,27 +32,33 @@ export function useQuizProgress() {
 
   const mutation = useMutation({
     mutationFn: async (finalScore: number): Promise<QuizProgress> => {
-      // Get current progress (from cache or storage)
       const currentProgress =
         queryClient.getQueryData<QuizProgress>(["quizProgress"]) ??
         (await storage.getQuizProgress());
 
       const today = new Date().toISOString().split("T")[0];
+
+      // if user already played today, only update stats, not the streak.
+      if (currentProgress.lastPlayed === today) {
+        const newProgress: QuizProgress = {
+          ...currentProgress,
+          totalAnswered: currentProgress.totalAnswered + quizQuestions.length,
+          correctAnswers: currentProgress.correctAnswers + finalScore,
+        };
+        await storage.setQuizProgress(newProgress);
+        return newProgress;
+      }
+
       const daysSinceLastPlayed = calculateDaysDifference(
         currentProgress.lastPlayed,
         today,
       );
 
-      // Calculate new streak
       let newStreak: number;
-      if (daysSinceLastPlayed === 0) {
-        // Same day - keep streak
-        newStreak = currentProgress.streak;
-      } else if (daysSinceLastPlayed === 1) {
-        // Next day - increment streak
+      if (daysSinceLastPlayed === 1) {
+        // played yesterday, continue the streak.
         newStreak = currentProgress.streak + 1;
       } else {
-        // Missed days - reset to 1
         newStreak = 1;
       }
 

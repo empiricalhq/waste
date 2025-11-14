@@ -16,7 +16,6 @@ function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
   const userLat = userLocation?.latitude;
   const userLng = userLocation?.longitude;
 
-  // Only update camera when user location coordinates actually change
   const camera = useMemo(() => {
     if (userLat !== undefined && userLng !== undefined) {
       return {
@@ -27,7 +26,6 @@ function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
     return DEFAULT_MAP_CENTER;
   }, [userLat, userLng]);
 
-  // Memoize markers array, only recreate when truck IDs or positions change
   const markers = useMemo(() => {
     return trucks.map((truck) => ({
       key: truck.id,
@@ -50,26 +48,41 @@ function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
   );
 }
 
-// Memo component to prevent re-renders when props haven't changed
+const LOCATION_EPSILON = 1e-6; // Tolerance for GPS coordinate changes
+
 export const TruckMap = memo(TruckMapComponent, (prevProps, nextProps) => {
-  // Custom comparison to prevent unnecessary re-renders
-  const sameUserLocation =
-    prevProps.userLocation?.latitude === nextProps.userLocation?.latitude &&
-    prevProps.userLocation?.longitude === nextProps.userLocation?.longitude;
+  const isUserLocationSame =
+    !(prevProps.userLocation || nextProps.userLocation) ||
+    (prevProps.userLocation &&
+      nextProps.userLocation &&
+      Math.abs(
+        prevProps.userLocation.latitude - nextProps.userLocation.latitude,
+      ) < LOCATION_EPSILON &&
+      Math.abs(
+        prevProps.userLocation.longitude - nextProps.userLocation.longitude,
+      ) < LOCATION_EPSILON);
 
-  // Check if truck data actually changed
-  const sameTrucks =
-    prevProps.trucks.length === nextProps.trucks.length &&
-    prevProps.trucks.every((truck, index) => {
-      const nextTruck = nextProps.trucks[index];
-      return (
-        truck.id === nextTruck.id &&
-        truck.lat === nextTruck.lat &&
-        truck.lng === nextTruck.lng
-      );
-    });
+  if (!isUserLocationSame) {
+    return false;
+  }
 
-  return sameUserLocation && sameTrucks;
+  if (prevProps.trucks.length !== nextProps.trucks.length) {
+    return false;
+  }
+
+  const prevTrucksMap = new Map(
+    prevProps.trucks.map((truck) => [truck.id, truck]),
+  );
+
+  const areTrucksSame = nextProps.trucks.every((nextTruck) => {
+    const prevTruck = prevTrucksMap.get(nextTruck.id);
+    if (!prevTruck) {
+      return false;
+    }
+    return prevTruck.lat === nextTruck.lat && prevTruck.lng === nextTruck.lng;
+  });
+
+  return areTrucksSame;
 });
 
 TruckMap.displayName = "TruckMap";

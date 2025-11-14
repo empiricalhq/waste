@@ -9,25 +9,25 @@ import type { LoginInput, SignUpInput } from "@/types";
 export function useAuth() {
   const queryClient = useQueryClient();
 
-  // Load user from storage immediately (fast, offline-friendly)
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      // First, try to get stored user
       const storedUser = await api.getStoredUser();
       if (!storedUser) {
         return null;
       }
 
-      // If we have a stored user, validate the session in background
+      // If we have a stored user, we MUST validate the session with the server.
+      // Failing to do so is a major security risk.
       try {
         const validatedUser = await api.validateSession();
-        return validatedUser || null;
+        // If the session is invalid, validatedUser will be null.
+        return validatedUser;
       } catch (error) {
-        // If validation fails, return stored user anyway (offline support)
-        // The next API call will handle auth errors
-        console.warn("Session validation failed, using cached user", error);
-        return storedUser;
+        // If validation fails (e.g., network error, server error, revoked token),
+        // we must treat the user as logged out for security.
+        console.warn("Session validation failed. Forcing logout.", error);
+        return null;
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -58,7 +58,6 @@ export function useAuth() {
     mutationFn: () => api.logout(),
     onSuccess: () => {
       queryClient.setQueryData(["user"], null);
-      // Clear all cached data on logout
       queryClient.clear();
     },
   });

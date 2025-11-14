@@ -127,15 +127,18 @@ class Storage {
         typeof parsed.totalAnswered !== "number" ||
         typeof parsed.correctAnswers !== "number"
       ) {
-        console.warn("Invalid quiz progress structure, resetting");
+        console.warn(
+          "Invalid quiz progress structure, returning default value.",
+        );
         return defaultValue;
       }
 
       return parsed;
     } catch (e) {
-      console.error("Failed to get quiz progress from storage", e);
-      // Try to recover by resetting
-      await this.setQuizProgress(defaultValue);
+      console.error(
+        "CRITICAL: Failed to get quiz progress from storage. User data was NOT reset.",
+        e,
+      );
       return defaultValue;
     }
   }

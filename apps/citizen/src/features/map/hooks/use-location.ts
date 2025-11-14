@@ -1,13 +1,14 @@
 import {
   getCurrentPositionAsync,
+  getForegroundPermissionsAsync,
   LocationAccuracy,
   requestForegroundPermissionsAsync,
 } from "expo-location";
 import { useCallback, useEffect, useState } from "react";
+import { Alert, Linking } from "react-native";
 import type { LocationCoords } from "@/types";
 
 interface UseLocationOptions {
-  // if true, location will be requested immediately upon component mount
   fetchOnMount?: boolean;
 }
 
@@ -23,10 +24,37 @@ export function useLocation(options: UseLocationOptions = {}) {
     setError(null);
 
     try {
-      const { status } = await requestForegroundPermissionsAsync();
+      let permission = await getForegroundPermissionsAsync();
 
-      if (status !== "granted") {
-        throw new Error("Permiso de ubicación denegado");
+      if (permission.status !== "granted") {
+        if (permission.canAskAgain) {
+          Alert.alert(
+            "Permiso de ubicación",
+            "La aplicación necesita tu ubicación para reportar problemas y mostrar camiones cercanos.",
+            [
+              { text: "Cancelar", style: "cancel" },
+              {
+                text: "Permitir",
+                onPress: async () => {
+                  permission = await requestForegroundPermissionsAsync();
+                  if (permission.status !== "granted") {
+                    throw new Error("Permiso de ubicación denegado.");
+                  }
+                },
+              },
+            ],
+          );
+        } else {
+          Alert.alert(
+            "Habilitar ubicación",
+            "El permiso de ubicación fue denegado. Por favor, habilítalo en los ajustes de la aplicación para continuar.",
+            [
+              { text: "Cancelar", style: "cancel" },
+              { text: "Abrir Ajustes", onPress: () => Linking.openSettings() },
+            ],
+          );
+          throw new Error("Permiso de ubicación denegado permanentemente.");
+        }
       }
 
       const location = await getCurrentPositionAsync({
@@ -45,8 +73,6 @@ export function useLocation(options: UseLocationOptions = {}) {
         err instanceof Error ? err.message : "No se pudo obtener la ubicación";
       setError(message);
       setCoords(null);
-      // re-throw the error so the calling component can handle it if needed
-      // (e.g., in a try/catch block for an imperative call).
       throw err;
     } finally {
       setIsLoading(false);
