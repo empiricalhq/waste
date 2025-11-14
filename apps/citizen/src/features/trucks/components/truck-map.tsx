@@ -52,11 +52,15 @@ const LOCATION_EPSILON = 1e-6; // Tolerance for GPS coordinate changes
 
 export const TruckMap = memo(TruckMapComponent, (prevProps, nextProps) => {
   const isUserLocationSame =
-    (!prevProps.userLocation && !nextProps.userLocation) ||
+    !(prevProps.userLocation || nextProps.userLocation) ||
     (prevProps.userLocation &&
       nextProps.userLocation &&
-      Math.abs(prevProps.userLocation.latitude - nextProps.userLocation.latitude) < LOCATION_EPSILON &&
-      Math.abs(prevProps.userLocation.longitude - nextProps.userLocation.longitude) < LOCATION_EPSILON);
+      Math.abs(
+        prevProps.userLocation.latitude - nextProps.userLocation.latitude,
+      ) < LOCATION_EPSILON &&
+      Math.abs(
+        prevProps.userLocation.longitude - nextProps.userLocation.longitude,
+      ) < LOCATION_EPSILON);
 
   if (!isUserLocationSame) {
     return false;
