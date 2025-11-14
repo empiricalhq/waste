@@ -3,17 +3,20 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/providers';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   title: 'Lima Limpia',
-  description: 'Created by EmpiricalHQ',
+  description: 'Explorando datos sobre gestión de residuos sólidos en Lima Metropolitana',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning={true}>
-      <body className={inter.variable}>
+      <body className={`${inter.variable} font-sans antialiased scroll-smooth`}>
         <Providers>{children}</Providers>
       </body>
     </html>
