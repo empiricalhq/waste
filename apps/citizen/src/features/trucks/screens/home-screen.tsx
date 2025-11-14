@@ -1,12 +1,6 @@
 import { useRouter } from "expo-router";
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
+import { Screen } from "@/components/ui/screen";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
@@ -62,32 +56,14 @@ export function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-        }
-      >
-        <Text style={styles.title}>Inicio</Text>
-        {renderContent()}
-      </ScrollView>
-    </SafeAreaView>
+    <Screen isRefreshing={isRefetching} onRefresh={refetch}>
+      <Text style={styles.title}>Inicio</Text>
+      {renderContent()}
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: theme.spacing.lg,
-  },
   contentWrapper: {
     gap: theme.spacing.lg,
   },

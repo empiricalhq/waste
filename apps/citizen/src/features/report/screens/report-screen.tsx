@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
+import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/context/toast-context";
 import { AuthForm } from "@/features/auth/components/auth-form";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -53,46 +53,26 @@ export function ReportScreen() {
 
   if (!isAuthenticated) {
     return (
-      <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.content}
-        >
-          <View style={styles.authWrapper}>
-            <Text style={styles.title}>Inicia sesión para continuar</Text>
-            <Text style={styles.message}>
-              Necesitas una cuenta para enviar reportes
-            </Text>
-            <AuthForm onSuccess={handleAuthSuccess} />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+      <Screen edges={["bottom"]}>
+        <View style={styles.authWrapper}>
+          <Text style={styles.title}>Inicia sesión para continuar</Text>
+          <Text style={styles.message}>
+            Necesitas una cuenta para enviar reportes
+          </Text>
+          <AuthForm onSuccess={handleAuthSuccess} />
+        </View>
+      </Screen>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["bottom"]}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-      >
-        <ReportForm onSubmit={handleSubmit} isSubmitting={isPending} />
-      </ScrollView>
-    </SafeAreaView>
+    <Screen edges={["bottom"]}>
+      <ReportForm onSubmit={handleSubmit} isSubmitting={isPending} />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: theme.spacing.lg,
-  },
   authWrapper: {
     gap: theme.spacing.lg,
   },

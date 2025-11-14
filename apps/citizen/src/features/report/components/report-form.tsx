@@ -14,8 +14,6 @@ interface ReportFormProps {
   isSubmitting: boolean;
 }
 
-type FormData = Pick<CreateReportInput, "description">;
-
 export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
   const [type, setType] = useState<CreateReportInput["type"] | null>(null);
   const {
@@ -30,12 +28,14 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
     control,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<FormData>({
+  } = useForm<Pick<CreateReportInput, "description">>({
     mode: "onChange",
     defaultValues: { description: "" },
   });
 
-  const handleFormSubmit = async (data: FormData) => {
+  const handleFormSubmit = async (
+    data: Pick<CreateReportInput, "description">,
+  ) => {
     if (!type) {
       // this should not happen if UI is correct, but as a safeguard
       show("Selecciona un tipo de reporte", { type: "error" });
