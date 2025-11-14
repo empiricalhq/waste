@@ -68,8 +68,9 @@ const styles = StyleSheet.create({
     gap: theme.spacing.lg,
   },
   title: {
-    fontSize: theme.fontSize.xxl,
+    fontSize: theme.fontSize.xxxl,
     fontWeight: theme.fontWeight.bold,
+    fontFamily: theme.fontFamily.bold,
     color: theme.colors.text,
     marginBottom: theme.spacing.xl,
   },
@@ -82,10 +83,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: theme.fontSize.lg,
     fontWeight: theme.fontWeight.semibold,
+    fontFamily: theme.fontFamily.semibold,
     color: theme.colors.text,
   },
   sectionDescription: {
     fontSize: theme.fontSize.base,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.md,
     lineHeight: 22,

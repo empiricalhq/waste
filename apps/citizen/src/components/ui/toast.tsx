@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginRight: theme.spacing.md,
     fontWeight: theme.fontWeight.bold,
+    fontFamily: theme.fontFamily.bold,
     width: 20,
     textAlign: "center",
   },
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textInverse,
     fontSize: theme.fontSize.base,
     fontWeight: theme.fontWeight.medium,
+    fontFamily: theme.fontFamily.medium,
     lineHeight: 20,
   },
   actionButton: {
@@ -142,5 +144,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textInverse,
     fontSize: theme.fontSize.sm,
     fontWeight: theme.fontWeight.semibold,
+    fontFamily: theme.fontFamily.semibold,
   },
 });

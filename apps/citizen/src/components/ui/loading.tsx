@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: theme.fontSize.sm,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.textSecondary,
   },
 });

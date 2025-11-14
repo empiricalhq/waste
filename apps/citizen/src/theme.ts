@@ -66,6 +66,13 @@ export const theme = {
     bold: "700" as const,
   },
 
+  fontFamily: {
+    regular: "Inter-Regular",
+    medium: "Inter-Medium",
+    semibold: "Inter-SemiBold",
+    bold: "Inter-Bold",
+  },
+
   shadow: {
     sm: {
       shadowColor: "#000",

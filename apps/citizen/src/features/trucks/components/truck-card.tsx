@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: theme.fontSize.sm,
     fontWeight: theme.fontWeight.medium,
+    fontFamily: theme.fontFamily.medium,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.md,
   },
@@ -77,16 +78,19 @@ const styles = StyleSheet.create({
   type: {
     fontSize: theme.fontSize.base,
     fontWeight: theme.fontWeight.semibold,
+    fontFamily: theme.fontFamily.semibold,
     color: theme.colors.text,
   },
   subtitle: {
     fontSize: theme.fontSize.sm,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.textSecondary,
     marginTop: 2,
     lineHeight: 18,
   },
   message: {
     fontSize: theme.fontSize.base,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.textSecondary,
     lineHeight: 22,
   },
@@ -96,10 +100,12 @@ const styles = StyleSheet.create({
   etaValue: {
     fontSize: theme.fontSize.xxl,
     fontWeight: theme.fontWeight.bold,
+    fontFamily: theme.fontFamily.bold,
     color: theme.colors.primary,
   },
   etaLabel: {
     fontSize: theme.fontSize.xs,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.textSecondary,
   },
 });

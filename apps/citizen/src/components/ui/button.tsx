@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: theme.fontSize.base,
     fontWeight: theme.fontWeight.semibold,
+    fontFamily: theme.fontFamily.semibold,
   },
   primaryText: {
     color: theme.colors.textInverse,

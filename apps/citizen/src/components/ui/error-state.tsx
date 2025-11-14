@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: theme.fontSize.base,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,

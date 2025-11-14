@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: theme.fontSize.sm,
     fontWeight: theme.fontWeight.medium,
+    fontFamily: theme.fontFamily.medium,
     color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
@@ -47,6 +48,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.md,
     fontSize: theme.fontSize.base,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.text,
     minHeight: 44,
   },
@@ -55,6 +57,7 @@ const styles = StyleSheet.create({
   },
   error: {
     fontSize: theme.fontSize.xs,
+    fontFamily: theme.fontFamily.regular,
     color: theme.colors.error,
     marginTop: theme.spacing.xs,
   },
