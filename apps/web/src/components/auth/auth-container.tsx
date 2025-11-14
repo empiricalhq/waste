@@ -20,7 +20,7 @@ export function AuthContainer({ children, showBrandImage = false, footer, classN
           </div>
 
           {showBrandImage && (
-            <div className="relative bg-muted hidden md:flex items-center justify-center overflow-hidden">
+            <div className="relative bg-muted hidden md:flex items-center justify-center overflow-hidden -my-8">
               <Image
                 src="/lima-verde.webp"
                 alt="Lima Limpia"
