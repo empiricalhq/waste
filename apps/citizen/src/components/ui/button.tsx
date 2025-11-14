@@ -1,9 +1,9 @@
 import {
   ActivityIndicator,
+  type GestureResponderEvent,
   StyleSheet,
   Text,
   TouchableOpacity,
-  type GestureResponderEvent,
   type TouchableOpacityProps,
 } from "react-native";
 import Animated, {
