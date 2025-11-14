@@ -1,8 +1,8 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
+import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/context/toast-context";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
 import { theme } from "@/theme";
@@ -28,14 +28,9 @@ export function ProfileScreen() {
 
   if (!isAuthenticated) {
     return (
-      <SafeAreaView style={styles.container} edges={["top"]}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.content}
-        >
-          <AuthForm />
-        </ScrollView>
-      </SafeAreaView>
+      <Screen>
+        <AuthForm />
+      </Screen>
     );
   }
 
@@ -45,63 +40,47 @@ export function ProfileScreen() {
       : 0;
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-      >
-        <View style={styles.contentWrapper}>
-          <Text style={styles.title}>Perfil</Text>
-          <Text style={styles.name}>{user?.name}</Text>
-          <Text style={styles.email}>{user?.email}</Text>
+    <Screen>
+      <View style={styles.contentWrapper}>
+        <Text style={styles.title}>Perfil</Text>
+        <Text style={styles.name}>{user?.name}</Text>
+        <Text style={styles.email}>{user?.email}</Text>
 
-          <Card variant="elevated">
-            <Text style={styles.cardTitle}>Estadísticas del quiz</Text>
-            {isLoadingProgress ? (
-              <Loading />
-            ) : (
-              <View style={styles.stats}>
-                <View style={styles.stat}>
-                  <Text style={styles.statValue}>{progress?.streak || 0}</Text>
-                  <Text style={styles.statLabel}>Racha</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statValue}>{accuracy}%</Text>
-                  <Text style={styles.statLabel}>Precisión</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statValue}>
-                    {progress?.totalAnswered || 0}
-                  </Text>
-                  <Text style={styles.statLabel}>Respondidas</Text>
-                </View>
+        <Card variant="elevated">
+          <Text style={styles.cardTitle}>Estadísticas del quiz</Text>
+          {isLoadingProgress ? (
+            <Loading />
+          ) : (
+            <View style={styles.stats}>
+              <View style={styles.stat}>
+                <Text style={styles.statValue}>{progress?.streak || 0}</Text>
+                <Text style={styles.statLabel}>Racha</Text>
               </View>
-            )}
-          </Card>
+              <View style={styles.stat}>
+                <Text style={styles.statValue}>{accuracy}%</Text>
+                <Text style={styles.statLabel}>Precisión</Text>
+              </View>
+              <View style={styles.stat}>
+                <Text style={styles.statValue}>
+                  {progress?.totalAnswered || 0}
+                </Text>
+                <Text style={styles.statLabel}>Respondidas</Text>
+              </View>
+            </View>
+          )}
+        </Card>
 
-          <Button
-            title="Cerrar sesión"
-            variant="secondary"
-            onPress={handleLogout}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        <Button
+          title="Cerrar sesión"
+          variant="secondary"
+          onPress={handleLogout}
+        />
+      </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing.lg,
-  },
   contentWrapper: {
     gap: theme.spacing.lg,
   },
