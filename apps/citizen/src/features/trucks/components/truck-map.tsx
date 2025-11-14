@@ -52,7 +52,7 @@ const LOCATION_EPSILON = 1e-6; // Tolerance for GPS coordinate changes
 
 export const TruckMap = memo(TruckMapComponent, (prevProps, nextProps) => {
   const isUserLocationSame =
-    !(prevProps.userLocation || nextProps.userLocation) ||
+    (!prevProps.userLocation && !nextProps.userLocation) ||
     (prevProps.userLocation &&
       nextProps.userLocation &&
       Math.abs(
@@ -90,7 +90,7 @@ TruckMap.displayName = "TruckMap";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.backgroundSecondary,
   },
   map: {
     flex: 1,

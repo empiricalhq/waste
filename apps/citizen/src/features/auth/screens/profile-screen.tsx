@@ -15,8 +15,8 @@ export function ProfileScreen() {
   const { progress, isLoadingProgress } = useQuizProgress();
 
   const handleLogout = () => {
-    show("¿Cerrar sesión?", {
-      type: "warning",
+    show("¿Estás seguro que quieres cerrar sesión?", {
+      type: "error",
       action: {
         label: "Confirmar",
         onPress: async () => {
@@ -64,7 +64,7 @@ export function ProfileScreen() {
                 <Text style={styles.statValue}>
                   {progress?.totalAnswered || 0}
                 </Text>
-                <Text style={styles.statLabel}>Respondidas</Text>
+                <Text style={styles.statLabel}>Respuestas</Text>
               </View>
             </View>
           )}
@@ -72,7 +72,7 @@ export function ProfileScreen() {
 
         <Button
           title="Cerrar sesión"
-          variant="secondary"
+          variant="destructive"
           onPress={handleLogout}
         />
       </View>
@@ -82,27 +82,25 @@ export function ProfileScreen() {
 
 const styles = StyleSheet.create({
   contentWrapper: {
-    gap: theme.spacing.lg,
+    gap: theme.spacing["spacing-xl"],
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
   },
   name: {
-    fontSize: theme.fontSize.xl,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
+    ...theme.typography.title2,
+    color: theme.colors.textPrimary,
   },
   email: {
-    fontSize: theme.fontSize.base,
+    ...theme.typography.callout,
     color: theme.colors.textSecondary,
+    marginTop: -theme.spacing["spacing-m"],
   },
   cardTitle: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.lg,
+    ...theme.typography.title3,
+    color: theme.colors.textPrimary,
+    marginBottom: theme.spacing["spacing-l"],
   },
   stats: {
     flexDirection: "row",
@@ -112,13 +110,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statValue: {
-    fontSize: theme.fontSize.xxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
   },
   statLabel: {
-    fontSize: theme.fontSize.sm,
+    ...theme.typography.caption,
+    textTransform: "uppercase",
     color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xs,
+    marginTop: theme.spacing["spacing-xs"],
   },
 });

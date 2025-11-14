@@ -9,7 +9,7 @@ interface LoadingProps {
 export function Loading({ message, size = "large" }: LoadingProps) {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={size} color={theme.colors.primary} />
+      <ActivityIndicator size={size} color={theme.colors.textPrimary} />
       {message && <Text style={styles.message}>{message}</Text>}
     </View>
   );
@@ -19,12 +19,11 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    gap: theme.spacing.md,
-    paddingVertical: theme.spacing.xxl,
+    gap: theme.spacing["spacing-m"],
+    paddingVertical: theme.spacing["spacing-xxl"],
   },
   message: {
-    fontSize: theme.fontSize.sm,
-    fontFamily: theme.fontFamily.regular,
+    ...theme.typography.callout,
     color: theme.colors.textSecondary,
   },
 });

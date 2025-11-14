@@ -32,19 +32,18 @@ export function QuizResults({
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quiz completado</Text>
-      <View style={styles.scoreCircle}>
+      <View style={[styles.scoreCircle, theme.shadow["shadow-strong"]]}>
         <Text style={styles.scoreValue}>{score}</Text>
         <Text style={styles.scoreTotal}>/ {quizQuestions.length}</Text>
       </View>
-      <Text style={styles.percentage}>{percentage}%</Text>
-      <Text style={styles.message}>{getMessage()}</Text>
+      <Text style={styles.percentage}>{getMessage()}</Text>
       {streakIncreased && (
         <View style={styles.streakBadge}>
           <Text style={styles.streakEmoji}>🔥</Text>
           <Text style={styles.streakText}>¡Racha activa!</Text>
         </View>
       )}
-      <Button title="Volver a intentar" onPress={onRestart} fullWidth={true} />
+      <Button title="Jugar de nuevo" onPress={onRestart} fullWidth={true} />
     </View>
   );
 }
@@ -54,59 +53,51 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: theme.spacing.lg,
+    gap: theme.spacing["spacing-l"],
   },
   title: {
-    fontSize: theme.fontSize.xxxl,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
   },
   scoreCircle: {
     width: 180,
     height: 180,
     borderRadius: 90,
-    backgroundColor: theme.colors.card,
+    backgroundColor: theme.colors.backgroundPrimary,
     borderWidth: 8,
-    borderColor: theme.colors.primary,
+    borderColor: theme.colors.accentIncome,
     justifyContent: "center",
-    alignItems: "center",
-    ...theme.shadow.lg,
+    flexDirection: "row",
+    alignItems: "baseline",
   },
   scoreValue: {
-    fontSize: 64,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.primary,
+    ...theme.typography.display,
+    fontSize: 72,
+    color: theme.colors.textPrimary,
   },
   scoreTotal: {
-    fontSize: theme.fontSize.xl,
+    ...theme.typography.title2,
     color: theme.colors.textSecondary,
+    marginLeft: theme.spacing["spacing-xs"],
   },
   percentage: {
-    fontSize: theme.fontSize.xxl,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-  },
-  message: {
-    fontSize: theme.fontSize.lg,
-    fontWeight: theme.fontWeight.medium,
-    color: theme.colors.text,
-    textAlign: "center",
+    ...theme.typography.title2,
+    color: theme.colors.textPrimary,
   },
   streakBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.spacing.sm,
-    backgroundColor: theme.colors.successLight,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.radius.full,
+    gap: theme.spacing["spacing-s"],
+    backgroundColor: theme.colors.backgroundSecondary,
+    paddingHorizontal: theme.spacing["spacing-l"],
+    paddingVertical: theme.spacing["spacing-s"],
+    borderRadius: theme.radius["radius-full"],
   },
   streakEmoji: {
     fontSize: 20,
   },
   streakText: {
-    fontSize: theme.fontSize.base,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.success,
+    ...theme.typography.subhead,
+    color: theme.colors.textPrimary,
   },
 });

@@ -11,8 +11,12 @@ interface ErrorStateProps {
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <View style={styles.container}>
-      <View style={[styles.iconContainer, theme.shadow.sm]}>
-        <AlertCircle size={32} color={theme.colors.error} strokeWidth={2} />
+      <View style={[styles.iconContainer, theme.shadow["shadow-soft"]]}>
+        <AlertCircle
+          size={32}
+          color={theme.colors.accentError}
+          strokeWidth={2}
+        />
       </View>
       <Text style={styles.message}>{message}</Text>
       {onRetry && (
@@ -26,22 +30,21 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    gap: theme.spacing.lg,
-    paddingVertical: theme.spacing.xxl,
+    gap: theme.spacing["spacing-l"],
+    paddingVertical: theme.spacing["spacing-xxl"],
   },
   iconContainer: {
     width: 64,
     height: 64,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.errorLight,
+    borderRadius: theme.radius["radius-full"],
+    backgroundColor: theme.colors.backgroundSecondary,
     alignItems: "center",
     justifyContent: "center",
   },
   message: {
-    fontSize: theme.fontSize.base,
-    fontFamily: theme.fontFamily.regular,
+    ...theme.typography.body,
     color: theme.colors.textSecondary,
     textAlign: "center",
-    lineHeight: 22,
+    lineHeight: 24,
   },
 });

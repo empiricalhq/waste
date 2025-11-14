@@ -5,6 +5,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ToastViewport } from "@/components/ui/toast-viewport";
 import { ToastProvider } from "@/context/toast-context";
+import { theme } from "@/theme";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +32,11 @@ export default function RootLayout() {
                     headerShown: true,
                     title: "Reportar problema",
                     animation: "slide_from_bottom",
+                    headerStyle: {
+                      backgroundColor: theme.colors.backgroundPrimary,
+                    },
+                    headerTitleStyle: theme.typography.headline,
+                    headerShadowVisible: false,
                   }}
                 />
               </Stack>

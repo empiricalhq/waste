@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import FastSquircleView from "react-native-fast-squircle";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
@@ -55,11 +56,15 @@ export function MapScreen() {
 
       {trucks.length > 0 && (
         <SafeAreaView style={styles.badgeContainerTop} edges={["top"]}>
-          <View style={[styles.badge, theme.shadow.md]}>
+          <FastSquircleView
+            style={[styles.badge, theme.shadow["shadow-soft"]]}
+            cornerSmoothing={1}
+          >
             <Text style={styles.badgeText}>
-              {trucks.length} en servicio ahora
+              {trucks.length} {trucks.length > 1 ? "CAMIONES" : "CAMIÓN"} EN
+              SERVICIO
             </Text>
-          </View>
+          </FastSquircleView>
         </SafeAreaView>
       )}
     </View>
@@ -74,8 +79,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: theme.spacing.xxl,
-    backgroundColor: theme.colors.background,
+    padding: theme.spacing["spacing-xxl"],
+    backgroundColor: theme.colors.backgroundPrimary,
   },
   badgeContainerTop: {
     position: "absolute",
@@ -83,19 +88,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center",
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing["spacing-l"],
     pointerEvents: "none",
   },
   badge: {
-    backgroundColor: theme.colors.card,
-    padding: theme.spacing.md,
-    borderRadius: theme.radius.md,
-    marginTop: theme.spacing.md,
+    backgroundColor: theme.colors.backgroundPrimary,
+    paddingVertical: theme.spacing["spacing-s"],
+    paddingHorizontal: theme.spacing["spacing-l"],
+    borderRadius: theme.radius["radius-full"],
+    marginTop: theme.spacing["spacing-s"],
   },
   badgeText: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-    textAlign: "center",
+    ...theme.typography.caption,
+    color: theme.colors.textPrimary,
   },
 });

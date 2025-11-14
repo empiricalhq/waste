@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Card } from "@/components/ui/card";
-import { WASTE_TYPES } from "@/constants";
 import { theme } from "@/theme";
 import type { TruckStatus } from "@/types";
 
@@ -12,10 +11,10 @@ export function TruckCard({ status }: TruckCardProps) {
   if (status.status === "not_scheduled") {
     return (
       <Card variant="elevated">
-        <Text style={styles.label}>Recolección de basura</Text>
+        <Text style={styles.sectionTitle}>Recolección de basura</Text>
         <Text style={styles.message}>
-          La recolección en tu zona no está programada todavía. Te notificaremos
-          cuando esté disponible.
+          La recolección en tu zona no está programada. Te notificaremos cuando
+          esté disponible.
         </Text>
       </Card>
     );
@@ -24,10 +23,10 @@ export function TruckCard({ status }: TruckCardProps) {
   if (status.status === "idle") {
     return (
       <Card variant="elevated">
-        <Text style={styles.label}>Recolección de basura</Text>
+        <Text style={styles.sectionTitle}>Recolección de basura</Text>
         <Text style={styles.message}>
           {status.message ||
-            "No hay camiones cerca en este momento. Sigue atento a las actualizaciones."}
+            "No hay camiones cerca. Sigue atento a las actualizaciones."}
         </Text>
       </Card>
     );
@@ -35,11 +34,10 @@ export function TruckCard({ status }: TruckCardProps) {
 
   return (
     <Card variant="elevated">
-      <Text style={styles.label}>Camión cercano</Text>
+      <Text style={styles.sectionTitle}>Camión cercano</Text>
       <View style={styles.row}>
-        <View style={[styles.dot, styles.generalDot]} />
         <View style={styles.content}>
-          <Text style={styles.type}>{WASTE_TYPES.general.label}</Text>
+          <Text style={styles.type}>Basura general</Text>
           <Text style={styles.subtitle}>{status.message}</Text>
         </View>
         <View style={styles.eta}>
@@ -52,45 +50,31 @@ export function TruckCard({ status }: TruckCardProps) {
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: theme.fontSize.sm,
-    fontWeight: theme.fontWeight.medium,
-    fontFamily: theme.fontFamily.medium,
+  sectionTitle: {
+    ...theme.typography.caption,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing["spacing-s"],
+    textTransform: "uppercase",
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.spacing.md,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: theme.radius.full,
-  },
-  generalDot: {
-    backgroundColor: WASTE_TYPES.general.color,
+    gap: theme.spacing["spacing-m"],
   },
   content: {
     flex: 1,
   },
   type: {
-    fontSize: theme.fontSize.base,
-    fontWeight: theme.fontWeight.semibold,
-    fontFamily: theme.fontFamily.semibold,
-    color: theme.colors.text,
+    ...theme.typography.headline,
+    color: theme.colors.textPrimary,
   },
   subtitle: {
-    fontSize: theme.fontSize.sm,
-    fontFamily: theme.fontFamily.regular,
+    ...theme.typography.footnote,
     color: theme.colors.textSecondary,
     marginTop: 2,
-    lineHeight: 18,
   },
   message: {
-    fontSize: theme.fontSize.base,
-    fontFamily: theme.fontFamily.regular,
+    ...theme.typography.callout,
     color: theme.colors.textSecondary,
     lineHeight: 22,
   },
@@ -98,14 +82,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   etaValue: {
-    fontSize: theme.fontSize.xxl,
-    fontWeight: theme.fontWeight.bold,
-    fontFamily: theme.fontFamily.bold,
-    color: theme.colors.primary,
+    ...theme.typography.title1,
+    color: theme.colors.textPrimary,
   },
   etaLabel: {
-    fontSize: theme.fontSize.xs,
-    fontFamily: theme.fontFamily.regular,
+    ...theme.typography.caption,
+    textTransform: "uppercase",
     color: theme.colors.textSecondary,
+    marginTop: -theme.spacing["spacing-xs"],
   },
 });
