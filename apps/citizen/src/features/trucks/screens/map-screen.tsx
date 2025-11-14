@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { Loading } from "@/components/ui/loading";
@@ -17,16 +17,6 @@ export function MapScreen() {
   const { coords: userLocation, isLoading: isLoadingLocation } = useLocation({
     fetchOnMount: true,
   });
-
-  if (Platform.OS !== "ios" && Platform.OS !== "android") {
-    return (
-      <SafeAreaView style={styles.center} edges={["top", "bottom"]}>
-        <Text style={styles.message}>
-          Los mapas solo están disponibles en iOS y Android
-        </Text>
-      </SafeAreaView>
-    );
-  }
 
   if (isLoadingTrucks || isLoadingLocation) {
     return (

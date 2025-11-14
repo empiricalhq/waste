@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -17,7 +18,11 @@ export function usePulsingAnimation(duration = 1000) {
 
   useEffect(() => {
     opacity.value = withRepeat(withTiming(1, { duration }), -1, true);
-  }, [duration, opacity]);
+
+    return () => {
+      cancelAnimation(opacity);
+    };
+  }, [duration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
