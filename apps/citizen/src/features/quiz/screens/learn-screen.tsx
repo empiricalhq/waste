@@ -20,10 +20,8 @@ export function LearnScreen() {
     setScore(finalScore);
 
     const oldStreak = progress?.streak || 0;
-    await updateProgress(finalScore);
-
-    // Check if streak actually increased (not just same day replay)
     const newProgress = await updateProgress(finalScore);
+
     setStreakIncreased(newProgress.streak > oldStreak);
 
     setScreen("results");

@@ -26,7 +26,7 @@ export function ReportScreen() {
       show("Reporte enviado correctamente", {
         type: "success",
       });
-      router.back();
+      router.replace("/");
     } catch (error: unknown) {
       const message =
         error instanceof ApiError
