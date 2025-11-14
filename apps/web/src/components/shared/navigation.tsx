@@ -60,9 +60,9 @@ export function Navigation({ navLinks, showAuth = true }: NavigationProps) {
           <div className={`flex items-center ${theme.nav.auth.buttonGap}`}>
             <Link
               href="/signin"
-              className={`${theme.nav.auth.fontSize} ${theme.nav.auth.loginTextColor} ${theme.nav.auth.loginHoverColor} ${theme.transitions.default}`}
+              className={`${theme.nav.auth.fontSize} ${theme.nav.auth.signupBgColor} ${theme.nav.auth.signupTextColor} ${theme.nav.auth.signupPadding} ${theme.nav.auth.signupBorderRadius} ${theme.nav.auth.signupHoverBgColor} ${theme.transitions.default}`}
             >
-              Acceso municipal
+              Intranet
             </Link>
           </div>
         )}

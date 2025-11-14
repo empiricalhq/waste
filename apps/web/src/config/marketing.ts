@@ -36,6 +36,11 @@ export const marketingTheme = {
       fontSize: 'text-[13px]',
       loginTextColor: 'text-gray-600',
       loginHoverColor: 'hover:text-gray-900',
+      signupBgColor: "bg-gray-900",
+      signupTextColor: "text-white",
+      signupHoverBgColor: "hover:bg-gray-800",
+      signupPadding: "px-3 py-[6px]",
+      signupBorderRadius: "rounded-md",
       buttonGap: 'gap-5',
     },
     bar: {

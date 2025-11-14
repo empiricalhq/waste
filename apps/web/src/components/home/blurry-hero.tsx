@@ -69,7 +69,7 @@ export function BlurryHero() {
 
         <div className="flex items-center justify-center gap-4">
           <Link
-            href="/blog"
+            href="/blog/what-we-were-cooking"
             className="inline-block text-[15px] bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
           >
             Leer el artículo

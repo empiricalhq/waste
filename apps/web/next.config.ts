@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
     cssChunking: true,
     viewTransition: true,
   },
+  transpilePackages: ['next-mdx-remote'],
   devIndicators: {
     position: 'bottom-right',
   },

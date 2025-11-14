@@ -1,5 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
 export interface PostMetadata {
   title: string;
@@ -7,6 +7,7 @@ export interface PostMetadata {
   author: string;
   category: string;
   summary?: string;
+  thumbnail?: string;
   thumbnailAlt?: string;
 }
 
@@ -16,7 +17,7 @@ export interface Post {
   content: string;
 }
 
-const POSTS_DIRECTORY = path.join(process.cwd(), 'src/posts');
+const POSTS_DIRECTORY = path.join(process.cwd(), "src/posts");
 
 function parseFrontmatter(fileContent: string) {
   const frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
@@ -27,14 +28,14 @@ function parseFrontmatter(fileContent: string) {
   }
 
   const frontMatterBlock = match[1];
-  const content = fileContent.replace(frontmatterRegex, '').trim();
-  const frontMatterLines = frontMatterBlock.trim().split('\n');
+  const content = fileContent.replace(frontmatterRegex, "").trim();
+  const frontMatterLines = frontMatterBlock.trim().split("\n");
   const metadata: Partial<PostMetadata> = {};
 
   for (const line of frontMatterLines) {
-    const [key, ...valueArr] = line.split(': ');
-    let value = valueArr.join(': ').trim();
-    value = value.replace(/^['"](.*)['"]$/, '$1'); // Remove quotes
+    const [key, ...valueArr] = line.split(": ");
+    let value = valueArr.join(": ").trim();
+    value = value.replace(/^['"](.*)['"]$/, "$1"); // Remove quotes
 
     if (key && value) {
       const typedKey = key.trim() as keyof PostMetadata;
@@ -49,11 +50,11 @@ function getMDXFiles(dir: string) {
   if (!fs.existsSync(dir)) {
     return [];
   }
-  return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx');
+  return fs.readdirSync(dir).filter((file) => path.extname(file) === ".mdx");
 }
 
 function readMDXFile(filePath: string) {
-  const rawContent = fs.readFileSync(filePath, 'utf-8');
+  const rawContent = fs.readFileSync(filePath, "utf-8");
   return parseFrontmatter(rawContent);
 }
 
@@ -79,11 +80,16 @@ export function getBlogPosts(): Post[] {
   });
 }
 
+export function getPostBySlug(slug: string): Post | undefined {
+  const posts = getBlogPosts();
+  return posts.find((post) => post.slug === slug);
+}
+
 export function generateExcerpt(content: string, length = 160): string {
   const cleanContent = content
-    .replace(/#+\s/g, '')
-    .replace(/\*\*|__/g, '')
-    .replace(/\n/g, ' ');
+    .replace(/#+\s/g, "")
+    .replace(/\*\*|__/g, "")
+    .replace(/\n/g, " ");
 
   if (cleanContent.length <= length) {
     return cleanContent;
