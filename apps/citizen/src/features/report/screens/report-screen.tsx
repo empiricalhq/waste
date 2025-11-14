@@ -28,10 +28,14 @@ export function ReportScreen() {
       });
       router.replace("/");
     } catch (error: unknown) {
-      const message =
-        error instanceof ApiError
-          ? error.message
-          : "Ocurrió un error inesperado al enviar el reporte.";
+      let message = "Ocurrió un error inesperado al enviar el reporte.";
+      if (error instanceof ApiError) {
+        if (error.code === "AUTH_EXPIRED") {
+          message = "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.";
+        } else {
+          message = error.message;
+        }
+      }
 
       show(message, {
         type: "error",
@@ -44,7 +48,6 @@ export function ReportScreen() {
   };
 
   const handleAuthSuccess = () => {
-    // after successful auth, if there was a pending report, submit it
     if (pendingReport) {
       handleSubmit(pendingReport);
       setPendingReport(null);

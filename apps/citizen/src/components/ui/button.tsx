@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  type GestureResponderEvent,
   type TouchableOpacityProps,
 } from "react-native";
 import Animated, {
@@ -40,14 +41,14 @@ export function Button({
     transform: [{ scale: scale.value }],
   }));
 
-  const handlePressIn = (e: any) => {
+  const handlePressIn = (e: GestureResponderEvent) => {
     if (!isDisabled) {
       scale.value = withSpring(0.96, theme.animation.easing.spring);
     }
     onPressIn?.(e);
   };
 
-  const handlePressOut = (e: any) => {
+  const handlePressOut = (e: GestureResponderEvent) => {
     scale.value = withSpring(1, theme.animation.easing.spring);
     onPressOut?.(e);
   };
