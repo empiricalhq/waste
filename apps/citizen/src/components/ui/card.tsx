@@ -1,36 +1,40 @@
-import { StyleSheet, View, type ViewProps } from "react-native";
+import { StyleSheet, type ViewProps } from "react-native";
+import FastSquircleView from "react-native-fast-squircle";
 import { theme } from "@/theme";
 
 interface CardProps extends ViewProps {
-  variant?: "default" | "elevated";
+  variant?: "outline" | "elevated";
 }
 
 export function Card({
-  variant = "default",
+  variant = "outline",
   children,
   style,
   ...props
 }: CardProps) {
   return (
-    <View
-      style={[styles.card, variant === "elevated" && styles.elevated, style]}
+    <FastSquircleView
+      style={[styles.card, styles[variant], style]}
+      cornerSmoothing={0.8}
       {...props}
     >
       {children}
-    </View>
+    </FastSquircleView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.lg,
+    backgroundColor: theme.colors.backgroundSecondary,
+    borderRadius: theme.radius["radius-m"],
+    padding: theme.spacing["spacing-l"],
+  },
+  outline: {
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: theme.spacing.lg,
+    borderColor: theme.colors.borderOutline,
   },
   elevated: {
-    ...theme.shadow.sm,
-    borderWidth: 0,
+    ...theme.shadow["shadow-soft"],
+    backgroundColor: theme.colors.backgroundPrimary,
   },
 });

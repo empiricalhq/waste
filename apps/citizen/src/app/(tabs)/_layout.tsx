@@ -1,62 +1,152 @@
-import { Tabs } from "expo-router";
-import { BookOpen, Home, MapPin, User } from "lucide-react-native";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { Link, Tabs } from "expo-router";
+import { BookOpen, Home, MapPin, Plus, User } from "lucide-react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import FastSquircleView from "react-native-fast-squircle";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { theme } from "@/theme";
 
-export default function TabLayout() {
+function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
+    <View style={styles.tabBarContainer}>
+      <View
+        style={[
+          styles.tabBar,
+          {
+            height: theme.sizing["sizing-tabbar"] + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
+        ]}
+      >
+        {state.routes.map((route, index) => {
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          const iconColor = isFocused
+            ? theme.colors.iconDark
+            : theme.colors.iconGrey;
+
+          let icon;
+          if (route.name === "index") {
+            icon = <Home color={iconColor} size={28} />;
+          } else if (route.name === "map") {
+            icon = <MapPin color={iconColor} size={28} />;
+          } else if (route.name === "learn") {
+            icon = <BookOpen color={iconColor} size={28} />;
+          } else if (route.name === "profile") {
+            icon = <User color={iconColor} size={28} />;
+          }
+
+          // render placeholder for the center button area
+          if (index === 2) {
+            return <View key="placeholder" style={styles.centerPlaceholder} />;
+          }
+          // adjust index for placeholder
+          const adjustedIndex = index > 1 ? index - 1 : index;
+          if (adjustedIndex >= 2) {
+            // we will render the middle button outside the map
+            return (
+              <Pressable
+                key={route.key}
+                onPress={onPress}
+                style={styles.tabItem}
+              >
+                {icon}
+              </Pressable>
+            );
+          }
+          return (
+            <Pressable key={route.key} onPress={onPress} style={styles.tabItem}>
+              {icon}
+            </Pressable>
+          );
+        })}
+      </View>
+
+      {/* center plus button */}
+      <View
+        style={[
+          styles.centerButtonContainer,
+          { bottom: insets.bottom + 18, left: "50%", marginLeft: -32.5 },
+        ]}
+        pointerEvents="box-none"
+      >
+        <Link href="/report" asChild>
+          <Pressable>
+            <FastSquircleView
+              style={styles.centerButton}
+              cornerSmoothing={1.0}
+            >
+              <Plus color={theme.colors.iconLight} size={20} strokeWidth={3} />
+            </FastSquircleView>
+          </Pressable>
+        </Link>
+      </View>
+    </View>
+  );
+}
+
+export default function TabLayout() {
+  return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textTertiary,
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: theme.colors.card,
-          borderTopColor: theme.colors.border,
-          borderTopWidth: 1,
-          height: 60 + insets.bottom,
-          paddingBottom: insets.bottom + 8,
-          paddingTop: 8,
-          ...theme.shadow.sm,
-        },
-        tabBarLabelStyle: {
-          fontSize: theme.fontSize.xs,
-          fontWeight: theme.fontWeight.medium,
-        },
-      }}
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Inicio",
-          tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: "Mapa",
-          tabBarIcon: ({ color, size }) => <MapPin color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="learn"
-        options={{
-          title: "Aprender",
-          tabBarIcon: ({ color, size }) => (
-            <BookOpen color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Perfil",
-          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
-        }}
-      />
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="map" />
+      <Tabs.Screen name="placeholder" />
+      <Tabs.Screen name="learn" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBarContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  tabBar: {
+    flexDirection: "row",
+    backgroundColor: theme.colors.backgroundPrimary,
+    paddingHorizontal: theme.spacing["spacing-l"],
+    width: "100%",
+  },
+  tabItem: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centerButtonContainer: {
+    position: "absolute",
+  },
+  centerButton: {
+    width: 65,
+    height: theme.sizing["sizing-button-md"],
+    borderRadius: theme.radius["radius-l"],
+    backgroundColor: theme.colors.backgroundDark,
+    justifyContent: "center",
+    alignItems: "center",
+    ...theme.shadow["shadow-strong"],
+  },
+  centerPlaceholder: {
+    width: 65,
+  },
+});

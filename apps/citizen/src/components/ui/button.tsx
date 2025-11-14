@@ -3,30 +3,29 @@ import {
   type GestureResponderEvent,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  type TouchableOpacityProps,
+  type PressableProps,
+  Pressable,
 } from "react-native";
+import FastSquircleView from "react-native-fast-squircle";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { theme } from "@/theme";
 
-interface ButtonProps extends Omit<TouchableOpacityProps, "style"> {
+interface ButtonProps extends Omit<PressableProps, "style"> {
   title: string;
-  variant?: "primary" | "secondary" | "ghost";
-  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "secondary" | "destructive" | "ghost";
   loading?: boolean;
   fullWidth?: boolean;
 }
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedSquircle = Animated.createAnimatedComponent(FastSquircleView);
 
 export function Button({
   title,
   variant = "primary",
-  size = "md",
   loading,
   fullWidth,
   disabled,
@@ -43,75 +42,72 @@ export function Button({
 
   const handlePressIn = (e: GestureResponderEvent) => {
     if (!isDisabled) {
-      scale.value = withSpring(0.96, theme.animation.easing.spring);
+      scale.value = withTiming(0.6, {
+        duration: theme.animation.duration.medium,
+      });
     }
     onPressIn?.(e);
   };
 
   const handlePressOut = (e: GestureResponderEvent) => {
-    scale.value = withSpring(1, theme.animation.easing.spring);
+    scale.value = withTiming(1, { duration: theme.animation.duration.medium });
     onPressOut?.(e);
   };
 
   return (
-    <AnimatedTouchable
-      style={[
-        styles.base,
-        styles[variant],
-        styles[size],
-        fullWidth && styles.fullWidth,
-        isDisabled && styles.disabled,
-        animatedStyle,
-      ]}
+    <Pressable
       disabled={isDisabled}
-      activeOpacity={0.8}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       {...props}
     >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={
-            variant === "primary" ? theme.colors.textInverse : theme.colors.text
-          }
-        />
-      ) : (
-        <Text style={[styles.text, styles[`${variant}Text`]]}>{title}</Text>
-      )}
-    </AnimatedTouchable>
+      <AnimatedSquircle
+        style={[
+          styles.base,
+          styles[variant],
+          fullWidth && styles.fullWidth,
+          isDisabled && styles.disabled,
+          animatedStyle,
+        ]}
+        cornerSmoothing={1}
+      >
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={
+              variant === "primary" || variant === "destructive"
+                ? theme.colors.textOnDark
+                : theme.colors.textPrimary
+            }
+          />
+        ) : (
+          <Text style={[styles.text, styles[`${variant}Text`]]}>{title}</Text>
+        )}
+      </AnimatedSquircle>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
+    height: theme.sizing["sizing-button-lg"],
+    borderRadius: theme.radius["radius-s"],
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: theme.radius.md,
+    paddingHorizontal: theme.spacing["spacing-l"],
   },
   primary: {
-    backgroundColor: theme.colors.primary,
-    ...theme.shadow.sm,
+    backgroundColor: theme.colors.backgroundDark,
   },
   secondary: {
-    backgroundColor: theme.colors.card,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.backgroundSecondary,
+  },
+  destructive: {
+    backgroundColor: theme.colors.accentError,
   },
   ghost: {
     backgroundColor: "transparent",
-  },
-  sm: {
-    height: 36,
-    paddingHorizontal: theme.spacing.md,
-  },
-  md: {
-    height: 44,
-    paddingHorizontal: theme.spacing.lg,
-  },
-  lg: {
-    height: 52,
-    paddingHorizontal: theme.spacing.xl,
+    height: "auto",
   },
   fullWidth: {
     width: "100%",
@@ -120,17 +116,19 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    fontSize: theme.fontSize.base,
-    fontWeight: theme.fontWeight.semibold,
-    fontFamily: theme.fontFamily.semibold,
+    ...theme.typography.title3,
   },
   primaryText: {
-    color: theme.colors.textInverse,
+    color: theme.colors.textOnDark,
   },
   secondaryText: {
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
+  },
+  destructiveText: {
+    color: theme.colors.textOnDark,
   },
   ghostText: {
-    color: theme.colors.text,
+    color: theme.colors.textSecondary,
+    ...theme.typography.callout,
   },
 });
