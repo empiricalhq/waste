@@ -46,10 +46,11 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
     defaultValues: { name: "", email: "", password: "" },
   });
 
-  // reset form when switching between login/signup
+  // wipe form when switching between login/signup
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset() is stable; we only care that mode changed.
   useEffect(() => {
     reset();
-  }, [mode, reset]);
+  }, [mode]);
 
   const handleAuth = async (data: FormData) => {
     try {
