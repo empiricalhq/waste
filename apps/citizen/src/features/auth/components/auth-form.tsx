@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/context/toast-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { ApiError } from "@/lib/api";
 import { theme } from "@/theme";
 import type { SignUpInput } from "@/types";
 
@@ -40,10 +41,16 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
           password: data.password,
         });
       }
-      // No success toast - user can see they're logged in from UI change
+
       onSuccess?.();
-    } catch (error: any) {
-      show(error.message || "Error de autenticación", { type: "error" });
+    } catch (error: unknown) {
+      if (error instanceof ApiError) {
+        show(error.message, { type: "error" });
+      } else {
+        show("Ocurrió un error inesperado. Por favor, intenta de nuevo.", {
+          type: "error",
+        });
+      }
     }
   };
 
