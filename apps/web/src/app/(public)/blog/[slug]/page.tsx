@@ -1,11 +1,11 @@
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import { PageWrapper } from "@/components/shared/page-wrapper";
-import { ArticleRenderer } from "@/components/blog/article-renderer";
-import { marketingTheme } from "@/config/marketing";
-import { getBlogPosts, getPostBySlug } from "@/lib/blog";
-import { useMDXComponents } from "@/mdx-components";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import { ArticleRenderer } from '@/components/blog/article-renderer';
+import { PageWrapper } from '@/components/shared/page-wrapper';
+import { marketingTheme } from '@/config/marketing';
+import { getBlogPosts, getPostBySlug } from '@/lib/blog';
+import { useMDXComponents } from '@/mdx-components';
 
 export async function generateStaticParams() {
   const posts = getBlogPosts();
@@ -14,11 +14,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata(
-  props: {
-    params: Promise<{ slug: string }>;
-  }
-): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const params = await props.params;
   const post = getPostBySlug(params.slug);
   if (!post) {
@@ -27,16 +23,11 @@ export async function generateMetadata(
 
   return {
     title: `${post.metadata.title} - Lima Limpia`,
-    description:
-      post.metadata.summary || "Un artículo del blog de Lima Limpia.",
+    description: post.metadata.summary || 'Un artículo del blog de Lima Limpia.',
   };
 }
 
-export default async function BlogPostPage(
-  props: {
-    params: Promise<{ slug: string }>;
-  }
-) {
+export default async function BlogPostPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   const post = getPostBySlug(params.slug);
 

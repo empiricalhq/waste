@@ -1,7 +1,7 @@
-import Link from "next/link";
-import Image from "next/image";
-import type { PostMetadata } from "@/lib/blog";
-import { marketingTheme } from "@/config/marketing";
+import Image from 'next/image';
+import Link from 'next/link';
+import { marketingTheme } from '@/config/marketing';
+import type { PostMetadata } from '@/lib/blog';
 
 interface ArticleRendererProps {
   metadata: PostMetadata;
@@ -10,10 +10,7 @@ interface ArticleRendererProps {
 
 export function ArticleRenderer({ metadata, children }: ArticleRendererProps) {
   const theme = marketingTheme;
-  const breadcrumb = [
-    { label: "Blog", href: "/blog" },
-    { label: metadata.category },
-  ];
+  const breadcrumb = [{ label: 'Blog', href: '/blog' }, { label: metadata.category }];
 
   return (
     <>
@@ -22,21 +19,13 @@ export function ArticleRenderer({ metadata, children }: ArticleRendererProps) {
           className={`flex items-center ${theme.meta.align} ${theme.breadcrumb.gap} ${theme.breadcrumb.fontSize} ${theme.breadcrumb.textColor} ${theme.spacing.breadcrumbBottom}`}
         >
           {breadcrumb.map((item, index) => (
-            <span
-              key={index}
-              className={`flex items-center ${theme.breadcrumb.gap}`}
-            >
+            <span key={index} className={`flex items-center ${theme.breadcrumb.gap}`}>
               {item.href ? (
-                <Link
-                  href={item.href}
-                  className={`${theme.breadcrumb.hoverColor} ${theme.transitions.default}`}
-                >
+                <Link href={item.href} className={`${theme.breadcrumb.hoverColor} ${theme.transitions.default}`}>
                   {item.label}
                 </Link>
               ) : (
-                <span className={theme.breadcrumb.activeColor}>
-                  {item.label}
-                </span>
+                <span className={theme.breadcrumb.activeColor}>{item.label}</span>
               )}
               {index < breadcrumb.length - 1 && <span>/</span>}
             </span>
@@ -55,16 +44,14 @@ export function ArticleRenderer({ metadata, children }: ArticleRendererProps) {
           {metadata.thumbnail ? (
             <Image
               src={metadata.thumbnail}
-              alt={metadata.thumbnailAlt || "Miniatura del artículo"}
-              fill
+              alt={metadata.thumbnailAlt || 'Miniatura del artículo'}
+              fill={true}
               className="object-cover"
-              priority
+              priority={true}
             />
           ) : (
-            <div
-              className={`${theme.thumbnail.placeholderTextColor} ${theme.thumbnail.placeholderTextSize}`}
-            >
-              {metadata.thumbnailAlt || "Miniatura del artículo"}
+            <div className={`${theme.thumbnail.placeholderTextColor} ${theme.thumbnail.placeholderTextSize}`}>
+              {metadata.thumbnailAlt || 'Miniatura del artículo'}
             </div>
           )}
         </div>
@@ -75,19 +62,16 @@ export function ArticleRenderer({ metadata, children }: ArticleRendererProps) {
           <span>{metadata.author}</span>
           <span>{theme.meta.separator}</span>
           <time dateTime={metadata.date}>
-            {new Date(metadata.date).toLocaleDateString("es-ES", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
+            {new Date(metadata.date).toLocaleDateString('es-ES', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
             })}
           </time>
         </div>
       </div>
 
-      <div
-        className="mx-auto"
-        style={{ maxWidth: theme.layout.contentMaxWidth }}
-      >
+      <div className="mx-auto" style={{ maxWidth: theme.layout.contentMaxWidth }}>
         {children}
       </div>
     </>
