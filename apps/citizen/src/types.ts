@@ -8,12 +8,11 @@ export interface Truck {
   lastUpdate: string;
 }
 
-export interface TruckStatus {
-  status: "active" | "idle" | "not_scheduled";
-  message?: string;
-  etaMinutes?: number;
-  truckId?: string;
-}
+export type TruckStatus =
+  | { status: 'ON_THE_WAY'; etaMinutes: number; truckId: string; truckName: string }
+  | { status: 'NEARBY'; truckId: string; truckName: string }
+  | { status: 'NOT_SCHEDULED'; message: string }
+  | { status: 'LOCATION_NOT_SET'; message: string };
 
 export interface QuizQuestion {
   id: string;
@@ -45,11 +44,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-}
-
-export interface AuthTokens {
-  token: string;
-  expiresAt: number; // timestamp
 }
 
 export type WasteType = "general" | "recycling" | "organic" | "hazardous";

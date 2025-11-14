@@ -1,9 +1,4 @@
-import {
-  API_URL,
-  AUTH_TOKEN_DURATION_MS,
-  RETRY_CONFIG,
-  TOKEN_EXPIRY_BUFFER,
-} from "@/constants";
+import { API_URL, RETRY_CONFIG } from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
   CreateReportInput,
@@ -32,47 +27,23 @@ const VALID_REPORT_TYPES = ["missed_collection", "illegal_dumping", "other"];
 class ApiClient {
   private readonly baseUrl = API_URL;
 
-  private async getValidToken(): Promise<string | null> {
-    const tokens = await storage.getAuthTokens();
-    if (!tokens) {
-      return null;
-    }
-
-    // If token expires in less than TOKEN_EXPIRY_BUFFER, try to refresh
-    const timeUntilExpiry = tokens.expiresAt - Date.now();
-    if (timeUntilExpiry < TOKEN_EXPIRY_BUFFER) {
-      console.info("Token expiring soon, should implement refresh");
-      // TODO: Implement token refresh endpoint when backend supports it
-      // For now, we just let it expire and user re-authenticates
-    }
-
-    return tokens.token;
-  }
-
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: acceptable tradeoff
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
   ): Promise<T> {
-    const token = await this.getValidToken();
-
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
     };
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt < RETRY_CONFIG.MAX_ATTEMPTS; attempt++) {
       try {
-        // biome-ignore lint/performance/noAwaitInLoops: intentional retry delay
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...options,
           headers,
+          credentials: 'include',
         });
 
         if (response.status === 401) {
@@ -94,12 +65,10 @@ class ApiClient {
             response.status,
           );
 
-          // don't retry client-side errors (4xx)
           if (response.status >= 400 && response.status < 500) {
             throw apiError;
           }
 
-          // for server errors (5xx), we will retry
           lastError = apiError;
           throw apiError;
         }
@@ -113,17 +82,15 @@ class ApiClient {
       } catch (error: unknown) {
         lastError = error as Error;
 
-        // if it's a known ApiError we already handled, re-throw if it's not retryable
         if (
           error instanceof ApiError &&
           error.status &&
           error.status >= 400 &&
           error.status < 500
         ) {
-          throw error; // Not retryable, exit loop immediately
+          throw error;
         }
 
-        // retry on network errors or 5xx errors
         if (attempt < RETRY_CONFIG.MAX_ATTEMPTS - 1) {
           const delay = Math.min(
             RETRY_CONFIG.BASE_DELAY * 2 ** attempt,
@@ -139,7 +106,7 @@ class ApiClient {
 
     console.error("All retry attempts failed:", lastError);
     if (lastError instanceof ApiError) {
-      throw lastError; // throw the last known API error
+      throw lastError;
     }
 
     throw new ApiError(
@@ -150,38 +117,26 @@ class ApiClient {
 
   // auth
   async login(input: LoginInput): Promise<User> {
-    const response = await this.request<{ user: User; token: string }>(
+    const response = await this.request<{ user: User }>(
       "/api/auth/sign-in/email",
       {
         method: "POST",
         body: JSON.stringify(input),
       },
     );
-
-    if (response.token) {
-      const expiresAt = Date.now() + AUTH_TOKEN_DURATION_MS;
-      await storage.setAuthTokens({ token: response.token, expiresAt });
-      await storage.setUser(response.user);
-    }
-
+    await storage.setUser(response.user);
     return response.user;
   }
 
   async signUp(input: SignUpInput): Promise<User> {
-    const response = await this.request<{ user: User; token: string }>(
+    const response = await this.request<{ user: User }>(
       "/api/auth/sign-up/email",
       {
         method: "POST",
         body: JSON.stringify(input),
       },
     );
-
-    if (response.token) {
-      const expiresAt = Date.now() + AUTH_TOKEN_DURATION_MS;
-      await storage.setAuthTokens({ token: response.token, expiresAt });
-      await storage.setUser(response.user);
-    }
-
+    await storage.setUser(response.user);
     return response.user;
   }
 
@@ -195,18 +150,10 @@ class ApiClient {
     }
   }
 
-  /**
-   * Gets user from local storage (not API).
-   * Call this on app start to restore session.
-   */
   getStoredUser(): Promise<User | null> {
     return storage.getUser();
   }
 
-  /**
-   * Validates stored token by making an authenticated request.
-   * Only call this when you need to verify the session is still valid.
-   */
   async validateSession(): Promise<User | null> {
     try {
       const response = await this.request<{ user: User }>(
@@ -228,43 +175,26 @@ class ApiClient {
         id: string;
         name: string;
         license_plate: string;
-        lat: number;
-        lng: number;
-        location_updated_at: string;
+        lat: number | null;
+        lng: number | null;
+        location_updated_at: string | null;
       }>
     >("/api/citizen/trucks");
 
-    return trucks.map((t) => ({
-      id: t.id,
-      name: t.name,
-      licensePlate: t.license_plate,
-      lat: t.lat,
-      lng: t.lng,
-      lastUpdate: t.location_updated_at,
-    }));
+    return trucks
+      .filter((t) => t.lat && t.lng)
+      .map((t) => ({
+        id: t.id,
+        name: t.name,
+        licensePlate: t.license_plate,
+        lat: t.lat as number,
+        lng: t.lng as number,
+        lastUpdate: t.location_updated_at as string,
+      }));
   }
 
   async getTruckStatus(): Promise<TruckStatus> {
-    const response = await this.request<{
-      status: string;
-      message?: string;
-      etaMinutes?: number;
-      truck?: string;
-    }>("/api/citizen/truck/status");
-
-    let status: TruckStatus["status"] = "idle";
-    if (response.status === "NEARBY") {
-      status = "active";
-    } else if (response.status === "LOCATION_NOT_SET") {
-      status = "not_scheduled";
-    }
-
-    return {
-      status,
-      message: response.message,
-      etaMinutes: response.etaMinutes,
-      truckId: response.truck,
-    };
+    return this.request<TruckStatus>("/api/citizen/truck/status");
   }
 
   // reports
@@ -289,7 +219,6 @@ class ApiClient {
       }),
     });
 
-    // validate response
     if (!VALID_REPORT_TYPES.includes(response.type)) {
       throw new ApiError("Tipo de reporte inválido", "INVALID_REPORT_TYPE");
     }
