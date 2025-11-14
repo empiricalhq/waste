@@ -1,6 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { REPORT_TYPES } from "@/constants";
@@ -13,6 +15,14 @@ interface ReportFormProps {
   onSubmit: (data: CreateReportInput) => void;
   isSubmitting: boolean;
 }
+
+const reportSchema = z.object({
+  description: z
+    .string()
+    .min(10, "Describe el problema con más detalle (mín. 10 caracteres)"),
+});
+
+type FormData = z.infer<typeof reportSchema>;
 
 export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
   const [type, setType] = useState<CreateReportInput["type"] | null>(null);
@@ -28,16 +38,14 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
     control,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<Pick<CreateReportInput, "description">>({
+  } = useForm<FormData>({
+    resolver: zodResolver(reportSchema),
     mode: "onChange",
     defaultValues: { description: "" },
   });
 
-  const handleFormSubmit = async (
-    data: Pick<CreateReportInput, "description">,
-  ) => {
+  const handleFormSubmit = async (data: FormData) => {
     if (!type) {
-      // this should not happen if UI is correct, but as a safeguard
       show("Selecciona un tipo de reporte", { type: "error" });
       return;
     }
@@ -95,14 +103,6 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
       <Controller
         control={control}
         name="description"
-        rules={{
-          required: "La descripción es obligatoria",
-          minLength: {
-            value: 10,
-            message:
-              "Describe el problema con más detalle (mín. 10 caracteres)",
-          },
-        }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             label="Descripción"
