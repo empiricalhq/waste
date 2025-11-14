@@ -4,15 +4,49 @@ import { Card } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
 import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/context/toast-context";
+import { useLocation } from "@/features/map/hooks/use-location";
 import { useQuizProgress } from "@/features/quiz/hooks/use-quiz-progress";
+import { ApiError } from "@/lib/api";
 import { theme } from "@/theme";
 import { AuthForm } from "../components/auth-form";
 import { useAuth } from "../hooks/use-auth";
+import { useUpdateLocation } from "../hooks/use-update-location";
 
 export function ProfileScreen() {
   const { user, isAuthenticated, logout } = useAuth();
   const { show } = useToast();
   const { progress, isLoadingProgress } = useQuizProgress();
+  const {
+    isLoading: isLoadingLocation,
+    error: locationError,
+    requestLocation,
+  } = useLocation();
+  const { mutate: updateLocation, isPending: isUpdatingLocation } =
+    useUpdateLocation();
+
+  const handleUpdateLocation = async () => {
+    try {
+      const coords = await requestLocation();
+      if (coords) {
+        updateLocation(coords, {
+          onSuccess: () => {
+            show("Ubicación actualizada correctamente", { type: "success" });
+          },
+          onError: (error) => {
+            const message =
+              error instanceof ApiError
+                ? error.message
+                : "No se pudo guardar tu ubicación.";
+            show(message, { type: "error" });
+          },
+        });
+      }
+    } catch (error) {
+      if (locationError) {
+        show(locationError, { type: "error" });
+      }
+    }
+  };
 
   const handleLogout = () => {
     show("¿Estás seguro que quieres cerrar sesión?", {
@@ -69,6 +103,13 @@ export function ProfileScreen() {
             </View>
           )}
         </Card>
+
+        <Button
+          title="Actualizar mi ubicación"
+          variant="secondary"
+          onPress={handleUpdateLocation}
+          loading={isLoadingLocation || isUpdatingLocation}
+        />
 
         <Button
           title="Cerrar sesión"

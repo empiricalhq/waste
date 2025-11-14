@@ -2,6 +2,7 @@ import { API_URL, RETRY_CONFIG } from "@/constants";
 import { storage } from "@/lib/storage";
 import type {
   CreateReportInput,
+  LocationCoords,
   LoginInput,
   Report,
   SignUpInput,
@@ -166,6 +167,13 @@ class ApiClient {
       }
       throw error;
     }
+  }
+
+  async updateProfileLocation(coords: LocationCoords): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>("/api/citizen/profile/location", {
+      method: "PUT",
+      body: JSON.stringify({ lat: coords.latitude, lng: coords.longitude }),
+    });
   }
 
   // trucks
