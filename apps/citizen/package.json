@@ -11,12 +11,12 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
     "biome": "biome check --reporter=github --unsafe .",
-    "postinstall": "bun install -g eas-cli && bun run login"
+    "postinstall": "bun install -g eas-cli"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
-    "@tanstack/react-query": "^5.90.3",
+    "@tanstack/react-query": "^5.90.8",
     "expo": "54.0.23",
     "expo-camera": "~17.0.9",
     "expo-constants": "~18.0.3",
