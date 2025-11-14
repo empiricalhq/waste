@@ -26,7 +26,7 @@ export function useQuizProgress() {
 
   const query = useQuery({
     queryKey: ["quizProgress"],
-    queryFn: storage.getQuizProgress,
+    queryFn: () => storage.getQuizProgress(),
     staleTime: Number.POSITIVE_INFINITY,
   });
 
@@ -38,7 +38,6 @@ export function useQuizProgress() {
 
       const today = new Date().toISOString().split("T")[0];
 
-      // if user already played today, only update stats, not the streak.
       if (currentProgress.lastPlayed === today) {
         const newProgress: QuizProgress = {
           ...currentProgress,
@@ -56,7 +55,6 @@ export function useQuizProgress() {
 
       let newStreak: number;
       if (daysSinceLastPlayed === 1) {
-        // played yesterday, continue the streak.
         newStreak = currentProgress.streak + 1;
       } else {
         newStreak = 1;

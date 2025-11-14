@@ -32,7 +32,7 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
   const isAnswered = selectedAnswer !== null;
   const isLastQuestion = currentIndex === questions.length - 1;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: imageOpacity and imageScale are stable shared values.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: currentIndex is the trigger to re-run the animation for each new question
   useEffect(() => {
     imageOpacity.value = withTiming(1, {
       duration: theme.animation.duration.slow,
@@ -54,9 +54,7 @@ export function QuizGame({ questions, onComplete }: QuizGameProps) {
 
   const handleNext = () => {
     if (isLastQuestion) {
-      const finalScore =
-        selectedAnswer === question.correctAnswer ? score + 1 : score;
-      onComplete(finalScore);
+      onComplete(score);
     } else {
       imageOpacity.value = 0;
       imageScale.value = 0.9;
@@ -128,7 +126,7 @@ function OptionButton({
 }: OptionButtonProps) {
   const scale = useSharedValue(1);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: scale is a stable shared value
+  // biome-ignore lint/correctness/useExhaustiveDependencies: isCorrect and isWrong are the triggers
   useEffect(() => {
     if (isCorrect) {
       scale.value = withSequence(
