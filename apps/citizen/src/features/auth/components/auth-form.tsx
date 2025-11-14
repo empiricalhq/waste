@@ -16,9 +16,7 @@ const baseSchema = z.object({
 
 const signupSchema = baseSchema.extend({
   name: z.string().min(2, "El nombre es obligatorio"),
-  password: z
-    .string()
-    .min(6, "La contraseña debe tener al menos 6 caracteres"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
 const loginSchema = baseSchema.extend({
@@ -59,6 +57,7 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
         await login({ email: data.email, password: data.password });
       } else {
         await signUp({
+          // biome-ignore lint/style/noNonNullAssertion: zod guarantees that data.name is a valid string if we reach this point
           name: data.name!,
           email: data.email,
           password: data.password,
