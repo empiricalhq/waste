@@ -1,12 +1,27 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Link, Tabs } from "expo-router";
-import { BookOpen, Home, MapPin, Plus, User } from "lucide-react-native";
+import {
+  BookOpen,
+  Home,
+  type LucideProps,
+  MapPin,
+  Plus,
+  User,
+} from "lucide-react-native";
+import type { ComponentType } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import FastSquircleView from "react-native-fast-squircle";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { theme } from "@/theme";
 
-function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+const TAB_ICONS: Record<string, ComponentType<LucideProps>> = {
+  index: Home,
+  map: MapPin,
+  learn: BookOpen,
+  profile: User,
+};
+
+function CustomTabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -21,7 +36,6 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         ]}
       >
         {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
           const isFocused = state.index === index;
 
           const onPress = () => {
@@ -40,16 +54,10 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             ? theme.colors.iconDark
             : theme.colors.iconGrey;
 
-          let icon;
-          if (route.name === "index") {
-            icon = <Home color={iconColor} size={28} />;
-          } else if (route.name === "map") {
-            icon = <MapPin color={iconColor} size={28} />;
-          } else if (route.name === "learn") {
-            icon = <BookOpen color={iconColor} size={28} />;
-          } else if (route.name === "profile") {
-            icon = <User color={iconColor} size={28} />;
-          }
+          const IconComponent = TAB_ICONS[route.name];
+          const icon = IconComponent ? (
+            <IconComponent color={iconColor} size={28} />
+          ) : null;
 
           // render placeholder for the center button area
           if (index === 2) {
