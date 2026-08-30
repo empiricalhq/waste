@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic';
 import type { Truck } from '@/lib/api-contract';
 
-// El MapWrapper ahora acepta la lista de camiones con ubicación
 interface MapWrapperProps {
   trucks: Truck[];
 }
@@ -18,6 +17,5 @@ const LiveMap = dynamic(() => import('@/components/map/live-map'), {
 });
 
 export function MapWrapper({ trucks }: MapWrapperProps) {
-  // Pasamos la lista de camiones al componente LiveMap
   return <LiveMap trucks={trucks} />;
 }

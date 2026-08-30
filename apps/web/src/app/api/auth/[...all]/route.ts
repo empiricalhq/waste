@@ -1,9 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { ENV } from '@/lib/env';
 
-// This route acts as a proxy to the authentication service.
-// This is used by the client-side `better-auth/react` library to fetch session data
-// without exposing the external auth service URL to the browser.
+// Keep authentication requests on this origin while the API URL stays server-side.
 async function handler(request: NextRequest) {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -16,7 +14,7 @@ async function handler(request: NextRequest) {
         'Content-Type': request.headers.get('Content-Type') || 'application/json',
         Cookie: request.headers.get('Cookie') || '',
       },
-      body: request.method !== 'GET' ? await request.text() : undefined,
+      body: request.method === 'GET' ? undefined : await request.text(),
       ...(request.method !== 'GET' && ({ duplex: 'auto' } as RequestInit)),
     });
 

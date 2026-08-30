@@ -7,7 +7,7 @@ import { marketingTheme } from '@/config/marketing';
 import { getBlogPosts, getPostBySlug } from '@/lib/blog';
 import { useMDXComponents } from '@/mdx-components';
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   const posts = getBlogPosts();
   return posts.map((post) => ({
     slug: post.slug,

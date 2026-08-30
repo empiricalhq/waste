@@ -46,7 +46,7 @@ export default function HomePage() {
                 Gratuito. Self-hosted. Código abierto. Construido para municipalidades de todos los tamaños.
               </p>
               <a
-                href="https://github.com/empiricalhq/waste"
+                href="https://github.com/empiricalhq/lima-limpia"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[14px] text-gray-900 hover:text-gray-700 font-medium"

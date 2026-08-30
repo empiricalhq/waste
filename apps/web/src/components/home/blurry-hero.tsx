@@ -9,7 +9,7 @@ import { marketingTheme } from '@/config/marketing';
 export function BlurryHero() {
   const [showVideo, setShowVideo] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLButtonElement>(null);
   const videoPlayerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,14 +25,16 @@ export function BlurryHero() {
         ease: 'back.out(1.7)',
       });
 
-      setTimeout(() => {
+      const playTimer = setTimeout(() => {
         const video = videoPlayerRef.current?.querySelector('video');
         if (video) {
           video.play().catch(() => {
-            // Autoplay might be blocked by browser.
+            // Browsers may block playback until the user interacts.
           });
         }
       }, 400);
+
+      return () => clearTimeout(playTimer);
     }
   }, [showVideo]);
 
@@ -48,7 +50,8 @@ export function BlurryHero() {
   };
 
   return (
-    <div
+    <section
+      aria-labelledby="hero-title"
       className="flex items-center justify-center px-6 py-20 relative"
       style={{
         paddingTop: marketingTheme.layout.navHeight,
@@ -57,6 +60,7 @@ export function BlurryHero() {
     >
       <div className="text-center relative z-10" style={{ maxWidth: marketingTheme.layout.contentMaxWidth }}>
         <h1
+          id="hero-title"
           className={`${marketingTheme.title.fontSize} ${marketingTheme.title.fontWeight} ${marketingTheme.title.lineHeight} ${marketingTheme.title.tracking} ${marketingTheme.title.textColor} mb-6`}
         >
           <span className="blur-word">Donde</span> <span className="blur-word">los datos</span>{' '}
@@ -75,6 +79,7 @@ export function BlurryHero() {
             Leer el artículo
           </Link>
           <button
+            type="button"
             onClick={() => setShowVideo(true)}
             className="inline-block text-[15px] bg-white text-gray-900 border border-gray-300 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium"
           >
@@ -83,14 +88,24 @@ export function BlurryHero() {
         </div>
       </div>
 
-      {showVideo && (
+      {showVideo ? (
         <>
-          <div ref={backdropRef} className="fixed inset-0 bg-black/50 z-50" onClick={closeModal} />
+          <button
+            type="button"
+            ref={backdropRef}
+            aria-label="Cerrar el video"
+            className="fixed inset-0 border-0 bg-black/50 p-0 z-50"
+            onClick={closeModal}
+          />
           <div ref={modalRef} className="fixed inset-0 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Ver el Video</h3>
-                <button onClick={closeModal} className="text-gray-500 hover:text-gray-700 text-2xl leading-none">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                >
                   ×
                 </button>
               </div>
@@ -102,7 +117,7 @@ export function BlurryHero() {
             </div>
           </div>
         </>
-      )}
-    </div>
+      ) : null}
+    </section>
   );
 }

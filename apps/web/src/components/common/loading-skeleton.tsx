@@ -6,7 +6,6 @@ export function DashboardSkeleton() {
 
   return (
     <div className="space-y-6">
-      {/* Stats skeleton */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {statKeys.map((key) => (
           <div key={key} className="rounded-lg border p-4">
@@ -16,7 +15,6 @@ export function DashboardSkeleton() {
         ))}
       </div>
 
-      {/* Main content skeleton */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Skeleton className="h-[500px] w-full rounded-lg" />
@@ -41,14 +39,12 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
 
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="flex space-x-4">
         {colKeys.map((colKey) => (
           <Skeleton key={`header-${colKey}`} className="h-4 flex-1" />
         ))}
       </div>
 
-      {/* Rows */}
       {rowKeys.map((rowKey) => (
         <div key={rowKey} className="flex space-x-4">
           {colKeys.map((colKey) => (

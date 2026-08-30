@@ -19,7 +19,7 @@ export function ArticleRenderer({ metadata, children }: ArticleRendererProps) {
           className={`flex items-center ${theme.meta.align} ${theme.breadcrumb.gap} ${theme.breadcrumb.fontSize} ${theme.breadcrumb.textColor} ${theme.spacing.breadcrumbBottom}`}
         >
           {breadcrumb.map((item, index) => (
-            <span key={index} className={`flex items-center ${theme.breadcrumb.gap}`}>
+            <span key={item.href ?? item.label} className={`flex items-center ${theme.breadcrumb.gap}`}>
               {item.href ? (
                 <Link href={item.href} className={`${theme.breadcrumb.hoverColor} ${theme.transitions.default}`}>
                   {item.label}
@@ -46,6 +46,7 @@ export function ArticleRenderer({ metadata, children }: ArticleRendererProps) {
               src={metadata.thumbnail}
               alt={metadata.thumbnailAlt || 'Miniatura del artículo'}
               fill={true}
+              sizes="(min-width: 1024px) 1024px, 100vw"
               className="object-cover"
               priority={true}
             />

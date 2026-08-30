@@ -19,7 +19,7 @@ export function AuthContainer({ children, showBrandImage = false, footer, classN
             <div className="w-full">{children}</div>
           </div>
 
-          {showBrandImage && (
+          {showBrandImage ? (
             <div className="relative bg-muted hidden md:flex items-center justify-center overflow-hidden -my-8">
               <Image
                 src="/lima-verde.webp"
@@ -29,11 +29,11 @@ export function AuthContainer({ children, showBrandImage = false, footer, classN
                 priority={true}
               />
             </div>
-          )}
+          ) : null}
         </CardContent>
       </Card>
 
-      {footer && <div>{footer}</div>}
+      {footer ? <div>{footer}</div> : null}
     </div>
   );
 }

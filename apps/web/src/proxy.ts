@@ -32,47 +32,58 @@ async function getAuthFromRequest(request: NextRequest): Promise<AuthContext | n
   }
 }
 
+function isBypassedPath(pathname: string): boolean {
+  return pathname.startsWith('/_next/') || pathname.includes('.') || pathname.startsWith('/api');
+}
+
+function redirectToSignIn(request: NextRequest, pathname: string): NextResponse {
+  const signInUrl = new URL('/signin', request.url);
+  signInUrl.searchParams.set('callbackUrl', pathname);
+  return NextResponse.redirect(signInUrl);
+}
+
+function guardProtectedRoute(request: NextRequest, pathname: string, userRoles: string[]): NextResponse | null {
+  const hasAccess = PROTECTED_ROLES.some((role) => userRoles.includes(role));
+  if (!hasAccess) {
+    const response = NextResponse.redirect(new URL('/signin', request.url));
+    response.cookies.delete('better-auth.session_token');
+    return response;
+  }
+
+  const hasSettingsAccess = SETTINGS_ROLES.some((role) => userRoles.includes(role));
+  if (pathname.startsWith(SETTINGS_ROUTE_PREFIX) && !hasSettingsAccess) {
+    return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
+  }
+
+  return null;
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith('/_next/') || pathname.includes('.')) {
+  // API and asset requests do not need the page access check.
+  if (isBypassedPath(pathname)) {
     return NextResponse.next();
   }
 
   const auth = await getAuthFromRequest(request);
   const isAuthenticated = Boolean(auth?.user);
-  const userRole = auth?.user?.role;
-  const userRoles = userRole?.split(',') ?? [];
+  const userRoles = auth?.user?.role?.split(',') ?? [];
 
-  if (pathname.startsWith('/api')) {
-    return NextResponse.next();
-  }
-
-  const isAuthRoute = AUTH_ROUTES.includes(pathname);
-  const isProtectedRoute = pathname.startsWith(PROTECTED_ROUTE_PREFIX);
-
-  if (isAuthRoute && isAuthenticated) {
+  if (AUTH_ROUTES.includes(pathname) && isAuthenticated) {
     return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
   }
 
+  const isProtectedRoute = pathname.startsWith(PROTECTED_ROUTE_PREFIX);
+
   if (isProtectedRoute && !isAuthenticated) {
-    const signInUrl = new URL('/signin', request.url);
-    signInUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(signInUrl);
+    return redirectToSignIn(request, pathname);
   }
 
   if (isProtectedRoute && isAuthenticated) {
-    const hasAccess = PROTECTED_ROLES.some((role) => userRoles.includes(role));
-    if (!hasAccess) {
-      const signInUrl = new URL('/signin', request.url);
-      const response = NextResponse.redirect(signInUrl);
-      response.cookies.delete('better-auth.session_token');
-      return response;
-    }
-
-    const hasSettingsAccess = SETTINGS_ROLES.some((role) => userRoles.includes(role));
-    if (pathname.startsWith(SETTINGS_ROUTE_PREFIX) && !hasSettingsAccess) {
-      return NextResponse.redirect(new URL(PROTECTED_ROUTE_PREFIX, request.url));
+    const guardResponse = guardProtectedRoute(request, pathname, userRoles);
+    if (guardResponse) {
+      return guardResponse;
     }
   }
 

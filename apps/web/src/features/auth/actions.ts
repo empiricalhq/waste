@@ -107,7 +107,6 @@ async function setupOrganization(sessionCookie: string): Promise<string> {
     throw new Error('No se pudo establecer la organización activa');
   }
 
-  // get the updated session cookie
   const newSessionCookie = setActiveResponse.headers.get('Set-Cookie');
   if (newSessionCookie) {
     const newCookie = newSessionCookie.split(';')[0];
@@ -129,7 +128,6 @@ export async function signIn(data: SignInSchema): Promise<ActionResult> {
     let { sessionCookie } = await performSignInRequest(validatedFields.data);
     await validateUserRole(sessionCookie);
 
-    // Set active organization for organization members
     sessionCookie = await setupOrganization(sessionCookie);
 
     await setSessionCookie(sessionCookie);
@@ -164,7 +162,8 @@ export async function signUp(data: SignUpSchema) {
 
 export async function signOut() {
   (await cookies()).delete('better-auth.session_token');
-  // biome-ignore lint/suspicious/noEmptyBlockStatements: backend signout is secondary; failure shouldn't block cookie deletion or redirect.
+  // Backend sign-out is best effort. Local cookie deletion must still finish.
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: backend sign-out is best effort.
   api.post('/api/auth/sign-out').catch(() => {});
   redirect('/signin');
 }

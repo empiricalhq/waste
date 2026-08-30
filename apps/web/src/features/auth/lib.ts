@@ -24,9 +24,7 @@ export const getAuth = cache(async (): Promise<AuthContext | null> => {
   }
 });
 
-export const getCurrentUser = cache(async (): Promise<User | null> => {
-  return (await getAuth())?.user ?? null;
-});
+export const getCurrentUser = cache(async (): Promise<User | null> => (await getAuth())?.user ?? null);
 
 export const requireUser = cache(async (): Promise<User> => {
   const user = await getCurrentUser();

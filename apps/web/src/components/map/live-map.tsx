@@ -9,13 +9,11 @@ interface LiveMapProps {
   trucks?: Truck[];
 }
 
-// Default map constants
 const X_COORDINATE = -77.0428;
 const Y_COORDINATE = -12.0464;
 const DEFAULT_CENTER: [number, number] = [Y_COORDINATE, X_COORDINATE]; // Lima, Peru
 const DEFAULT_ZOOM = 12;
 
-// Marker icon config
 const ICON_SIZE = { width: 25, height: 41 };
 const ICON_ANCHOR = { x: 12, y: 41 };
 const POPUP_ANCHOR = { x: 1, y: -34 };
@@ -33,7 +31,7 @@ export default function LiveMap({ trucks = [] }: LiveMapProps) {
   });
 
   const trucksWithLocation = trucks.filter(
-    (t): t is Truck & { lat: number; lng: number } => t.lat != null && t.lng != null,
+    (t): t is Truck & { lat: number; lng: number } => t.lat !== null && t.lng !== null,
   );
 
   const center: [number, number] =

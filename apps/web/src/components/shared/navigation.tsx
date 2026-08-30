@@ -56,7 +56,7 @@ export function Navigation({ navLinks, showAuth = true }: NavigationProps) {
           </div>
         )}
 
-        {showAuth && (
+        {showAuth ? (
           <div className={`flex items-center ${theme.nav.auth.buttonGap}`}>
             <Link
               href="/signin"
@@ -65,7 +65,7 @@ export function Navigation({ navLinks, showAuth = true }: NavigationProps) {
               Intranet
             </Link>
           </div>
-        )}
+        ) : null}
       </div>
     </nav>
   );

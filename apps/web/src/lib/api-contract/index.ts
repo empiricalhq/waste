@@ -1,4 +1,4 @@
-// biome-ignore-all lint: we do need all of these exports
+// biome-ignore-all lint: this module is the public contract export surface.
 export type { Route, Truck } from './admin';
 export { routeSchema, routeStatusSchema, truckSchema } from './admin';
 export type { Issue, Session, User } from './common';

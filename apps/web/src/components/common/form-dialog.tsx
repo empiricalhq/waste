@@ -13,9 +13,6 @@ interface FormDialogProps extends PropsWithChildren {
   contentClassName?: string;
 }
 
-/**
- * A generic dialog component for forms.
- */
 export function FormDialog({
   title,
   description,
@@ -31,7 +28,7 @@ export function FormDialog({
       <DialogContent className={cn('sm:max-w-[600px] max-h-[90vh] flex flex-col', contentClassName)}>
         <DialogHeader className="shrink-0">
           <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+          {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto pr-1">{children}</div>

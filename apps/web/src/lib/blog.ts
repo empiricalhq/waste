@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { cache } from 'react';
 
 export interface PostMetadata {
   title: string;
@@ -18,24 +19,25 @@ export interface Post {
 }
 
 const POSTS_DIRECTORY = path.join(process.cwd(), 'src/posts');
+const FRONTMATTER_REGEX = /---\s*([\s\S]*?)\s*---/;
+const QUOTED_VALUE_REGEX = /^['"](.*)['"]$/;
 
 function parseFrontmatter(fileContent: string) {
-  const frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
-  const match = frontmatterRegex.exec(fileContent);
+  const match = FRONTMATTER_REGEX.exec(fileContent);
 
   if (!match) {
     return { metadata: {} as PostMetadata, content: fileContent };
   }
 
   const frontMatterBlock = match[1];
-  const content = fileContent.replace(frontmatterRegex, '').trim();
+  const content = fileContent.replace(FRONTMATTER_REGEX, '').trim();
   const frontMatterLines = frontMatterBlock.trim().split('\n');
   const metadata: Partial<PostMetadata> = {};
 
   for (const line of frontMatterLines) {
     const [key, ...valueArr] = line.split(': ');
     let value = valueArr.join(': ').trim();
-    value = value.replace(/^['"](.*)['"]$/, '$1'); // Remove quotes
+    value = value.replace(QUOTED_VALUE_REGEX, '$1');
 
     if (key && value) {
       const typedKey = key.trim() as keyof PostMetadata;
@@ -58,7 +60,7 @@ function readMDXFile(filePath: string) {
   return parseFrontmatter(rawContent);
 }
 
-export function getBlogPosts(): Post[] {
+export const getBlogPosts = cache((): Post[] => {
   const mdxFiles = getMDXFiles(POSTS_DIRECTORY);
 
   const posts = mdxFiles.map((file) => {
@@ -78,7 +80,7 @@ export function getBlogPosts(): Post[] {
     }
     return 1;
   });
-}
+});
 
 export function getPostBySlug(slug: string): Post | undefined {
   const posts = getBlogPosts();

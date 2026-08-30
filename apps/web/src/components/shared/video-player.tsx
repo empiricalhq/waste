@@ -24,15 +24,20 @@ export function VideoPlayer({ src, poster, className = '' }: VideoPlayerProps) {
 
     const updateTime = () => setCurrentTime(video.currentTime);
     const updateDuration = () => setDuration(video.duration);
+    const updatePlayingState = () => setIsPlaying(!video.paused);
 
     video.addEventListener('timeupdate', updateTime);
     video.addEventListener('loadedmetadata', updateDuration);
-    video.addEventListener('ended', () => setIsPlaying(false));
+    video.addEventListener('play', updatePlayingState);
+    video.addEventListener('pause', updatePlayingState);
+    video.addEventListener('ended', updatePlayingState);
 
     return () => {
       video.removeEventListener('timeupdate', updateTime);
       video.removeEventListener('loadedmetadata', updateDuration);
-      video.removeEventListener('ended', () => setIsPlaying(false));
+      video.removeEventListener('play', updatePlayingState);
+      video.removeEventListener('pause', updatePlayingState);
+      video.removeEventListener('ended', updatePlayingState);
     };
   }, []);
 
@@ -42,32 +47,31 @@ export function VideoPlayer({ src, poster, className = '' }: VideoPlayerProps) {
       return;
     }
 
-    if (isPlaying) {
-      video.pause();
+    if (video.paused) {
+      video.play().catch(() => undefined);
     } else {
-      video.play();
+      video.pause();
     }
-    setIsPlaying(!isPlaying);
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
     const video = videoRef.current;
     if (!video) {
       return;
     }
 
-    const time = (Number.parseFloat(e.target.value) / 100) * duration;
+    const time = (Number.parseFloat(event.target.value) / 100) * duration;
     video.currentTime = time;
     setCurrentTime(time);
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const video = videoRef.current;
     if (!video) {
       return;
     }
 
-    const newVolume = Number.parseFloat(e.target.value);
+    const newVolume = Number.parseFloat(event.target.value);
     video.volume = newVolume;
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
@@ -97,6 +101,7 @@ export function VideoPlayer({ src, poster, className = '' }: VideoPlayerProps) {
   return (
     <div className={`bg-white rounded-lg overflow-hidden ${className}`} style={{ touchAction: 'manipulation' }}>
       <div className="relative bg-black">
+        {/* biome-ignore lint/a11y/useMediaCaption: The external source has no caption track and no transcript is available. */}
         <video
           ref={videoRef}
           src={src}
@@ -123,18 +128,19 @@ export function VideoPlayer({ src, poster, className = '' }: VideoPlayerProps) {
         <div className="flex items-center justify-between px-4 pb-3">
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={togglePlay}
               className="w-10 h-10 bg-gray-900 hover:bg-gray-800 active:bg-gray-700 text-white rounded-md flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
               aria-label={isPlaying ? 'Pause' : 'Play'}
               style={{ touchAction: 'manipulation' }}
             >
               {isPlaying ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <rect x="6" y="4" width="4" height="16" rx="1" />
                   <rect x="14" y="4" width="4" height="16" rx="1" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <polygon points="7,4 19,12 7,20" />
                 </svg>
               )}
@@ -148,24 +154,49 @@ export function VideoPlayer({ src, poster, className = '' }: VideoPlayerProps) {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={toggleMute}
                 className="w-9 h-9 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-900 rounded-md flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
                 style={{ touchAction: 'manipulation' }}
               >
                 {isMuted || volume === 0 ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    aria-hidden="true"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5" />
                     <line x1="23" y1="9" x2="17" y2="15" />
                     <line x1="17" y1="9" x2="23" y2="15" />
                   </svg>
                 ) : volume < 0.5 ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    aria-hidden="true"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5" />
                     <path d="M15.54,8.46a5,5,0,0,1,0,7.07" />
                   </svg>
                 ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    aria-hidden="true"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5" />
                     <path d="M15.54,8.46a5,5,0,0,1,0,7.07" />
                     <path d="M19.07,4.93a10,10,0,0,1,0,14.14" />

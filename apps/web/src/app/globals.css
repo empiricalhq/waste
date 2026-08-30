@@ -72,7 +72,6 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
-/* variables for (public) routes */
 .public-theme {
   --background: oklch(1 0 0);
   --foreground: oklch(0.13 0.028 261.692);

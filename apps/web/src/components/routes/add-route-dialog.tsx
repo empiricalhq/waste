@@ -13,7 +13,7 @@ import { createRoute } from '@/features/routes/actions';
 import { type CreateRouteSchema, createRouteSchema } from '@/features/routes/schemas';
 import { FormDialog } from '../common/form-dialog';
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: a form is not complex but rather repetitive so, this is ignored
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: the form repeats one field group for each input.
 export function AddRouteDialog() {
   const [isPending, startTransition] = useTransition();
 

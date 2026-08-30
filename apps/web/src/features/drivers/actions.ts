@@ -69,7 +69,7 @@ export async function updateDriver(data: UpdateDriverSchema): Promise<ActionResu
     await api.admin.updateDriver(id, {
       name,
       email,
-      ...(password && { password }), // Only include password if provided
+      ...(password && { password }),
     });
   } catch (error: unknown) {
     return { error: error instanceof Error ? error.message : 'Failed to update driver.' };

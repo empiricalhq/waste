@@ -1,3 +1,4 @@
+import { ApiStatusMonitor } from '@/components/common/api-status-monitor';
 import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar';
 import { getAuth, requireUser } from '@/features/auth/lib';
 import type { Role } from '@/features/auth/roles';
@@ -9,11 +10,14 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   const userRole = (auth?.user?.role as Role) ?? null;
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar user={user} memberRole={userRole} />
-      <div className="lg:pl-64">
-        <main className="p-6">{children}</main>
+    <>
+      <ApiStatusMonitor />
+      <div className="min-h-screen bg-background">
+        <DashboardSidebar user={user} memberRole={userRole} />
+        <div className="lg:pl-64">
+          <main className="p-6">{children}</main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

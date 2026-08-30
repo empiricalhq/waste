@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Validation constants
 const MIN_PASSWORD_LENGTH = 8;
 const MIN_SIGNIN_PASSWORD_LENGTH = 6;
 const MIN_NAME_LENGTH = 2;

@@ -1,7 +1,7 @@
 import type { MDXComponents } from 'mdx/types';
 import { marketingTheme } from '@/config/marketing';
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: This component is inherently verbose
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: the element mapping is intentionally repetitive.
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   const theme = marketingTheme;
 

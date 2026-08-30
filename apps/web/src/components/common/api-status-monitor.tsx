@@ -24,7 +24,6 @@ export function ApiStatusMonitor() {
           showConnectionError();
         }
       } catch {
-        // Handle server action RPC failures (rare edge case)
         showConnectionError();
       }
     }

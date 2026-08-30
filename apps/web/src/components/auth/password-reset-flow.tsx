@@ -24,9 +24,9 @@ import {
 import { cn } from '@/lib/utils';
 
 const REDIRECT_DELAY_MS = 2000;
-// biome-ignore lint/style/noMagicNumbers: definition for ease-out quad
+// biome-ignore lint/style/noMagicNumbers: standard easing curve.
 const EASE_OUT_QUAD = [0.25, 0.46, 0.45, 0.94] as const;
-// biome-ignore lint/style/noMagicNumbers: definition for ease-in quad
+// biome-ignore lint/style/noMagicNumbers: standard easing curve.
 const EASE_IN_QUAD = [0.55, 0.085, 0.68, 0.53] as const;
 const ANIMATION_DURATION_IN = 0.3;
 const ANIMATION_DURATION_OUT = 0.2;
