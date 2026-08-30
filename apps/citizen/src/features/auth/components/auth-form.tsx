@@ -23,9 +23,16 @@ const loginSchema = baseSchema.extend({
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 
-const formSchema = signupSchema.partial({ name: true });
+interface FormData {
+  name?: string;
+  email: string;
+  password: string;
+}
 
-type FormData = z.infer<typeof formSchema>;
+const DEFAULT_VALUES = {
+  login: { name: "", email: "", password: "" },
+  signup: { name: "", email: "", password: "" },
+} as const;
 
 interface AuthFormProps {
   onSuccess?: () => void;
@@ -46,11 +53,9 @@ export function AuthForm({ onSuccess }: AuthFormProps) {
     defaultValues: { name: "", email: "", password: "" },
   });
 
-  // wipe form when switching between login/signup
-  // biome-ignore lint/correctness/useExhaustiveDependencies: reset() is stable; we only care that mode changed.
   useEffect(() => {
-    reset();
-  }, [mode]);
+    reset(DEFAULT_VALUES[mode]);
+  }, [mode, reset]);
 
   const handleAuth = async (data: FormData) => {
     try {

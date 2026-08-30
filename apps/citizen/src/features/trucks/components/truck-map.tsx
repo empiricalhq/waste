@@ -26,14 +26,16 @@ function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
     return DEFAULT_MAP_CENTER;
   }, [userLat, userLng]);
 
-  const markers = useMemo(() => {
-    return trucks.map((truck) => ({
-      key: truck.id,
-      coordinates: { latitude: truck.lat, longitude: truck.lng },
-      title: truck.name,
-      snippet: `Placa: ${truck.licensePlate}`,
-    }));
-  }, [trucks]);
+  const markers = useMemo(
+    () =>
+      trucks.map((truck) => ({
+        key: truck.id,
+        coordinates: { latitude: truck.lat, longitude: truck.lng },
+        title: truck.name,
+        snippet: `Placa: ${truck.licensePlate}`,
+      })),
+    [trucks],
+  );
 
   return (
     <View style={styles.container}>
@@ -48,7 +50,7 @@ function TruckMapComponent({ trucks, userLocation }: TruckMapProps) {
   );
 }
 
-const LOCATION_EPSILON = 1e-6; // tolerance for GPS coordinate changes
+const LOCATION_EPSILON = 1e-6; // Ignore GPS changes smaller than this threshold.
 
 export const TruckMap = memo(TruckMapComponent, (prevProps, nextProps) => {
   const isUserLocationSame =

@@ -23,7 +23,6 @@ class Storage {
     await deleteItemAsync(key);
   }
 
-  // User data
   async getUser(): Promise<User | null> {
     try {
       const parsed = await this.get<User>(KEYS.USER);
@@ -31,7 +30,6 @@ class Storage {
         return null;
       }
 
-      // Validate structure
       if (!(parsed.id && parsed.email && parsed.name)) {
         console.warn("Invalid user structure, clearing");
         await this.delete(KEYS.USER);
@@ -63,7 +61,6 @@ class Storage {
     }
   }
 
-  // Quiz progress
   async getQuizProgress(): Promise<QuizProgress> {
     const defaultValue: QuizProgress = {
       streak: 0,
@@ -78,7 +75,6 @@ class Storage {
         return defaultValue;
       }
 
-      // Validate structure
       if (
         typeof parsed.streak !== "number" ||
         typeof parsed.totalAnswered !== "number" ||

@@ -40,7 +40,7 @@ export function HomeScreen() {
 
     return (
       <View style={styles.contentWrapper}>
-        {status && <TruckCard status={status} />}
+        {status ? <TruckCard status={status} /> : null}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Reportar un problema</Text>

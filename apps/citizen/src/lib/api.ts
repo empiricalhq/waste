@@ -28,6 +28,45 @@ const VALID_REPORT_TYPES = ["missed_collection", "illegal_dumping", "other"];
 class ApiClient {
   private readonly baseUrl = API_URL;
 
+  private async attemptRequest<T>(
+    endpoint: string,
+    options: RequestInit,
+    headers: Record<string, string>,
+  ): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers,
+      credentials: "include",
+    });
+
+    if (response.status === 401) {
+      await storage.clearAuth();
+      throw new ApiError(
+        "Sesión expirada. Por favor, inicia sesión nuevamente.",
+        "AUTH_EXPIRED",
+        401,
+      );
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({
+        message: "Ocurrió un error en el servidor.",
+      }));
+      throw new ApiError(
+        errorBody.message || "Error en la solicitud.",
+        errorBody.code,
+        response.status,
+      );
+    }
+
+    if (response.status === 204) {
+      return null as T;
+    }
+
+    const data = await response.json();
+    return data.data === undefined ? data : data.data;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
@@ -41,45 +80,7 @@ class ApiClient {
 
     for (let attempt = 0; attempt < RETRY_CONFIG.MAX_ATTEMPTS; attempt++) {
       try {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-          ...options,
-          headers,
-          credentials: 'include',
-        });
-
-        if (response.status === 401) {
-          await storage.clearAuth();
-          throw new ApiError(
-            "Sesión expirada. Por favor, inicia sesión nuevamente.",
-            "AUTH_EXPIRED",
-            401,
-          );
-        }
-
-        if (!response.ok) {
-          const errorBody = await response.json().catch(() => ({
-            message: "Ocurrió un error en el servidor.",
-          }));
-          const apiError = new ApiError(
-            errorBody.message || "Error en la solicitud.",
-            errorBody.code,
-            response.status,
-          );
-
-          if (response.status >= 400 && response.status < 500) {
-            throw apiError;
-          }
-
-          lastError = apiError;
-          throw apiError;
-        }
-
-        if (response.status === 204) {
-          return null as T;
-        }
-
-        const data = await response.json();
-        return data.data !== undefined ? data.data : data;
+        return await this.attemptRequest<T>(endpoint, options, headers);
       } catch (error: unknown) {
         lastError = error as Error;
 
@@ -116,7 +117,6 @@ class ApiClient {
     );
   }
 
-  // auth
   async login(input: LoginInput): Promise<User> {
     const response = await this.request<{ user: User }>(
       "/api/auth/sign-in/email",
@@ -169,24 +169,23 @@ class ApiClient {
     }
   }
 
-  async updateProfileLocation(coords: LocationCoords): Promise<{ success: boolean }> {
+  updateProfileLocation(coords: LocationCoords): Promise<{ success: boolean }> {
     return this.request<{ success: boolean }>("/api/citizen/profile/location", {
       method: "PUT",
       body: JSON.stringify({ lat: coords.latitude, lng: coords.longitude }),
     });
   }
 
-  // trucks
   async getTrucks(): Promise<Truck[]> {
     const trucks = await this.request<
-      Array<{
+      {
         id: string;
         name: string;
         license_plate: string;
         lat: number | null;
         lng: number | null;
         location_updated_at: string | null;
-      }>
+      }[]
     >("/api/citizen/trucks");
 
     return trucks
@@ -201,11 +200,10 @@ class ApiClient {
       }));
   }
 
-  async getTruckStatus(): Promise<TruckStatus> {
+  getTruckStatus(): Promise<TruckStatus> {
     return this.request<TruckStatus>("/api/citizen/truck/status");
   }
 
-  // reports
   async createReport(input: CreateReportInput): Promise<Report> {
     const response = await this.request<{
       id: string;

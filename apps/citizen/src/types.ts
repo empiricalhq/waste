@@ -1,4 +1,3 @@
-// core domain
 export interface Truck {
   id: string;
   name: string;
@@ -9,10 +8,15 @@ export interface Truck {
 }
 
 export type TruckStatus =
-  | { status: 'ON_THE_WAY'; etaMinutes: number; truckId: string; truckName: string }
-  | { status: 'NEARBY'; truckId: string; truckName: string }
-  | { status: 'NOT_SCHEDULED'; message: string }
-  | { status: 'LOCATION_NOT_SET'; message: string };
+  | {
+      status: "ON_THE_WAY";
+      etaMinutes: number;
+      truckId: string;
+      truckName: string;
+    }
+  | { status: "NEARBY"; truckId: string; truckName: string }
+  | { status: "NOT_SCHEDULED"; message: string }
+  | { status: "LOCATION_NOT_SET"; message: string };
 
 export interface QuizQuestion {
   id: string;
@@ -26,7 +30,7 @@ export interface QuizProgress {
   streak: number;
   totalAnswered: number;
   correctAnswers: number;
-  lastPlayed: string | null; // ISO date string YYYY-MM-DD
+  lastPlayed: string | null; // Calendar date in YYYY-MM-DD format.
 }
 
 export interface Report {
@@ -48,7 +52,6 @@ export interface User {
 
 export type WasteType = "general" | "recycling" | "organic" | "hazardous";
 
-// api
 export interface ApiError {
   message: string;
   code?: string;
@@ -73,13 +76,11 @@ export interface SignUpInput {
   password: string;
 }
 
-// UI
 export interface LocationCoords {
   latitude: number;
   longitude: number;
 }
 
-// Route params
 export interface ReportFlowState {
   returnTo?: string;
   requiresAuth?: boolean;

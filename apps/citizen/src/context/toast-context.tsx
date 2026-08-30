@@ -52,13 +52,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     new Map(),
   );
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       for (const timer of timersRef.current.values()) {
         clearTimeout(timer);
       }
-    };
-  }, []);
+    },
+    [],
+  );
 
   const dismiss = useCallback((id: string) => {
     if (timersRef.current.has(id)) {
@@ -80,10 +81,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       const toast: Toast = { id, content, options: toastOptions };
 
       setToasts((prev) => {
-        // Limit number of visible toasts
         const newToasts = [...prev, toast];
         if (newToasts.length > TOAST_CONFIG.MAX_VISIBLE_TOASTS) {
-          // Remove oldest toast
           const removedId = newToasts[0].id;
           if (timersRef.current.has(removedId)) {
             clearTimeout(timersRef.current.get(removedId));

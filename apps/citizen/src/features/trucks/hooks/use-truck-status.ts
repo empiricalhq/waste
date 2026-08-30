@@ -3,9 +3,6 @@ import { POLLING } from "@/constants";
 import { useAppState } from "@/hooks/use-app-state";
 import { api } from "@/lib/api";
 
-/**
- * Hook to fetch truck status with smart polling
- */
 export function useTruckStatus(options: { enabled?: boolean } = {}) {
   const { enabled = true } = options;
   const isAppActive = useAppState();

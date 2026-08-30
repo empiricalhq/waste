@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import FastSquircleView from "react-native-fast-squircle";
 import Animated, {
@@ -29,21 +29,26 @@ const getBackgroundColor = (type: ToastType["options"]["type"]): string => {
 export function Toast({ toast }: ToastProps) {
   const { dismiss } = useToast();
   const opacity = useSharedValue(0);
-  const translateY = useSharedValue(50); // Start from bottom
+  const translateY = useSharedValue(50);
+  const dismissTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // animate in
     opacity.value = withSpring(1, theme.animation.spring);
     translateY.value = withSpring(0, theme.animation.spring);
+
+    return () => {
+      if (dismissTimeoutRef.current) {
+        clearTimeout(dismissTimeoutRef.current);
+      }
+    };
   }, [opacity, translateY]);
 
   const handleDismiss = () => {
-    // animate out
     opacity.value = withTiming(0, { duration: theme.animation.duration.short });
     translateY.value = withTiming(50, {
       duration: theme.animation.duration.short,
     });
-    setTimeout(() => {
+    dismissTimeoutRef.current = setTimeout(() => {
       dismiss(toast.id);
     }, theme.animation.duration.short);
   };
@@ -55,6 +60,7 @@ export function Toast({ toast }: ToastProps) {
 
   const backgroundColor = getBackgroundColor(toast.options.type);
   const textColor = theme.colors.textOnDark;
+  const action = toast.options.action;
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
@@ -72,19 +78,17 @@ export function Toast({ toast }: ToastProps) {
               {toast.content}
             </Text>
           </View>
-          {toast.options.action && (
+          {action ? (
             <Pressable
               style={styles.actionButton}
               onPress={() => {
-                toast.options.action?.onPress();
+                action.onPress();
                 handleDismiss();
               }}
             >
-              <Text style={styles.actionText}>
-                {toast.options.action.label}
-              </Text>
+              <Text style={styles.actionText}>{action.label}</Text>
             </Pressable>
-          )}
+          ) : null}
         </FastSquircleView>
       </Pressable>
     </Animated.View>

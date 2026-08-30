@@ -2,10 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type { LoginInput, SignUpInput } from "@/types";
 
-/**
- * Main auth hook. Uses local storage as source of truth on mount,
- * then validates with API in background.
- */
 export function useAuth() {
   const queryClient = useQueryClient();
 
@@ -17,15 +13,12 @@ export function useAuth() {
         return null;
       }
 
-      // If we have a stored user, we MUST validate the session with the server.
-      // Failing to do so is a major security risk.
+      // Secure storage restores a local hint. The API session is authoritative.
       try {
         const validatedUser = await api.validateSession();
-        // If the session is invalid, validatedUser will be null.
         return validatedUser;
       } catch (error) {
-        // If validation fails (e.g., network error, server error, revoked token),
-        // we must treat the user as logged out for security.
+        // Do not trust stored credentials when session validation fails.
         console.warn("Session validation failed. Forcing logout.", error);
         return null;
       }
@@ -36,8 +29,8 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: (input: LoginInput) => api.login(input),
-    onSuccess: (user) => {
-      queryClient.setQueryData(["user"], user);
+    onSuccess: (loggedInUser) => {
+      queryClient.setQueryData(["user"], loggedInUser);
     },
     onError: () => {
       queryClient.setQueryData(["user"], null);
@@ -46,8 +39,8 @@ export function useAuth() {
 
   const signUpMutation = useMutation({
     mutationFn: (input: SignUpInput) => api.signUp(input),
-    onSuccess: (user) => {
-      queryClient.setQueryData(["user"], user);
+    onSuccess: (registeredUser) => {
+      queryClient.setQueryData(["user"], registeredUser);
     },
     onError: () => {
       queryClient.setQueryData(["user"], null);

@@ -10,7 +10,7 @@ export function Loading({ message, size = "large" }: LoadingProps) {
   return (
     <View style={styles.container}>
       <ActivityIndicator size={size} color={theme.colors.textPrimary} />
-      {message && <Text style={styles.message}>{message}</Text>}
+      {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
   );
 }

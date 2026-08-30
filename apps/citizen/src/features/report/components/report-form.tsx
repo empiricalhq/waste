@@ -129,13 +129,15 @@ export function ReportForm({ onSubmit, isSubmitting }: ReportFormProps) {
           disabled={isLoadingLocation || Boolean(coords)}
           fullWidth={true}
         />
-        {locationError && <Text style={styles.error}>{locationError}</Text>}
-        {coords && (
+        {locationError ? (
+          <Text style={styles.error}>{locationError}</Text>
+        ) : null}
+        {coords ? (
           <Text style={styles.success}>
             Ubicación: {coords.latitude.toFixed(4)},{" "}
             {coords.longitude.toFixed(4)}
           </Text>
-        )}
+        ) : null}
       </View>
 
       <Button

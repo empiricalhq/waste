@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import {
   StyleSheet,
   Text,
@@ -13,21 +13,23 @@ interface InputProps extends TextInputProps {
   error?: string;
 }
 
-export const Input = React.forwardRef<TextInput, InputProps>(
-  ({ label, error, style, ...props }, ref) => {
-    return (
-      <View>
-        <Text style={styles.label}>{label}</Text>
-        <TextInput
-          ref={ref}
-          style={[styles.input, error && styles.inputError, style]}
-          placeholderTextColor={theme.colors.textTertiary}
-          {...props}
-        />
-        {error && <Text style={styles.error}>{error}</Text>}
-      </View>
-    );
-  },
+export const Input = ({
+  label,
+  error,
+  style,
+  ref,
+  ...props
+}: InputProps & { ref?: React.RefObject<TextInput | null> }) => (
+  <View>
+    <Text style={styles.label}>{label}</Text>
+    <TextInput
+      ref={ref}
+      style={[styles.input, error && styles.inputError, style]}
+      placeholderTextColor={theme.colors.textTertiary}
+      {...props}
+    />
+    {error ? <Text style={styles.error}>{error}</Text> : null}
+  </View>
 );
 
 Input.displayName = "Input";

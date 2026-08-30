@@ -41,7 +41,7 @@ export function ProfileScreen() {
           },
         });
       }
-    } catch (error) {
+    } catch {
       if (locationError) {
         show(locationError, { type: "error" });
       }

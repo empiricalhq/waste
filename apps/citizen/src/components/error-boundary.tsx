@@ -17,12 +17,10 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   static getDerivedStateFromError(_: Error): State {
-    // update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // todo: add logging service here. for now we just log to console
     console.error("Uncaught error:", error, errorInfo);
   }
 

@@ -1,5 +1,5 @@
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Link, Tabs } from "expo-router";
+import type { BottomTabBarProps } from "expo-router/build/react-navigation/bottom-tabs";
 import {
   BookOpen,
   Home,
@@ -59,23 +59,8 @@ function CustomTabBar({ state, navigation }: BottomTabBarProps) {
             <IconComponent color={iconColor} size={28} />
           ) : null;
 
-          // render placeholder for the center button area
           if (index === 2) {
             return <View key="placeholder" style={styles.centerPlaceholder} />;
-          }
-          // adjust index for placeholder
-          const adjustedIndex = index > 1 ? index - 1 : index;
-          if (adjustedIndex >= 2) {
-            // we will render the middle button outside the map
-            return (
-              <Pressable
-                key={route.key}
-                onPress={onPress}
-                style={styles.tabItem}
-              >
-                {icon}
-              </Pressable>
-            );
           }
           return (
             <Pressable key={route.key} onPress={onPress} style={styles.tabItem}>
@@ -85,7 +70,6 @@ function CustomTabBar({ state, navigation }: BottomTabBarProps) {
         })}
       </View>
 
-      {/* center plus button */}
       <View
         style={[
           styles.centerButtonContainer,

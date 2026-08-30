@@ -37,12 +37,12 @@ export function QuizResults({
         <Text style={styles.scoreTotal}>/ {quizQuestions.length}</Text>
       </View>
       <Text style={styles.percentage}>{getMessage()}</Text>
-      {streakIncreased && (
+      {streakIncreased ? (
         <View style={styles.streakBadge}>
           <Text style={styles.streakEmoji}>🔥</Text>
           <Text style={styles.streakText}>¡Racha activa!</Text>
         </View>
-      )}
+      ) : null}
       <Button title="Jugar de nuevo" onPress={onRestart} fullWidth={true} />
     </View>
   );

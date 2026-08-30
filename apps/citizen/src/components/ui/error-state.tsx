@@ -19,9 +19,9 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         />
       </View>
       <Text style={styles.message}>{message}</Text>
-      {onRetry && (
+      {onRetry ? (
         <Button title="Reintentar" onPress={onRetry} variant="secondary" />
-      )}
+      ) : null}
     </View>
   );
 }

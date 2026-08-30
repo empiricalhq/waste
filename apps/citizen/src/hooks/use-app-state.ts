@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 
-/**
- * Returns true when app is in foreground/active state
- * Used to pause polling when app is backgrounded
- */
+/** Return whether the app is active so background polling can stop. */
 export function useAppState(): boolean {
   const [isActive, setIsActive] = useState(true);
 
