@@ -20,9 +20,7 @@ METADATA_FILE = "manifest.json"
 
 
 def _load_metadata(data_dir: Path) -> dict[str, dict]:
-    """
-    Load cached download metadata if available, otherwise return an empty dictionary.
-    """
+    """Load the manifest, or return an empty one when it is missing or invalid."""
     metadata_path = data_dir / METADATA_FILE
     if metadata_path.exists():
         try:
@@ -33,7 +31,7 @@ def _load_metadata(data_dir: Path) -> dict[str, dict]:
 
 
 def _save_metadata(data_dir: Path, metadata: dict[str, dict]) -> None:
-    """Write metadata to disk atomically, replacing the previous file."""
+    """Replace the manifest atomically."""
     metadata_path = data_dir / METADATA_FILE
     try:
         temp_path = metadata_path.with_suffix(".tmp")
@@ -44,7 +42,6 @@ def _save_metadata(data_dir: Path, metadata: dict[str, dict]) -> None:
 
 
 def _record_download(data_dir: Path, url: str, title: str, filename: str) -> None:
-    """Record a successful download in the metadata manifest."""
     metadata = _load_metadata(data_dir)
     metadata[filename] = {
         "url": url,
@@ -55,7 +52,7 @@ def _record_download(data_dir: Path, url: str, title: str, filename: str) -> Non
 
 
 def _find_cached_file(data_dir: Path, url: str) -> Optional[Path]:
-    """Return the cached file path for a given URL if it exists and is valid."""
+    """Return a cached file only when its manifest entry and file still exist."""
     metadata = _load_metadata(data_dir)
     for filename, record in metadata.items():
         if record.get("url") == url:
@@ -72,7 +69,6 @@ def find_tag(
     class_: Optional[str] = None,
     id_: Optional[str] = None,
 ) -> Optional[Tag]:
-    """Find and return the first matching BeautifulSoup tag, or None if not found."""
     kwargs = {}
     if class_:
         kwargs["class_"] = class_
@@ -132,7 +128,6 @@ def fetch_response_with_fallbacks(
 
 
 def _fetch_with_fallbacks(url: str, filepath: Path) -> bool:
-    """Download a file from a URL, retrying via archive.org if necessary."""
     response = fetch_response_with_fallbacks(url, stream=True)
     if not response:
         return False

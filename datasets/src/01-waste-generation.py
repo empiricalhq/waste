@@ -7,13 +7,12 @@ app = marimo.App(width="medium")
 with app.setup(hide_code=True):
     import logging
 
-    from pathlib import Path
-
     import altair as alt
     import marimo as mo
     import polars as pl
 
     from utils.datasets import download
+    from utils.files import resolve_data_path
 
 
 @app.cell(hide_code=True)
@@ -28,10 +27,7 @@ def _():
 
 @app.cell
 def _():
-    # Notebooks are run via `mise run dev` from the datasets directory.
-    # The working directory is the datasets root.
-    PROJECT_ROOT = Path.cwd()
-    DATA_DIR = PROJECT_ROOT / "data" / "residuos"
+    DATA_DIR = resolve_data_path("residuos")
 
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -78,7 +74,6 @@ def _(DATA_DIR):
 
 @app.cell
 def _(generation_dataset_paths):
-    # Cargar el dataset principal en un dataframe de Polars.
     df_generacion = (
         pl.read_csv(
             generation_dataset_paths["generacion_residuos"],

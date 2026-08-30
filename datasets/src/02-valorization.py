@@ -7,26 +7,17 @@ app = marimo.App(width="medium")
 with app.setup(hide_code=True):
     import logging
 
-    from pathlib import PurePath
-
     import marimo as mo
     import plotly.express as px
     import polars as pl
 
     import utils.datasets
 
+    from utils.files import resolve_data_path
+
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
-
-    def resolve_data_path(*parts) -> PurePath:
-        """
-        Return a string path to a data file under 'public', compatible with local and WASM environments.
-        """
-        base = mo.notebook_location() or (_ for _ in ()).throw(
-            RuntimeError("Notebook location could not be determined")
-        )
-        return base / "public" / PurePath(*parts)
 
 
 @app.cell(hide_code=True)
@@ -51,9 +42,6 @@ def _():
 
 @app.cell
 def _():
-    # Run notebooks with "mise run dev" from the datasets directory.
-    # The working directory is the dataset root.
-    # All downloaded data is stored in this directory.
     DATA_DIR = resolve_data_path("residuos")
     return (DATA_DIR,)
 
@@ -110,7 +98,7 @@ def _(valorization_inorg_path, valorization_org_path):
 
 @app.function(hide_code=True)
 def normalize_cols(df):
-    """Normaliza nombres de columnas a mayúsculas sin tildes ni espacios."""
+    """Normalize column names to uppercase, without accents or spaces."""
 
     def clean(col):
         return (
@@ -169,12 +157,10 @@ def process_df(df, col_name, new_col_name):
 
 @app.cell
 def _(valorization_inorg):
-    # Inorgánicos
     valorization_inorg_agg = process_df(
         valorization_inorg, "QRESIDUOS__VAL_INORGAN", "INORG_TON"
     )
 
-    # Orgánicos
     valorization_org_agg = (
         valorization_inorg.with_columns(pl.lit(0.0).alias("ORG_TON"))
         .group_by(["DEPARTAMENTO", "PROVINCIA", "DISTRITO"])
