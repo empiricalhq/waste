@@ -47,7 +47,7 @@ async function collectUserInput() {
           message: 'Nombre completo del propietario:',
           placeholder: 'Ejemplo: Juan Pérez',
           validate: (value) => {
-            if (value.trim().length < MIN_NAME_LENGTH) {
+            if ((value ?? '').trim().length < MIN_NAME_LENGTH) {
               return `Escribe el nombre completo (mínimo ${MIN_NAME_LENGTH} caracteres).`;
             }
           },
@@ -57,7 +57,7 @@ async function collectUserInput() {
           message: 'Correo electrónico del propietario:',
           placeholder: 'Ejemplo: admin@dominio.xyz',
           validate: (value) => {
-            if (!EMAIL_REGEX.test(value)) {
+            if (!EMAIL_REGEX.test(value ?? '')) {
               return 'Debes ingresar un correo electrónico válido.';
             }
           },
@@ -66,7 +66,7 @@ async function collectUserInput() {
         password({
           message: `Crea una contraseña segura (mínimo ${MIN_PASSWORD_LENGTH} caracteres):`,
           validate: (value) => {
-            if (value.length < MIN_PASSWORD_LENGTH) {
+            if ((value ?? '').length < MIN_PASSWORD_LENGTH) {
               return `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.`;
             }
           },
