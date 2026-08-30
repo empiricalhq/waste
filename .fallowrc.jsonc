@@ -1,0 +1,52 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "apps/api/src/cmd/server.ts",
+    "apps/api/test-runner.ts",
+    "apps/api/tests/**/*.test.ts",
+    "apps/web/next.config.ts",
+    "apps/web/src/app/**/{page,layout,route,loading,error,not-found,template,default}.{ts,tsx}",
+    "apps/citizen/src/app/**/*.tsx",
+    "packages/database/drizzle.config.ts",
+    "packages/database/scripts/**/*.ts",
+    "packages/email/templates/**/*.tsx"
+  ],
+  "workspaces": {
+    "patterns": ["packages/database", "packages/email", "apps/*"]
+  },
+  "publicPackages": ["@lima-garbage/email"],
+  "ignoreDependencies": [
+    // Expo config plugins are referenced by name in app.json.
+    "expo-font",
+    "expo-splash-screen",
+    // Expo links these packages natively.
+    "expo-dev-client",
+    "expo-system-ui",
+    // Loaded by @next/mdx, not imported by application code.
+    "@mdx-js/loader",
+    "@mdx-js/react",
+    // Loaded by the email preview and render tools.
+    "@react-email/preview-server",
+    "react-dom"
+  ],
+  "duplicates": {
+    // Report only patterns repeated across at least three locations.
+    "minOccurrences": 3
+  },
+  "boundaries": {
+    "zones": [
+      { "name": "api", "patterns": ["apps/api/**"] },
+      { "name": "web", "patterns": ["apps/web/**"] },
+      { "name": "citizen", "patterns": ["apps/citizen/**"] },
+      { "name": "database", "patterns": ["packages/database/**"] },
+      { "name": "email", "patterns": ["packages/email/**"] }
+    ],
+    "rules": [{ "from": "api", "allow": ["database", "email"] }]
+  },
+  "rules": {
+    // Fallow does not resolve the API's @/ alias with its current tsconfig support.
+    "unresolved-imports": "warn",
+    "unused-files": "warn",
+    "boundary-violation": "error"
+  }
+}

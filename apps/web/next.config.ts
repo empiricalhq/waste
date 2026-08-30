@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
   pageExtensions: ['mdx', 'ts', 'tsx'],
   experimental: {
     cssChunking: true,
-    viewTransition: true,
   },
   transpilePackages: ['next-mdx-remote'],
   devIndicators: {

@@ -8,11 +8,6 @@
     "scheme": "limalimpia",
     "userInterfaceStyle": "light",
     "owner": "empiricalhq",
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.limalimpia.ciudadano"
@@ -67,6 +62,13 @@
             "./assets/fonts/Inter-SemiBold.ttf",
             "./assets/fonts/Inter-Bold.ttf"
           ]
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "backgroundColor": "#ffffff"
         }
       ]
     ],

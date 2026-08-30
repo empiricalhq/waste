@@ -10,6 +10,9 @@
       "solid": "none"
     },
     "rules": {
+      "performance": {
+        "noJsxPropsBind": "off"
+      },
       "style": {
         "noDefaultExport": "off",
         "noMagicNumbers": "off",

@@ -11,7 +11,7 @@ function mustEnv(name: string): string {
 
 const databaseUrl = mustEnv('DATABASE_URL');
 
-// biome-ignore lint/style/noDefaultExport: drizzle-kit requires default export for config files
+// biome-ignore lint/style/noDefaultExport: Drizzle Kit requires a default export.
 export default defineConfig({
   schema: './src/schema/index.ts',
   out: './migrations',

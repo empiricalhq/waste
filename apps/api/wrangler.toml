@@ -6,11 +6,5 @@ compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
 
 workers_dev = true
 
-[vars]
-# Use wrangler secret for sensitive values:
-# bun x wrangler secret put DATABASE_URL
-# bun x wrangler secret put BETTER_AUTH_SECRET
-# bun x wrangler secret put RESEND_API_KEY
-
 [build]
 command = "bun run build:worker"

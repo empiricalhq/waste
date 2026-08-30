@@ -6,15 +6,16 @@
   "private": true,
   "scripts": {
     "dev": "email dev -p 3001 --dir templates",
-    "format": "biome check --write --unsafe"
+    "format": "biome format --write .",
+    "lint": "biome lint ."
   },
   "devDependencies": {
     "@react-email/components": "0.5.7",
     "@react-email/preview-server": "4.3.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "react-email": "4.3.2",
     "typescript": "5.9.3"
   }

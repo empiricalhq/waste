@@ -1,0 +1,6 @@
+[install]
+# React Native/Expo autolinking (apps/citizen) requires a single hoisted node_modules
+# tree; bun's isolated linker (the default for workspace monorepos since lockfile
+# configVersion 1) creates multiple per-context native module copies, which breaks
+# native builds. See https://expo.fyi/resolving-dependency-issues.
+linker = "hoisted"

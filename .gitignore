@@ -4,3 +4,4 @@ node_modules/
 .env.test
 *.ps1
 .vercel
+.fallow

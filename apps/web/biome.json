@@ -24,7 +24,8 @@
       },
       "performance": {
         "recommended": true,
-        "noNamespaceImport": "off"
+        "noNamespaceImport": "off",
+        "noJsxPropsBind": "off"
       }
     }
   },
