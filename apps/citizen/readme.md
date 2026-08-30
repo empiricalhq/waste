@@ -1,44 +1,59 @@
-# Docs
+# Citizen app
 
-Before you start, you're going to need a Google Cloud API key. To get it, just follow the
-[official guide](https://docs.expo.dev/versions/latest/sdk/maps/#google-cloud-api-setup)
-from Expo (you'll basically enable "Maps SDK for Android" and will get a key). Paste that
-key in `app.json` under `android.config.googleMaps.apiKey` (don't commit this!).
+`apps/citizen` is the public Expo app. It shows active trucks, reports
+collection problems, and includes waste-sorting lessons.
 
-> [!NOTE]
-> Expo Go cannot load `expo-maps` or `react-native-fast-squircle` as they have
-> native code; you must use a custom development build. To build this, you'll need EAS
-> CLI: `bun i -g eas-cli` (this is done automatically after `bun install`, see the
-> postinstall script)
+## Setup
 
-## Builds
+Install the monorepo dependencies from the repository root:
 
-### Development builds (cloud)
+```sh
+bun install
+```
 
-Fastest way to run the project on a real device.
+Set the API URL in the root `.env` or in the Expo environment used for the
+build:
 
-1. `bun run dev`
-   - Bundles the project (~600 MB) and uploads it to EAS.
-   - 3–5 min upload time; build queue + compile take about 20 min when the queue is short.
+```sh
+EXPO_PUBLIC_API_URL="http://localhost:4000"
+```
 
-2. Download the generated APK from the EAS dashboard and install it.
-   - The binary includes every native dependency; hot-reload works like Expo Go.
+When testing on an Android emulator, use `http://10.0.2.2:4000`. On a physical
+device, use the development machine's LAN address.
 
-### Local builds (Android only)
+Android maps need a Google Maps API key. Follow [Expo's Google Cloud API setup
+guide](https://docs.expo.dev/versions/latest/sdk/maps/#google-cloud-api-setup),
+then add the key to `expo.android.config.googleMaps.apiKey` in `app.json`.
+Keep the key out of source control.
 
-Use when you want to compile on your own machine.
+The app uses native modules, including `expo-maps` and
+`react-native-fast-squircle`. Expo Go cannot load this app. Use an EAS
+development build or a [local native build](https://docs.expo.dev/develop/development-builds/introduction/).
 
-1. Install Android Studio and the Android SDK.
-2. Set `ANDROID_HOME`. For Windows PowerShell (temporary):
+## Commands
 
-   ```powershell
-   $env:ANDROID_HOME = "C:\Users\<user>\AppData\Local\Android\Sdk"
-   ```
+Run from the repository root:
 
-   Permanent:
-   - Admin: System Properties > Environment Variables.
-   - Non-admin: Control Panel > User Accounts > Change my environment variables.
+```sh
+bun --filter @lima-garbage/citizens start
+bun --filter @lima-garbage/citizens dev
+bun --filter @lima-garbage/citizens android
+bun --filter @lima-garbage/citizens lint
+```
 
-   Then add `%ANDROID_HOME%\platform-tools` to `PATH`.
+The lint setup follows [Expo's ESLint guide](https://docs.expo.dev/guides/using-eslint/).
 
-3. Restart your terminal / IDE (VS Code may need a full restart).
+The `dev` script uses the `development` EAS profile. Log in first when needed:
+
+```sh
+bun --filter @lima-garbage/citizens login
+```
+
+## Local Android builds
+
+Install Android Studio and the Android SDK. Set `ANDROID_HOME` to the SDK path
+and add its `platform-tools` directory to `PATH`. The app's `mise.toml` pins
+the Java version used by the Android build.
+
+After the first native build, Metro hot reload works with the installed
+development client.

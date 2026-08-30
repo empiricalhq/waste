@@ -1,102 +1,57 @@
-## ODS 11: Gestión de residuos sólidos en áreas urbanas (Perú)
+# Datasets
 
-Actualmente podemos obtener datos del
-[SINIA](https://sinia.minam.gob.pe/portal/datos-abiertos/) (Sistema Nacional de
-Información Ambiental):
+This package contains Marimo notebooks for exploring public waste and
+population data from Peru. The notebooks are experiments for the project, not
+an API or a production data pipeline.
 
-| Dataset                                                                                                                                                                                                              | Descripción                                                                                                                                                               |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Valorización de residuos sólidos Inorgánicos a nivel distrital](https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam)                      | Información sobre el reaprovechamiento y valorización de residuos inorgánicos (plásticos, metales, vidrio, papel, etc.) gestionados por los municipios a nivel distrital. |
-| [Valorización de residuos sólidos Orgánicos a nivel distrital](https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam)                        | Datos sobre el reaprovechamiento y valorización de residuos orgánicos (restos de alimentos, residuos vegetales) gestionados a nivel distrital.                            |
-| [Composición de residuos sólidos domiciliarios](https://datosabiertos.gob.pe/dataset/composici%C3%B3n-de-residuos-s%C3%B3lidos-domiciliarios)                                                                        | Proporción de diferentes tipos de residuos generados en los hogares (orgánicos, plásticos, metales, vidrio, papel, entre otros).                                          |
-| [Disposición final adecuada de residuos sólidos](https://datosabiertos.gob.pe/dataset/disposici%C3%B3n-final-adecuada-de-residuos-s%C3%B3lidos-ministerio-del-ambiente-minam)                                        | Registra la cantidad de residuos que son llevados a infraestructuras autorizadas (rellenos sanitarios, celdas de seguridad, entre otros).                                 |
-| [Generación anual de residuos sólidos domiciliarios y municipales](https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente)          | Estadísticas anuales de generación de residuos en hogares y a nivel municipal.                                                                                            |
-| [Residuos municipales generados anualmente](https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente)                                                                                          | Cantidad de residuos generados por los municipios del país, con variación por año.                                                                                        |
-| [Implementación del Programa Municipal EDUCCA](https://www.datosabiertos.gob.pe/dataset/implementaci%C3%B3n-del-programa-municipal-de-educaci%C3%B3n-cultura-y-ciudadan%C3%ADa-ambiental-programa)                   | Información sobre la ejecución a nivel distrital del Programa EDUCCA, orientado a educación y cultura ambiental en la ciudadanía.                                         |
-| [Disposición final adecuada de residuos sólidos (duplicado)](https://www.datosabiertos.gob.pe/dataset/disposici%C3%B3n-final-adecuada-de-residuos-s%C3%B3lidos-ministerio-del-ambiente-minam)                        | Mismo dataset que el anterior sobre disposición final adecuada de residuos, listado dos veces en el portal.                                                               |
-| [Inventario Nacional de Áreas Degradadas por residuos sólidos municipales](https://www.datosabiertos.gob.pe/dataset/inventario-nacional-de-%C3%A1reas-degradadas-por-residuos-s%C3%B3lidos-municipales-organismo-de) | Registro de sitios degradados por acumulación o disposición inadecuada de residuos sólidos municipales en el país.                                                        |
+## Notebooks
 
-El objetivo es contar la historia completa de los residuos: cómo se generan, de
-qué están compuestos, cómo se valorizan, cómo se disponen, qué programas
-ambientales los gestionan y cuáles son sus impactos.
+| File | Contents |
+| --- | --- |
+| [`src/01-waste-generation.py`](src/01-waste-generation.py) | Annual municipal waste generation and a ranking of districts. |
+| [`src/02-valorization.py`](src/02-valorization.py) | Organic and inorganic waste valorization by district. |
+| [`src/03-population-map.py`](src/03-population-map.py) | Department, district, and Lima block population maps. |
 
-1. **GENERACIÓN**
+The source pages are linked in the notebooks. They are published by the
+[Peruvian open-data portal](https://datosabiertos.gob.pe/) and the
+[National Environmental Information System](https://sinia.minam.gob.pe/portal/datos-abiertos/).
+The main sources are [annual waste generation](https://datosabiertos.gob.pe/dataset/generaci%C3%B3n-anual-de-residuos-s%C3%B3lidos-domiciliarios-y-municipales-ministerio-del-ambiente),
+[municipal waste generation](https://datosabiertos.gob.pe/dataset/residuos-municipales-generados-anualmente),
+and [district waste valorization](https://datosabiertos.gob.pe/dataset/valorizaci%C3%B3n-de-residuos-s%C3%B3lidos-nivel-distrital-ministerio-del-ambiente-minam).
 
-   datasets:
-   - Generación anual de residuos sólidos domiciliarios y municipales
-   - Residuos municipales generados anualmente
-   - Generación de residuos sólidos municipales
+## Run a notebook
 
-   gráficos:
-   - [ ] serie temporal: toneladas 2000-2024
-   - [ ] mapa coroplético: kg per cápita por distrito/provincia
-   - [ ] top 10: barras horizontales de municipios con mayor generación
-   - [ ] indicador: kg de residuos per cápita por año.
+The project uses `mise` and `uv`. From this directory:
 
-2. **VALORIZACIÓN**
+```sh
+mise run install
+uv run marimo edit src/01-waste-generation.py
+```
 
-   datasets:
-   - Valorización de residuos sólidos Inorgánicos a nivel distrital
-   - Valorización de residuos sólidos Orgánicos a nivel distrital
+Replace the notebook path to open another file. `mise run dev` opens Marimo
+without choosing a file, and `mise run dev-lan` makes the server reachable on
+the local network.
 
-   gráficos:
-   - [ ] barras agrupadas: comparación de valorización orgánica vs inorgánica
-         por distrito
-   - [ ] evaluación anual: líneas de % valorizado sobre total generado
-   - [ ] mapa: distritos con tasa >= 20 %
+Downloaded CSV files are cached under `src/public/residuos` and are ignored by
+Git. The tracked `manifest.json` records the source URL, title, and download
+time. The population notebook reads the checked-in geographic files under
+`src/public`.
 
-3. **DISPOSICIÓN FINAL**
+## Export
 
-   datasets:
-   - Disposición final adecuada de residuos sólidos
+The export task currently builds the population map notebook as a WebAssembly
+HTML bundle:
 
-   gráficos:
-   - [ ] serie de tiempo: % de residuos dispuestos adecuadamente vs total
-         generado.
-   - [ ] mapa: rellenos sanitarios y cobertura por distrito, distritos que
-         atienden
-   - [ ] kpi: cobertura nacional último año
-   - [ ] área apilada: % adecuado vs inadecuado 2010-2023
+```sh
+mise run export
+```
 
-4. **COMPOSICIÓN**
+The output is written to `src/output`, which is ignored by Git.
 
-   datasets:
-   - Composición de residuos sólidos domiciliarios
+## Code quality
 
-   gráficos:
-   - [ ] donut: % orgánicos, plásticos, papel, vidrio, metales, otros
-   - [ ] heatmap: cambio de proporción 2014 vs 2023 por región
-   - [ ] evolución temporal: cambios en la proporción de plásticos u orgánicos
-         en 10 años.
-   - [ ] barras horizontales: comparación por tipo de residuo.
+```sh
+mise run fix
+```
 
-5. **PROGRAMAS DE GESTIÓN AMBIENTAL**
-
-   datasets:
-   - Implementación del Programa Municipal EDUCCA
-
-   gráficos:
-   - [ ] mapa binario: distrito con/sin educca (% de municipios)
-   - [ ] boxplot: valorización per cápita – con educca vs sin educca
-   - [ ] línea temporal: crecimiento del programa en los últimos años.
-
-6. **IMPACTOS**
-
-   datasets:
-   - Inventario Nacional de Áreas Degradadas por residuos sólidos municipales
-
-   gráficos:
-   - [ ] puntos: ubicación y tamaño (ha) de áreas degradadas
-   - [ ] serie temporal: evolución de áreas degradadas detectadas por año.
-   - [ ] scatter: toneladas generadas vs ha degradadas por región (x: toneladas
-         generadas, y: áreas degradadas).
-   - [ ] indicador: total de ha registradas.
-
-El flujo narrativo podría ser algo como:
-
-1. Generación: mostrar cuánto y dónde se produce
-2. Valorización: mostrar cuánto se reaprovecha
-3. Disposición: mostrar cuánto se maneja correctamente
-4. Composición: mostrar de qué están hechos los residuos
-5. Programas: mostrar esfuerzos de gestión y educación ambiental
-6. Impactos: mostrar consecuencias de la mala gestión
+This runs Ruff's formatter and linter with fixes enabled.

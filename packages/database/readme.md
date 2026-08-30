@@ -1,121 +1,84 @@
-# [pkg]: @lima-garbage/database
+# Database package
 
-Paquete para definición de esquemas, migraciones y conexión de base de datos
-PostgreSQL usando Drizzle ORM y Supabase. Está diseñado exclusivamente para
-desarrollo y pruebas.
+`@lima-garbage/database` owns the PostgreSQL schema used by the API. It defines
+tables with [Drizzle](https://orm.drizzle.team/docs/overview) and stores
+generated migrations. The API currently creates its own `pg` pool and runs
+parameterized SQL.
 
-El paquete gestiona la estructura base de datos del proyecto, incluyendo
-autenticación de usuarios, gestión de rutas, seguimiento de vehículos y perfiles
-ciudadanos. Utiliza ciertos componentes de
-[better-auth](https://www.better-auth.com/docs/plugins/admin) para autenticación
-y drizzle-kit para migraciones.
+The API is the only workspace that may import this package. The web and citizen
+apps call the API instead of connecting to PostgreSQL.
 
-## Esquema
+## Schema
 
-El esquema se define modularmente en [src/schema/](src/schema/) con punto de
-entrada en index.ts que exporta definiciones y relaciones para su uso en otros
-proyectos dentro del monorepo.
+Schema files live in [`src/schema`](src/schema):
 
-**Autenticación** ([auth.ts](src/schema/auth.ts)): Gestión de usuarios mediante
-better-auth con extensiones personalizadas.
+- `auth.ts`: users, sessions, organizations, members, and invitations.
+- `citizens.ts`: citizen profiles and education progress.
+- `communications.ts`: dispatch messages and push notification tokens.
+- `issues.ts`: citizen reports, driver reports, and system alerts.
+- `locations.ts`: current truck locations and location history.
+- `routes.ts`: routes, waypoints, schedules, and assignments.
+- `trucks.ts`: truck records.
 
-- user: Tabla principal con enum appRole personalizado
-  (admin|supervisor|driver|citizen) para permisos a nivel aplicación. appRole y
-  role son distintos, el segundo es para uso de better-auth.
-- account, session, verification: Soporte OAuth, gestión de sesiones y tokens de
-  verificación respectivamente.
+[`src/schema/index.ts`](src/schema/index.ts) exports the tables and defines all
+Drizzle relations.
 
-**Vehículos** ([trucks.ts](src/schema/trucks.ts)): Para el seguimiento de
-camiones recolectores.
+## Environment
 
-- truck: Información estática (nombre, placa).
-- truckCurrentLocation: Ubicación actual en tiempo real, diseñada para
-  actualizaciones frecuentes. Esto debe ser actualizado desde
-  [apps/trucks](../../apps/trucks).
-- truckLocationHistory: Registro histórico para análisis y reproducción de
-  rutas.
+The schema tools need `DATABASE_URL`. The setup and seed scripts also need
+`BETTER_AUTH_SECRET`. `BETTER_AUTH_URL` is optional and defaults to
+`http://localhost:4000`.
 
-**Rutas** ([routes.ts](src/schema/routes.ts)): Es la estructura de rutas de
-recolección.
+Copy [`../../.env.example`](../../.env.example) to `.env` and fill in the
+values before running a command.
 
-- route: Definición principal con waypoints, ubicación inicial y estado.
-  Referencias a createdBy y approvedBy del modelo user.
-- routeWaypoint: Coordenadas geográficas ordenadas del trazado.
-- routeSchedule: Programación recurrente (ej: lunes 08:00).
-- routeAssignment: Núcleo operacional que vincula route, truck y driver para
-  fecha específica, con seguimiento de estado de 'scheduled' a 'completed'. Es
-  algo flexible y adaptable.
+## Commands
 
-**Ciudadanos** ([citizens.ts](src/schema/citizens.ts)): Funcionalidades
-orientadas al ciudadano.
-
-- citizenProfile: Extensión de user para rol 'citizen' con datos de ubicación y
-  preferencias.
-- userEducationProgress: Seguimiento de progreso en contenido educativo.
-
----
-
-Las relaciones entre tables están definidas en [index.ts](src/schema/index.ts).
-Se usan el helper relations de Drizzle para consultas relacionales tipadas.
-
-## Variables de entorno
-
-Configuración requerida en .env en el directorio raíz (ver
-[.env.example](../../.env.example)):
-
-```
-DATABASE_URL=<postgresql_connection_string>
-SUPABASE_URL=<supabase_project_url>
-BETTER_AUTH_SECRET=<token_signing_secret>
-```
-
-## Gestión de esquema
-
-Ejecuta los comandos desde dentro de `packages/database/`. No uses
-`bun --filter @lima-garbage/database`, porque los scripts interactivos (via
-@clack/prompts o drizzle-kit) como `setup:admin` no reciben entrada estándar
-correctamente. Es un problema conocido de `bun`.
-
-Entra al directorio y ejecuta por ejemplo (¡todavía no lo hagas!):
+Run these from the repository root:
 
 ```sh
-bun run setup:admin
+bun --filter @lima-garbage/database db:generate
+bun --filter @lima-garbage/database db:push
+bun --filter @lima-garbage/database db:push:test
+bun --filter @lima-garbage/database db:studio
 ```
 
-Y así funciona.
+Create the first organization owner with the interactive setup script:
 
-### Migraciones
+```sh
+bun --filter @lima-garbage/database setup:admin
+```
 
-`drizzle-kit migrate` falla al crear `ENUM` ya existentes con el error
-`type "xxx" already exists`. Es un bug conocido y no tiene solución disponible;
-solo ocurre en migraciones, ya que `db:push` funciona pero no se usa en
-producción.
+The script prints the values needed by the seed script. Add them to `.env`, then
+run:
 
-El único workaround sería envolver cada `CREATE TYPE` en un bloque
-`DO $$ ... EXCEPTION`, lo cual es manual e impracticable.
+```sh
+bun --filter @lima-garbage/database db:seed
+```
 
-Un miembro del equipo de Drizzle ha confirmado que lo corregirán en la versión
-`1.0.0`, prevista en dos semanas (ver este
-[comentario](https://github.com/drizzle-team/drizzle-orm/issues/3206#issuecomment-3239448359)).
-Hasta entonces no existen migraciones seguras, por lo que generamos el esquema
-con `db:generate` y aplicamos los cambios manualmente o con `db:push` en
-desarrollo, en espera de revisar la situación antes del primer release alfa.
+The seed script is for development data. It is safe to run more than once for
+the records it owns, but it must not run against production data.
 
----
+## Migrations
 
-Comandos adicionales:
+Schema changes follow this path:
 
-`bun run db:push`: Sincronización directa esquema-base de datos, omitiendo
-sistema de migraciones. Solo desarrollo local.
+```mermaid
+flowchart LR
+    edit[Edit src/schema] --> generate[Run db:generate]
+    generate --> review[Review generated SQL]
+    review --> test[Test on a disposable database]
+    test --> commit[Commit SQL and journal entry]
+    commit --> apply[Apply with db:migrate]
+```
 
-### Configuración inicial
+Keep each migration SQL file with its matching entry in
+[`migrations/meta/_journal.json`](migrations/meta/_journal.json). Do not apply
+a migration until the complete history can be created on a fresh database.
 
-`bun run setup:admin`: Script interactivo crítico para creación del primer
-usuario admin. Solicita nombre, email y contraseña.
+`db:push` changes a database without recording a migration and is for local
+development. `db:migrate` applies the committed migration files.
 
-Falla si admin existe. Al completarse exitosamente, imprime variables de entorno
-(SYSTEM_ADMIN_EMAIL, SYSTEM_ADMIN_PASSWORD) para agregar a .env en el directorio
-raiz, usadas por tests automatizados de API.
-
-`bun run db:seed`: Ejecuta seed.ts para poblar la base de datos con datos
-iniciales/prueba. Ver scripts/seed.ts](scripts/seed.ts) para modificaciones.
+Do not edit generated migration snapshots by hand. If a migration needs a manual
+change, document why in the migration review and make sure a fresh database can
+still apply the complete migration history.
