@@ -9,6 +9,16 @@ import color from 'picocolors';
 const MILLISECONDS_PER_MINUTE = 60_000;
 const DEFAULT_START_HOUR = 8;
 
+interface AssignmentSeed {
+  dbClient: PoolClient;
+  truckId: string;
+  routeId: string;
+  driverId: string;
+  supervisorId: string;
+  startHour: number;
+  durationMinutes: number;
+}
+
 function mustEnv(name: string): string {
   const val = process.env[name];
   if (!val) {
@@ -26,7 +36,7 @@ const db = new Pool({ connectionString: DATABASE_URL });
 const auth = betterAuth({
   database: db,
   secret: AUTH_SECRET,
-  // biome-ignore lint/style/useNamingConvention: better auth requires baseURL
+  // biome-ignore lint/style/useNamingConvention: Better Auth requires baseURL.
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
   emailAndPassword: { enabled: true },
   user: {
@@ -104,7 +114,7 @@ async function ensureUser(sessionToken: string, u: (typeof seedUsers)[number]) {
         username: u.username,
       },
     },
-    // biome-ignore lint/style/useNamingConvention: HTTP header name must be capitalized
+    // biome-ignore lint/style/useNamingConvention: HTTP requires the capitalized header name.
     headers: { Cookie: sessionToken },
   });
 
@@ -155,15 +165,15 @@ async function ensureRoute(dbClient: PoolClient, supervisorId: string) {
   return routeId;
 }
 
-async function ensureAssignment(
-  dbClient: PoolClient,
-  truckId: string,
-  routeId: string,
-  driverId: string,
-  supervisorId: string,
-  startHour: number,
-  durationMinutes: number,
-) {
+async function ensureAssignment({
+  dbClient,
+  truckId,
+  routeId,
+  driverId,
+  supervisorId,
+  startHour,
+  durationMinutes,
+}: AssignmentSeed) {
   const today = new Date().toISOString().split('T')[0];
   const { rows } = await dbClient.query('SELECT id FROM route_assignment WHERE truck_id=$1 AND assigned_date=$2', [
     truckId,
@@ -219,15 +229,15 @@ async function seedDatabase(client: PoolClient, supervisor: { id: string }, driv
   s.stop('Ruta lista.');
 
   s.start('Creando asignaciones...');
-  await ensureAssignment(
-    client,
-    truckIds[0],
+  await ensureAssignment({
+    dbClient: client,
+    truckId: truckIds[0],
     routeId,
-    driver.id,
-    supervisor.id,
-    DEFAULT_START_HOUR,
-    seedData.route.estimatedDurationMinutes,
-  );
+    driverId: driver.id,
+    supervisorId: supervisor.id,
+    startHour: DEFAULT_START_HOUR,
+    durationMinutes: seedData.route.estimatedDurationMinutes,
+  });
   s.stop('Asignaciones listas.');
 }
 

@@ -24,7 +24,7 @@ const db = new Pool({
 const auth = betterAuth({
   database: db,
   secret: process.env.BETTER_AUTH_SECRET,
-  // biome-ignore lint/style/useNamingConvention: better auth requires baseURL
+  // biome-ignore lint/style/useNamingConvention: Better Auth requires baseURL.
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:4000/api',
   emailAndPassword: { enabled: true },
   telemetry: { enabled: false },
@@ -81,13 +81,13 @@ async function collectUserInput() {
   );
 }
 
-async function createOwnerUser(email: string, password: string, name: string) {
+async function createOwnerUser(email: string, userPassword: string, name: string) {
   const s = spinner();
   s.start('Creando usuario propietario...');
   const { user: ownerUser } = await auth.api.signUpEmail({
     body: {
       email,
-      password,
+      password: userPassword,
       name,
     },
   });
@@ -108,12 +108,12 @@ async function createOrganization(userId: string) {
   s.stop('Organización creada correctamente.');
 }
 
-function displaySuccessMessage(email: string, password: string) {
+function displaySuccessMessage(email: string, userPassword: string) {
   const noteMessage = `
 Agrega estas credenciales al archivo ${color.bold('.env')} en la raíz del proyecto:
 
 ${color.green(`SYSTEM_ADMIN_EMAIL="${email}"`)}
-${color.green(`SYSTEM_ADMIN_PASSWORD="${password}"`)}
+${color.green(`SYSTEM_ADMIN_PASSWORD="${userPassword}"`)}
 `;
   note(noteMessage, 'Próximos pasos (apps/api/test):');
   outro(color.green('Propietario de la organización configurado correctamente.'));

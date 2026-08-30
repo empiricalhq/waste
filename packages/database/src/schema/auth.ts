@@ -115,6 +115,6 @@ export const invitation = pgTable('invitation', {
     .notNull()
     .references(() => organization.id, { onDelete: 'cascade' }),
   role: memberRoleEnum('role').notNull(),
-  status: text('status').notNull(), // e.g., 'pending', 'accepted'
+  status: text('status').notNull(),
   expiresAt: timestamp('expiresAt', { withTimezone: true, mode: 'date' }).notNull(),
 });

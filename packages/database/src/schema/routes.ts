@@ -101,5 +101,6 @@ export const routeAssignment = pgTable(
     index('idx_assignment_driver_date').on(table.driverId, table.assignedDate),
     index('idx_assignment_truck_date').on(table.truckId, table.assignedDate),
     index('idx_assignment_date_status').on(table.assignedDate, table.status),
+    index('idx_assignment_driver_status').on(table.driverId, table.status),
   ],
 );

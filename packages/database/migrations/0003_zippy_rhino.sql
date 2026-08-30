@@ -1,0 +1,2 @@
+CREATE INDEX "citizen_issue_report_user_idx" ON "citizen_issue_report" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "idx_assignment_driver_status" ON "route_assignment" USING btree ("driver_id","status");

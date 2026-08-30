@@ -4,13 +4,15 @@ import { account, session, user } from './auth.ts';
 import { citizenProfile, userEducationProgress } from './citizens.ts';
 import { dispatchMessage, pushNotificationToken } from './communications.ts';
 import { citizenIssueReport, driverIssueReport, systemAlert } from './issues.ts';
+import { truckCurrentLocation, truckLocationHistory } from './locations.ts';
 import { route, routeAssignment, routeSchedule, routeWaypoint } from './routes.ts';
-import { truck, truckCurrentLocation, truckLocationHistory } from './trucks.ts';
+import { truck } from './trucks.ts';
 
 export * from './auth.ts';
 export * from './citizens.ts';
 export * from './communications.ts';
 export * from './issues.ts';
+export * from './locations.ts';
 export * from './routes.ts';
 export * from './trucks.ts';
 

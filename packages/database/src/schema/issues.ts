@@ -71,5 +71,6 @@ export const citizenIssueReport = pgTable(
   (table) => [
     index('citizen_issue_report_status_idx').on(table.status),
     index('citizen_issue_report_type_idx').on(table.type),
+    index('citizen_issue_report_user_idx').on(table.userId),
   ],
 );
