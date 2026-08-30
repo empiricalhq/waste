@@ -10,13 +10,13 @@
     "lint": "biome lint ."
   },
   "devDependencies": {
-    "@react-email/components": "0.5.7",
-    "@react-email/preview-server": "4.3.2",
+    "@react-email/components": "1.0.12",
+    "@react-email/preview-server": "5.2.10",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-email": "4.3.2",
+    "react-email": "6.9.3",
     "typescript": "5.9.3"
   }
 }
