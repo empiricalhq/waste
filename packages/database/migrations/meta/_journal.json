@@ -29,6 +29,13 @@
       "when": 1788058148089,
       "tag": "0003_zippy_rhino",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788067632767,
+      "tag": "0004_striped_silver_surfer",
+      "breakpoints": true
     }
   ]
 }
