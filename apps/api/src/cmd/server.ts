@@ -4,7 +4,7 @@ import { loadConfig } from '@/internal/shared/config/config';
 const config = loadConfig();
 const port = config.server.port;
 
-// biome-ignore lint/style/noDefaultExport: Hono requires default export
+// biome-ignore lint/style/noDefaultExport: the runtime expects the Hono default export.
 export default {
   fetch: app.fetch,
   port,

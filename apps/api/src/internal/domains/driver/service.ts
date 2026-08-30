@@ -65,21 +65,24 @@ export class DriverService extends BaseService {
       }
       const { id: assignmentId, truck_id: truckId } = assignment;
 
-      await client.query(LocationQueries.upsertTruckCurrentLocation, [
-        truckId,
-        assignmentId,
-        location.lat,
-        location.lng,
-        location.speed,
-        location.heading,
-      ]);
-      await client.query(LocationQueries.createTruckLocationHistory, [
-        truckId,
-        assignmentId,
-        location.lat,
-        location.lng,
-        location.speed,
-        location.heading,
+      // Keep the current location and history row in the same transaction.
+      await Promise.all([
+        client.query(LocationQueries.upsertTruckCurrentLocation, [
+          truckId,
+          assignmentId,
+          location.lat,
+          location.lng,
+          location.speed,
+          location.heading,
+        ]),
+        client.query(LocationQueries.createTruckLocationHistory, [
+          truckId,
+          assignmentId,
+          location.lat,
+          location.lng,
+          location.speed,
+          location.heading,
+        ]),
       ]);
     });
   }

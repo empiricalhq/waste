@@ -36,8 +36,6 @@ app.onError((err, c) => {
   return errorResponse(c, 'Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
 });
 
-app.notFound((c) => {
-  return notFound(c, 'Not found');
-});
+app.notFound((c) => notFound(c, 'Not found'));
 
 export { app };

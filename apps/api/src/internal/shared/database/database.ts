@@ -2,14 +2,14 @@ import { Pool, type PoolClient, type QueryResultRow } from 'pg';
 import type { DatabaseConfig } from '@/internal/shared/config/config';
 
 export interface DatabaseInterface {
-  query<T extends QueryResultRow = QueryResultRow>(
+  query: <T extends QueryResultRow = QueryResultRow>(
     text: string,
     params?: unknown[],
-  ): Promise<{ rows: T[]; rowCount: number }>;
-  getClient(): Promise<PoolClient>;
-  withTransaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T>;
-  getPool(): Pool;
-  close(): Promise<void>;
+  ) => Promise<{ rows: T[]; rowCount: number }>;
+  getClient: () => Promise<PoolClient>;
+  withTransaction: <T>(callback: (client: PoolClient) => Promise<T>) => Promise<T>;
+  getPool: () => Pool;
+  close: () => Promise<void>;
 }
 
 export class Database implements DatabaseInterface {
@@ -22,6 +22,7 @@ export class Database implements DatabaseInterface {
       max: config.maxConnections,
       idleTimeoutMillis: config.idleTimeoutMs,
       connectionTimeoutMillis: config.connectionTimeoutMs,
+      statement_timeout: config.statementTimeoutMs,
     });
   }
 

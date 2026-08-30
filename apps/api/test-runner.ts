@@ -23,7 +23,7 @@ const code = await tests.exited;
 try {
   server.kill();
 } catch {
-  // ignore errors if the server is already dead
+  // Cleanup can race with a server that has already exited.
 }
 
 process.exit(code ?? 1);

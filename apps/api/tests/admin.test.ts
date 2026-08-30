@@ -37,10 +37,8 @@ describe('Admin API', () => {
     test('should fail with duplicate license plate', async () => {
       const truckData = { name: 'Test Truck', license_plate: 'DUPLICATE' };
 
-      // create first truck
       await baseTest.ctx.client.post('/admin/trucks', truckData, baseTest.ctx.auth.getHeaders('admin'));
 
-      // try to create duplicate
       const response = await baseTest.ctx.client.post<ErrorResponse>(
         '/admin/trucks',
         truckData,

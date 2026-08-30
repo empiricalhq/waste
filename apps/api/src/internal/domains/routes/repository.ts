@@ -27,16 +27,13 @@ export class RouteRepository extends BaseRepository {
         throw new Error('Database query failed to return created route.');
       }
 
-      const waypointPromises = waypoints.map((waypoint) =>
-        client.query(RouteQueries.createWaypoint, [
-          route.id,
-          waypoint.sequence_order,
-          waypoint.lat,
-          waypoint.lng,
-          waypoint.sequence_order * ETA_MINUTES_PER_SEQUENCE_STEP,
-        ]),
-      );
-      await Promise.all(waypointPromises);
+      await client.query(RouteQueries.createWaypoints, [
+        route.id,
+        waypoints.map((w) => w.sequence_order),
+        waypoints.map((w) => w.lat),
+        waypoints.map((w) => w.lng),
+        waypoints.map((w) => w.sequence_order * ETA_MINUTES_PER_SEQUENCE_STEP),
+      ]);
 
       return route;
     });

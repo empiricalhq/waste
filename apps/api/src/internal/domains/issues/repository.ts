@@ -23,12 +23,6 @@ export class IssueRepository extends BaseRepository {
   }
 
   async findAllOpen(): Promise<IssueReportSummary[]> {
-    const [driverIssues, citizenIssues] = await Promise.all([
-      this.executeQuery<IssueReportSummary>(IssueQueries.findOpenDriverIssues),
-      this.executeQuery<IssueReportSummary>(IssueQueries.findOpenCitizenIssues),
-    ]);
-
-    const all = [...driverIssues, ...citizenIssues];
-    return all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return this.executeQuery<IssueReportSummary>(IssueQueries.findAllOpen);
   }
 }

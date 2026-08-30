@@ -1,5 +1,6 @@
 import { Hono, type MiddlewareHandler } from 'hono';
 import { z } from 'zod';
+import type { AppRole } from '@/internal/shared/auth/roles';
 import { created, noContent, success } from '@/internal/shared/utils/response';
 import { CommonSchemas, validateJson, validateParam } from '@/internal/shared/utils/validation';
 import { CreateAssignmentSchema } from '../assignments/schemas';
@@ -14,7 +15,7 @@ const IdParamSchema = z.object({ id: CommonSchemas.id });
 
 export function createAdminHandler(
   adminService: AdminService,
-  authMiddleware: (allowedRoles: string[]) => MiddlewareHandler<AuthEnv>,
+  authMiddleware: (allowedRoles: AppRole[]) => MiddlewareHandler<AuthEnv>,
 ): Hono<AuthEnv> {
   const admin = new Hono<AuthEnv>();
 

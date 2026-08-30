@@ -12,6 +12,14 @@ import type { CreateTruckRequest, Truck, TruckWithDetails } from '../trucks/mode
 import type { TruckRepository } from '../trucks/repository';
 import type { UserWithRole } from '../users/models';
 
+interface AdminServiceDependencies {
+  truckRepo: TruckRepository;
+  routeRepo: RouteRepository;
+  assignmentRepo: AssignmentRepository;
+  issueRepo: IssueRepository;
+  authService: AuthService;
+}
+
 export class AdminService extends BaseService {
   private readonly truckRepo: TruckRepository;
   private readonly routeRepo: RouteRepository;
@@ -19,13 +27,7 @@ export class AdminService extends BaseService {
   private readonly issueRepo: IssueRepository;
   private readonly authService: AuthService;
 
-  constructor(
-    truckRepo: TruckRepository,
-    routeRepo: RouteRepository,
-    assignmentRepo: AssignmentRepository,
-    issueRepo: IssueRepository,
-    authService: AuthService,
-  ) {
+  constructor({ truckRepo, routeRepo, assignmentRepo, issueRepo, authService }: AdminServiceDependencies) {
     super();
     this.truckRepo = truckRepo;
     this.routeRepo = routeRepo;
@@ -40,20 +42,21 @@ export class AdminService extends BaseService {
         headers,
         query: {
           limit: 1000,
+          filterField: 'role',
+          filterOperator: 'eq',
+          filterValue: 'driver',
         },
       });
 
-      const driverUsers = response.users.filter((user: { role?: string }) => user.role === 'driver');
-
-      return driverUsers.map((user) => ({
+      return response.users.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
         createdAt: new Date(user.createdAt),
         role: 'driver',
       }));
-    } catch (_error) {
-      throw new Error('Failed to retrieve drivers due to an internal error.');
+    } catch (error) {
+      throw new Error('Failed to retrieve drivers due to an internal error.', { cause: error });
     }
   }
 

@@ -24,15 +24,18 @@ export const LocationQueries = {
   `,
   findCitizenProfileLocation: 'SELECT lat, lng FROM citizen_profile WHERE user_id = $1',
   findNearbyTrucks: `
-    SELECT
-      t.id as truck_id,
-      t.name as truck_name,
-      ( 6371 * acos( cos(radians($1)) * cos(radians(tcl.lat)) * cos(radians(tcl.lng) - radians($2)) + sin(radians($1)) * sin(radians(tcl.lat)) ) ) AS distance_km
-    FROM truck_current_location tcl
-    JOIN truck t ON tcl.truck_id = t.id
-    JOIN route_assignment ra ON tcl.route_assignment_id = ra.id
-    WHERE ra.status = 'active' AND tcl.updated_at > NOW() - INTERVAL '10 minutes'
-      AND ( 6371 * acos( cos(radians($1)) * cos(radians(tcl.lat)) * cos(radians(tcl.lng) - radians($2)) + sin(radians($1)) * sin(radians(tcl.lat)) ) ) < 1
+    SELECT truck_id, truck_name, distance_km
+    FROM (
+      SELECT
+        t.id as truck_id,
+        t.name as truck_name,
+        ( 6371 * acos( cos(radians($1)) * cos(radians(tcl.lat)) * cos(radians(tcl.lng) - radians($2)) + sin(radians($1)) * sin(radians(tcl.lat)) ) ) AS distance_km
+      FROM truck_current_location tcl
+      JOIN truck t ON tcl.truck_id = t.id
+      JOIN route_assignment ra ON tcl.route_assignment_id = ra.id
+      WHERE ra.status = 'active' AND tcl.updated_at > NOW() - INTERVAL '10 minutes'
+    ) nearby
+    WHERE distance_km < 1
     ORDER BY distance_km ASC
     LIMIT 1
   `,

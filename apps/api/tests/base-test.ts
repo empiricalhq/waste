@@ -20,11 +20,9 @@ export class BaseTest {
     const db = new Database();
     const auth = new Auth(client, db);
 
-    // clean state
     await db.clean();
     auth.clearSessions();
 
-    // setup organization and admin user
     await this.setupOrganization(db, auth);
 
     this.ctx = { client, auth, db };
@@ -38,7 +36,6 @@ export class BaseTest {
   }
 
   private async setupOrganization(db: Database, auth: Auth): Promise<void> {
-    // create organization
     const orgResult = await db.query<{ id: string }>(
       `INSERT INTO organization (id, name, slug) VALUES (gen_random_uuid(), 'Test Org', 'test-org') RETURNING id`,
     );
@@ -47,7 +44,6 @@ export class BaseTest {
       throw new Error('Failed to create test organization');
     }
 
-    // create admin user and membership
     const adminConfig = TEST_USERS.admin;
     const adminId = await auth.ensureUserExists(adminConfig.email, adminConfig.password);
 
@@ -57,7 +53,6 @@ export class BaseTest {
       [adminId, orgId, 'owner'],
     );
 
-    // create driver user and membership
     const driverConfig = TEST_USERS.driver;
     const driverId = await auth.ensureUserExists(driverConfig.email, driverConfig.password);
 
@@ -67,7 +62,6 @@ export class BaseTest {
       [driverId, orgId, 'driver'],
     );
 
-    // create citizen user (without organization membership)
     const citizenConfig = TEST_USERS.citizen;
     await auth.ensureUserExists(citizenConfig.email, citizenConfig.password);
   }

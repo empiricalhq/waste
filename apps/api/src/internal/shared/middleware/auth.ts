@@ -1,14 +1,12 @@
 import { createMiddleware } from 'hono/factory';
 import type { AuthService } from '@/internal/domains/auth/service';
 import type { AuthEnv } from '@/internal/domains/auth/types';
+import type { AppRole } from '@/internal/shared/auth/roles';
 import { forbidden, unauthorized } from '@/internal/shared/utils/response';
 
-/**
- * Role-based authentication middleware.
- * @param allowedRoles - Empty array requires only valid session, otherwise checks for matching roles
- */
+/** Require a session and, when roles are provided, an active organization member role. */
 export function createAuthMiddleware(authService: AuthService) {
-  return function authMiddleware(allowedRoles: string[]) {
+  return function authMiddleware(allowedRoles: AppRole[]) {
     return createMiddleware<AuthEnv>(async (c, next) => {
       const session = await authService.api.getSession({
         headers: c.req.raw.headers,
@@ -18,7 +16,7 @@ export function createAuthMiddleware(authService: AuthService) {
         return unauthorized(c);
       }
 
-      // skip role check if no roles required
+      // An empty role list means any authenticated user may continue.
       if (allowedRoles.length === 0) {
         c.set('user', session.user);
         c.set('session', session.session);
@@ -39,7 +37,7 @@ export function createAuthMiddleware(authService: AuthService) {
         return forbidden(c, 'No organization membership found');
       }
 
-      // memberRoleResponse.role can be string or string[], so we normalize it to an array
+      // Better Auth may return one role or a list of roles.
       const memberRoles = Array.isArray(memberRoleResponse.role) ? memberRoleResponse.role : [memberRoleResponse.role];
 
       const hasRequiredRole = allowedRoles.some((role) => memberRoles.includes(role));
@@ -55,10 +53,7 @@ export function createAuthMiddleware(authService: AuthService) {
   };
 }
 
-/**
- * Creates middleware that restricts access to citizens only
- * Citizens are defined as users without an active organization
- */
+/** Allow authenticated users who do not have an active organization. */
 export function createCitizenOnlyMiddleware(authService: AuthService) {
   return createMiddleware<AuthEnv>(async (c, next) => {
     const session = await authService.api.getSession({

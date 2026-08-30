@@ -13,8 +13,12 @@ export function noContent(c: Context) {
   return c.body(null, HttpStatus.NO_CONTENT);
 }
 
-export function error(c: Context, error: string, statusCode: ContentfulStatusCode = HttpStatus.INTERNAL_SERVER_ERROR) {
-  return c.json({ error }, statusCode);
+export function error(
+  c: Context,
+  message: string,
+  statusCode: ContentfulStatusCode = HttpStatus.INTERNAL_SERVER_ERROR,
+) {
+  return c.json({ error: message }, statusCode);
 }
 
 export function validationError(c: Context, formErrors: string[] = [], fieldErrors: Record<string, string[]> = {}) {
@@ -33,7 +37,6 @@ export function forbidden(c: Context, message = 'Forbidden') {
   return c.json({ error: message }, HttpStatus.FORBIDDEN);
 }
 
-// currently unused, but might be useful later on
 export function conflict(c: Context, message = 'Conflict') {
   return c.json({ error: message }, HttpStatus.CONFLICT);
 }

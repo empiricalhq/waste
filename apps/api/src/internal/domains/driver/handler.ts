@@ -1,5 +1,6 @@
 import { Hono, type MiddlewareHandler } from 'hono';
 import { z } from 'zod';
+import type { AppRole } from '@/internal/shared/auth/roles';
 import { created, success } from '@/internal/shared/utils/response';
 import { CommonSchemas, validateJson, validateParam } from '@/internal/shared/utils/validation';
 import type { AuthEnv } from '../auth/types';
@@ -11,7 +12,7 @@ const IdParamSchema = z.object({ id: CommonSchemas.id });
 
 export function createDriverHandler(
   driverService: DriverService,
-  authMiddleware: (allowedRoles: string[]) => MiddlewareHandler<AuthEnv>,
+  authMiddleware: (allowedRoles: AppRole[]) => MiddlewareHandler<AuthEnv>,
 ): Hono<AuthEnv> {
   const driver = new Hono<AuthEnv>();
 

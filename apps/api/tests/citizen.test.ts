@@ -40,11 +40,10 @@ describe('Citizen API', () => {
       );
       const truckId = truckRes.data.data.id;
       await baseTest.ctx.db.query(
-        `INSERT INTO truck_current_location (truck_id, lat, lng) VALUES ($1, -12.05, -77.05)`,
+        'INSERT INTO truck_current_location (truck_id, lat, lng) VALUES ($1, -12.05, -77.05)',
         [truckId],
       );
 
-      // citizen fetches trucks
       await baseTest.ctx.auth.loginAs('citizen');
       const response = await baseTest.ctx.client.get<SuccessResponse<TruckWithDetails[]>>(
         '/citizen/trucks',
@@ -97,7 +96,6 @@ describe('Citizen API', () => {
     });
 
     test('should list own issues', async () => {
-      // create an issue first
       await baseTest.ctx.client.post(
         '/citizen/issues',
         createTestIssue('missed_collection'),

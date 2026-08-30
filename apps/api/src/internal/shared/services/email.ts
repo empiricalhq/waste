@@ -28,7 +28,7 @@ export class EmailService {
         subject: 'Restablecer tu contraseña (lima-limpia.pe)',
         html,
       });
-    } catch (_error) {
+    } catch {
       throw new Error('Failed to send password reset email');
     }
   }
@@ -37,11 +37,11 @@ export class EmailService {
     try {
       const url = new URL(betterAuthUrl);
 
-      // Extract token from path: /api/auth/reset-password/{token}
+      // Better Auth puts the reset token in the generated URL path.
       const pathParts = url.pathname.split('/');
       const token = pathParts.at(-1);
 
-      // Extract callback URL from query params
+      // The callback URL identifies the frontend page that receives the token.
       const callbackURL = url.searchParams.get('callbackURL');
 
       if (!(callbackURL && token)) {
@@ -52,7 +52,7 @@ export class EmailService {
       frontendUrl.searchParams.set('token', token);
 
       return frontendUrl.toString();
-    } catch (_error) {
+    } catch {
       return betterAuthUrl;
     }
   }

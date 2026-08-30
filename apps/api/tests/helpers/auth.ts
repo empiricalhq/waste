@@ -19,7 +19,6 @@ export class Auth {
   }
 
   async login(email: string, password: string): Promise<Session> {
-    // return cached session if exists
     const existing = this.sessions.get(email);
     if (existing) {
       return existing;
@@ -40,13 +39,11 @@ export class Auth {
       cookie = await this.setupOrganization(cookie);
     }
 
-    // get session data
     const sessionRes = await this.client.get<{ user: User; session: { activeOrganizationId?: string } }>(
       '/auth/get-session',
       { Cookie: cookie },
     );
 
-    // get member info
     let member: Member | null = null;
     if (sessionRes.data.session?.activeOrganizationId) {
       const orgRes = await this.client.get<{

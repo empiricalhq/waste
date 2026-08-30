@@ -21,8 +21,10 @@ export const RouteQueries = {
     WHERE route_id = $1
     ORDER BY sequence_order ASC
   `,
-  createWaypoint: `
+  createWaypoints: `
     INSERT INTO route_waypoint (id, route_id, sequence_order, lat, lng, estimated_arrival_offset_minutes)
-    VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)
+    SELECT gen_random_uuid(), $1, seq, lat, lng, offset_minutes
+    FROM UNNEST($2::int[], $3::double precision[], $4::double precision[], $5::int[])
+      AS w(seq, lat, lng, offset_minutes)
   `,
 } as const;

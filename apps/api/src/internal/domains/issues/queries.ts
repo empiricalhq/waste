@@ -14,14 +14,19 @@ export const IssueQueries = {
     VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)
     RETURNING id
   `,
-  findOpenDriverIssues: `
-    SELECT 'driver' as source, id, type, status, created_at, notes as description, lat, lng
-    FROM driver_issue_report
-    WHERE status = 'open'
-  `,
-  findOpenCitizenIssues: `
-    SELECT 'citizen' as source, id, type, status, created_at, description, lat, lng
-    FROM citizen_issue_report
-    WHERE status = 'open'
+  findAllOpen: `
+    (
+      SELECT 'driver' as source, id, type, status, created_at, notes as description, lat, lng
+      FROM driver_issue_report
+      WHERE status = 'open'
+    )
+    UNION ALL
+    (
+      SELECT 'citizen' as source, id, type, status, created_at, description, lat, lng
+      FROM citizen_issue_report
+      WHERE status = 'open'
+    )
+    ORDER BY created_at DESC
+    LIMIT 200
   `,
 } as const;

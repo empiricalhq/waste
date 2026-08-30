@@ -22,6 +22,7 @@ export interface DatabaseConfig {
   maxConnections: number;
   idleTimeoutMs: number;
   connectionTimeoutMs: number;
+  statementTimeoutMs: number;
 }
 
 export interface AuthConfig {
@@ -57,6 +58,7 @@ export function loadConfig(): Config {
       maxConnections: 20,
       idleTimeoutMs: 30_000,
       connectionTimeoutMs: 2000,
+      statementTimeoutMs: Number.parseInt(process.env.DB_STATEMENT_TIMEOUT_MS || '10000', 10),
     },
     auth: {
       secret: mustGetEnv('BETTER_AUTH_SECRET'),
