@@ -7,7 +7,7 @@ import type { AuthEnv } from '../auth/types';
 import { CreateAdminIssueSchema } from '../issues/schemas';
 import { CreateRouteSchema } from '../routes/schemas';
 import { CreateTruckSchema } from '../trucks/schemas';
-import { CreateDriverSchema } from './schemas';
+import { CreateDriverSchema, CreateUserSchema } from './schemas';
 import type { AdminService } from './service';
 
 const IdParamSchema = z.object({ id: CommonSchemas.id });
@@ -19,6 +19,12 @@ export function createAdminHandler(
   const admin = new Hono<AuthEnv>();
 
   admin.use('*', authMiddleware(['admin', 'supervisor', 'owner']));
+
+  admin.post('/users', validateJson(CreateUserSchema), async (c) => {
+    const userData = c.req.valid('json');
+    const newUser = await adminService.createUser(userData);
+    return created(c, newUser);
+  });
 
   admin.get('/drivers', async (c) => {
     const drivers = await adminService.getDrivers(c.req.raw.headers);

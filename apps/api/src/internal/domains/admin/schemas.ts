@@ -6,3 +6,10 @@ export const CreateDriverSchema = z.object({
   email: z.email('Invalid email format'),
   password: z.string().min(8, 'Password must be at least 8 characters long'),
 });
+
+export const CreateUserSchema = z.object({
+  name: CommonSchemas.name.min(2),
+  email: z.email('Invalid email format'),
+  password: z.string().min(8, 'Password must be at least 8 characters long'),
+  role: z.enum(['admin', 'supervisor', 'driver'], { message: 'Invalid role' }),
+});
